@@ -52,7 +52,7 @@
 
   <main class="container section portfolio">
     <h1 style="margin:0 0 8px">Project Gallery</h1>
-    <p class="lead">Filter by industry, capability, or status. Every project includes agentic orchestration, traces, and a usable UI.</p>
+    <p class="lead">Filter by industry, capability, or code access. Every project includes agentic orchestration, traces, and a usable UI.</p>
     <p class="small" style="margin:6px 0 12px; color:#9fb3ca">
       All software in this portfolio was designed and built by <strong>Oliver Ellison</strong> d/b/a <strong>Reliable AI Network, Inc. </strong> (“RAIN”).
     </p>
@@ -73,11 +73,11 @@
         </select>
       </div>
       <div>
-        <label for="fStatus">Status</label>
-        <select id="fStatus" class="input">
+        <label for="fCode">Code access</label>
+        <select id="fCode" class="input">
           <option value="all">All</option>
-          <option>Ready</option>
-          <option>Coming Soon</option>
+          <option value="open_source">Open Source</option>
+          <option value="proprietary_saas">Proprietary SaaS</option>
         </select>
       </div>
     </div>
@@ -248,10 +248,13 @@
     // Ensure "Agentic" chip present if omitted (keeps your visual consistency)
     PROJS.forEach(p => { if (!p.caps.includes("Agentic")) p.caps.push("Agentic"); });
 
+    // NEW: default codeAccess to open_source if not set (so you don't have to edit each item yet)
+    PROJS.forEach(p => { if (!p.codeAccess) p.codeAccess = "open_source"; });
+
     const grid = document.getElementById('grid');
     const fIndustry = document.getElementById('fIndustry');
     const fCap = document.getElementById('fCap');
-    const fStatus = document.getElementById('fStatus');
+    const fCode = document.getElementById('fCode');
 
     // --- Build dropdowns from data (with seeded baselines), alphabetize, and default to "All ..." ---
     const INDUSTRY_BASE = [
@@ -299,11 +302,11 @@
     function match(p){
       const ind = fIndustry.value;
       const cap = fCap.value;
-      const st = fStatus.value;
+      const code = fCode.value;
       const okInd = (ind === 'all') || p.industries.includes(ind);
       const okCap = (cap === 'all') || p.caps.includes(cap);
-      const okSt  = (st === 'all')  || p.status === st;
-      return okInd && okCap && okSt;
+      const okCode = (code === 'all') || p.codeAccess === code;
+      return okInd && okCap && okCode;
     }
 
     function render(){
@@ -384,11 +387,10 @@
         io.observe(img);
       });
     }
-
     // --- Init: build dropdowns from data, bind events, render ---
     populateSelectsFromData();
 
-    [fIndustry, fCap, fStatus].forEach(sel => {
+    [fIndustry, fCap, fCode].forEach(sel => {
       if (!sel) return;
       const hasAll = Array.from(sel.options).some(o => o.value === 'all');
       if (hasAll) sel.value = 'all';
@@ -397,7 +399,7 @@
 
     fIndustry.addEventListener('change', render);
     fCap.addEventListener('change', render);
-    fStatus.addEventListener('change', render);
+    fCode.addEventListener('change', render);
 
     render(); // initial
   </script>
