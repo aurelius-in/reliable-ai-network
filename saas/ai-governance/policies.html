@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Governance Policies - Policy Management</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary-color: #059669;
+            --secondary-light: #10b981;
+            --secondary-dark: #047857;
+            --background: #f8fafc;
+            --background-paper: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --grey-50: #f8fafc;
+            --grey-100: #f1f5f9;
+            --grey-200: #e2e8f0;
+            --grey-300: #cbd5e1;
+            --grey-400: #94a3b8;
+            --grey-500: #64748b;
+            --grey-600: #475569;
+            --grey-700: #334155;
+            --grey-800: #1e293b;
+            --grey-900: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--background);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 50%, var(--primary-light) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .create-policy-btn {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .create-policy-btn:hover {
+            background: var(--secondary-dark);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Policy Stats */
+        .policy-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Policy Categories */
+        .policy-categories {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+            margin-bottom: 2rem;
+        }
+
+        .policy-categories h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .category-card {
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .category-card.safety {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: var(--error);
+        }
+
+        .category-card.cost {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: var(--warning);
+        }
+
+        .category-card.compliance {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: var(--info);
+        }
+
+        .category-card.access {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: var(--success);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .category-icon.safety {
+            background: var(--error);
+        }
+
+        .category-icon.cost {
+            background: var(--warning);
+        }
+
+        .category-icon.compliance {
+            background: var(--info);
+        }
+
+        .category-icon.access {
+            background: var(--success);
+        }
+
+        .category-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .category-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .category-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+
+        .category-count {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .category-status {
+            color: var(--text-secondary);
+        }
+
+        /* Active Policies */
+        .active-policies {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+            margin-bottom: 2rem;
+        }
+
+        .active-policies h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .policy-list {
+            list-style: none;
+        }
+
+        .policy-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--grey-100);
+            transition: background 0.2s ease;
+        }
+
+        .policy-item:hover {
+            background: var(--grey-50);
+        }
+
+        .policy-item:last-child {
+            border-bottom: none;
+        }
+
+        .policy-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .policy-status.active {
+            background: var(--success);
+        }
+
+        .policy-status.warning {
+            background: var(--warning);
+        }
+
+        .policy-status.inactive {
+            background: var(--grey-300);
+        }
+
+        .policy-content {
+            flex: 1;
+        }
+
+        .policy-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .policy-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .policy-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .policy-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--grey-300);
+            background: white;
+            color: var(--text-primary);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .policy-btn:hover {
+            background: var(--grey-50);
+            border-color: var(--grey-400);
+        }
+
+        .policy-btn.edit {
+            background: var(--info);
+            color: white;
+            border-color: var(--info);
+        }
+
+        .policy-btn.edit:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: white;
+        }
+
+        /* Policy Violations */
+        .policy-violations {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+        }
+
+        .policy-violations h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .violations-list {
+            list-style: none;
+        }
+
+        .violation-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--grey-100);
+        }
+
+        .violation-item:last-child {
+            border-bottom: none;
+        }
+
+        .violation-severity {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .violation-severity.critical {
+            background: var(--error);
+        }
+
+        .violation-severity.high {
+            background: var(--warning);
+        }
+
+        .violation-severity.medium {
+            background: var(--info);
+        }
+
+        .violation-severity.low {
+            background: var(--success);
+        }
+
+        .violation-content {
+            flex: 1;
+        }
+
+        .violation-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .violation-details {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .violation-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .policy-stats {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+
+            .policy-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .policy-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-cogs"></i>
+                Policy Management
+            </div>
+            <div class="header-controls">
+                <a href="demo.html" class="create-policy-btn">
+                    <i class="fas fa-plus"></i>
+                    Create Policy
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Policy Stats -->
+        <div class="policy-stats">
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Active Policies</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Violations Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">98.7%</div>
+                <div class="stat-label">Compliance Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Pending Reviews</div>
+            </div>
+        </div>
+
+        <!-- Policy Categories -->
+        <div class="policy-categories">
+            <h3>Policy Categories</h3>
+            <div class="categories-grid">
+                <div class="category-card safety">
+                    <div class="category-header">
+                        <div class="category-icon safety">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="category-title">Safety & Security</div>
+                    </div>
+                    <div class="category-description">
+                        Policies for PII detection, content safety, and security measures.
+                    </div>
+                    <div class="category-stats">
+                        <span class="category-count">4 active policies</span>
+                        <span class="category-status">2 violations today</span>
+                    </div>
+                </div>
+
+                <div class="category-card cost">
+                    <div class="category-header">
+                        <div class="category-icon cost">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="category-title">Cost Management</div>
+                    </div>
+                    <div class="category-description">
+                        Budget controls, spending limits, and cost optimization policies.
+                    </div>
+                    <div class="category-stats">
+                        <span class="category-count">3 active policies</span>
+                        <span class="category-status">1 violation today</span>
+                    </div>
+                </div>
+
+                <div class="category-card compliance">
+                    <div class="category-header">
+                        <div class="category-icon compliance">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <div class="category-title">Compliance</div>
+                    </div>
+                    <div class="category-description">
+                        GDPR, HIPAA, SOX compliance and regulatory requirements.
+                    </div>
+                    <div class="category-stats">
+                        <span class="category-count">3 active policies</span>
+                        <span class="category-status">0 violations today</span>
+                    </div>
+                </div>
+
+                <div class="category-card access">
+                    <div class="category-header">
+                        <div class="category-icon access">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="category-title">Access Control</div>
+                    </div>
+                    <div class="category-description">
+                        User permissions, role-based access, and authentication policies.
+                    </div>
+                    <div class="category-stats">
+                        <span class="category-count">2 active policies</span>
+                        <span class="category-status">2 violations today</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Policies -->
+        <div class="active-policies">
+            <h3>Active Policies</h3>
+            <ul class="policy-list">
+                <li class="policy-item">
+                    <div class="policy-status active"></div>
+                    <div class="policy-content">
+                        <div class="policy-name">PII Detection & Redaction</div>
+                        <div class="policy-description">Automatically detect and redact personally identifiable information in all LLM requests and responses.</div>
+                    </div>
+                    <div class="policy-actions">
+                        <a href="demo.html" class="policy-btn">View</a>
+                        <a href="demo.html" class="policy-btn edit">Edit</a>
+                    </div>
+                </li>
+                <li class="policy-item">
+                    <div class="policy-status active"></div>
+                    <div class="policy-content">
+                        <div class="policy-name">Monthly Budget Limit</div>
+                        <div class="policy-description">Enforce monthly spending limits of $5,000 per organization with automatic alerts at 80% threshold.</div>
+                    </div>
+                    <div class="policy-actions">
+                        <a href="demo.html" class="policy-btn">View</a>
+                        <a href="demo.html" class="policy-btn edit">Edit</a>
+                    </div>
+                </li>
+                <li class="policy-item">
+                    <div class="policy-status warning"></div>
+                    <div class="policy-content">
+                        <div class="policy-name">Content Safety Filter</div>
+                        <div class="policy-description">Block requests containing toxic, biased, or inappropriate content with configurable thresholds.</div>
+                    </div>
+                    <div class="policy-actions">
+                        <a href="demo.html" class="policy-btn">View</a>
+                        <a href="demo.html" class="policy-btn edit">Edit</a>
+                    </div>
+                </li>
+                <li class="policy-item">
+                    <div class="policy-status active"></div>
+                    <div class="policy-content">
+                        <div class="policy-name">GDPR Compliance</div>
+                        <div class="policy-description">Ensure all data processing activities comply with GDPR requirements including data minimization and consent.</div>
+                    </div>
+                    <div class="policy-actions">
+                        <a href="demo.html" class="policy-btn">View</a>
+                        <a href="demo.html" class="policy-btn edit">Edit</a>
+                    </div>
+                </li>
+                <li class="policy-item">
+                    <div class="policy-status active"></div>
+                    <div class="policy-content">
+                        <div class="policy-name">Role-Based Access Control</div>
+                        <div class="policy-description">Enforce user permissions based on organizational roles and responsibilities.</div>
+                    </div>
+                    <div class="policy-actions">
+                        <a href="demo.html" class="policy-btn">View</a>
+                        <a href="demo.html" class="policy-btn edit">Edit</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Policy Violations -->
+        <div class="policy-violations">
+            <h3>Recent Policy Violations</h3>
+            <ul class="violations-list">
+                <li class="violation-item">
+                    <div class="violation-severity critical"></div>
+                    <div class="violation-content">
+                        <div class="violation-title">PII Detection Violation</div>
+                        <div class="violation-details">SSN detected in user query • Policy: PII Detection & Redaction</div>
+                    </div>
+                    <div class="violation-time">2 min ago</div>
+                </li>
+                <li class="violation-item">
+                    <div class="violation-severity high"></div>
+                    <div class="violation-content">
+                        <div class="violation-title">Budget Threshold Exceeded</div>
+                        <div class="violation-details">Monthly spending reached 85% of limit • Policy: Monthly Budget Limit</div>
+                    </div>
+                    <div class="violation-time">15 min ago</div>
+                </li>
+                <li class="violation-item">
+                    <div class="violation-severity medium"></div>
+                    <div class="violation-content">
+                        <div class="violation-title">Content Safety Violation</div>
+                        <div class="violation-details">High toxicity score detected • Policy: Content Safety Filter</div>
+                    </div>
+                    <div class="violation-time">1 hour ago</div>
+                </li>
+                <li class="violation-item">
+                    <div class="violation-severity low"></div>
+                    <div class="violation-content">
+                        <div class="violation-title">Access Control Violation</div>
+                        <div class="violation-details">Unauthorized model access attempt • Policy: Role-Based Access Control</div>
+                    </div>
+                    <div class="violation-time">2 hours ago</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

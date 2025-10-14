@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Governance Platform - Architecture Guide</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary-color: #059669;
+            --secondary-light: #10b981;
+            --secondary-dark: #047857;
+            --background: #f8fafc;
+            --background-paper: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --grey-50: #f8fafc;
+            --grey-100: #f1f5f9;
+            --grey-200: #e2e8f0;
+            --grey-300: #cbd5e1;
+            --grey-400: #94a3b8;
+            --grey-500: #64748b;
+            --grey-600: #475569;
+            --grey-700: #334155;
+            --grey-800: #1e293b;
+            --grey-900: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--background);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 50%, var(--primary-light) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+        }
+
+        .nav a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+            padding: 2rem;
+        }
+
+        .content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .content h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--grey-200);
+            padding-bottom: 0.5rem;
+        }
+
+        .content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: var(--text-primary);
+        }
+
+        .content p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .content ul,
+        .content ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        .content li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .content pre {
+            background: var(--grey-900);
+            color: var(--grey-100);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .content code {
+            background: var(--grey-100);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        /* Architecture Diagrams */
+        .architecture-diagram {
+            background: var(--grey-50);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .architecture-diagram h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .architecture-diagram pre {
+            background: var(--grey-900);
+            color: var(--grey-100);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        /* Component Grid */
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .component-card {
+            background: var(--grey-50);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+        }
+
+        .component-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .component-card p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        .component-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        /* Data Flow Diagram */
+        .data-flow {
+            background: var(--grey-50);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+            margin: 2rem 0;
+        }
+
+        .flow-step {
+            background: white;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .flow-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .flow-number {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .flow-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .flow-content p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Security Section */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .security-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+            text-align: center;
+        }
+
+        .security-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.25rem;
+        }
+
+        .security-item h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .security-item p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+
+            .nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .content h1 {
+                font-size: 2rem;
+            }
+
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .security-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-sitemap"></i>
+                Architecture Guide
+            </a>
+            <nav class="nav">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#architecture">Architecture</a>
+                <a href="demo.html">Demo</a>
+                <a href="documentation.html">Documentation</a>
+                <a href="index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content">
+            <h1>Architecture Guide</h1>
+            
+            <p>This comprehensive architecture guide provides detailed insights into the design principles, components, and implementation patterns used in the AI Governance Platform. The architecture is designed for enterprise-scale deployments with high availability, security, and performance requirements.</p>
+
+            <h2>System Overview</h2>
+
+            <p>The AI Governance Platform follows a modern microservices architecture pattern, designed to handle enterprise-scale AI/LLM operations with comprehensive governance, monitoring, and compliance capabilities.</p>
+
+            <div class="architecture-diagram">
+                <h3>High-Level Architecture</h3>
+                <pre>┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                           AI Governance Platform v2.0                              │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  Presentation Layer                                                                 │
+│  ├── React Dashboard (Real-time UI with WebSocket connections)                     │
+│  ├── Mobile App (React Native with offline capabilities)                          │
+│  ├── API Documentation (Interactive Swagger/OpenAPI)                               │
+│  ├── Monitoring Dashboards (Custom Grafana dashboards)                            │
+│  └── Admin Console (Advanced configuration & management)                          │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  API Gateway & Load Balancer                                                       │
+│  ├── Kong/Traefik (Advanced request routing & transformation)                      │
+│  ├── Rate Limiting & DDoS Protection (Cloudflare integration)                     │
+│  ├── SSL/TLS Termination (Let's Encrypt automation)                               │
+│  ├── API Versioning & Backward Compatibility                                       │
+│  └── Circuit Breaker & Bulkhead Patterns                                          │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  AI Agent Orchestration Layer                                                      │
+│  ├── Security Agent (Autonomous threat detection & response)                      │
+│  ├── Intelligence Agent (Predictive analytics & optimization)                     │
+│  ├── Compliance Agent (Real-time regulatory compliance)                           │
+│  ├── Automation Agent (Workflow orchestration & task scheduling)                  │
+│  ├── Analytics Agent (Advanced pattern recognition & insights)                    │
+│  └── Customer Success Agent (Proactive engagement & retention)                    │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  Core Application Layer (Microservices)                                           │
+│  ├── LLM Proxy Service (Multi-provider with failover & load balancing)           │
+│  │   ├── OpenAI, Anthropic, Google, Azure, Cohere, Hugging Face                  │
+│  │   ├── Intelligent caching with semantic similarity                             │
+│  │   ├── A/B testing framework for model comparison                               │
+│  │   └── Custom model fine-tuning & deployment                                     │
+│  ├── Safety Checker Service (Advanced content analysis)                           │
+│  │   ├── Multi-layered PII detection (95%+ accuracy)                             │
+│  │   ├── Toxicity & bias detection with custom models                             │
+│  │   ├── Jailbreak prevention & prompt injection detection                        │
+│  │   └── Real-time content redaction & sanitization                               │
+│  ├── Policy Engine Service (OPA integration with advanced features)               │
+│  │   ├── Real-time policy evaluation (<10ms latency)                             │
+│  │   ├── Multi-tenant policy isolation & inheritance                             │
+│  │   ├── Policy versioning & rollback capabilities                                │
+│  │   └── Custom policy language extensions                                        │
+│  ├── Cost Tracker Service (Precise financial monitoring)                          │
+│  │   ├── Real-time token counting & cost calculation                             │
+│  │   ├── Budget enforcement with configurable thresholds                          │
+│  │   ├── Cost optimization recommendations                                        │
+│  │   └── Multi-currency support & financial reporting                             │
+│  ├── Audit Service (Comprehensive compliance & logging)                           │
+│  │   ├── Immutable audit trails with cryptographic signing                        │
+│  │   ├── GDPR, HIPAA, SOX compliance automation                                   │
+│  │   ├── Data lineage tracking & provenance                                       │
+│  │   └── Automated compliance report generation                                   │
+│  └── User Management Service (Advanced RBAC & authentication)                     │
+│       ├── Multi-factor authentication (TOTP, WebAuthn, SMS)                       │
+│       ├── OAuth2/OIDC integration with SSO providers                              │
+│       ├── Role-based access control with fine-grained permissions                 │
+│       └── User behavior analytics & anomaly detection                             │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  Data Layer (Multi-database architecture)                                         │
+│  ├── PostgreSQL (Primary OLTP with read replicas)                                │
+│  │   ├── Connection pooling & query optimization                                  │
+│  │   ├── Automated backups & point-in-time recovery                               │
+│  │   └── Partitioning for high-volume data                                        │
+│  ├── Redis Cluster (Distributed caching & sessions)                              │
+│  │   ├── High-availability with automatic failover                                │
+│  │   ├── Pub/Sub for real-time notifications                                      │
+│  │   └── Stream processing for event sourcing                                     │
+│  ├── Elasticsearch (Log aggregation & search)                                    │
+│  │   ├── Real-time log analysis & alerting                                        │
+│  │   ├── Full-text search across all data                                         │
+│  │   └── Machine learning for anomaly detection                                   │
+│  ├── ClickHouse (Analytics & reporting)                                           │
+│  │   ├── Columnar storage for fast analytics                                      │
+│  │   ├── Real-time data ingestion                                                 │
+│  │   └── Complex analytical queries                                               │
+│  ├── MinIO (Object storage with S3 compatibility)                                │
+│  │   ├── Multi-site replication                                                   │
+│  │   ├── Data encryption at rest & in transit                                     │
+│  │   └── Lifecycle management & archival                                          │
+│  └── Apache Kafka (Event streaming & message queuing)                            │
+│       ├── High-throughput event processing                                        │
+│       ├── Event sourcing & CQRS patterns                                          │
+│       └── Real-time data pipeline integration                                     │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  Infrastructure & Observability (Cloud-native stack)                             │
+│  ├── Kubernetes (Container orchestration)                                         │
+│  │   ├── Auto-scaling based on custom metrics                                     │
+│  │   ├── Rolling updates & canary deployments                                     │
+│  │   ├── Resource quotas & limit ranges                                           │
+│  │   └── Network policies & pod security standards                                │
+│  ├── OpenTelemetry (Distributed tracing & metrics)                               │
+│  │   ├── End-to-end request tracing                                               │
+│  │   ├── Custom metrics & business KPIs                                           │
+│  │   ├── Correlation IDs for request tracking                                     │
+│  │   └── Performance bottleneck identification                                    │
+│  ├── Prometheus (Metrics collection & alerting)                                  │
+│  │   ├── Custom exporters for business metrics                                    │
+│  │   ├── Advanced alerting rules & thresholds                                     │
+│  │   ├── Long-term storage with Thanos                                            │
+│  │   └── High availability with federation                                        │
+│  ├── Grafana (Visualization & dashboards)                                        │
+│  │   ├── Custom dashboards for business metrics                                   │
+│  │   ├── Alerting & notification integration                                      │
+│  │   ├── Multi-tenant dashboard sharing                                           │
+│  │   └── Machine learning anomaly detection                                       │
+│  ├── Jaeger (Distributed tracing visualization)                                  │
+│  │   ├── Service dependency mapping                                               │
+│  │   ├── Performance bottleneck analysis                                          │
+│  │   ├── Error tracking & debugging                                               │
+│  │   └── Trace comparison & regression detection                                  │
+│  └── AlertManager (Advanced alerting & notification)                             │
+│       ├── Multi-channel notifications (Slack, email, PagerDuty)                  │
+│       ├── Alert grouping & deduplication                                          │
+│       ├── Escalation policies & on-call management                               │
+│       └── Integration with incident management tools                              │
+└─────────────────────────────────────────────────────────────────────────────────────┘</pre>
+            </div>
+
+            <div class="architecture-diagram">
+                <h3>AI Agent Communication Flow</h3>
+                <pre>┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                           AI Agent Communication Protocol                          │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐          │
+│  │   Security  │◄──►│ Intelligence│◄──►│ Compliance  │◄──►│ Automation  │          │
+│  │    Agent    │    │    Agent    │    │    Agent    │    │    Agent    │          │
+│  └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘          │
+│         ▲                   ▲                   ▲                   ▲              │
+│         │                   │                   │                   │              │
+│         ▼                   ▼                   ▼                   ▼              │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐    │
+│  │                    Agent Communication Bus                                  │    │
+│  │  ├── Message Queue (Apache Kafka)                                          │    │
+│  │  ├── Event Sourcing & CQRS                                                 │    │
+│  │  ├── Consensus Protocol (Raft)                                             │    │
+│  │  ├── Conflict Resolution Engine                                            │    │
+│  │  └── Performance Optimization                                              │    │
+│  └─────────────────────────────────────────────────────────────────────────────┘    │
+│         ▲                   ▲                   ▲                   ▲              │
+│         │                   │                   │                   │              │
+│         ▼                   ▼                   ▼                   ▼              │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐          │
+│  │  Analytics  │◄──►│  Customer   │◄──►│   Shared    │◄──►│  Monitoring │          │
+│  │    Agent    │    │   Success   │    │ Knowledge   │    │    Agent    │          │
+│  │             │    │    Agent    │    │    Base     │    │             │          │
+│  └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘          │
+│                                                                                     │
+│  Communication Patterns:                                                           │
+│  ├── Request-Response (Synchronous)                                               │
+│  ├── Publish-Subscribe (Asynchronous)                                             │
+│  ├── Event Streaming (Real-time)                                                  │
+│  ├── Consensus Decision Making                                                    │
+│  └── Distributed State Management                                                 │
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘</pre>
+            </div>
+
+            <div class="architecture-diagram">
+                <h3>Data Flow Architecture</h3>
+                <pre>┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                           Enterprise Data Flow Pipeline                            │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                     │
+│  External Systems     ┌──────────────┐     AI Governance Platform                  │
+│  ├── ERP Systems      │              │     ┌─────────────────────────────────────┐  │
+│  ├── CRM Platforms    │   API        │────►│          API Gateway                │  │
+│  ├── Data Warehouses  │  Gateway     │     │  ├── Request Validation             │  │
+│  ├── Cloud Services   │              │     │  ├── Rate Limiting                  │  │
+│  └── IoT Devices      └──────────────┘     │  ├── Authentication                 │  │
+│                           │                 │  └── Load Balancing                 │  │
+│                           ▼                 └─────────────────────────────────────┘  │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐    │
+│  │                    Real-time Processing Layer                               │    │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │    │
+│  │  │   Stream    │  │   Batch     │  │   ML        │  │   Cache     │        │    │
+│  │  │ Processing  │  │ Processing  │  │ Pipeline    │  │ Layer       │        │    │
+│  │  │ (Kafka)     │  │ (Spark)     │  │ (TensorFlow)│  │ (Redis)     │        │    │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘        │    │
+│  └─────────────────────────────────────────────────────────────────────────────┘    │
+│                           │                                                         │
+│                           ▼                                                         │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐    │
+│  │                        AI Agent Layer                                       │    │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │    │
+│  │  │   Security  │  │ Intelligence│  │ Compliance  │  │ Automation  │        │    │
+│  │  │    Agent    │  │    Agent    │  │    Agent    │  │    Agent    │        │    │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘        │    │
+│  │  ┌─────────────┐  ┌─────────────┐                                          │    │
+│  │  │  Analytics  │  │  Customer   │                                          │    │
+│  │  │    Agent    │  │   Success   │                                          │    │
+│  │  │             │  │    Agent    │                                          │    │
+│  │  └─────────────┘  └─────────────┘                                          │    │
+│  └─────────────────────────────────────────────────────────────────────────────┘    │
+│                           │                                                         │
+│                           ▼                                                         │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐    │
+│  │                        Storage Layer                                        │    │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │    │
+│  │  │ PostgreSQL  │  │ Elasticsearch│  │ ClickHouse  │  │ MinIO       │        │    │
+│  │  │ (OLTP)      │  │ (Search)    │  │ (Analytics) │  │ (Objects)   │        │    │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘        │    │
+│  └─────────────────────────────────────────────────────────────────────────────┘    │
+│                           │                                                         │
+│                           ▼                                                         │
+│  ┌─────────────────────────────────────────────────────────────────────────────┐    │
+│  │                     Output & Integration                                    │    │
+│  │  ├── Real-time Dashboards (WebSocket)                                       │    │
+│  │  ├── Automated Reports (PDF, Excel, CSV)                                    │    │
+│  │  ├── API Responses (JSON, GraphQL)                                          │    │
+│  │  ├── Webhook Notifications                                                  │    │
+│  │  └── Data Exports (ETL Pipelines)                                           │    │
+│  └─────────────────────────────────────────────────────────────────────────────┘    │
+│                                                                                     │
+│  Data Processing Capabilities:                                                     │
+│  ├── Real-time streaming (1M+ events/second)                                      │
+│  ├── Batch processing (100TB+ datasets)                                           │
+│  ├── Machine learning inference (<100ms latency)                                  │
+│  ├── Complex analytics queries (<1s response time)                                │
+│  └── Data lineage tracking & compliance                                           │
+│                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘</pre>
+            </div>
+
+            <h2>Core Components</h2>
+
+            <div class="component-grid">
+                <div class="component-card">
+                    <h3><div class="component-icon"><i class="fas fa-shield-alt"></i></div> LLM Proxy Service</h3>
+                    <p>Central gateway for all LLM interactions with multi-provider support, circuit breaker patterns, and intelligent load balancing across OpenAI, Anthropic, Google, and Azure providers.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3><div class="component-icon"><i class="fas fa-search"></i></div> Safety Checker Service</h3>
+                    <p>Advanced content analysis engine with 95%+ accuracy PII detection, toxicity filtering, bias detection, and jailbreak prevention using state-of-the-art ML models.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3><div class="component-icon"><i class="fas fa-cogs"></i></div> Policy Engine Service</h3>
+                    <p>OPA-integrated policy management with real-time evaluation, multi-tenant support, and comprehensive violation reporting for governance and compliance.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3><div class="component-icon"><i class="fas fa-dollar-sign"></i></div> Cost Tracker Service</h3>
+                    <p>Real-time cost monitoring with precise token counting, budget enforcement, intelligent caching, and detailed analytics across all providers and models.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3><div class="component-icon"><i class="fas fa-clipboard-list"></i></div> Audit Service</h3>
+                    <p>Comprehensive audit logging with immutable trails, trace correlation, and compliance reporting for GDPR, HIPAA, SOX, and other regulatory requirements.</p>
+                </div>
+
+                <div class="component-card">
+                    <h3><div class="component-icon"><i class="fas fa-users"></i></div> User Management Service</h3>
+                    <p>Enterprise-grade user management with role-based access control, multi-tenant isolation, JWT authentication, and comprehensive user analytics.</p>
+                </div>
+            </div>
+
+            <h2>Data Flow Architecture</h2>
+
+            <p>The platform processes requests through a sophisticated pipeline that ensures safety, compliance, and optimal performance at every step.</p>
+
+            <div class="data-flow">
+                <div class="flow-step">
+                    <div class="flow-number">1</div>
+                    <div class="flow-content">
+                        <h4>Request Ingestion</h4>
+                        <p>Client requests are received by the API Gateway, authenticated, and routed to the appropriate service based on organization and user context.</p>
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">2</div>
+                    <div class="flow-content">
+                        <h4>Policy Evaluation</h4>
+                        <p>Request is evaluated against active policies using OPA engine to ensure compliance with organizational governance rules and regulatory requirements.</p>
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">3</div>
+                    <div class="flow-content">
+                        <h4>Safety Analysis</h4>
+                        <p>Content undergoes comprehensive safety checks including PII detection, toxicity analysis, bias detection, and jailbreak prevention.</p>
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">4</div>
+                    <div class="flow-content">
+                        <h4>Cost Calculation</h4>
+                        <p>Request cost is calculated based on provider pricing, model selection, and token usage with real-time budget monitoring and enforcement.</p>
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">5</div>
+                    <div class="flow-content">
+                        <h4>LLM Processing</h4>
+                        <p>Validated request is forwarded to the appropriate LLM provider with circuit breaker protection and intelligent retry mechanisms.</p>
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">6</div>
+                    <div class="flow-content">
+                        <h4>Response Processing</h4>
+                        <p>LLM response undergoes safety checks, cost tracking, and policy validation before being returned to the client.</p>
+                    </div>
+                </div>
+
+                <div class="flow-step">
+                    <div class="flow-number">7</div>
+                    <div class="flow-content">
+                        <h4>Audit Logging</h4>
+                        <p>Complete request/response cycle is logged with full traceability for compliance, debugging, and analytics purposes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Security Architecture</h2>
+
+            <p>The platform implements defense-in-depth security principles with multiple layers of protection to ensure enterprise-grade security and compliance.</p>
+
+            <div class="security-grid">
+                <div class="security-item">
+                    <div class="security-icon"><i class="fas fa-lock"></i></div>
+                    <h4>Authentication & Authorization</h4>
+                    <p>JWT-based authentication with role-based access control and multi-factor authentication support.</p>
+                </div>
+
+                <div class="security-item">
+                    <div class="security-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h4>Data Encryption</h4>
+                    <p>End-to-end encryption with TLS 1.3 for data in transit and AES-256 for data at rest.</p>
+                </div>
+
+                <div class="security-item">
+                    <div class="security-icon"><i class="fas fa-eye"></i></div>
+                    <h4>PII Protection</h4>
+                    <p>Advanced PII detection and redaction with 95%+ accuracy across multiple data types and formats.</p>
+                </div>
+
+                <div class="security-item">
+                    <div class="security-icon"><i class="fas fa-network-wired"></i></div>
+                    <h4>Network Security</h4>
+                    <p>VPC isolation, security groups, and network segmentation with DDoS protection and rate limiting.</p>
+                </div>
+
+                <div class="security-item">
+                    <div class="security-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <h4>Compliance</h4>
+                    <p>Built-in compliance frameworks for GDPR, HIPAA, SOX, and other regulatory requirements.</p>
+                </div>
+
+                <div class="security-item">
+                    <div class="security-icon"><i class="fas fa-history"></i></div>
+                    <h4>Audit Trails</h4>
+                    <p>Immutable audit logs with comprehensive traceability and tamper-proof storage.</p>
+                </div>
+            </div>
+
+            <h2>Scalability & Performance</h2>
+
+            <h3>Horizontal Scaling</h3>
+            <p>The platform is designed for horizontal scaling with:</p>
+            <ul>
+                <li><strong>Stateless Services:</strong> All microservices are stateless, enabling easy horizontal scaling</li>
+                <li><strong>Load Balancing:</strong> Intelligent load balancing with health checks and circuit breaker patterns</li>
+                <li><strong>Auto-scaling:</strong> Kubernetes-based auto-scaling based on CPU, memory, and custom metrics</li>
+                <li><strong>Database Sharding:</strong> PostgreSQL sharding for high-volume data operations</li>
+            </ul>
+
+            <h3>Performance Optimizations</h3>
+            <ul>
+                <li><strong>Intelligent Caching:</strong> Redis-based caching with TTL and cache invalidation strategies</li>
+                <li><strong>Connection Pooling:</strong> Optimized database connection pooling and connection reuse</li>
+                <li><strong>Async Processing:</strong> Asynchronous request processing with FastAPI and async/await patterns</li>
+                <li><strong>CDN Integration:</strong> Content delivery network for static assets and API responses</li>
+            </ul>
+
+            <h2>Monitoring & Observability</h2>
+
+            <div class="architecture-diagram">
+                <h3>Observability Stack</h3>
+                <pre>┌────────────────────────────────────────────────────────────────┐
+│                    Observability Stack                         │
+├────────────────────────────────────────────────────────────────┤
+│  Application Layer                                             │
+│  ├── OpenTelemetry SDK (Metrics, Traces, Logs)                │
+│  ├── Custom Business Metrics                                   │
+│  └── Health Check Endpoints                                    │
+├────────────────────────────────────────────────────────────────┤
+│  Collection Layer                                              │
+│  ├── Prometheus (Metrics collection)                           │
+│  ├── Jaeger (Distributed tracing)                              │
+│  └── Elasticsearch (Log aggregation)                           │
+├────────────────────────────────────────────────────────────────┤
+│  Storage & Processing                                          │
+│  ├── Time Series DB (Metrics storage)                          │
+│  ├── Trace Storage (Jaeger backend)                            │
+│  └── Log Storage (Elasticsearch)                               │
+├────────────────────────────────────────────────────────────────┤
+│  Visualization & Alerting                                      │
+│  ├── Grafana (Dashboards & visualization)                      │
+│  ├── Jaeger UI (Trace exploration)                             │
+│  ├── Kibana (Log analysis)                                     │
+│  └── AlertManager (Alert routing)                              │
+└────────────────────────────────────────────────────────────────┘</pre>
+            </div>
+
+            <h3>Key Metrics</h3>
+            <ul>
+                <li><strong>Business Metrics:</strong> Request volume, user activity, cost tracking, safety violations</li>
+                <li><strong>System Metrics:</strong> CPU, memory, disk usage, network I/O, response times</li>
+                <li><strong>Application Metrics:</strong> Error rates, throughput, latency percentiles, cache hit rates</li>
+                <li><strong>Custom Metrics:</strong> Policy violations, compliance scores, cost per request, safety scores</li>
+            </ul>
+
+            <h2>Deployment Architecture</h2>
+
+            <p>The platform supports multiple deployment patterns from single-node development environments to multi-region production deployments.</p>
+
+            <h3>Development Environment</h3>
+            <ul>
+                <li>Docker Compose for local development</li>
+                <li>Single-node PostgreSQL and Redis instances</li>
+                <li>Mock external LLM providers for testing</li>
+                <li>Local monitoring with simplified observability stack</li>
+            </ul>
+
+            <h3>Production Environment</h3>
+            <ul>
+                <li>Kubernetes cluster with auto-scaling</li>
+                <li>High-availability PostgreSQL with read replicas</li>
+                <li>Redis cluster for caching and session management</li>
+                <li>Multi-region deployment with disaster recovery</li>
+                <li>Comprehensive monitoring and alerting</li>
+            </ul>
+
+            <h2>API Design Principles</h2>
+
+            <h3>RESTful API Design</h3>
+            <ul>
+                <li><strong>Resource-based URLs:</strong> Clean, intuitive API endpoints following REST conventions</li>
+                <li><strong>HTTP Status Codes:</strong> Proper use of HTTP status codes for clear error handling</li>
+                <li><strong>Pagination:</strong> Consistent pagination patterns for large datasets</li>
+                <li><strong>Filtering & Sorting:</strong> Query parameters for data filtering and sorting</li>
+            </ul>
+
+            <h3>OpenAPI Specification</h3>
+            <ul>
+                <li>Complete API documentation with OpenAPI 3.0 specification</li>
+                <li>Interactive API explorer with Swagger UI</li>
+                <li>Code generation for client SDKs</li>
+                <li>API versioning and backward compatibility</li>
+            </ul>
+
+            <h2>Future Architecture Considerations</h2>
+
+            <h3>Planned Enhancements</h3>
+            <ul>
+                <li><strong>Edge Computing:</strong> Edge deployment for reduced latency and improved performance</li>
+                <li><strong>ML Model Serving:</strong> Dedicated ML model serving infrastructure for custom models</li>
+                <li><strong>Event Streaming:</strong> Apache Kafka integration for real-time event processing</li>
+                <li><strong>Multi-cloud Support:</strong> Cloud-agnostic deployment with multi-cloud redundancy</li>
+            </ul>
+
+            <h3>Scalability Roadmap</h3>
+            <ul>
+                <li><strong>Service Mesh:</strong> Istio integration for advanced traffic management</li>
+                <li><strong>Database Federation:</strong> Multi-database support for specialized workloads</li>
+                <li><strong>AI/ML Pipeline:</strong> Dedicated ML pipeline for custom model training and inference</li>
+                <li><strong>Global Distribution:</strong> Multi-region deployment with data sovereignty compliance</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

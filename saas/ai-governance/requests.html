@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Governance Requests - Request Management</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary-color: #059669;
+            --secondary-light: #10b981;
+            --secondary-dark: #047857;
+            --background: #f8fafc;
+            --background-paper: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --grey-50: #f8fafc;
+            --grey-100: #f1f5f9;
+            --grey-200: #e2e8f0;
+            --grey-300: #cbd5e1;
+            --grey-400: #94a3b8;
+            --grey-500: #64748b;
+            --grey-600: #475569;
+            --grey-700: #334155;
+            --grey-800: #1e293b;
+            --grey-900: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--background);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 50%, var(--primary-light) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+        }
+
+        .refresh-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Request Stats */
+        .request-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Request Filters */
+        .request-filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+            margin-bottom: 2rem;
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .filter-input {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--grey-300);
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+            background: white;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        /* Request Table */
+        .requests-table {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--grey-200);
+            background: var(--grey-50);
+        }
+
+        .table-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .table-content {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: var(--grey-50);
+            border-bottom: 1px solid var(--grey-200);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--grey-100);
+            font-size: 0.875rem;
+        }
+
+        .table tbody tr:hover {
+            background: var(--grey-50);
+        }
+
+        .request-id {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-error {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .status-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .cost-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .duration {
+            color: var(--text-secondary);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--grey-300);
+            background: white;
+            color: var(--text-primary);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--grey-50);
+            border-color: var(--grey-400);
+        }
+
+        .action-btn.view {
+            background: var(--info);
+            color: white;
+            border-color: var(--info);
+        }
+
+        .action-btn.view:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: white;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            background: var(--grey-50);
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--grey-300);
+            background: white;
+            color: var(--text-primary);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover {
+            background: var(--grey-50);
+            border-color: var(--grey-400);
+        }
+
+        .pagination-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .request-stats {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .filters-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+
+            .table-content {
+                font-size: 0.75rem;
+            }
+
+            .table th,
+            .table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-list"></i>
+                Request Management
+            </div>
+            <div class="header-controls">
+                <select class="filter-select">
+                    <option value="all">All Requests</option>
+                    <option value="success">Successful</option>
+                    <option value="warning">Warnings</option>
+                    <option value="error">Errors</option>
+                </select>
+                <button class="refresh-btn" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Request Stats -->
+        <div class="request-stats">
+            <div class="stat-card">
+                <div class="stat-value">1,247</div>
+                <div class="stat-label">Total Requests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1,189</div>
+                <div class="stat-label">Successful</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">43</div>
+                <div class="stat-label">With Warnings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">15</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+
+        <!-- Request Filters -->
+        <div class="request-filters">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label class="filter-label">Search</label>
+                    <input type="text" class="filter-input" placeholder="Search by user, model, or ID...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select class="filter-input">
+                        <option value="">All Statuses</option>
+                        <option value="success">Success</option>
+                        <option value="warning">Warning</option>
+                        <option value="error">Error</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Model</label>
+                    <select class="filter-input">
+                        <option value="">All Models</option>
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="gpt-3.5">GPT-3.5</option>
+                        <option value="claude">Claude</option>
+                        <option value="gemini">Gemini</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Date Range</label>
+                    <select class="filter-input">
+                        <option value="today">Today</option>
+                        <option value="24h">Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Table -->
+        <div class="requests-table">
+            <div class="table-header">
+                <h3>Recent Requests</h3>
+            </div>
+            <div class="table-content">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>User</th>
+                            <th>Model</th>
+                            <th>Status</th>
+                            <th>Cost</th>
+                            <th>Duration</th>
+                            <th>Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="request-id">req_abc123def</div>
+                            </td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">JD</div>
+                                    <span>john.doe@company.com</span>
+                                </div>
+                            </td>
+                            <td>GPT-4</td>
+                            <td>
+                                <span class="status-badge status-success">Success</span>
+                            </td>
+                            <td>
+                                <div class="cost-value">$0.045</div>
+                            </td>
+                            <td>
+                                <div class="duration">1.2s</div>
+                            </td>
+                            <td>2 minutes ago</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="demo.html" class="action-btn view">View</a>
+                                    <a href="demo.html" class="action-btn">Log</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="request-id">req_xyz789ghi</div>
+                            </td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">JS</div>
+                                    <span>jane.smith@company.com</span>
+                                </div>
+                            </td>
+                            <td>Claude-3</td>
+                            <td>
+                                <span class="status-badge status-warning">Warning</span>
+                            </td>
+                            <td>
+                                <div class="cost-value">$0.032</div>
+                            </td>
+                            <td>
+                                <div class="duration">0.8s</div>
+                            </td>
+                            <td>5 minutes ago</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="demo.html" class="action-btn view">View</a>
+                                    <a href="demo.html" class="action-btn">Log</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="request-id">req_mno456pqr</div>
+                            </td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">MW</div>
+                                    <span>mike.wilson@company.com</span>
+                                </div>
+                            </td>
+                            <td>GPT-3.5</td>
+                            <td>
+                                <span class="status-badge status-success">Success</span>
+                            </td>
+                            <td>
+                                <div class="cost-value">$0.018</div>
+                            </td>
+                            <td>
+                                <div class="duration">0.6s</div>
+                            </td>
+                            <td>8 minutes ago</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="demo.html" class="action-btn view">View</a>
+                                    <a href="demo.html" class="action-btn">Log</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="request-id">req_stu012vwx</div>
+                            </td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">SB</div>
+                                    <span>sarah.brown@company.com</span>
+                                </div>
+                            </td>
+                            <td>Gemini-Pro</td>
+                            <td>
+                                <span class="status-badge status-error">Error</span>
+                            </td>
+                            <td>
+                                <div class="cost-value">$0.000</div>
+                            </td>
+                            <td>
+                                <div class="duration">0.1s</div>
+                            </td>
+                            <td>12 minutes ago</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="demo.html" class="action-btn view">View</a>
+                                    <a href="demo.html" class="action-btn">Log</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="request-id">req_yza345bcd</div>
+                            </td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">DL</div>
+                                    <span>david.lee@company.com</span>
+                                </div>
+                            </td>
+                            <td>GPT-4</td>
+                            <td>
+                                <span class="status-badge status-success">Success</span>
+                            </td>
+                            <td>
+                                <div class="cost-value">$0.067</div>
+                            </td>
+                            <td>
+                                <div class="duration">1.8s</div>
+                            </td>
+                            <td>15 minutes ago</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="demo.html" class="action-btn view">View</a>
+                                    <a href="demo.html" class="action-btn">Log</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="request-id">req_efg678hij</div>
+                            </td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">AM</div>
+                                    <span>anna.martinez@company.com</span>
+                                </div>
+                            </td>
+                            <td>Claude-3</td>
+                            <td>
+                                <span class="status-badge status-info">Processing</span>
+                            </td>
+                            <td>
+                                <div class="cost-value">-</div>
+                            </td>
+                            <td>
+                                <div class="duration">-</div>
+                            </td>
+                            <td>Just now</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="demo.html" class="action-btn view">View</a>
+                                    <a href="demo.html" class="action-btn">Log</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <a href="requests.html" class="pagination-btn">Previous</a>
+                <a href="requests.html" class="pagination-btn active">1</a>
+                <a href="requests.html" class="pagination-btn">2</a>
+                <a href="requests.html" class="pagination-btn">3</a>
+                <a href="requests.html" class="pagination-btn">4</a>
+                <a href="requests.html" class="pagination-btn">5</a>
+                <a href="requests.html" class="pagination-btn">Next</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function refreshData() {
+            const refreshBtn = document.querySelector('.refresh-btn');
+            const icon = refreshBtn.querySelector('i');
+            icon.classList.add('fa-spin');
+            
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+            }, 1000);
+        }
+
+        // Add real-time updates simulation
+        setInterval(() => {
+            const now = new Date();
+            const timeElements = document.querySelectorAll('.table tbody tr td:nth-child(7)');
+            
+            // Update the first few rows with more recent times
+            timeElements.forEach((element, index) => {
+                if (index === 0) {
+                    element.textContent = 'Just now';
+                } else if (index === 1) {
+                    element.textContent = '1 minute ago';
+                } else if (index === 2) {
+                    element.textContent = '3 minutes ago';
+                }
+            });
+        }, 30000);
+    </script>
+</body>
+</html>

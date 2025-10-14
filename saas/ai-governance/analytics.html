@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Governance Analytics - Detailed Analytics View</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary-color: #059669;
+            --secondary-light: #10b981;
+            --secondary-dark: #047857;
+            --background: #f8fafc;
+            --background-paper: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --grey-50: #f8fafc;
+            --grey-100: #f1f5f9;
+            --grey-200: #e2e8f0;
+            --grey-300: #cbd5e1;
+            --grey-400: #94a3b8;
+            --grey-500: #64748b;
+            --grey-600: #475569;
+            --grey-700: #334155;
+            --grey-800: #1e293b;
+            --grey-900: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--background);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 50%, var(--primary-light) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .time-selector {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+        }
+
+        .refresh-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Analytics Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+        }
+
+        .chart-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-container.large {
+            height: 400px;
+        }
+
+        /* Violations Section */
+        .violations-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+            margin-bottom: 2rem;
+        }
+
+        .violations-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .violations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .violation-card {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+            text-align: center;
+        }
+
+        .violation-card.critical {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: var(--error);
+        }
+
+        .violation-card.high {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: var(--warning);
+        }
+
+        .violation-card.medium {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: var(--info);
+        }
+
+        .violation-card.low {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: var(--success);
+        }
+
+        .violation-count {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .violation-type {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .violation-list {
+            list-style: none;
+        }
+
+        .violation-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--grey-100);
+            transition: background 0.2s ease;
+        }
+
+        .violation-item:hover {
+            background: var(--grey-50);
+        }
+
+        .violation-item:last-child {
+            border-bottom: none;
+        }
+
+        .violation-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .violation-content {
+            flex: 1;
+        }
+
+        .violation-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .violation-details {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .violation-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Cost Analysis */
+        .cost-analysis {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+            margin-bottom: 2rem;
+        }
+
+        .cost-analysis h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .cost-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--grey-50);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+        }
+
+        .cost-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .cost-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* User Analytics */
+        .user-analytics {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+        }
+
+        .user-analytics h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-stat {
+            text-align: center;
+            padding: 1rem;
+            background: var(--grey-50);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+        }
+
+        .user-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .user-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .violations-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .cost-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+
+            .user-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+
+            .header-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-chart-bar"></i>
+                Analytics Dashboard
+            </div>
+            <div class="header-controls">
+                <select class="time-selector">
+                    <option value="1h">Last Hour</option>
+                    <option value="24h" selected>Last 24 Hours</option>
+                    <option value="7d">Last 7 Days</option>
+                    <option value="30d">Last 30 Days</option>
+                </select>
+                <button class="refresh-btn" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Analytics Grid -->
+        <div class="analytics-grid">
+            <div class="chart-card">
+                <h3>Request Volume & Safety Trends</h3>
+                <div class="chart-container large">
+                    <canvas id="trendsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Provider Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="providersChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Violations Section -->
+        <div class="violations-section">
+            <h3>Safety Violations Analysis</h3>
+            <div class="violations-grid">
+                <div class="violation-card critical">
+                    <div class="violation-count" style="color: var(--error);">3</div>
+                    <div class="violation-type" style="color: var(--error);">Critical</div>
+                </div>
+                <div class="violation-card high">
+                    <div class="violation-count" style="color: var(--warning);">7</div>
+                    <div class="violation-type" style="color: var(--warning);">High</div>
+                </div>
+                <div class="violation-card medium">
+                    <div class="violation-count" style="color: var(--info);">12</div>
+                    <div class="violation-type" style="color: var(--info);">Medium</div>
+                </div>
+                <div class="violation-card low">
+                    <div class="violation-count" style="color: var(--success);">8</div>
+                    <div class="violation-type" style="color: var(--success);">Low</div>
+                </div>
+            </div>
+
+            <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Recent Violations</h4>
+            <ul class="violation-list">
+                <li class="violation-item">
+                    <div class="violation-icon" style="background: var(--error);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="violation-content">
+                        <div class="violation-title">Critical PII Detection</div>
+                        <div class="violation-details">SSN detected in user query • john.doe@company.com</div>
+                    </div>
+                    <div class="violation-time">2 min ago</div>
+                </li>
+                <li class="violation-item">
+                    <div class="violation-icon" style="background: var(--warning);">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="violation-content">
+                        <div class="violation-title">High Toxicity Score</div>
+                        <div class="violation-details">Content flagged for inappropriate language • jane.smith@company.com</div>
+                    </div>
+                    <div class="violation-time">5 min ago</div>
+                </li>
+                <li class="violation-item">
+                    <div class="violation-icon" style="background: var(--info);">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="violation-content">
+                        <div class="violation-title">Medium Bias Detection</div>
+                        <div class="violation-details">Potential gender bias in response • mike.wilson@company.com</div>
+                    </div>
+                    <div class="violation-time">8 min ago</div>
+                </li>
+                <li class="violation-item">
+                    <div class="violation-icon" style="background: var(--error);">
+                        <i class="fas fa-ban"></i>
+                    </div>
+                    <div class="violation-content">
+                        <div class="violation-title">Critical Jailbreak Attempt</div>
+                        <div class="violation-details">User attempted to bypass safety measures • anonymous</div>
+                    </div>
+                    <div class="violation-time">12 min ago</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Cost Analysis -->
+        <div class="cost-analysis">
+            <h3>Cost Analysis</h3>
+            <div class="cost-grid">
+                <div class="cost-item">
+                    <div class="cost-value">$2,847.32</div>
+                    <div class="cost-label">Total Spend</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-value">$0.023</div>
+                    <div class="cost-label">Avg per Request</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-value">56.9%</div>
+                    <div class="cost-label">Budget Used</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-value">$1,152.68</div>
+                    <div class="cost-label">Remaining</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="costTrendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- User Analytics -->
+        <div class="user-analytics">
+            <h3>User Analytics</h3>
+            <div class="user-stats">
+                <div class="user-stat">
+                    <div class="user-stat-value">156</div>
+                    <div class="user-stat-label">Active Users</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value">89</div>
+                    <div class="user-stat-label">New This Month</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value">2.3</div>
+                    <div class="user-stat-label">Avg Sessions/Day</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value">8.1</div>
+                    <div class="user-stat-label">Avg Requests/User</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="userActivityChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data for charts
+        const trendsData = {
+            labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+            datasets: [{
+                label: 'Total Requests',
+                data: [45, 32, 67, 89, 123, 98],
+                borderColor: '#1e3a8a',
+                backgroundColor: 'rgba(30, 58, 138, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                yAxisID: 'y'
+            }, {
+                label: 'Safety Violations',
+                data: [2, 1, 3, 5, 4, 2],
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                yAxisID: 'y1'
+            }]
+        };
+
+        const providersData = {
+            labels: ['OpenAI', 'Anthropic', 'Google', 'Azure', 'Others'],
+            datasets: [{
+                data: [45, 25, 15, 10, 5],
+                backgroundColor: [
+                    '#1e3a8a',
+                    '#059669',
+                    '#3b82f6',
+                    '#f59e0b',
+                    '#64748b'
+                ],
+                borderWidth: 0
+            }]
+        };
+
+        const costTrendData = {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [{
+                label: 'Weekly Cost',
+                data: [650, 720, 680, 797],
+                borderColor: '#059669',
+                backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        const userActivityData = {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Daily Active Users',
+                data: [120, 135, 142, 138, 156, 98, 87],
+                backgroundColor: 'rgba(30, 58, 138, 0.8)',
+                borderColor: '#1e3a8a',
+                borderWidth: 1
+            }]
+        };
+
+        // Initialize charts
+        function initCharts() {
+            // Trends Chart
+            const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+            new Chart(trendsCtx, {
+                type: 'line',
+                data: trendsData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Requests'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Violations'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    }
+                }
+            });
+
+            // Providers Chart
+            const providersCtx = document.getElementById('providersChart').getContext('2d');
+            new Chart(providersCtx, {
+                type: 'doughnut',
+                data: providersData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Cost Trend Chart
+            const costTrendCtx = document.getElementById('costTrendChart').getContext('2d');
+            new Chart(costTrendCtx, {
+                type: 'line',
+                data: costTrendData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Cost ($)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // User Activity Chart
+            const userActivityCtx = document.getElementById('userActivityChart').getContext('2d');
+            new Chart(userActivityCtx, {
+                type: 'bar',
+                data: userActivityData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Active Users'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Refresh data function
+        function refreshData() {
+            const refreshBtn = document.querySelector('.refresh-btn i');
+            refreshBtn.classList.add('pulse');
+            
+            setTimeout(() => {
+                refreshBtn.classList.remove('pulse');
+            }, 1000);
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+        });
+    </script>
+</body>
+</html>

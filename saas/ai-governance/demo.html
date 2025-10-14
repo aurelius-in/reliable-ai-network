@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Governance Platform - Interactive Demo</title>
+    <meta name="description" content="Interactive demo of the AI Governance Platform showcasing real-time monitoring, safety features, cost management, and compliance tools.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary-color: #059669;
+            --secondary-light: #10b981;
+            --secondary-dark: #047857;
+            --background: #f8fafc;
+            --background-paper: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --grey-50: #f8fafc;
+            --grey-100: #f1f5f9;
+            --grey-200: #e2e8f0;
+            --grey-300: #cbd5e1;
+            --grey-400: #94a3b8;
+            --grey-500: #64748b;
+            --grey-600: #475569;
+            --grey-700: #334155;
+            --grey-800: #1e293b;
+            --grey-900: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--background);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 50%, var(--primary-light) 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+        }
+
+        .nav a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        /* Demo Container */
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .demo-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-header p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Demo Navigation */
+        .demo-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .demo-nav-btn {
+            background: white;
+            color: var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-nav-btn:hover,
+        .demo-nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Demo Content */
+        .demo-content {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--grey-200);
+        }
+
+        .demo-iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            display: block;
+        }
+
+        /* Demo Info */
+        .demo-info {
+            background: linear-gradient(135deg, var(--grey-50) 0%, white 100%);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--grey-200);
+        }
+
+        .demo-info h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .demo-info p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .demo-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .demo-feature {
+            background: white;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--grey-200);
+        }
+
+        .demo-feature h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-feature p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* Demo Tabs */
+        .demo-tabs {
+            display: flex;
+            background: var(--grey-100);
+            border-bottom: 1px solid var(--grey-200);
+        }
+
+        .demo-tab {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .demo-tab:hover {
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-primary);
+        }
+
+        .demo-tab.active {
+            background: white;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .demo-tab-content {
+            display: none;
+            padding: 2rem;
+        }
+
+        .demo-tab-content.active {
+            display: block;
+        }
+
+        /* Mock Data Display */
+        .mock-data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .mock-data-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--grey-200);
+        }
+
+        .mock-data-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mock-data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--grey-100);
+        }
+
+        .mock-data-item:last-child {
+            border-bottom: none;
+        }
+
+        .mock-data-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .mock-data-value {
+            color: var(--text-secondary);
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-healthy { background: var(--success); }
+        .status-warning { background: var(--warning); }
+        .status-error { background: var(--error); }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+
+            .nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .demo-container {
+                padding: 1rem;
+            }
+
+            .demo-header h1 {
+                font-size: 2rem;
+            }
+
+            .demo-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .demo-tabs {
+                flex-direction: column;
+            }
+
+            .demo-iframe {
+                height: 60vh;
+            }
+
+            .mock-data-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                AI Governance Platform
+            </a>
+            <nav class="nav">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#architecture">Architecture</a>
+                <a href="index.html#demo">Demo</a>
+                <a href="documentation.html">Documentation</a>
+                <a href="index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Demo Container -->
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>Interactive Demo</h1>
+            <p>Experience the full AI Governance Platform with real-time data, interactive features, and comprehensive monitoring capabilities.</p>
+        </div>
+
+        <!-- Demo Navigation -->
+        <div class="demo-nav">
+            <a href="demo.html" class="demo-nav-btn active">
+                <i class="fas fa-play"></i>
+                Live Demo
+            </a>
+            <a href="dashboard.html" class="demo-nav-btn">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard View
+            </a>
+            <a href="analytics.html" class="demo-nav-btn">
+                <i class="fas fa-chart-bar"></i>
+                Analytics View
+            </a>
+            <a href="policies.html" class="demo-nav-btn">
+                <i class="fas fa-cogs"></i>
+                Policies View
+            </a>
+        </div>
+
+        <!-- Demo Info -->
+        <div class="demo-info">
+            <h2>What You'll See</h2>
+            <p>This interactive demo showcases the complete AI Governance Platform with live data, real-time updates, and all enterprise features. The demo runs entirely on mock data and requires no external dependencies.</p>
+            
+            <div class="demo-features">
+                <div class="demo-feature">
+                    <h3><i class="fas fa-chart-line"></i> Real-time Metrics</h3>
+                    <p>Live dashboard with key performance indicators, usage statistics, and system health monitoring.</p>
+                </div>
+                <div class="demo-feature">
+                    <h3><i class="fas fa-shield-alt"></i> Safety Monitoring</h3>
+                    <p>Advanced PII detection, content safety checks, and violation tracking with instant alerts.</p>
+                </div>
+                <div class="demo-feature">
+                    <h3><i class="fas fa-dollar-sign"></i> Cost Management</h3>
+                    <p>Real-time cost tracking, budget monitoring, and spending analytics across all providers.</p>
+                </div>
+                <div class="demo-feature">
+                    <h3><i class="fas fa-users"></i> User Management</h3>
+                    <p>Multi-tenant support with role-based access control and comprehensive user analytics.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo Content -->
+        <div class="demo-content">
+            <div class="demo-tabs">
+                <button class="demo-tab active" onclick="showTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </button>
+                <button class="demo-tab" onclick="showTab('analytics')">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                </button>
+                <button class="demo-tab" onclick="showTab('policies')">
+                    <i class="fas fa-cogs"></i>
+                    Policies
+                </button>
+                <button class="demo-tab" onclick="showTab('requests')">
+                    <i class="fas fa-list"></i>
+                    Requests
+                </button>
+            </div>
+
+            <div id="dashboard" class="demo-tab-content active">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    Loading Interactive Dashboard...
+                </div>
+                <iframe src="dashboard.html" class="demo-iframe" id="dashboard-iframe"></iframe>
+            </div>
+
+            <div id="analytics" class="demo-tab-content">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    Loading Analytics Dashboard...
+                </div>
+                <iframe src="analytics.html" class="demo-iframe" id="analytics-iframe"></iframe>
+            </div>
+
+            <div id="policies" class="demo-tab-content">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    Loading Policy Management...
+                </div>
+                <iframe src="policies.html" class="demo-iframe" id="policies-iframe"></iframe>
+            </div>
+
+            <div id="requests" class="demo-tab-content">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    Loading Request Management...
+                </div>
+                <iframe src="requests.html" class="demo-iframe" id="requests-iframe"></iframe>
+            </div>
+        </div>
+
+        <!-- Mock Data Display -->
+        <div class="demo-info" style="margin-top: 2rem;">
+            <h2>Demo Data Overview</h2>
+            <p>The demo includes realistic data representing a typical enterprise AI governance environment:</p>
+            
+            <div class="mock-data-grid">
+                <div class="mock-data-card">
+                    <h3><i class="fas fa-chart-line"></i> System Metrics</h3>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Total Requests</span>
+                        <span class="mock-data-value">1,247</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Active Users</span>
+                        <span class="mock-data-value">156</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">System Health</span>
+                        <span class="mock-data-value"><span class="status-indicator status-healthy"></span>Healthy</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Uptime</span>
+                        <span class="mock-data-value">99.97%</span>
+                    </div>
+                </div>
+
+                <div class="mock-data-card">
+                    <h3><i class="fas fa-shield-alt"></i> Safety Metrics</h3>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">PII Detections</span>
+                        <span class="mock-data-value">23</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Content Violations</span>
+                        <span class="mock-data-value">7</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Jailbreak Attempts</span>
+                        <span class="mock-data-value">3</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Safety Score</span>
+                        <span class="mock-data-value">94.2%</span>
+                    </div>
+                </div>
+
+                <div class="mock-data-card">
+                    <h3><i class="fas fa-dollar-sign"></i> Cost Metrics</h3>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Total Spend</span>
+                        <span class="mock-data-value">$2,847.32</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Monthly Budget</span>
+                        <span class="mock-data-value">$5,000.00</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Cost per Request</span>
+                        <span class="mock-data-value">$0.023</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Budget Status</span>
+                        <span class="mock-data-value"><span class="status-indicator status-healthy"></span>On Track</span>
+                    </div>
+                </div>
+
+                <div class="mock-data-card">
+                    <h3><i class="fas fa-cogs"></i> Policy Metrics</h3>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Active Policies</span>
+                        <span class="mock-data-value">12</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Policy Violations</span>
+                        <span class="mock-data-value">5</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Compliance Rate</span>
+                        <span class="mock-data-value">98.7%</span>
+                    </div>
+                    <div class="mock-data-item">
+                        <span class="mock-data-label">Last Audit</span>
+                        <span class="mock-data-value">2 hours ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.demo-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.demo-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Load iframe content when tab becomes active
+            setTimeout(() => {
+                const iframe = document.getElementById(`${tabName}-iframe`);
+                if (iframe && !iframe.src.includes(tabName)) {
+                    iframe.src = `${tabName}.html`;
+                }
+            }, 100);
+        }
+
+        // Load dashboard iframe on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const dashboardIframe = document.getElementById('dashboard-iframe');
+                if (dashboardIframe) {
+                    dashboardIframe.src = 'dashboard.html';
+                }
+            }, 1000);
+        });
+
+        // Handle iframe load events
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.addEventListener('load', () => {
+                const loading = iframe.previousElementSibling;
+                if (loading && loading.classList.contains('loading')) {
+                    loading.style.display = 'none';
+                }
+            });
+        });
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
