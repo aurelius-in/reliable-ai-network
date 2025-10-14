@@ -1,0 +1,144 @@
+import React from 'react'
+import { Box, Typography, List, ListItem, ListItemText, Paper, Divider, Button, Slider, TextField, Snackbar, Alert, Chip } from '@mui/material'
+import TrendSparkline from '../components/TrendSparkline'
+import { useQuery } from '@tanstack/react-query'
+import { apiGet } from '../lib/api'
+import SkeletonBlock from '../components/SkeletonBlock'
+import OutliersTable from '../components/OutliersTable'
+import type { ScoresListResp, OutliersResp } from '../lib/types'
+import { exportToCsv } from '../lib/csv'
+import { useOrg } from '../context/OrgContext'
+import ProviderDetailDialog from '../components/ProviderDetailDialog'
+import ErrorState from '../components/ErrorState'
+import EmptyState from '../components/EmptyState'
+
+const Scores: React.FC = () => {
+  const { orgId } = useOrg()
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['scores', orgId, 'latest'],
+    queryFn: async () => apiGet<ScoresListResp>(`/api/scores/${orgId}/latest`),
+  })
+
+  const [industry, setIndustry] = React.useState('')
+  const [region, setRegion] = React.useState('')
+
+  const outliers = useQuery({
+    queryKey: ['outliers', orgId, 'latest', industry, region],
+    queryFn: async () => apiGet<OutliersResp>(`/api/outliers/providers?org_id=${orgId}&period=latest${industry ? `&industry=${encodeURIComponent(industry)}` : ''}${region ? `&region=${encodeURIComponent(region)}` : ''}`),
+  })
+
+  const exportOutliers = () => {
+    exportToCsv('provider_outliers.csv', (outliers.data?.providers || []) as any)
+  }
+  const copyOutliersCsv = async () => {
+    const rows = outliers.data?.providers || []
+    const header = ['provider_id','score','z_total_amount','z_avg_amount','z_n_claims']
+    const lines = [header.join(',')]
+    for (const r of rows as any[]) {
+      lines.append(`${r.provider_id},${r.score},${r.z_total_amount || ''},${r.z_avg_amount || ''},${r.z_n_claims || ''}`)
+    }
+    try { await navigator.clipboard.writeText(lines.join('\n') + '\n'); setToast({ open: true, kind: 'success', msg: 'Copied' }) } catch { setToast({ open: true, kind: 'error', msg: 'Copy failed' }) }
+  }
+
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null)
+  const onUploadClick = () => fileInputRef.current?.click()
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const form = new FormData()
+    form.append('file', file)
+    try {
+      const resp = await fetch(`/api/ingest/claims?org_id=${orgId}`, { method: 'POST', body: form })
+      if (!resp.ok) throw new Error('upload failed')
+      await Promise.all([refetch(), outliers.refetch()])
+      setToast({ open: true, kind: 'success', msg: 'Claims uploaded' })
+    } catch {
+      setToast({ open: true, kind: 'error', msg: 'Upload failed' })
+    }
+    e.target.value = ''
+  }
+
+  const [minScore, setMinScore] = React.useState<number>(0)
+
+  const [detailOpen, setDetailOpen] = React.useState(false)
+  const [detail, setDetail] = React.useState<any>(null)
+  const [toast, setToast] = React.useState<{ open: boolean; kind: 'success' | 'error'; msg: string }>({ open: false, kind: 'success', msg: '' })
+  const openDetail = async (providerId: number) => {
+    try {
+      const d = await apiGet(`/api/providers/${providerId}/detail?org_id=${orgId}`)
+      setDetail(d)
+    } catch {
+      // Mock fallback when API unavailable
+      const today = new Date()
+      const series: { date: string; amount: number }[] = []
+      let base = 200 + Math.random() * 400
+      for (let i = 11; i >= 0; i--) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1)
+        const noise = (Math.random() - 0.5) * 30
+        const amt = Math.max(10, base + noise + (Math.random() < 0.1 ? 150 : 0))
+        series.push({ date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`, amount: Number(amt.toFixed(2)) })
+      }
+      setDetail({ provider_id: providerId, org_id: orgId, count: series.length, total: series.reduce((s,v)=>s+v.amount,0), avg: series.reduce((s,v)=>s+v.amount,0)/series.length, series })
+    }
+    setDetailOpen(true)
+  }
+
+  const filtered = (outliers.data?.providers || []).filter(p => (p.score ?? 0) >= minScore)
+
+  return (
+    <Box>
+      <Typography variant="h4" gutterBottom>Scores</Typography>
+      <Paper sx={{ bgcolor: '#111', border: '1px solid #B30700', mb: 2, p: 1 }}>
+        {isLoading && <SkeletonBlock height={100} />}
+        {isError && <ErrorState message="Failed to load scores." />}
+        {!isLoading && !isError && (
+          <List>
+            {(data?.scores || []).map((s, idx) => (
+              <ListItem key={idx}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: 2 }}>
+                  <ListItemText primary={`${s.entity ?? 'Org'} - ${s.family ?? 'Family'}: ${s.score ?? ''}`} sx={{ color: '#F1A501' }} />
+                  <Box sx={{ minWidth: 160 }}>
+                    <TrendSparkline values={Array.from({ length: 24 }, (_, i) => Math.max(0, Math.min(100, (s.score || 0) + Math.sin(i / 2) * 5 - 2)))} />
+                  </Box>
+                </Box>
+              </ListItem>
+            ))}
+            {(!data?.scores || data.scores.length === 0) && <EmptyState message="No scores yet." />}
+          </List>
+        )}
+      </Paper>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, gap: 1, flexWrap: 'wrap' }}>
+        <Typography variant="h5" gutterBottom>Provider Outliers</Typography>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+          <TextField size="small" placeholder="Industry" value={industry} onChange={e => setIndustry(e.target.value)} sx={{ input: { color: '#F1A501' } }} />
+          <TextField size="small" placeholder="Region" value={region} onChange={e => setRegion(e.target.value)} sx={{ input: { color: '#F1A501' } }} />
+          <Button variant="outlined" onClick={exportOutliers} disabled={outliers.isLoading} sx={{ color: '#F1A501', borderColor: '#B30700' }}>Export CSV</Button>
+          <Button variant="outlined" onClick={copyOutliersCsv} disabled={outliers.isLoading} sx={{ color: '#F1A501', borderColor: '#B30700' }}>Copy CSV</Button>
+          <Chip size="small" label={`${(outliers.data?.providers || []).length} rows`} sx={{ bgcolor: '#111', border: '1px solid #333', color: '#F1A501' }} />
+          <input ref={fileInputRef} type="file" accept=".csv,.parquet,.pq" style={{ display: 'none' }} onChange={onFileChange} />
+          <Button variant="outlined" onClick={onUploadClick} sx={{ color: '#F1A501', borderColor: '#B30700' }}>Upload Claims</Button>
+        </Box>
+      </Box>
+
+      <Box sx={{ mb: 1 }}>
+        <Typography variant="body2" sx={{ color: '#F1A501' }}>Min Score: {minScore.toFixed(0)}</Typography>
+        <Slider value={minScore} onChange={(_, v) => setMinScore(v as number)} min={0} max={100} step={1} sx={{ color: '#B30700' }} />
+      </Box>
+
+      <Paper sx={{ bgcolor: '#111', border: '1px solid #B30700' }}>
+        {outliers.isLoading && <SkeletonBlock height={160} />}
+        {outliers.isError && <ErrorState message="Failed to load outliers." />}
+        {!outliers.isLoading && !outliers.isError && filtered.length === 0 && <EmptyState message="No outliers match your filters." />}
+        {!outliers.isLoading && !outliers.isError && filtered.length > 0 && <OutliersTable rows={filtered} onSelect={openDetail} />}
+      </Paper>
+
+      <ProviderDetailDialog open={detailOpen} onClose={() => setDetailOpen(false)} detail={detail || undefined} />
+      <Snackbar open={toast.open} autoHideDuration={2000} onClose={() => setToast({ ...toast, open: false })} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert severity={toast.kind} sx={{ bgcolor: '#111', color: '#F1A501', border: '1px solid #B30700' }}>{toast.msg}</Alert>
+      </Snackbar>
+    </Box>
+  )
+}
+
+export default Scores

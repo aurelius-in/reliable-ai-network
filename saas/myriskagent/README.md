@@ -154,11 +154,14 @@ docs/demo/
 ## 🚀 Getting Started
 
 ### Quick Demo
-1. **Open** `index.html` in your browser
-2. **Explore** the different tabs and features
-3. **Interact** with the AI assistant
-4. **Review** the architecture documentation
-5. **Contact** us for a personalized demo
+1. **Open** `index.html` in your browser (this is the actual working UI from the main app!)
+2. **Experience** the 5-second splash screen with the MyRiskAgent logo
+3. **Explore** the different tabs and features with rich mock data
+4. **Interact** with the AI assistant and risk analytics
+5. **Review** the comprehensive architecture documentation
+6. **Contact** us for a personalized demo with your data
+
+**Note**: This demo uses the actual production UI components and styling from the main MyRiskAgent application, ensuring you see exactly what the real system looks like.
 
 ### Keyboard Shortcuts
 - **Alt+1**: Overview dashboard
