@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoOps Sentinel - Enterprise Operations Platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/demo.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/recharts@2.12.7/lib/index.min.js"></script>
+</head>
+<body>
+    <!-- Premium Header -->
+    <div class="premium-header">
+        <div class="container">
+            <div class="premium-badge">
+                <i class="fas fa-crown"></i>
+                <span>Enterprise Platform</span>
+            </div>
+            <div class="premium-stats">
+                <div class="stat">
+                    <span class="stat-value">99.9%</span>
+                    <span class="stat-label">Uptime</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">$2.3M</span>
+                    <span class="stat-label">Avg Savings</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">820%</span>
+                    <span class="stat-label">ROI</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="demo-navbar">
+        <div class="nav-brand">
+            <div class="brand-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <span class="brand-text">AutoOps Sentinel</span>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="overview">
+                <i class="fas fa-tachometer-alt"></i>
+                Overview
+            </button>
+            <button class="nav-tab" data-tab="ops">
+                <i class="fas fa-tools"></i>
+                Ops
+            </button>
+            <button class="nav-tab" data-tab="agent">
+                <i class="fas fa-robot"></i>
+                Agent
+            </button>
+        </div>
+        <div class="nav-actions">
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="demo-main">
+        <!-- Overview Tab -->
+        <div class="demo-tab-content active" id="overview">
+            <!-- Status Cards -->
+            <div class="status-cards">
+                <div class="status-card">
+                    <div class="card-header">
+                        <div class="card-icon anomalies">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="card-title">Anomalies</div>
+                    </div>
+                    <div class="card-value" id="anomalies-count">23</div>
+                    <div class="card-trend up">+12%</div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="card-header">
+                        <div class="card-icon actions">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="card-title">Actions</div>
+                    </div>
+                    <div class="card-value" id="actions-count">8</div>
+                    <div class="card-trend down">-3%</div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="card-header">
+                        <div class="card-icon incidents">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="card-title">Incidents</div>
+                    </div>
+                    <div class="card-value" id="incidents-count">2</div>
+                    <div class="card-trend stable">0%</div>
+                </div>
+                
+                <div class="status-card">
+                    <div class="card-header">
+                        <div class="card-icon availability">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="card-title">Availability</div>
+                    </div>
+                    <div class="card-value" id="availability-value">99.8%</div>
+                    <div class="card-trend up">+0.1%</div>
+                </div>
+                
+                <div class="status-card large">
+                    <div class="card-header">
+                        <div class="card-icon latency">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="card-title">p95 Latency</div>
+                    </div>
+                    <div class="card-value" id="latency-value">245ms</div>
+                    <div class="card-description">
+                        Health KPIs: Latency p95 ideal: &lt; 200 ms (good), 200–500 ms (watch), &gt; 500 ms (action)
+                    </div>
+                </div>
+                
+                <div class="status-card large">
+                    <div class="card-header">
+                        <div class="card-icon ebr">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="card-title">Error Budget Remaining</div>
+                    </div>
+                    <div class="card-value" id="ebr-value">84.2%</div>
+                    <div class="card-description">Error Budget Remaining</div>
+                </div>
+                
+                <div class="status-card large">
+                    <div class="card-header">
+                        <div class="card-icon cost">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="card-title">Cost Avoided</div>
+                    </div>
+                    <div class="card-value" id="cost-value">$46,000</div>
+                    <div class="card-description">Estimated savings from avoided downtime</div>
+                </div>
+                
+                <div class="status-card large">
+                    <div class="card-header">
+                        <div class="card-icon stats">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="card-title">Anomaly Stats</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="anomaly-pills">
+                            <span class="pill low">Low: 12</span>
+                            <span class="pill medium">Med: 8</span>
+                            <span class="pill high">High: 2</span>
+                            <span class="pill critical">Critical: 1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary and Charts -->
+            <div class="dashboard-grid">
+                <div class="summary-panel">
+                    <div class="panel-header">
+                        <h3>Summary</h3>
+                    </div>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <span class="label">Anomalies:</span>
+                            <span class="value" id="summary-anomalies">23</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Actions:</span>
+                            <span class="value" id="summary-actions">8</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Incidents:</span>
+                            <span class="value" id="summary-incidents">2</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="forecast-panel">
+                    <div class="panel-header">
+                        <h3>Forecast</h3>
+                    </div>
+                    <div class="forecast-content">
+                        <div class="forecast-item">
+                            <div class="forecast-metric">CPU Usage</div>
+                            <div class="forecast-trend up">Expected to increase by 15% in next 2 hours</div>
+                        </div>
+                        <div class="forecast-item">
+                            <div class="forecast-metric">Memory Usage</div>
+                            <div class="forecast-trend stable">Stable with minor fluctuations</div>
+                        </div>
+                        <div class="forecast-item">
+                            <div class="forecast-metric">Error Rate</div>
+                            <div class="forecast-trend down">Decreasing trend expected</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metrics-chart-panel">
+                    <div class="panel-header">
+                        <h3>Metrics</h3>
+                        <div class="metric-selector">
+                            <button class="metric-btn active" data-metric="cpu">CPU</button>
+                            <button class="metric-btn" data-metric="mem">Mem</button>
+                            <button class="metric-btn" data-metric="latency">Latency</button>
+                            <button class="metric-btn" data-metric="error_rate">Error Rate</button>
+                            <button class="metric-btn" data-metric="failed_logins">Failed Logins</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="metricsChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ops Tab -->
+        <div class="demo-tab-content" id="ops">
+            <div class="ops-grid">
+                <div class="ops-main">
+                    <div class="timeline-panel">
+                        <div class="panel-header">
+                            <h3>Timeline</h3>
+                        </div>
+                        <div class="timeline-content" id="timeline-content">
+                            <!-- Timeline items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="anomalies-panel">
+                        <div class="panel-header">
+                            <h3>Anomalies</h3>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Metric</th>
+                                        <th>Severity</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="anomalies-table">
+                                    <!-- Anomalies will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="actions-panel">
+                        <div class="panel-header">
+                            <h3>Actions</h3>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Action</th>
+                                        <th>Status</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="actions-table">
+                                    <!-- Actions will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ops-sidebar">
+                    <div class="runbook-panel">
+                        <div class="panel-header">
+                            <h3>Runbook Catalog</h3>
+                        </div>
+                        <div class="runbook-content" id="runbook-content">
+                            <!-- Runbooks will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="policies-panel">
+                        <div class="panel-header">
+                            <h3>Policies</h3>
+                        </div>
+                        <div class="policies-content" id="policies-content">
+                            <!-- Policies will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Tab -->
+        <div class="demo-tab-content" id="agent">
+            <div class="agent-layout">
+                <div class="agent-header">
+                    <div class="anomaly-banner">
+                        <div class="banner-content">
+                            Latest anomaly: Failed Logins — Low (Source: Auth) · Seen: 3m ago
+                        </div>
+                    </div>
+                    <div class="business-ticker">
+                        <div class="ticker-content">
+                            <span class="ticker-item">CPU spike detected in API cluster</span>
+                            <span class="ticker-item">Memory usage trending upward</span>
+                            <span class="ticker-item">Error rate within normal bounds</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-panel">
+                    <div class="panel-header">
+                        <h3>Ask Agent</h3>
+                    </div>
+                    <div class="chat-interface">
+                        <div class="chat-input-container">
+                            <input type="text" id="chat-input" placeholder="Ask about incidents, anomalies, actions..." class="chat-input">
+                            <button id="ask-button" class="ask-button">Ask</button>
+                        </div>
+                        <div class="chat-response" id="chat-response">
+                            <!-- Chat responses will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="plan-panel">
+                    <div class="panel-header">
+                        <h3>Action Plan</h3>
+                    </div>
+                    <div class="plan-content" id="plan-content">
+                        <!-- Action plans will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="narrative-panel">
+                    <div class="panel-header">
+                        <h3>Narrative</h3>
+                    </div>
+                    <div class="narrative-content" id="narrative-content">
+                        <!-- Narrative will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading AutoOps Sentinel...</div>
+        </div>
+    </div>
+
+    <script src="js/demo.js"></script>
+    <script src="js/mock-data.js"></script>
+</body>
+</html>

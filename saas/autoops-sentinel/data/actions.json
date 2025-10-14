@@ -1,0 +1,141 @@
+[
+  {
+    "id": "act-001",
+    "action": "Scale Deployment",
+    "status": "completed",
+    "result": "Success",
+    "created_at": "2024-01-15T14:25:18Z",
+    "completed_at": "2024-01-15T14:26:45Z",
+    "description": "Scaled API deployment from 3 to 5 replicas",
+    "target": "api-deployment",
+    "parameters": {
+      "replicas": 5,
+      "reason": "High CPU usage detected"
+    },
+    "impact": {
+      "cpu_reduction": 25.3,
+      "latency_improvement": 15.2
+    }
+  },
+  {
+    "id": "act-002",
+    "action": "Restart Service",
+    "status": "completed",
+    "result": "Success",
+    "created_at": "2024-01-15T14:18:33Z",
+    "completed_at": "2024-01-15T14:19:12Z",
+    "description": "Restarted web service to resolve memory leak",
+    "target": "web-service",
+    "parameters": {
+      "service": "web-service-02",
+      "reason": "Memory leak detected"
+    },
+    "impact": {
+      "memory_reduction": 18.7,
+      "uptime": "99.9%"
+    }
+  },
+  {
+    "id": "act-003",
+    "action": "Quarantine Host",
+    "status": "completed",
+    "result": "Success",
+    "created_at": "2024-01-15T14:12:47Z",
+    "completed_at": "2024-01-15T14:13:28Z",
+    "description": "Quarantined compromised host and enforced MFA",
+    "target": "auth-service",
+    "parameters": {
+      "host": "auth-node-03",
+      "reason": "Suspicious login attempts"
+    },
+    "impact": {
+      "failed_logins_reduction": 89.2,
+      "security_improvement": "High"
+    }
+  },
+  {
+    "id": "act-004",
+    "action": "Rollout Undo",
+    "status": "completed",
+    "result": "Success",
+    "created_at": "2024-01-15T14:05:52Z",
+    "completed_at": "2024-01-15T14:07:15Z",
+    "description": "Rolled back payment service to previous stable version",
+    "target": "payment-service",
+    "parameters": {
+      "service": "payment-service",
+      "version": "v2.1.3",
+      "reason": "High error rate detected"
+    },
+    "impact": {
+      "error_rate_reduction": 78.5,
+      "latency_improvement": 32.1
+    }
+  },
+  {
+    "id": "act-005",
+    "action": "Scale Deployment",
+    "status": "in_progress",
+    "result": "Running",
+    "created_at": "2024-01-15T14:02:38Z",
+    "description": "Scaling database cluster to handle increased load",
+    "target": "db-cluster",
+    "parameters": {
+      "replicas": 4,
+      "reason": "CPU saturation detected"
+    },
+    "progress": 65
+  },
+  {
+    "id": "act-006",
+    "action": "Restart Service",
+    "status": "completed",
+    "result": "Success",
+    "created_at": "2024-01-15T13:59:25Z",
+    "completed_at": "2024-01-15T14:00:08Z",
+    "description": "Restarted cache service to clear memory leaks",
+    "target": "cache-service",
+    "parameters": {
+      "service": "cache-service",
+      "reason": "Memory leak detected"
+    },
+    "impact": {
+      "memory_reduction": 22.4,
+      "cache_hit_improvement": 15.8
+    }
+  },
+  {
+    "id": "act-007",
+    "action": "Quarantine Host",
+    "status": "failed",
+    "result": "Error",
+    "created_at": "2024-01-15T13:56:12Z",
+    "completed_at": "2024-01-15T13:57:33Z",
+    "description": "Failed to quarantine worker node due to connection timeout",
+    "target": "worker-cluster",
+    "parameters": {
+      "host": "worker-node-05",
+      "reason": "High CPU usage and connection issues"
+    },
+    "error": "Connection timeout after 30 seconds"
+  },
+  {
+    "id": "act-008",
+    "action": "Rollout Undo",
+    "status": "completed",
+    "result": "Success",
+    "created_at": "2024-01-15T13:52:59Z",
+    "completed_at": "2024-01-15T13:54:22Z",
+    "description": "Rolled back analytics service to resolve performance issues",
+    "target": "analytics-service",
+    "parameters": {
+      "service": "analytics-service",
+      "version": "v1.8.2",
+      "reason": "Memory usage spike"
+    },
+    "impact": {
+      "memory_reduction": 35.2,
+      "performance_improvement": 28.7
+    }
+  }
+]

@@ -1,0 +1,781 @@
+/* Value Proposition Page Styles */
+
+/* Hero Section */
+.value-hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--background-dark) 0%, var(--background-paper) 100%);
+}
+
+.value-hero .hero-content {
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 120px 0;
+}
+
+.value-hero .hero-title {
+    font-size: 4.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 32px;
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 32px;
+    margin-top: 60px;
+}
+
+.hero-stats .stat-item {
+    text-align: center;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    transition: var(--transition);
+}
+
+.hero-stats .stat-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-color);
+}
+
+.hero-stats .stat-number {
+    font-size: 3rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.hero-stats .stat-label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Market Opportunity Section */
+.market-opportunity {
+    padding: 120px 0;
+    background: var(--background-dark);
+}
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    margin-top: 60px;
+}
+
+.market-card {
+    background: var(--background-paper);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.market-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.market-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    border-color: var(--primary-color);
+}
+
+.market-card:hover::before {
+    opacity: 1;
+}
+
+.market-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-primary);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: white;
+    margin: 0 auto 24px;
+    box-shadow: var(--shadow-glow);
+}
+
+.market-content h3 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.market-content p {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.market-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.market-detail .growth {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+}
+
+.market-detail .description {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* Technology Leadership Section */
+.technology-leadership {
+    padding: 120px 0;
+    background: linear-gradient(180deg, var(--background-dark) 0%, rgba(15, 23, 42, 0.5) 100%);
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 32px;
+    margin-top: 60px;
+}
+
+.tech-card {
+    background: var(--background-paper);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.tech-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.tech-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-color);
+}
+
+.tech-card:hover::before {
+    opacity: 1;
+}
+
+.tech-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.tech-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+}
+
+.tech-icon.ai {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.tech-icon.cloud {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.tech-icon.security {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.tech-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.tech-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tech-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.tech-metric .metric-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.tech-metric .metric-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+.tech-description {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-top: 8px;
+}
+
+/* Customer Success Section */
+.customer-success {
+    padding: 120px 0;
+    background: var(--background-dark);
+}
+
+.success-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 32px;
+    margin-top: 60px;
+}
+
+.success-card {
+    background: var(--background-paper);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.success-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.success-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-color);
+}
+
+.success-card:hover::before {
+    opacity: 1;
+}
+
+.success-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.company-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+}
+
+.company-logo.financial {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.company-logo.ecommerce {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.company-logo.healthcare {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.company-info h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+
+.company-info .industry {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.success-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.success-metrics .metric {
+    text-align: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.success-metrics .metric-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 4px;
+}
+
+.success-metrics .metric-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.success-quote {
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 8px;
+}
+
+/* ROI Analysis Section */
+.roi-analysis {
+    padding: 120px 0;
+    background: linear-gradient(180deg, var(--background-dark) 0%, rgba(15, 23, 42, 0.5) 100%);
+}
+
+.roi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    margin-top: 60px;
+}
+
+.roi-card {
+    background: var(--background-paper);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.roi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.roi-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-color);
+}
+
+.roi-card:hover::before {
+    opacity: 1;
+}
+
+.roi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.roi-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.roi-badge {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 1.125rem;
+    font-weight: 800;
+    box-shadow: var(--shadow-glow);
+}
+
+.roi-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.roi-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.roi-item:last-child {
+    border-bottom: none;
+}
+
+.roi-item.total {
+    font-weight: 700;
+    color: var(--text-primary);
+    border-top: 2px solid var(--primary-color);
+    padding-top: 16px;
+    margin-top: 8px;
+}
+
+.roi-label {
+    color: var(--text-secondary);
+}
+
+.roi-value {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Competitive Advantage Section */
+.competitive-advantage {
+    padding: 120px 0;
+    background: var(--background-dark);
+}
+
+.competitive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    margin-top: 60px;
+}
+
+.competitive-card {
+    background: var(--background-paper);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.competitive-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.competitive-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-color);
+}
+
+.competitive-card:hover::before {
+    opacity: 1;
+}
+
+.competitive-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-primary);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: white;
+    margin: 0 auto 24px;
+    box-shadow: var(--shadow-glow);
+}
+
+.competitive-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.competitive-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.advantage-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.advantage-metrics .metric {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Investment Highlights Section */
+.investment-highlights {
+    padding: 120px 0;
+    background: linear-gradient(180deg, var(--background-dark) 0%, rgba(15, 23, 42, 0.5) 100%);
+}
+
+.highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    margin-top: 60px;
+}
+
+.highlight-card {
+    background: var(--background-paper);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.highlight-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.highlight-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-color);
+}
+
+.highlight-card:hover::before {
+    opacity: 1;
+}
+
+.highlight-number {
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-glow);
+}
+
+.highlight-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.highlight-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Investment CTA Section */
+.investment-cta {
+    padding: 120px 0;
+    background: var(--background-dark);
+    text-align: center;
+}
+
+.investment-cta .cta-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.investment-cta .cta-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.investment-cta .cta-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    line-height: 1.7;
+}
+
+.investment-cta .cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Navigation Active State */
+.nav-link.active {
+    color: var(--primary-color);
+    position: relative;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--gradient-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .value-hero .hero-title {
+        font-size: 3rem;
+    }
+    
+    .hero-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .hero-stats .stat-number {
+        font-size: 2rem;
+    }
+    
+    .market-grid,
+    .tech-grid,
+    .success-grid,
+    .roi-grid,
+    .competitive-grid,
+    .highlights-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .success-metrics {
+        grid-template-columns: 1fr;
+    }
+    
+    .investment-cta .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .investment-cta .cta-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .value-hero .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .market-card,
+    .tech-card,
+    .success-card,
+    .roi-card,
+    .competitive-card,
+    .highlight-card {
+        padding: 24px;
+    }
+    
+    .market-content h3,
+    .tech-header h3,
+    .roi-header h3,
+    .competitive-card h3,
+    .highlight-card h3 {
+        font-size: 1.25rem;
+    }
+}

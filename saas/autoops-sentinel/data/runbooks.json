@@ -1,0 +1,228 @@
+[
+  {
+    "name": "Scale Deployment",
+    "description": "Automatically scale deployment based on CPU/memory usage",
+    "category": "scaling",
+    "version": "1.2.0",
+    "author": "AutoOps Team",
+    "last_updated": "2024-01-10T10:30:00Z",
+    "execution_count": 156,
+    "success_rate": 94.2,
+    "avg_execution_time": "2m 15s",
+    "parameters": [
+      {
+        "name": "min_replicas",
+        "type": "integer",
+        "default": 2,
+        "description": "Minimum number of replicas"
+      },
+      {
+        "name": "max_replicas",
+        "type": "integer",
+        "default": 10,
+        "description": "Maximum number of replicas"
+      },
+      {
+        "name": "cpu_threshold",
+        "type": "float",
+        "default": 80.0,
+        "description": "CPU threshold percentage"
+      },
+      {
+        "name": "memory_threshold",
+        "type": "float",
+        "default": 85.0,
+        "description": "Memory threshold percentage"
+      }
+    ],
+    "steps": [
+      "Check current resource usage",
+      "Calculate required replicas",
+      "Validate scaling limits",
+      "Execute scaling action",
+      "Monitor scaling progress",
+      "Verify service health"
+    ]
+  },
+  {
+    "name": "Restart Service",
+    "description": "Gracefully restart a service to resolve memory leaks",
+    "category": "maintenance",
+    "version": "1.1.5",
+    "author": "Platform Team",
+    "last_updated": "2024-01-08T14:20:00Z",
+    "execution_count": 89,
+    "success_rate": 98.9,
+    "avg_execution_time": "1m 45s",
+    "parameters": [
+      {
+        "name": "service_name",
+        "type": "string",
+        "required": true,
+        "description": "Name of the service to restart"
+      },
+      {
+        "name": "graceful_timeout",
+        "type": "integer",
+        "default": 30,
+        "description": "Graceful shutdown timeout in seconds"
+      },
+      {
+        "name": "health_check_timeout",
+        "type": "integer",
+        "default": 60,
+        "description": "Health check timeout in seconds"
+      }
+    ],
+    "steps": [
+      "Drain traffic from service",
+      "Perform graceful shutdown",
+      "Wait for graceful timeout",
+      "Start new service instance",
+      "Perform health checks",
+      "Restore traffic routing"
+    ]
+  },
+  {
+    "name": "Quarantine Host",
+    "description": "Isolate a compromised or problematic host",
+    "category": "security",
+    "version": "2.0.1",
+    "author": "Security Team",
+    "last_updated": "2024-01-12T09:15:00Z",
+    "execution_count": 23,
+    "success_rate": 100.0,
+    "avg_execution_time": "45s",
+    "parameters": [
+      {
+        "name": "host_id",
+        "type": "string",
+        "required": true,
+        "description": "ID of the host to quarantine"
+      },
+      {
+        "name": "reason",
+        "type": "string",
+        "required": true,
+        "description": "Reason for quarantine"
+      },
+      {
+        "name": "notify_team",
+        "type": "boolean",
+        "default": true,
+        "description": "Send notification to security team"
+      }
+    ],
+    "steps": [
+      "Verify host status",
+      "Drain all workloads",
+      "Update load balancer configuration",
+      "Block network access",
+      "Send security notification",
+      "Log quarantine action"
+    ]
+  },
+  {
+    "name": "Rollout Undo",
+    "description": "Rollback a deployment to the previous stable version",
+    "category": "deployment",
+    "version": "1.3.2",
+    "author": "DevOps Team",
+    "last_updated": "2024-01-14T16:45:00Z",
+    "execution_count": 67,
+    "success_rate": 97.0,
+    "avg_execution_time": "3m 20s",
+    "parameters": [
+      {
+        "name": "deployment_name",
+        "type": "string",
+        "required": true,
+        "description": "Name of the deployment to rollback"
+      },
+      {
+        "name": "target_version",
+        "type": "string",
+        "description": "Specific version to rollback to (optional)"
+      },
+      {
+        "name": "preserve_data",
+        "type": "boolean",
+        "default": true,
+        "description": "Preserve data during rollback"
+      }
+    ],
+    "steps": [
+      "Identify current deployment version",
+      "Locate previous stable version",
+      "Create rollback plan",
+      "Execute rollback deployment",
+      "Verify service functionality",
+      "Update monitoring alerts"
+    ]
+  },
+  {
+    "name": "Clear Cache",
+    "description": "Clear application and system caches",
+    "category": "performance",
+    "version": "1.0.8",
+    "author": "Performance Team",
+    "last_updated": "2024-01-05T11:30:00Z",
+    "execution_count": 134,
+    "success_rate": 99.3,
+    "avg_execution_time": "30s",
+    "parameters": [
+      {
+        "name": "cache_type",
+        "type": "string",
+        "default": "all",
+        "description": "Type of cache to clear (all, application, system)"
+      },
+      {
+        "name": "warm_cache",
+        "type": "boolean",
+        "default": true,
+        "description": "Warm cache after clearing"
+      }
+    ],
+    "steps": [
+      "Stop cache service",
+      "Clear cache storage",
+      "Restart cache service",
+      "Warm frequently used data",
+      "Verify cache functionality"
+    ]
+  },
+  {
+    "name": "Database Optimization",
+    "description": "Optimize database connections and queries",
+    "category": "database",
+    "version": "1.4.1",
+    "author": "Database Team",
+    "last_updated": "2024-01-11T13:20:00Z",
+    "execution_count": 45,
+    "success_rate": 95.6,
+    "avg_execution_time": "5m 10s",
+    "parameters": [
+      {
+        "name": "database_name",
+        "type": "string",
+        "required": true,
+        "description": "Name of the database to optimize"
+      },
+      {
+        "name": "optimization_type",
+        "type": "string",
+        "default": "connections",
+        "description": "Type of optimization (connections, queries, indexes)"
+      }
+    ],
+    "steps": [
+      "Analyze current database performance",
+      "Identify optimization opportunities",
+      "Execute connection pool optimization",
+      "Update query execution plans",
+      "Rebuild database indexes",
+      "Monitor performance improvements"
+    ]
+  }
+]

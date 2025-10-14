@@ -1,0 +1,112 @@
+[
+  {
+    "id": "a-001",
+    "metric": "cpu",
+    "score": 2.3,
+    "severity": "high",
+    "created_at": "2024-01-15T14:32:15Z",
+    "description": "CPU usage spike detected in API cluster",
+    "source": "api-cluster-01",
+    "threshold": 80.0,
+    "current_value": 89.2
+  },
+  {
+    "id": "a-002",
+    "metric": "mem",
+    "score": 1.8,
+    "severity": "medium",
+    "created_at": "2024-01-15T14:28:42Z",
+    "description": "Memory usage trending upward",
+    "source": "web-service-02",
+    "threshold": 75.0,
+    "current_value": 78.5
+  },
+  {
+    "id": "a-003",
+    "metric": "error_rate",
+    "score": 3.1,
+    "severity": "critical",
+    "created_at": "2024-01-15T14:25:18Z",
+    "description": "High error rate in payment service",
+    "source": "payment-service",
+    "threshold": 2.0,
+    "current_value": 5.8
+  },
+  {
+    "id": "a-004",
+    "metric": "latency",
+    "score": 1.5,
+    "severity": "low",
+    "created_at": "2024-01-15T14:22:05Z",
+    "description": "Latency increase in user service",
+    "source": "user-service",
+    "threshold": 200.0,
+    "current_value": 245.3
+  },
+  {
+    "id": "a-005",
+    "metric": "cpu",
+    "score": 2.7,
+    "severity": "high",
+    "created_at": "2024-01-15T14:18:33Z",
+    "description": "CPU saturation in database cluster",
+    "source": "db-cluster-01",
+    "threshold": 85.0,
+    "current_value": 91.7
+  },
+  {
+    "id": "a-006",
+    "metric": "mem",
+    "score": 1.2,
+    "severity": "low",
+    "created_at": "2024-01-15T14:15:21Z",
+    "description": "Memory leak detected in cache service",
+    "source": "cache-service",
+    "threshold": 70.0,
+    "current_value": 72.1
+  },
+  {
+    "id": "a-007",
+    "metric": "failed_logins",
+    "score": 2.9,
+    "severity": "high",
+    "created_at": "2024-01-15T14:12:47Z",
+    "description": "Suspicious login attempts detected",
+    "source": "auth-service",
+    "threshold": 20.0,
+    "current_value": 47.3
+  },
+  {
+    "id": "a-008",
+    "metric": "cpu",
+    "score": 1.7,
+    "severity": "medium",
+    "created_at": "2024-01-15T14:09:14Z",
+    "description": "CPU usage increase in worker nodes",
+    "source": "worker-cluster",
+    "threshold": 75.0,
+    "current_value": 78.9
+  },
+  {
+    "id": "a-009",
+    "metric": "mem",
+    "score": 2.1,
+    "severity": "medium",
+    "created_at": "2024-01-15T14:05:52Z",
+    "description": "Memory usage spike in analytics service",
+    "source": "analytics-service",
+    "threshold": 80.0,
+    "current_value": 84.2
+  },
+  {
+    "id": "a-010",
+    "metric": "error_rate",
+    "score": 1.4,
+    "severity": "low",
+    "created_at": "2024-01-15T14:02:38Z",
+    "description": "Minor error rate increase in notification service",
+    "source": "notification-service",
+    "threshold": 1.5,
+    "current_value": 1.8
+  }
+]
