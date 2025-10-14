@@ -11,11 +11,10 @@
     .portfolio .filters{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:8px 0 16px}
     .portfolio .filters label{font-weight:700}
     .portfolio .grid{grid-template-columns: repeat(auto-fill,minmax(280px,1fr))}
-    .portfolio .card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    .portfolio .card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:10px;flex-wrap:wrap}
     .portfolio .card .repo{display:inline-block;padding:10px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.25)}
     .badge{display:inline-block;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.25);background:rgba(148,163,184,.12);margin-right:6px;margin-top:6px}
     .pill{display:inline-block;padding:8px 12px;border-radius:999px;background:rgba(15,23,42,.6);border:1px solid rgba(148,163,184,.2);font-weight:700}
-    .disabled{opacity:.6;pointer-events:none}
     .small{font-size:12px;color:#94a3b8}
     .card .title{margin-bottom:4px}
     .muted{color:#94a3b8}
@@ -136,17 +135,19 @@
         poster:"./high-volume-recruiter-hire-falcon-poster.webp",
         gif:"./high-volume-recruiter-hire-falcon.webp"
       },
-{ id:"governance", title:"AI Governance Dashboard",
-  summary:"For platform/security leaders: a production LLM proxy with policies-as-code, cost controls, audit trails, and safety guardrails. Centralize prompts, models, and tools behind enforceable rules; capture decisions and spend; ship features faster without losing compliance or observability.",
-  industries:["Platform / IT","Finance & Legal"],
-  caps:["Governance","Guardrails","Compliance","UI & Traces","Agentic"],
-  status:"Ready",
-  codeAccess:"proprietary_saas",
-  page:"https://aurelius-in.github.io/AI-Governance/index.html",
-  repo:null, // no repo link for Proprietary SaaS
-  poster:"./ai-governance-dashboard-poster.webp",
-  gif:"./ai-governance-dashboard.webp"
-},
+
+      { id:"governance", title:"AI Governance Dashboard",
+        summary:"For platform/security leaders: a production LLM proxy with policies-as-code, cost controls, audit trails, and safety guardrails. Centralize prompts, models, and tools behind enforceable rules; capture decisions and spend; ship features faster without losing compliance or observability.",
+        industries:["Platform / IT","Finance & Legal"],
+        caps:["Governance","Guardrails","Compliance","UI & Traces","Agentic"],
+        status:"Ready",
+        codeAccess:"proprietary_saas",
+        page:"https://aurelius-in.github.io/AI-Governance/index.html",
+        repo:null,
+        poster:"./ai-governance-dashboard-poster.webp",
+        gif:"./ai-governance-dashboard.webp"
+      },
+
       { id:"aida", title:"AI Document Agent (aiDa)",
         summary:"For legal/finance/insurers: orchestrates document ingest, classification, extraction, risk checks, and compliance monitoring with live agent traces and audit artifacts. Pairs retrieval and policy controls so reviewers get cited evidence, faster processing, and measurable quality gains.",
         industries:["Finance & Legal","Platform / IT","Insurance"],
@@ -193,7 +194,6 @@
         gif:"https://raw.githubusercontent.com/aurelius-in/agentic-portfolio/main/docs/images/esqa-preview.webp"
       },
 
-      /* UPDATED: images + summary */
       { id:"myriskagent", title:"MyRiskAgent",
         summary:"Agentic risk intelligence for providers and companies. Ingests claims, filings, and OSINT; computes family risk scores with peer-normalized outlier detection; explains drivers via SHAP; exports audit-ready evidence. Stack: FastAPI, Postgres/pgvector or Chroma, DuckDB, Redis, LangGraph, Prometheus/Grafana, OPA.",
         industries:["Finance & Legal","Insurance","Healthcare","Platform / IT"],
@@ -250,7 +250,7 @@
     // Ensure "Agentic" chip present if omitted (keeps your visual consistency)
     PROJS.forEach(p => { if (!p.caps.includes("Agentic")) p.caps.push("Agentic"); });
 
-    // NEW: default codeAccess to open_source if not set (so you don't have to edit each item yet)
+    // Default codeAccess to open_source if not set
     PROJS.forEach(p => { if (!p.codeAccess) p.codeAccess = "open_source"; });
 
     const grid = document.getElementById('grid');
@@ -286,7 +286,6 @@
     }
 
     function fillSelect(selectEl, allLabel, values){
-      // Preserve the first "All ..." option
       selectEl.innerHTML = "";
       const first = document.createElement("option");
       first.value = "all";
@@ -297,7 +296,6 @@
         opt.textContent = v;
         selectEl.appendChild(opt);
       });
-      // Force default to "All ..."
       selectEl.value = "all";
     }
 
@@ -320,8 +318,18 @@
       grid.innerHTML = items.map(p => {
         const caps = p.caps.slice().sort((a,b)=>a.localeCompare(b, undefined, {sensitivity:'base'})).map(t => '<span class="badge">'+t+'</span>').join('');
         const inds = p.industries.slice().sort((a,b)=>a.localeCompare(b, undefined, {sensitivity:'base'})).map(t => '<span class="badge">'+t+'</span>').join('');
-        const link = p.repo ? '<a class="repo" href="'+p.repo+'" target="_blank" rel="noopener">View Repository</a>' : '<span class="repo disabled">Coming Soon</span>';
-        const statusPill = '<span class="pill small">'+p.status+'</span>';
+
+        // Link logic: never show "Coming Soon"
+        let link = "";
+        if (p.codeAccess === 'proprietary_saas' && p.page) {
+          link = '<a class="repo" href="'+p.page+'" target="_blank" rel="noopener">View Product</a>';
+        } else if (p.codeAccess === 'open_source' && p.repo) {
+          link = '<a class="repo" href="'+p.repo+'" target="_blank" rel="noopener">View Repository</a>';
+        }
+
+        // Code access pill
+        const accessLabel = p.codeAccess === 'proprietary_saas' ? 'Proprietary SaaS' : 'Open Source';
+        const accessPill = '<span class="pill small">'+accessLabel+'</span>';
 
         const media = (p.poster || p.gif) ? `
           <div class="proj-media">
@@ -342,7 +350,7 @@
             <div style="margin-top:6px">${caps}</div>
             <div class="foot">
               ${link}
-              ${statusPill}
+              ${accessPill}
             </div>
           </article>
         `;
@@ -389,6 +397,7 @@
         io.observe(img);
       });
     }
+
     // --- Init: build dropdowns from data, bind events, render ---
     populateSelectsFromData();
 
