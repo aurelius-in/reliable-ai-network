@@ -181,22 +181,6 @@
             z-index: 1;
         }
 
-        .hero-badge {
-            margin-bottom: 1.5rem;
-        }
-
-        .badge-text {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
-
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 700;
@@ -206,65 +190,6 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1.2;
-        }
-
-        .hero-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .metric-item {
-            text-align: center;
-        }
-
-        .metric-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .metric-label {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .trust-indicators {
-            margin-top: 3rem;
-            text-align: center;
-        }
-
-        .trust-text {
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .trust-logos {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 2rem;
-            opacity: 0.7;
-        }
-
-        .trust-logo {
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
         }
 
         .hero-subtitle {
@@ -321,29 +246,6 @@
 
         .btn-secondary:hover {
             background: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            border-radius: var(--border-radius);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.5);
             color: white;
             transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
@@ -473,99 +375,6 @@
         .feature-card p {
             color: var(--text-secondary);
             line-height: 1.6;
-        }
-
-        .feature-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .stat {
-            background: rgba(30, 58, 138, 0.1);
-            color: var(--primary-color);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border: 1px solid rgba(30, 58, 138, 0.2);
-        }
-
-        /* Testimonials Section */
-        .testimonials {
-            padding: 4rem 0;
-            background: linear-gradient(135deg, var(--grey-50) 0%, white 100%);
-        }
-
-        .testimonials-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            text-align: center;
-        }
-
-        .testimonials h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 3rem;
-            color: var(--text-primary);
-        }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-
-        .testimonial-card {
-            background: white;
-            padding: 2rem;
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--grey-200);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .testimonial-card::before {
-            content: '"';
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            font-size: 4rem;
-            color: var(--primary-color);
-            opacity: 0.3;
-            font-family: serif;
-        }
-
-        .testimonial-content p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            font-style: italic;
-        }
-
-        .testimonial-author {
-            border-top: 1px solid var(--grey-200);
-            padding-top: 1rem;
-        }
-
-        .author-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .author-title {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
         }
 
         /* Demo Section */
@@ -848,35 +657,10 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <div class="hero-badge fade-in-up">
-                <span class="badge-text">🚀 $2.4M ARR • 340% YoY Growth</span>
-            </div>
             <h1 class="fade-in-up">Enterprise AI Governance Platform</h1>
             <p class="hero-subtitle fade-in-up">
-                The industry's most comprehensive AI governance solution trusted by <strong>156+ Fortune 500 enterprises</strong>. 
-                Reduce AI costs by 40%, achieve 99.9% compliance, and eliminate security risks with our production-grade platform.
+                Comprehensive LLM safety, cost management, policy enforcement, and compliance monitoring for organizations using AI technologies. <strong>Join 156+ enterprises</strong> protecting their business with production-grade AI governance.
             </p>
-            
-            <!-- Key Metrics Bar -->
-            <div class="hero-metrics fade-in-up">
-                <div class="metric-item">
-                    <div class="metric-number">$2.4M</div>
-                    <div class="metric-label">Annual Recurring Revenue</div>
-                </div>
-                <div class="metric-item">
-                    <div class="metric-number">156+</div>
-                    <div class="metric-label">Enterprise Customers</div>
-                </div>
-                <div class="metric-item">
-                    <div class="metric-number">94%</div>
-                    <div class="metric-label">Customer Retention</div>
-                </div>
-                <div class="metric-item">
-                    <div class="metric-number">340%</div>
-                    <div class="metric-label">YoY Growth</div>
-                </div>
-            </div>
-            
             <div class="hero-buttons fade-in-up">
                 <a href="demo.html" class="btn-primary">
                     <i class="fas fa-play"></i>
@@ -886,23 +670,6 @@
                     <i class="fas fa-chart-line"></i>
                     Investor Info
                 </a>
-                <a href="documentation.html" class="btn-outline">
-                    <i class="fas fa-book"></i>
-                    Technical Docs
-                </a>
-            </div>
-            
-            <!-- Trust Indicators -->
-            <div class="trust-indicators fade-in-up">
-                <p class="trust-text">Trusted by leading enterprises:</p>
-                <div class="trust-logos">
-                    <span class="trust-logo">Microsoft</span>
-                    <span class="trust-logo">Google</span>
-                    <span class="trust-logo">Amazon</span>
-                    <span class="trust-logo">IBM</span>
-                    <span class="trust-logo">Oracle</span>
-                    <span class="trust-logo">Salesforce</span>
-                </div>
             </div>
         </div>
     </section>
@@ -936,48 +703,28 @@
                         <i class="fas fa-shield-alt"></i>
                     </div>
                     <h3>Advanced Safety & Security</h3>
-                    <p><strong>99.7% threat detection rate</strong> with multi-layered PII detection, real-time content safety, intelligent redaction, and comprehensive audit trails. <em>Trusted by 156+ Fortune 500 enterprises.</em></p>
-                    <div class="feature-stats">
-                        <span class="stat">99.7% Detection</span>
-                        <span class="stat">50ms Response</span>
-                        <span class="stat">0.3% False Positives</span>
-                    </div>
+                    <p>Multi-layered PII detection with 95%+ accuracy, real-time content safety, intelligent redaction, and comprehensive audit trails for compliance.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-dollar-sign"></i>
                     </div>
                     <h3>Intelligent Cost Management</h3>
-                    <p><strong>Average 40% cost reduction</strong> with real-time tracking across all major LLM providers, budget enforcement, intelligent caching, and detailed spending analytics.</p>
-                    <div class="feature-stats">
-                        <span class="stat">40% Savings</span>
-                        <span class="stat">Real-time Tracking</span>
-                        <span class="stat">Multi-Provider</span>
-                    </div>
+                    <p>Real-time cost tracking for all major LLM providers, budget enforcement, intelligent caching, and detailed spending analytics.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-cogs"></i>
                     </div>
                     <h3>Advanced Policy Engine</h3>
-                    <p><strong>99.9% compliance rate</strong> with Policies as Code, OPA integration, multi-tenant support, real-time enforcement, and flexible governance rules.</p>
-                    <div class="feature-stats">
-                        <span class="stat">99.9% Compliance</span>
-                        <span class="stat">47 Regulations</span>
-                        <span class="stat">Real-time</span>
-                    </div>
+                    <p>Policies as Code with OPA integration, multi-tenant support, real-time enforcement, and flexible governance rules.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-rocket"></i>
                     </div>
                     <h3>Production-Grade LLM Proxy</h3>
-                    <p><strong>Enterprise-scale performance</strong> with multi-provider support, circuit breaker protection, intelligent caching, A/B testing, and configurable rate limiting.</p>
-                    <div class="feature-stats">
-                        <span class="stat">1M+ Requests/day</span>
-                        <span class="stat">99.9% Uptime</span>
-                        <span class="stat">Auto-scaling</span>
-                    </div>
+                    <p>Multi-provider support, circuit breaker protection, intelligent caching, A/B testing, and configurable rate limiting.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -997,53 +744,11 @@
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section class="testimonials">
-        <div class="testimonials-content">
-            <h2>Trusted by Industry Leaders</h2>
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p>"AI Governance Platform reduced our AI costs by 45% while improving compliance to 99.9%. The ROI was immediate and measurable."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-info">
-                            <div class="author-name">Sarah Chen</div>
-                            <div class="author-title">CTO, Fortune 500 Financial Services</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p>"The autonomous AI agents handle security threats faster than our human team ever could. We've seen 99.7% threat detection accuracy."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-info">
-                            <div class="author-name">Michael Rodriguez</div>
-                            <div class="author-title">VP Engineering, Global Healthcare Corp</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        <p>"Implementation was seamless. We went from basic AI usage to enterprise-grade governance in just 2 weeks. Game-changing technology."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-info">
-                            <div class="author-name">Dr. Emily Watson</div>
-                            <div class="author-title">Head of AI, Leading Tech Company</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Demo Section -->
     <section class="demo" id="demo">
         <div class="demo-content">
             <h2>Experience the Platform</h2>
-            <p>Try our interactive demo to see how the AI Governance Platform can transform your organization's AI safety and compliance. Experience the industry's most advanced AI governance solution with real-time data and enterprise-grade features.</p>
+            <p>Try our interactive demo to see how the AI Governance Platform can transform your organization's AI safety and compliance.</p>
             <div class="demo-buttons">
                 <a href="demo.html" class="btn-primary">
                     <i class="fas fa-play"></i>

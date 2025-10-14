@@ -293,6 +293,8 @@
         .demo-tab-content {
             display: none;
             padding: 2rem;
+            background: white;
+            border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
         }
 
         .demo-tab-content.active {
@@ -407,7 +409,11 @@
             align-items: center;
             height: 200px;
             font-size: 1.125rem;
-            color: var(--text-secondary);
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--grey-50) 0%, white 100%);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--grey-200);
+            margin: 1rem 0;
         }
 
         .loading i {
