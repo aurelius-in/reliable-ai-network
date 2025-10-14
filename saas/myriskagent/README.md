@@ -154,12 +154,21 @@ docs/demo/
 ## 🚀 Getting Started
 
 ### Quick Demo
-1. **Open** `index.html` in your browser (this is the actual working UI from the main app!)
-2. **Experience** the 5-second splash screen with the MyRiskAgent logo
-3. **Explore** the different tabs and features with rich mock data
-4. **Interact** with the AI assistant and risk analytics
-5. **Review** the comprehensive architecture documentation
-6. **Contact** us for a personalized demo with your data
+
+**Option 1: Local Server (Recommended)**
+1. **Run the server**: Double-click `serve.bat` (Windows) or `./serve.sh` (Mac/Linux)
+2. **Or manually**: Run `python serve.py` in the demo folder
+3. **Open browser**: The demo will automatically open at http://localhost:8080
+4. **Experience** the 5-second splash screen with the MyRiskAgent logo
+5. **Explore** the different tabs and features with rich mock data
+6. **Interact** with the AI assistant and risk analytics
+7. **Review** the comprehensive architecture documentation
+
+**Option 2: Direct File (Limited)**
+- **Note**: Due to browser security restrictions, opening `index.html` directly may show a black screen
+- **For best results**: Use the local server option above
+
+**Why a server is needed**: The demo uses modern ES modules which require HTTP(S) protocol, not file:// protocol.
 
 **Note**: This demo uses the actual production UI components and styling from the main MyRiskAgent application, ensuring you see exactly what the real system looks like.
 
