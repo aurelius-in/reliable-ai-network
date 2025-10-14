@@ -1,0 +1,426 @@
+{
+  "overview": {
+    "combinedIndex": 44,
+    "financialRisk": 42,
+    "complianceRisk": 35,
+    "operationalRisk": 50,
+    "onlineComponent": 2.3,
+    "trend": [40, 42, 38, 45, 44, 41, 43, 44, 42, 46, 44, 45],
+    "lastUpdated": "2024-01-15T10:30:00Z",
+    "confidence": 94
+  },
+  "scores": [
+    {
+      "metric": "Financial Health Risk",
+      "score": 42,
+      "confidence": 95,
+      "trend": "down",
+      "lastUpdated": "2024-01-15",
+      "description": "Based on leverage ratios, cash flow, and debt service coverage"
+    },
+    {
+      "metric": "Compliance & Reputation",
+      "score": 35,
+      "confidence": 88,
+      "trend": "stable",
+      "lastUpdated": "2024-01-15",
+      "description": "Regulatory compliance, sanctions exposure, and adverse media"
+    },
+    {
+      "metric": "Operational Risk",
+      "score": 50,
+      "confidence": 92,
+      "trend": "up",
+      "lastUpdated": "2024-01-15",
+      "description": "Provider outliers, billing patterns, and operational efficiency"
+    },
+    {
+      "metric": "Combined Index",
+      "score": 44,
+      "confidence": 94,
+      "trend": "stable",
+      "lastUpdated": "2024-01-15",
+      "description": "Weighted combination of all risk factors"
+    }
+  ],
+  "drivers": {
+    "waterfall": [
+      { "category": "Base Risk", "value": 30, "color": "#333333" },
+      { "category": "Financial Factors", "value": 12, "color": "#B30700" },
+      { "category": "Compliance Issues", "value": -5, "color": "#4CAF50" },
+      { "category": "Operational Concerns", "value": 7, "color": "#FF9800" }
+    ],
+    "fraudAnalysis": {
+      "einReuse": 12.5,
+      "longStayRate": 8.3,
+      "weekendBilling": 15.2,
+      "amountOutliers": 23,
+      "topOutlier": "MedCorp Services",
+      "contributions": [
+        { "name": "EIN Reuse", "value": 12.5, "color": "#B30700" },
+        { "name": "Long Stay", "value": 8.3, "color": "#FF5722" },
+        { "name": "Weekend Billing", "value": 15.2, "color": "#FF9800" },
+        { "name": "Amount Outliers", "value": 23.0, "color": "#F44336" }
+      ]
+    },
+    "recommendations": [
+      "Review provider MedCorp Services for billing patterns",
+      "Investigate weekend billing anomalies",
+      "Verify EIN usage across multiple providers",
+      "Schedule audit for top 5 outliers"
+    ]
+  },
+  "documents": {
+    "searchResults": [
+      {
+        "id": 1,
+        "title": "SEC Filing 10-K Q4 2023",
+        "snippet": "Financial performance and risk factors including improved leverage ratios and expansion of outpatient services...",
+        "source": "SEC EDGAR",
+        "date": "2024-01-10",
+        "url": "#",
+        "relevance": 0.95
+      },
+      {
+        "id": 2,
+        "title": "News: Regulatory Compliance Update",
+        "snippet": "New regulations affecting healthcare providers with updated compliance requirements and reporting standards...",
+        "source": "Healthcare News",
+        "date": "2024-01-12",
+        "url": "#",
+        "relevance": 0.87
+      },
+      {
+        "id": 3,
+        "title": "OFAC Sanctions List Update",
+        "snippet": "Updated sanctions list includes new entities with enhanced screening requirements for financial institutions...",
+        "source": "OFAC",
+        "date": "2024-01-08",
+        "url": "#",
+        "relevance": 0.78
+      },
+      {
+        "id": 4,
+        "title": "EPA Environmental Enforcement",
+        "snippet": "Recent environmental enforcement actions affecting healthcare facilities with new compliance requirements...",
+        "source": "EPA ECHO",
+        "date": "2024-01-05",
+        "url": "#",
+        "relevance": 0.72
+      },
+      {
+        "id": 5,
+        "title": "OSHA Workplace Safety Report",
+        "snippet": "Workplace safety inspection results showing improved safety metrics and reduced incident rates...",
+        "source": "OSHA",
+        "date": "2024-01-03",
+        "url": "#",
+        "relevance": 0.68
+      }
+    ],
+    "totalCount": 1247,
+    "lastUpdated": "2024-01-15T09:45:00Z"
+  },
+  "ask": {
+    "sampleQuestions": [
+      "What are the main risk factors for this organization?",
+      "Show me recent compliance issues",
+      "Analyze provider billing patterns",
+      "What sanctions exposure exists?",
+      "How has financial health changed over time?",
+      "What are the biggest operational risks?",
+      "Show me recent adverse media coverage",
+      "Analyze fraud detection patterns"
+    ],
+    "recentQueries": [
+      {
+        "question": "What are the main risk factors?",
+        "timestamp": "2024-01-15T10:15:00Z",
+        "response": "Based on current data, the main risk factors are operational concerns (50 score) and financial health (42 score). Key drivers include provider billing anomalies and moderate leverage ratios."
+      },
+      {
+        "question": "Show compliance issues",
+        "timestamp": "2024-01-15T09:30:00Z",
+        "response": "No active compliance violations detected. Recent regulatory updates include new healthcare reporting requirements. OFAC screening shows no sanctions exposure."
+      }
+    ]
+  },
+  "providers": [
+    {
+      "id": 1,
+      "name": "MedCorp Services",
+      "industry": "Healthcare",
+      "region": "North America",
+      "totalAmount": 1250000,
+      "avgAmount": 2500,
+      "claimsCount": 500,
+      "outlierScore": 85,
+      "lastActivity": "2024-01-15"
+    },
+    {
+      "id": 2,
+      "name": "TechHealth Solutions",
+      "industry": "Technology",
+      "region": "Europe",
+      "totalAmount": 890000,
+      "avgAmount": 1780,
+      "claimsCount": 500,
+      "outlierScore": 78,
+      "lastActivity": "2024-01-14"
+    },
+    {
+      "id": 3,
+      "name": "FinanceMed Inc",
+      "industry": "Finance",
+      "region": "Asia",
+      "totalAmount": 2100000,
+      "avgAmount": 4200,
+      "claimsCount": 500,
+      "outlierScore": 72,
+      "lastActivity": "2024-01-13"
+    },
+    {
+      "id": 4,
+      "name": "Global Health Partners",
+      "industry": "Healthcare",
+      "region": "North America",
+      "totalAmount": 1560000,
+      "avgAmount": 3120,
+      "claimsCount": 500,
+      "outlierScore": 68,
+      "lastActivity": "2024-01-12"
+    },
+    {
+      "id": 5,
+      "name": "Digital Care Systems",
+      "industry": "Technology",
+      "region": "Europe",
+      "totalAmount": 720000,
+      "avgAmount": 1440,
+      "claimsCount": 500,
+      "outlierScore": 65,
+      "lastActivity": "2024-01-11"
+    },
+    {
+      "id": 6,
+      "name": "MedFinance Corp",
+      "industry": "Finance",
+      "region": "Asia",
+      "totalAmount": 1890000,
+      "avgAmount": 3780,
+      "claimsCount": 500,
+      "outlierScore": 62,
+      "lastActivity": "2024-01-10"
+    }
+  ],
+  "providerOutliers": [
+    {
+      "id": 1,
+      "name": "MedCorp Services",
+      "score": 85,
+      "industry": "Healthcare",
+      "region": "North America",
+      "claims": 500,
+      "reason": "High weekend billing percentage (23%) and unusual EIN patterns",
+      "lastUpdated": "2024-01-15"
+    },
+    {
+      "id": 2,
+      "name": "TechHealth Solutions",
+      "score": 78,
+      "industry": "Technology",
+      "region": "Europe",
+      "claims": 450,
+      "reason": "Above-average claim amounts and long-stay rate anomalies",
+      "lastUpdated": "2024-01-14"
+    },
+    {
+      "id": 3,
+      "name": "FinanceMed Inc",
+      "score": 72,
+      "industry": "Finance",
+      "region": "Asia",
+      "claims": 320,
+      "reason": "Unusual billing patterns and amount/day outliers",
+      "lastUpdated": "2024-01-13"
+    }
+  ],
+  "status": {
+    "uptime": "99.9%",
+    "responseTime": 245,
+    "documentsProcessed": 15420,
+    "activeUsers": 127,
+    "health": [
+      { "name": "API Server", "status": "healthy", "responseTime": 45 },
+      { "name": "Database", "status": "healthy", "responseTime": 12 },
+      { "name": "Vector Store", "status": "healthy", "responseTime": 89 },
+      { "name": "Cache", "status": "warning", "responseTime": 156 },
+      { "name": "Message Queue", "status": "healthy", "responseTime": 23 }
+    ],
+    "activity": [
+      { "time": "10:45", "message": "New risk assessment completed for organization ACME", "type": "info" },
+      { "time": "10:42", "message": "Provider outlier detected: MedCorp Services", "type": "warning" },
+      { "time": "10:38", "message": "Document ingested from SEC EDGAR", "type": "info" },
+      { "time": "10:35", "message": "User login from IP 192.168.1.100", "type": "info" },
+      { "time": "10:30", "message": "Risk scores updated for 5 organizations", "type": "info" },
+      { "time": "10:25", "message": "OFAC sanctions list updated", "type": "info" },
+      { "time": "10:20", "message": "Batch processing completed: 150 documents", "type": "info" }
+    ],
+    "metrics": {
+      "requestsPerMinute": 245,
+      "averageResponseTime": 245,
+      "errorRate": 0.02,
+      "memoryUsage": 68,
+      "cpuUsage": 45
+    }
+  },
+  "evidence": {
+    "executiveSummary": {
+      "title": "Executive Risk Assessment",
+      "date": "2024-01-15",
+      "summary": "The client shows solid operational performance with manageable compliance exposure. Financial signals are stable with no critical adverse media detected in the last 60 days.",
+      "keyFindings": [
+        "SEC filing indicates improved leverage ratio YoY",
+        "Press release confirms expansion of outpatient services",
+        "Provider billing trend: minor weekend billing increase within expected bounds",
+        "No active sanctions exposure detected"
+      ],
+      "recommendations": [
+        "Continue monitoring provider billing patterns",
+        "Schedule quarterly compliance review",
+        "Maintain current risk management protocols"
+      ]
+    },
+    "references": [
+      {
+        "title": "Q4 Results",
+        "description": "Internal analyst summary and SEC 10-K excerpt",
+        "type": "document",
+        "url": "#"
+      },
+      {
+        "title": "Litigation Update",
+        "description": "Legal counsel memo (non-material impact)",
+        "type": "document",
+        "url": "#"
+      },
+      {
+        "title": "Provider Analytics",
+        "description": "Comprehensive provider risk analysis",
+        "type": "report",
+        "url": "#"
+      }
+    ]
+  },
+  "pricing": {
+    "tiers": [
+      {
+        "name": "Starter",
+        "price": 299,
+        "period": "month",
+        "features": [
+          "Up to 10 organizations",
+          "Basic risk scoring",
+          "Standard compliance checks",
+          "Email support",
+          "Monthly reports"
+        ],
+        "limits": {
+          "organizations": 10,
+          "documentsPerMonth": 1000,
+          "apiCalls": 10000
+        }
+      },
+      {
+        "name": "Professional",
+        "price": 799,
+        "period": "month",
+        "features": [
+          "Up to 50 organizations",
+          "Advanced risk scoring",
+          "Real-time compliance monitoring",
+          "Priority support",
+          "Custom reports",
+          "API access",
+          "White-label options"
+        ],
+        "limits": {
+          "organizations": 50,
+          "documentsPerMonth": 10000,
+          "apiCalls": 100000
+        },
+        "popular": true
+      },
+      {
+        "name": "Enterprise",
+        "price": 1999,
+        "period": "month",
+        "features": [
+          "Unlimited organizations",
+          "AI-powered risk analysis",
+          "Custom integrations",
+          "Dedicated support",
+          "Advanced analytics",
+          "Full API access",
+          "On-premise deployment",
+          "Custom training"
+        ],
+        "limits": {
+          "organizations": "unlimited",
+          "documentsPerMonth": "unlimited",
+          "apiCalls": "unlimited"
+        }
+      }
+    ],
+    "addOns": [
+      {
+        "name": "AI Risk Agents",
+        "price": 199,
+        "period": "month",
+        "description": "Advanced AI agents for automated risk detection and analysis"
+      },
+      {
+        "name": "Custom Integrations",
+        "price": 5000,
+        "period": "one-time",
+        "description": "Custom integration with your existing systems"
+      },
+      {
+        "name": "Dedicated Support",
+        "price": 999,
+        "period": "month",
+        "description": "24/7 dedicated support team"
+      }
+    ]
+  },
+  "competitors": [
+    {
+      "name": "RiskIQ",
+      "price": 1200,
+      "features": ["Basic risk monitoring", "Standard reports", "Email support"],
+      "rating": 4.2,
+      "notes": "Limited AI capabilities, basic reporting"
+    },
+    {
+      "name": "Recorded Future",
+      "price": 2500,
+      "features": ["Advanced threat intel", "Custom dashboards", "API access"],
+      "rating": 4.5,
+      "notes": "Expensive, complex setup, limited healthcare focus"
+    },
+    {
+      "name": "IBM Security",
+      "price": 3000,
+      "features": ["Enterprise security", "AI analytics", "24/7 support"],
+      "rating": 4.3,
+      "notes": "High cost, complex implementation, generic solution"
+    }
+  ],
+  "marketData": {
+    "marketSize": 12.8,
+    "growthRate": 18.5,
+    "competitors": 150,
+    "fundingRaised": 2.3,
+    "lastUpdated": "2024-01-15"
+  }
+}
