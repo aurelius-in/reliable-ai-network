@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MyRiskAgent – Agentic Risk Analysis Platform by Reliable AI Network">
+    <meta name="theme-color" content="#000000">
+    <title>MyRiskAgent - AI-Powered Risk Intelligence</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Century+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* MyRiskAgent Noir Theme */
+        :root {
+            --mra-red: #B30700;
+            --mra-yellow: #F1A501;
+            --mra-black: #000000;
+            --font-heading: 'Special Elite', serif;
+            --font-body: 'Century Gothic', Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--mra-black);
+            color: var(--mra-yellow);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--mra-red);
+            font-family: var(--font-heading);
+        }
+
+        a {
+            color: var(--mra-yellow);
+            text-decoration: none;
+        }
+
+        mark {
+            background: #b3070059;
+            color: var(--mra-yellow);
+            padding: 0 2px;
+        }
+
+        /* Splash Screen */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--mra-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #splash img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* App Container */
+        #app {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        /* App Bar */
+        .app-bar {
+            background: var(--mra-black);
+            border-bottom: 2px solid var(--mra-red);
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .app-title {
+            font-family: var(--font-heading);
+            color: var(--mra-red);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .org-selector {
+            background: transparent;
+            color: var(--mra-yellow);
+            border: 1px solid var(--mra-red);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: var(--font-body);
+            cursor: pointer;
+        }
+
+        /* Navigation Tabs */
+        .tabs-container {
+            background: var(--mra-black);
+            border-bottom: 1px solid #333;
+        }
+
+        .tabs {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .tab {
+            background: transparent;
+            color: var(--mra-yellow);
+            border: none;
+            padding: 16px 24px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 14px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: rgba(179, 7, 0, 0.1);
+        }
+
+        .tab.active {
+            color: var(--mra-red);
+            border-bottom-color: var(--mra-red);
+            background: rgba(179, 7, 0, 0.05);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Overview Page */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: #111111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .risk-gauge {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .gauge-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .gauge-low { background: conic-gradient(green 0deg 120deg, #333 120deg 360deg); }
+        .gauge-medium { background: conic-gradient(yellow 0deg 240deg, #333 240deg 360deg); }
+        .gauge-high { background: conic-gradient(red 0deg 300deg, #333 300deg 360deg); }
+
+        .gauge-text {
+            position: absolute;
+            color: white;
+            font-family: var(--font-heading);
+        }
+
+        .sparkline {
+            height: 60px;
+            background: linear-gradient(90deg, var(--mra-red) 0%, var(--mra-yellow) 50%, var(--mra-red) 100%);
+            border-radius: 4px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sparkline::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* What If Panel */
+        .what-if-panel {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid var(--mra-red);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .what-if-title {
+            color: var(--mra-red);
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .what-if-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 16px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            color: var(--mra-yellow);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            background: #333;
+            border: 1px solid #555;
+            color: var(--mra-yellow);
+            padding: 12px;
+            border-radius: 4px;
+            font-family: var(--font-body);
+        }
+
+        .btn {
+            background: var(--mra-red);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #d40800;
+        }
+
+        /* Documents Section */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .document-card {
+            background: #111111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .document-card:hover {
+            border-color: var(--mra-red);
+            transform: translateY(-2px);
+        }
+
+        .document-title {
+            color: var(--mra-red);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .document-meta {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .document-snippet {
+            color: var(--mra-yellow);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                padding: 0 8px;
+            }
+
+            .tab {
+                white-space: nowrap;
+                padding: 12px 16px;
+                font-size: 12px;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+
+            .what-if-form {
+                grid-template-columns: 1fr;
+            }
+
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .app-bar {
+                padding: 0 8px;
+            }
+
+            .app-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                height: 30px;
+            }
+
+            .app-title {
+                font-size: 1rem;
+            }
+
+            .gauge-circle {
+                width: 120px;
+                height: 120px;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: #111111;
+            border-top: 1px solid #333;
+            padding: 20px;
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--mra-red);
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash">
+        <img src="./assets/mra-logo.gif" alt="MyRiskAgent" />
+    </div>
+
+    <!-- Main App -->
+    <div id="app">
+        <!-- App Bar -->
+        <div class="app-bar">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <img src="./assets/mra-banner-sm.png" alt="MyRiskAgent" class="logo" />
+                <div class="app-title">MyRiskAgent</div>
+            </div>
+            <select class="org-selector" id="orgSelector">
+                <option value="demo-org">Demo Organization</option>
+                <option value="acme-corp">ACME Corporation</option>
+                <option value="health-systems">Health Systems Inc</option>
+            </select>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" data-tab="overview">Overview</button>
+                <button class="tab" data-tab="scores">Scores</button>
+                <button class="tab" data-tab="drivers">Drivers</button>
+                <button class="tab" data-tab="documents">Documents</button>
+                <button class="tab" data-tab="ask">Ask</button>
+                <button class="tab" data-tab="providers">Providers</button>
+                <button class="tab" data-tab="status">Status</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overview">
+                <h2>Risk Dashboard</h2>
+                <div class="overview-grid">
+                    <div class="card">
+                        <h3>Combined Risk Score</h3>
+                        <div class="risk-gauge">
+                            <div class="gauge-circle gauge-medium">
+                                <div class="gauge-text">72</div>
+                            </div>
+                            <p>Medium Risk</p>
+                        </div>
+                        <div class="sparkline"></div>
+                        <p style="text-align: center; margin-top: 8px;">↑ 5% from last month</p>
+                    </div>
+                    <div class="card">
+                        <h3>Family Risk Score</h3>
+                        <div class="risk-gauge">
+                            <div class="gauge-circle gauge-low">
+                                <div class="gauge-text">34</div>
+                            </div>
+                            <p>Low Risk</p>
+                        </div>
+                        <div class="sparkline"></div>
+                        <p style="text-align: center; margin-top: 8px;">↓ 2% from last month</p>
+                    </div>
+                </div>
+
+                <!-- What If Panel -->
+                <div class="what-if-panel">
+                    <h3 class="what-if-title">What If Analysis</h3>
+                    <div class="what-if-form">
+                        <div class="form-group">
+                            <label class="form-label">Scenario</label>
+                            <select class="form-input">
+                                <option>Increase provider volume by 20%</option>
+                                <option>Add new service line</option>
+                                <option>Regulatory changes</option>
+                                <option>Market expansion</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Timeframe</label>
+                            <select class="form-input">
+                                <option>3 months</option>
+                                <option>6 months</option>
+                                <option>12 months</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="runWhatIf()">Analyze</button>
+                    </div>
+                </div>
+
+                <!-- Pinned Documents -->
+                <h3>Pinned Documents</h3>
+                <div class="documents-grid">
+                    <div class="document-card" onclick="viewDocument('executive-brief')">
+                        <div class="document-title">Executive Brief</div>
+                        <div class="document-meta">Generated: Today | Risk Analysis</div>
+                        <div class="document-snippet">The client shows solid operational performance with manageable compliance exposure. Financial signals are stable. No critical adverse media detected in the last 60 days.</div>
+                    </div>
+                    <div class="document-card" onclick="viewDocument('q4-results')">
+                        <div class="document-title">Q4 Results Summary</div>
+                        <div class="document-meta">Internal Report | Finance</div>
+                        <div class="document-snippet">SEC filing (10-K) indicates improved leverage ratio YoY. Press release confirms expansion of outpatient services.</div>
+                    </div>
+                    <div class="document-card" onclick="viewDocument('litigation-update')">
+                        <div class="document-title">Litigation Update</div>
+                        <div class="document-meta">Legal Counsel | Compliance</div>
+                        <div class="document-snippet">Legal counsel memo indicates non-material impact from ongoing litigation. Settlement negotiations progressing.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scores Tab -->
+            <div class="tab-content" id="scores">
+                <h2>Risk Scores & Analytics</h2>
+                <div class="overview-grid">
+                    <div class="card">
+                        <h3>Financial Risk</h3>
+                        <div class="risk-gauge">
+                            <div class="gauge-circle gauge-medium">
+                                <div class="gauge-text">68</div>
+                            </div>
+                        </div>
+                        <p>Stable financial position with moderate leverage concerns</p>
+                    </div>
+                    <div class="card">
+                        <h3>Operational Risk</h3>
+                        <div class="risk-gauge">
+                            <div class="gauge-circle gauge-low">
+                                <div class="gauge-text">42</div>
+                            </div>
+                        </div>
+                        <p>Strong operational controls and compliance framework</p>
+                    </div>
+                    <div class="card">
+                        <h3>Regulatory Risk</h3>
+                        <div class="risk-gauge">
+                            <div class="gauge-circle gauge-medium">
+                                <div class="gauge-text">75</div>
+                            </div>
+                        </div>
+                        <p>Increased regulatory scrutiny in healthcare sector</p>
+                    </div>
+                    <div class="card">
+                        <h3>Reputational Risk</h3>
+                        <div class="risk-gauge">
+                            <div class="gauge-circle gauge-low">
+                                <div class="gauge-text">28</div>
+                            </div>
+                        </div>
+                        <p>Positive media sentiment and strong stakeholder relationships</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drivers Tab -->
+            <div class="tab-content" id="drivers">
+                <h2>Risk Drivers Analysis</h2>
+                <div class="card">
+                    <h3>Top Risk Factors</h3>
+                    <div style="margin: 20px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>Provider Billing Anomalies</span>
+                            <div style="background: var(--mra-red); height: 8px; width: 75%; border-radius: 4px;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>Regulatory Compliance</span>
+                            <div style="background: var(--mra-yellow); height: 8px; width: 60%; border-radius: 4px;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>Market Competition</span>
+                            <div style="background: var(--mra-yellow); height: 8px; width: 45%; border-radius: 4px;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>Technology Infrastructure</span>
+                            <div style="background: green; height: 8px; width: 30%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Tab -->
+            <div class="tab-content" id="documents">
+                <h2>Document Repository</h2>
+                <div class="documents-grid">
+                    <div class="document-card">
+                        <div class="document-title">SEC 10-K Filing</div>
+                        <div class="document-meta">SEC Edgar | Financial Report</div>
+                        <div class="document-snippet">Annual report filed with the Securities and Exchange Commission containing comprehensive financial information.</div>
+                    </div>
+                    <div class="document-card">
+                        <div class="document-title">OSHA Compliance Report</div>
+                        <div class="document-meta">OSHA | Safety Report</div>
+                        <div class="document-snippet">Workplace safety compliance assessment and recommendations for improvement.</div>
+                    </div>
+                    <div class="document-card">
+                        <div class="document-title">OFAC Sanctions Check</div>
+                        <div class="document-meta">OFAC | Compliance</div>
+                        <div class="document-snippet">Sanctions screening results for all business partners and stakeholders.</div>
+                    </div>
+                    <div class="document-card">
+                        <div class="document-title">Media Analysis Report</div>
+                        <div class="document-meta">GDELT | News Analysis</div>
+                        <div class="document-snippet">Comprehensive media sentiment analysis and adverse news monitoring.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ask Tab -->
+            <div class="tab-content" id="ask">
+                <h2>AI Assistant</h2>
+                <div class="card">
+                    <h3>Ask MyRiskAgent</h3>
+                    <div style="margin: 20px 0;">
+                        <textarea class="form-input" rows="4" placeholder="Ask about risk factors, compliance issues, or business insights..."></textarea>
+                        <button class="btn" style="margin-top: 12px;">Ask Question</button>
+                    </div>
+                    <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; margin-top: 20px;">
+                        <h4 style="color: var(--mra-red); margin-bottom: 12px;">Sample Questions:</h4>
+                        <ul style="color: var(--mra-yellow); line-height: 1.6;">
+                            <li>"What are the main risk drivers for this organization?"</li>
+                            <li>"How does our compliance score compare to industry benchmarks?"</li>
+                            <li>"What regulatory changes should we be monitoring?"</li>
+                            <li>"Show me the latest adverse media mentions"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Providers Tab -->
+            <div class="tab-content" id="providers">
+                <h2>Provider Analytics</h2>
+                <div class="overview-grid">
+                    <div class="card">
+                        <h3>Provider Outliers</h3>
+                        <div style="margin: 20px 0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Dr. Smith - Cardiology</span>
+                                <span style="color: var(--mra-red);">High Risk</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Dr. Johnson - Orthopedics</span>
+                                <span style="color: var(--mra-yellow);">Medium Risk</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Dr. Williams - Internal Med</span>
+                                <span style="color: green;">Low Risk</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Billing Patterns</h3>
+                        <div class="sparkline" style="height: 100px; margin: 20px 0;"></div>
+                        <p style="text-align: center;">Weekend billing shows 15% increase</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Tab -->
+            <div class="tab-content" id="status">
+                <h2>System Status</h2>
+                <div class="card">
+                    <h3>Service Health</h3>
+                    <div style="margin: 20px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>API Gateway</span>
+                            <span style="color: green;">✓ Operational</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>Risk Engine</span>
+                            <span style="color: green;">✓ Operational</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>AI Agents</span>
+                            <span style="color: green;">✓ Operational</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>Vector Database</span>
+                            <span style="color: green;">✓ Operational</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span>External APIs</span>
+                            <span style="color: var(--mra-yellow);">⚠ Monitoring</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 24px;">
+                    <h3>Performance Metrics</h3>
+                    <div style="margin: 20px 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Response Time</span>
+                            <span style="color: green;">145ms avg</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Uptime</span>
+                            <span style="color: green;">99.9%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Data Processing</span>
+                            <span style="color: green;">2.3M records/hour</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>MyRiskAgent by <a href="https://reliableai.network" target="_blank">Reliable AI Network</a> | 
+            <a href="./architecture/solution-overview.md" target="_blank">Architecture</a> | 
+            <a href="./architecture/investor-analysis.md" target="_blank">Investment</a></p>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="./js/data.js"></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/ui.js"></script>
+</body>
+</html>
