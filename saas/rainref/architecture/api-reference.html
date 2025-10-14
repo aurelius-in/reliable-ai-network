@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RainRef - API Reference</title>
+    <link rel="icon" href="../rr-black-trans.png">
+    <style>
+        :root {
+            --bg: #ffffff; --fg: #000000; --panel: #f7f7f7; --hair: #e5e5e5;
+            --muted: #444444; --primary: #0066cc; --success: #28a745; --warning: #ffc107; --danger: #dc3545;
+        }
+        :root[data-theme="dark"] {
+            --bg: #000000; --fg: #ffffff; --panel: #0d0d0d; --hair: #222222;
+            --muted: #cccccc;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); color: var(--fg); line-height: 1.6; padding: 2rem;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .nav { margin-bottom: 2rem; }
+        .nav a { 
+            color: var(--primary); 
+            text-decoration: none; 
+            margin-right: 1rem; 
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--hair);
+            border-radius: 4px;
+        }
+        .nav a:hover { background: var(--panel); }
+        
+        .section {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--hair);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section h3 {
+            color: var(--fg);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .endpoint {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .method {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        
+        .method-get { background: #e8f5e8; color: #2e7d32; }
+        .method-post { background: #e3f2fd; color: #1565c0; }
+        .method-put { background: #fff8e1; color: #f57c00; }
+        .method-delete { background: #ffebee; color: #c62828; }
+        
+        .endpoint-url {
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .endpoint-description {
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+        
+        .code-block {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover { text-decoration: underline; }
+        
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .parameter-table th,
+        .parameter-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--hair);
+        }
+        
+        .parameter-table th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--fg);
+        }
+        
+        .parameter-table tr:hover {
+            background: var(--panel);
+        }
+        
+        .auth-section {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--success);
+        }
+        
+        .auth-section h4 {
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+        
+        .rate-limit {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .rate-limit h4 {
+            color: var(--warning);
+            margin-bottom: 0.5rem;
+        }
+        
+        .response-example {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .response-example h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-code {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-200 { background: #e8f5e8; color: #2e7d32; }
+        .status-201 { background: #e8f5e8; color: #2e7d32; }
+        .status-400 { background: #ffebee; color: #c62828; }
+        .status-401 { background: #ffebee; color: #c62828; }
+        .status-403 { background: #ffebee; color: #c62828; }
+        .status-404 { background: #ffebee; color: #c62828; }
+        .status-500 { background: #ffebee; color: #c62828; }
+        
+        .sdk-section {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .sdk-section h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--hair);
+            margin-bottom: 1rem;
+        }
+        
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: var(--muted);
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Back to RainRef Demo</a>
+        
+        <div class="header">
+            <h1>📚 RainRef API Reference</h1>
+            <p>Comprehensive API Documentation for Enterprise Integration</p>
+        </div>
+        
+        <nav class="nav">
+            <a href="system-overview.html">System Overview</a>
+            <a href="security-model.html">Security Model</a>
+            <a href="deployment-guide.html">Deployment Guide</a>
+            <a href="api-reference.html">API Reference</a>
+        </nav>
+
+        <div class="section">
+            <h2>API Overview</h2>
+            <p>RainRef provides a comprehensive REST API for integrating with enterprise support systems. The API is built on FastAPI with automatic OpenAPI documentation, type safety, and enterprise-grade security.</p>
+            
+            <div class="auth-section">
+                <h4>🔐 Authentication</h4>
+                <p>All API endpoints require authentication using one of the following methods:</p>
+                <ul>
+                    <li><strong>API Key:</strong> Include <code>X-API-Key</code> header</li>
+                    <li><strong>JWT Token:</strong> Include <code>Authorization: Bearer &lt;token&gt;</code> header</li>
+                    <li><strong>OAuth 2.0:</strong> Include <code>Authorization: Bearer &lt;access_token&gt;</code> header</li>
+                </ul>
+            </div>
+            
+            <div class="rate-limit">
+                <h4>⏱️ Rate Limiting</h4>
+                <p>API requests are rate limited to ensure fair usage:</p>
+                <ul>
+                    <li><strong>Standard Tier:</strong> 1,000 requests/hour per API key</li>
+                    <li><strong>Enterprise Tier:</strong> 10,000 requests/hour per API key</li>
+                    <li><strong>Unlimited Tier:</strong> No rate limits</li>
+                </ul>
+                <p>Rate limit headers are included in all responses: <code>X-RateLimit-Limit</code>, <code>X-RateLimit-Remaining</code>, <code>X-RateLimit-Reset</code></p>
+            </div>
+            
+            <div class="sdk-section">
+                <h4>🛠️ SDKs</h4>
+                <p>Official SDKs are available for popular programming languages:</p>
+                <ul>
+                    <li><strong>Python:</strong> <code>pip install rainref</code></li>
+                    <li><strong>TypeScript/JavaScript:</strong> <code>npm install @rainref/sdk</code></li>
+                    <li><strong>Go:</strong> <code>go get github.com/rainref/go-sdk</code></li>
+                    <li><strong>Java:</strong> Available in Maven Central</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Ref Events & Tickets</h2>
+            <p>Core endpoints for ingesting and managing support events and tickets.</p>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-url">/ref/events</span>
+                </div>
+                <div class="endpoint-description">Ingest a new support event from any external system</div>
+                
+                <h4>Request Body</h4>
+                <div class="code-block">{
+  "source": "zendesk",
+  "channel": "support",
+  "text": "Payment processing is failing intermittently",
+  "user_ref": "user_12345",
+  "product": "billing",
+  "metadata": {
+    "ticket_id": "ZD-12345",
+    "priority": "high",
+    "tags": ["payment", "urgent"]
+  }
+}</div>
+                
+                <h4>Response</h4>
+                <div class="response-example">
+                    <h4><span class="status-code status-201">201 Created</span></h4>
+                    <div class="code-block">{
+  "id": "evt_abc123",
+  "source": "zendesk",
+  "channel": "support",
+  "status": "received",
+  "received_at": "2024-01-15T10:30:00Z",
+  "processing_time_ms": 45
+}</div>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-url">/ref/events</span>
+                </div>
+                <div class="endpoint-description">List support events with filtering and pagination</div>
+                
+                <h4>Query Parameters</h4>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>page</td>
+                            <td>integer</td>
+                            <td>No</td>
+                            <td>Page number (default: 1)</td>
+                        </tr>
+                        <tr>
+                            <td>limit</td>
+                            <td>integer</td>
+                            <td>No</td>
+                            <td>Items per page (default: 20, max: 100)</td>
+                        </tr>
+                        <tr>
+                            <td>source</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by source (zendesk, intercom, github, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td>channel</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by channel (support, issues, tickets)</td>
+                        </tr>
+                        <tr>
+                            <td>status</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by status (received, processing, resolved)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4>Response</h4>
+                <div class="response-example">
+                    <h4><span class="status-code status-200">200 OK</span></h4>
+                    <div class="code-block">{
+  "items": [
+    {
+      "id": "evt_abc123",
+      "source": "zendesk",
+      "channel": "support",
+      "text": "Payment processing is failing intermittently",
+      "status": "processing",
+      "received_at": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "total": 1250,
+  "page": 1,
+  "limit": 20,
+  "pages": 63
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Support & Answers</h2>
+            <p>Endpoints for AI-powered support processing and answer generation.</p>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-url">/support/answer</span>
+                </div>
+                <div class="endpoint-description">Generate an AI-powered answer with citations for a support ticket</div>
+                
+                <h4>Request Body</h4>
+                <div class="code-block">{
+  "event_id": "evt_abc123",
+  "context": {
+    "user_type": "premium",
+    "product_version": "2.1.0",
+    "environment": "production"
+  },
+  "options": {
+    "include_sources": true,
+    "max_sources": 5,
+    "confidence_threshold": 0.8
+  }
+}</div>
+                
+                <h4>Response</h4>
+                <div class="response-example">
+                    <h4><span class="status-code status-200">200 OK</span></h4>
+                    <div class="code-block">{
+  "answer_id": "ans_def456",
+  "event_id": "evt_abc123",
+  "answer_markdown": "Based on your description, this appears to be a known issue with payment processing on mobile devices. Here's how to resolve it:\n\n1. Clear your browser cache and cookies\n2. Try using an incognito/private browsing window\n3. Disable browser extensions temporarily\n\nIf the issue persists, please try using a different payment method.",
+  "confidence_score": 0.92,
+  "sources": [
+    {
+      "id": "kb_001",
+      "title": "Payment Processing Troubleshooting",
+      "relevance_score": 0.95,
+      "url": "/kb/kb_001"
+    },
+    {
+      "id": "kb_045",
+      "title": "Mobile Browser Compatibility",
+      "relevance_score": 0.88,
+      "url": "/kb/kb_045"
+    }
+  ],
+  "suggested_actions": [
+    {
+      "type": "clear_cache",
+      "description": "Clear browser cache and cookies",
+      "risk_level": "low",
+      "requires_approval": false
+    }
+  ],
+  "processing_time_ms": 1250
+}</div>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-url">/support/answers/{answer_id}</span>
+                </div>
+                <div class="endpoint-description">Retrieve a specific answer with full details</div>
+                
+                <h4>Response</h4>
+                <div class="response-example">
+                    <h4><span class="status-code status-200">200 OK</span></h4>
+                    <div class="code-block">{
+  "answer_id": "ans_def456",
+  "event_id": "evt_abc123",
+  "answer_markdown": "...",
+  "confidence_score": 0.92,
+  "sources": [...],
+  "suggested_actions": [...],
+  "created_at": "2024-01-15T10:32:15Z",
+  "updated_at": "2024-01-15T10:32:15Z",
+  "feedback": {
+    "helpful": 0,
+    "not_helpful": 0,
+    "user_rating": null
+  }
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Actions & Automation</h2>
+            <p>Endpoints for executing safe, policy-gated actions on support tickets.</p>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-url">/action/execute</span>
+                </div>
+                <div class="endpoint-description">Execute a safe action with policy validation and receipt generation</div>
+                
+                <h4>Request Body</h4>
+                <div class="code-block">{
+  "event_id": "evt_abc123",
+  "action_type": "resend_activation_email",
+  "parameters": {
+    "user_id": "user_12345",
+    "email": "user@example.com",
+    "template": "activation_reminder"
+  },
+  "context": {
+    "requested_by": "agent_jane",
+    "reason": "Customer requested activation email resend"
+  }
+}</div>
+                
+                <h4>Response</h4>
+                <div class="response-example">
+                    <h4><span class="status-code status-200">200 OK</span></h4>
+                    <div class="code-block">{
+  "action_id": "act_ghi789",
+  "event_id": "evt_abc123",
+  "status": "completed",
+  "result": {
+    "email_sent": true,
+    "delivery_status": "delivered",
+    "message_id": "msg_xyz123"
+  },
+  "receipt": {
+    "receipt_id": "rcp_jkl012",
+    "signature": "sha256:abc123...",
+    "created_at": "2024-01-15T10:35:00Z",
+    "verification_url": "/audit/rcp_jkl012"
+  },
+  "policy_check": {
+    "approved": true,
+    "policy_id": "policy_email_send",
+    "risk_score": 0.1,
+    "approved_by": "system"
+  },
+  "execution_time_ms": 850
+}</div>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-url">/action/history</span>
+                </div>
+                <div class="endpoint-description">Retrieve action execution history with filtering</div>
+                
+                <h4>Query Parameters</h4>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>event_id</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by event ID</td>
+                        </tr>
+                        <tr>
+                            <td>action_type</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by action type</td>
+                        </tr>
+                        <tr>
+                            <td>status</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by status (pending, approved, completed, failed)</td>
+                        </tr>
+                        <tr>
+                            <td>start_date</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by start date (ISO 8601)</td>
+                        </tr>
+                        <tr>
+                            <td>end_date</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by end date (ISO 8601)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Knowledge Base</h2>
+            <p>Endpoints for managing the AI knowledge base and retrieval system.</p>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-url">/kb/cards</span>
+                </div>
+                <div class="endpoint-description">Search knowledge base cards with hybrid BM25 + vector search</div>
+                
+                <h4>Query Parameters</h4>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>query</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Search query for semantic and keyword search</td>
+                        </tr>
+                        <tr>
+                            <td>tags</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Comma-separated list of tags to filter by</td>
+                        </tr>
+                        <tr>
+                            <td>trust_status</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by trust status (approved, pending, rejected)</td>
+                        </tr>
+                        <tr>
+                            <td>limit</td>
+                            <td>integer</td>
+                            <td>No</td>
+                            <td>Maximum number of results (default: 20, max: 100)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4>Response</h4>
+                <div class="response-example">
+                    <h4><span class="status-code status-200">200 OK</span></h4>
+                    <div class="code-block">{
+  "results": [
+    {
+      "id": "kb_001",
+      "title": "Payment Processing Troubleshooting",
+      "canonical_text": "If you're experiencing payment processing issues...",
+      "tags": ["payment", "billing", "troubleshooting"],
+      "trust_status": "approved",
+      "relevance_score": 0.95,
+      "sources": [
+        {
+          "type": "documentation",
+          "url": "https://docs.company.com/payment-troubleshooting",
+          "last_updated": "2024-01-10T00:00:00Z"
+        }
+      ],
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-10T00:00:00Z"
+    }
+  ],
+  "total": 45,
+  "search_time_ms": 120
+}</div>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-url">/kb/cards</span>
+                </div>
+                <div class="endpoint-description">Create or update a knowledge base card (admin only)</div>
+                
+                <h4>Request Body</h4>
+                <div class="code-block">{
+  "title": "New Troubleshooting Guide",
+  "canonical_text": "Step-by-step troubleshooting instructions...",
+  "tags": ["troubleshooting", "new-feature"],
+  "sources": [
+    {
+      "type": "documentation",
+      "url": "https://docs.company.com/new-guide",
+      "title": "Official Documentation"
+    }
+  ],
+  "trust_status": "pending"
+}</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Product Signals</h2>
+            <p>Endpoints for managing product intelligence signals and insights.</p>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-url">/signals/emit</span>
+                </div>
+                <div class="endpoint-description">Emit a product signal for roadmap tools and strategic planning</div>
+                
+                <h4>Request Body</h4>
+                <div class="code-block">{
+  "origin": "ticket:evt_abc123",
+  "type": "bug",
+  "product_area": "payment_processing",
+  "strength": 0.85,
+  "description": "Intermittent payment processing failures on mobile",
+  "evidence_refs": [
+    "kb:kb_001",
+    "receipt:rcp_jkl012"
+  ],
+  "impact": {
+    "affected_users": 150,
+    "revenue_impact": 2500.00,
+    "severity": "high"
+  },
+  "metadata": {
+    "platform": "mobile",
+    "browser": "safari",
+    "version": "2.1.0"
+  }
+}</div>
+                
+                <h4>Response</h4>
+                <div class="response-example">
+                    <h4><span class="status-code status-201">201 Created</span></h4>
+                    <div class="code-block">{
+  "signal_id": "sig_mno345",
+  "origin": "ticket:evt_abc123",
+  "type": "bug",
+  "product_area": "payment_processing",
+  "strength": 0.85,
+  "status": "active",
+  "routed_to": [
+    {
+      "system": "jira",
+      "issue_id": "PROJ-1234",
+      "url": "https://company.atlassian.net/browse/PROJ-1234"
+    }
+  ],
+  "created_at": "2024-01-15T10:40:00Z",
+  "updated_at": "2024-01-15T10:40:00Z"
+}</div>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-url">/signals/search</span>
+                </div>
+                <div class="endpoint-description">Search and filter product signals</div>
+                
+                <h4>Query Parameters</h4>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>type</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by signal type (bug, feature, friction, pricing, churn)</td>
+                        </tr>
+                        <tr>
+                            <td>product_area</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by product area</td>
+                        </tr>
+                        <tr>
+                            <td>min_strength</td>
+                            <td>float</td>
+                            <td>No</td>
+                            <td>Minimum signal strength (0.0-1.0)</td>
+                        </tr>
+                        <tr>
+                            <td>status</td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by status (active, resolved, archived)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Audit & Receipts</h2>
+            <p>Endpoints for audit trails and tamper-evident receipts.</p>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-url">/audit/{receipt_id}</span>
+                </div>
+                <div class="endpoint-description">Retrieve a tamper-evident receipt with verification</div>
+                
+                <h4>Response</h4>
+                <div class="response-example">
+                    <h4><span class="status-code status-200">200 OK</span></h4>
+                    <div class="code-block">{
+  "receipt_id": "rcp_jkl012",
+  "action_id": "act_ghi789",
+  "event_id": "evt_abc123",
+  "action_type": "resend_activation_email",
+  "parameters": {
+    "user_id": "user_12345",
+    "email": "user@example.com"
+  },
+  "result": {
+    "email_sent": true,
+    "delivery_status": "delivered"
+  },
+  "signature": "sha256:abc123def456...",
+  "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A...",
+  "created_at": "2024-01-15T10:35:00Z",
+  "verified": true,
+  "verification_timestamp": "2024-01-15T10:35:01Z"
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Error Handling</h2>
+            <p>RainRef API uses standard HTTP status codes and returns detailed error information.</p>
+            
+            <div class="endpoint">
+                <h3>Error Response Format</h3>
+                <div class="code-block">{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Request validation failed",
+    "details": [
+      {
+        "field": "email",
+        "message": "Invalid email format",
+        "value": "invalid-email"
+      }
+    ],
+    "request_id": "req_abc123",
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}</div>
+                
+                <h3>Common Error Codes</h3>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Status Code</th>
+                            <th>Error Code</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>400</td>
+                            <td>VALIDATION_ERROR</td>
+                            <td>Request validation failed</td>
+                        </tr>
+                        <tr>
+                            <td>401</td>
+                            <td>UNAUTHORIZED</td>
+                            <td>Authentication required</td>
+                        </tr>
+                        <tr>
+                            <td>403</td>
+                            <td>FORBIDDEN</td>
+                            <td>Insufficient permissions</td>
+                        </tr>
+                        <tr>
+                            <td>404</td>
+                            <td>NOT_FOUND</td>
+                            <td>Resource not found</td>
+                        </tr>
+                        <tr>
+                            <td>429</td>
+                            <td>RATE_LIMITED</td>
+                            <td>Rate limit exceeded</td>
+                        </tr>
+                        <tr>
+                            <td>500</td>
+                            <td>INTERNAL_ERROR</td>
+                            <td>Internal server error</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>SDK Examples</h2>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('python')">Python</div>
+                <div class="tab" onclick="showTab('typescript')">TypeScript</div>
+                <div class="tab" onclick="showTab('curl')">cURL</div>
+            </div>
+            
+            <div id="python" class="tab-content active">
+                <h3>Python SDK</h3>
+                <div class="code-block">from rainref import RainRefClient
+
+# Initialize client
+client = RainRefClient(
+    api_key="your_api_key",
+    base_url="https://api.rainref.ai"
+)
+
+# Ingest a support event
+event = client.ref.events.create({
+    "source": "zendesk",
+    "channel": "support",
+    "text": "Payment processing is failing",
+    "user_ref": "user_12345",
+    "product": "billing"
+})
+
+# Generate an answer
+answer = client.support.answer.create({
+    "event_id": event.id,
+    "context": {"user_type": "premium"}
+})
+
+# Execute an action
+action = client.action.execute({
+    "event_id": event.id,
+    "action_type": "resend_activation_email",
+    "parameters": {"user_id": "user_12345"}
+})
+
+print(f"Event: {event.id}")
+print(f"Answer: {answer.answer_markdown}")
+print(f"Action: {action.status}")</div>
+            </div>
+            
+            <div id="typescript" class="tab-content">
+                <h3>TypeScript SDK</h3>
+                <div class="code-block">import { RainRefClient } from '@rainref/sdk';
+
+// Initialize client
+const client = new RainRefClient({
+  apiKey: 'your_api_key',
+  baseUrl: 'https://api.rainref.ai'
+});
+
+// Ingest a support event
+const event = await client.ref.events.create({
+  source: 'zendesk',
+  channel: 'support',
+  text: 'Payment processing is failing',
+  userRef: 'user_12345',
+  product: 'billing'
+});
+
+// Generate an answer
+const answer = await client.support.answer.create({
+  eventId: event.id,
+  context: { userType: 'premium' }
+});
+
+// Execute an action
+const action = await client.action.execute({
+  eventId: event.id,
+  actionType: 'resend_activation_email',
+  parameters: { userId: 'user_12345' }
+});
+
+console.log(`Event: ${event.id}`);
+console.log(`Answer: ${answer.answerMarkdown}`);
+console.log(`Action: ${action.status}`);</div>
+            </div>
+            
+            <div id="curl" class="tab-content">
+                <h3>cURL Examples</h3>
+                <div class="code-block"># Ingest a support event
+curl -X POST https://api.rainref.ai/ref/events \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: your_api_key" \
+  -d '{
+    "source": "zendesk",
+    "channel": "support",
+    "text": "Payment processing is failing",
+    "user_ref": "user_12345",
+    "product": "billing"
+  }'
+
+# Generate an answer
+curl -X POST https://api.rainref.ai/support/answer \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: your_api_key" \
+  -d '{
+    "event_id": "evt_abc123",
+    "context": {"user_type": "premium"}
+  }'
+
+# Execute an action
+curl -X POST https://api.rainref.ai/action/execute \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: your_api_key" \
+  -d '{
+    "event_id": "evt_abc123",
+    "action_type": "resend_activation_email",
+    "parameters": {"user_id": "user_12345"}
+  }'</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Webhooks</h2>
+            <p>RainRef supports webhooks for real-time notifications of important events.</p>
+            
+            <div class="endpoint">
+                <h3>Webhook Events</h3>
+                <ul>
+                    <li><strong>ticket.created</strong> - New support ticket received</li>
+                    <li><strong>answer.generated</strong> - AI answer generated</li>
+                    <li><strong>action.executed</strong> - Action executed successfully</li>
+                    <li><strong>signal.emitted</strong> - Product signal emitted</li>
+                    <li><strong>kb.card.approved</strong> - Knowledge base card approved</li>
+                </ul>
+                
+                <h4>Webhook Payload Example</h4>
+                <div class="code-block">{
+  "event": "action.executed",
+  "timestamp": "2024-01-15T10:35:00Z",
+  "data": {
+    "action_id": "act_ghi789",
+    "event_id": "evt_abc123",
+    "action_type": "resend_activation_email",
+    "status": "completed",
+    "result": {
+      "email_sent": true,
+      "delivery_status": "delivered"
+    },
+    "receipt": {
+      "receipt_id": "rcp_jkl012",
+      "signature": "sha256:abc123..."
+    }
+  }
+}</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>OpenAPI Specification</h2>
+            <p>RainRef provides a complete OpenAPI 3.0 specification for automatic client generation and documentation.</p>
+            
+            <div class="sdk-section">
+                <h4>📋 OpenAPI Endpoints</h4>
+                <ul>
+                    <li><strong>JSON Format:</strong> <code>https://api.rainref.ai/openapi.json</code></li>
+                    <li><strong>YAML Format:</strong> <code>https://api.rainref.ai/openapi.yaml</code></li>
+                    <li><strong>Interactive Docs:</strong> <code>https://api.rainref.ai/docs</code></li>
+                    <li><strong>ReDoc:</strong> <code>https://api.rainref.ai/redoc</code></li>
+                </ul>
+            </div>
+            
+            <div class="sdk-section">
+                <h4>🛠️ Client Generation</h4>
+                <p>Generate client libraries from the OpenAPI specification:</p>
+                <div class="code-block"># Generate Python client
+openapi-generator generate -i https://api.rainref.ai/openapi.json -g python -o ./rainref-python-client
+
+# Generate TypeScript client
+openapi-generator generate -i https://api.rainref.ai/openapi.json -g typescript-axios -o ./rainref-ts-client
+
+# Generate Go client
+openapi-generator generate -i https://api.rainref.ai/openapi.json -g go -o ./rainref-go-client</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RainRef - Deployment Guide</title>
+    <link rel="icon" href="../rr-black-trans.png">
+    <style>
+        :root {
+            --bg: #ffffff; --fg: #000000; --panel: #f7f7f7; --hair: #e5e5e5;
+            --muted: #444444; --primary: #0066cc; --success: #28a745; --warning: #ffc107; --danger: #dc3545;
+        }
+        :root[data-theme="dark"] {
+            --bg: #000000; --fg: #ffffff; --panel: #0d0d0d; --hair: #222222;
+            --muted: #cccccc;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); color: var(--fg); line-height: 1.6; padding: 2rem;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .nav { margin-bottom: 2rem; }
+        .nav a { 
+            color: var(--primary); 
+            text-decoration: none; 
+            margin-right: 1rem; 
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--hair);
+            border-radius: 4px;
+        }
+        .nav a:hover { background: var(--panel); }
+        
+        .section {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--hair);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section h3 {
+            color: var(--fg);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .deployment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .deployment-card {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .deployment-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover { text-decoration: underline; }
+        
+        .code-block {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+        
+        .architecture-diagram {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+        
+        .requirement-list {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .requirement-list h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .requirement-list ul {
+            margin-left: 1rem;
+        }
+        
+        .step {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--success);
+        }
+        
+        .step h4 {
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+        
+        .warning {
+            background: #fff8e1;
+            border: 1px solid #ffcc02;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .warning h4 {
+            color: var(--warning);
+            margin-bottom: 0.5rem;
+        }
+        
+        .info {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .info h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .tech-item {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Back to RainRef Demo</a>
+        
+        <div class="header">
+            <h1>🚀 RainRef Deployment Guide</h1>
+            <p>Enterprise Deployment & Operations Guide</p>
+        </div>
+        
+        <nav class="nav">
+            <a href="system-overview.html">System Overview</a>
+            <a href="security-model.html">Security Model</a>
+            <a href="deployment-guide.html">Deployment Guide</a>
+            <a href="api-reference.html">API Reference</a>
+        </nav>
+
+        <div class="section">
+            <h2>Deployment Overview</h2>
+            <p>RainRef supports multiple deployment models to meet enterprise requirements, from cloud-native SaaS to on-premise installations. This guide covers production-ready deployments with enterprise-grade security, scalability, and reliability.</p>
+            
+            <div class="deployment-grid">
+                <div class="deployment-card">
+                    <h4>☁️ Cloud-Native SaaS</h4>
+                    <p>Fully managed service with automatic scaling, updates, and maintenance. Ideal for most enterprises.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">Azure</span>
+                        <span class="tech-item">Kubernetes</span>
+                        <span class="tech-item">Terraform</span>
+                    </div>
+                </div>
+                
+                <div class="deployment-card">
+                    <h4>🏢 Hybrid Cloud</h4>
+                    <p>Data stays on-premise while compute runs in the cloud. Perfect for regulated industries.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">Azure Stack</span>
+                        <span class="tech-item">VPN</span>
+                        <span class="tech-item">Private Cloud</span>
+                    </div>
+                </div>
+                
+                <div class="deployment-card">
+                    <h4>🏭 On-Premise</h4>
+                    <p>Complete on-premise deployment with air-gapped networking for maximum security.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">Docker</span>
+                        <span class="tech-item">Kubernetes</span>
+                        <span class="tech-item">Air Gap</span>
+                    </div>
+                </div>
+                
+                <div class="deployment-card">
+                    <h4>🌍 Multi-Region</h4>
+                    <p>Global deployment with data residency compliance and disaster recovery.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">Multi-AZ</span>
+                        <span class="tech-item">Geo-Replication</span>
+                        <span class="tech-item">CDN</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>System Requirements</h2>
+            
+            <h3>Minimum Requirements</h3>
+            <div class="requirement-list">
+                <h4>Compute Resources</h4>
+                <ul>
+                    <li><strong>CPU:</strong> 8 cores (16 vCPUs recommended)</li>
+                    <li><strong>Memory:</strong> 32GB RAM (64GB recommended)</li>
+                    <li><strong>Storage:</strong> 500GB SSD (1TB recommended)</li>
+                    <li><strong>Network:</strong> 1Gbps bandwidth</li>
+                </ul>
+            </div>
+            
+            <div class="requirement-list">
+                <h4>Software Dependencies</h4>
+                <ul>
+                    <li><strong>Operating System:</strong> Ubuntu 20.04 LTS or RHEL 8+</li>
+                    <li><strong>Container Runtime:</strong> Docker 20.10+ or containerd</li>
+                    <li><strong>Orchestration:</strong> Kubernetes 1.24+ or Docker Compose</li>
+                    <li><strong>Database:</strong> PostgreSQL 14+ with pgvector extension</li>
+                    <li><strong>Cache:</strong> Redis 6.0+</li>
+                </ul>
+            </div>
+            
+            <div class="requirement-list">
+                <h4>External Services</h4>
+                <ul>
+                    <li><strong>Object Storage:</strong> Azure Blob Storage or S3-compatible</li>
+                    <li><strong>Key Management:</strong> Azure Key Vault or HashiCorp Vault</li>
+                    <li><strong>Monitoring:</strong> Prometheus, Grafana, Jaeger</li>
+                    <li><strong>Logging:</strong> ELK Stack or Azure Monitor</li>
+                </ul>
+            </div>
+            
+            <h3>Scalability Requirements</h3>
+            <div class="info">
+                <h4>📊 Enterprise Scale</h4>
+                <ul>
+                    <li><strong>High Volume:</strong> 10M+ tickets per day</li>
+                    <li><strong>Concurrent Users:</strong> 100K+ simultaneous users</li>
+                    <li><strong>Data Storage:</strong> 1PB+ total capacity</li>
+                    <li><strong>Availability:</strong> 99.99% uptime SLA</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Cloud-Native Deployment (Recommended)</h2>
+            
+            <h3>Azure Kubernetes Service (AKS)</h3>
+            <div class="step">
+                <h4>Step 1: Infrastructure Setup</h4>
+                <div class="code-block">
+# Create resource group
+az group create --name rainref-prod --location eastus
+
+# Create AKS cluster
+az aks create \
+  --resource-group rainref-prod \
+  --name rainref-cluster \
+  --node-count 3 \
+  --node-vm-size Standard_D8s_v3 \
+  --enable-addons monitoring \
+  --generate-ssh-keys
+
+# Get credentials
+az aks get-credentials --resource-group rainref-prod --name rainref-cluster
+                </div>
+            </div>
+            
+            <div class="step">
+                <h4>Step 2: Database Setup</h4>
+                <div class="code-block">
+# Create PostgreSQL server
+az postgres flexible-server create \
+  --resource-group rainref-prod \
+  --name rainref-db \
+  --admin-user rainref \
+  --admin-password 'SecurePassword123!' \
+  --sku-name Standard_D4s_v3 \
+  --tier GeneralPurpose \
+  --public-access 0.0.0.0 \
+  --storage-size 1024
+
+# Install pgvector extension
+az postgres flexible-server parameter set \
+  --resource-group rainref-prod \
+  --server-name rainref-db \
+  --name shared_preload_libraries \
+  --value "vector"
+                </div>
+            </div>
+            
+            <div class="step">
+                <h4>Step 3: Storage Setup</h4>
+                <div class="code-block">
+# Create storage account
+az storage account create \
+  --resource-group rainref-prod \
+  --name rainrefstorage \
+  --sku Standard_LRS \
+  --kind StorageV2
+
+# Create containers
+az storage container create \
+  --account-name rainrefstorage \
+  --name knowledge-base \
+  --public-access off
+
+az storage container create \
+  --account-name rainrefstorage \
+  --name receipts \
+  --public-access off
+                </div>
+            </div>
+            
+            <div class="step">
+                <h4>Step 4: Deploy Application</h4>
+                <div class="code-block">
+# Create namespace
+kubectl create namespace rainref
+
+# Apply secrets
+kubectl apply -f - &lt;&lt;EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rainref-secrets
+  namespace: rainref
+type: Opaque
+data:
+  database-url: <base64-encoded-connection-string>
+  blob-connection-string: <base64-encoded-storage-connection>
+  jwt-secret: <base64-encoded-jwt-secret>
+  openai-api-key: <base64-encoded-openai-key>
+EOF
+
+# Deploy application
+helm repo add rainref https://charts.rainref.ai
+helm install rainref rainref/rainref \
+  --namespace rainref \
+  --set image.tag=latest \
+  --set replicaCount=3 \
+  --set resources.requests.memory=2Gi \
+  --set resources.requests.cpu=1000m
+                </div>
+            </div>
+            
+            <div class="step">
+                <h4>Step 5: Configure Ingress</h4>
+                <div class="code-block">
+# Install NGINX ingress controller
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --create-namespace
+
+# Create ingress resource
+kubectl apply -f - &lt;&lt;EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rainref-ingress
+  namespace: rainref
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - rainref.yourdomain.com
+    secretName: rainref-tls
+  rules:
+  - host: rainref.yourdomain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rainref-web
+            port:
+              number: 80
+EOF
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>On-Premise Deployment</h2>
+            
+            <h3>Docker Compose Deployment</h3>
+            <div class="step">
+                <h4>Step 1: Prepare Environment</h4>
+                <div class="code-block">
+# Create deployment directory
+mkdir -p /opt/rainref
+cd /opt/rainref
+
+# Create environment file
+cat > .env &lt;&lt;EOF
+# Database Configuration
+POSTGRES_DB=rainref
+POSTGRES_USER=rainref
+POSTGRES_PASSWORD=SecurePassword123!
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+
+# Redis Configuration
+REDIS_URL=redis://redis:6379/0
+
+# Azure Blob Storage (or local MinIO)
+BLOB_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=yourstorage;AccountKey=yourkey;EndpointSuffix=core.windows.net
+
+# Application Configuration
+SECRET_KEY=your-secret-key-here
+JWT_SECRET=your-jwt-secret-here
+OPENAI_API_KEY=your-openai-api-key
+
+# Security
+ENABLE_HTTPS=true
+SSL_CERT_PATH=/certs/cert.pem
+SSL_KEY_PATH=/certs/key.pem
+EOF
+                </div>
+            </div>
+            
+            <div class="step">
+                <h4>Step 2: Create Docker Compose</h4>
+                <div class="code-block">
+cat > docker-compose.yml &lt;&lt;EOF
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  opa:
+    image: openpolicyagent/opa:latest
+    command: ["run", "--server", "/policies"]
+    volumes:
+      - ./policies:/policies
+    ports:
+      - "8181:8181"
+    restart: unless-stopped
+
+  api:
+    image: rainref/api:latest
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: ${REDIS_URL}
+      BLOB_CONNECTION_STRING: ${BLOB_CONNECTION_STRING}
+      SECRET_KEY: ${SECRET_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPA_URL: http://opa:8181
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+      - opa
+    restart: unless-stopped
+
+  web:
+    image: rainref/web:latest
+    environment:
+      VITE_API_URL: http://localhost:8080
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs:/certs
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+EOF
+                </div>
+            </div>
+            
+            <div class="step">
+                <h4>Step 3: Initialize Database</h4>
+                <div class="code-block">
+# Create initialization script
+cat > init.sql &lt;&lt;EOF
+-- Enable pgvector extension
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Create initial schema
+CREATE TABLE IF NOT EXISTS ref_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    source VARCHAR(50) NOT NULL,
+    channel VARCHAR(50) NOT NULL,
+    payload_json JSONB NOT NULL,
+    user_ref VARCHAR(100),
+    product VARCHAR(50),
+    received_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes
+CREATE INDEX idx_ref_events_source ON ref_events(source);
+CREATE INDEX idx_ref_events_channel ON ref_events(channel);
+CREATE INDEX idx_ref_events_received_at ON ref_events(received_at);
+CREATE INDEX idx_ref_events_payload_gin ON ref_events USING GIN(payload_json);
+EOF
+
+# Start services
+docker-compose up -d
+
+# Run migrations
+docker-compose exec api python -m alembic upgrade head
+
+# Seed initial data
+docker-compose exec api python seed.py
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>High Availability & Disaster Recovery</h2>
+            
+            <h3>Multi-AZ Deployment</h3>
+            <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              MULTI-AZ DEPLOYMENT                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────┐              ┌─────────────────────┐              │
+│  │     AVAILABILITY    │              │     AVAILABILITY    │              │
+│  │        ZONE A       │              │        ZONE B       │              │
+│  │                     │              │                     │              │
+│  │  ┌───────────────┐  │              │  ┌───────────────┐  │              │
+│  │  │   RainRef     │  │              │  │   RainRef     │  │              │
+│  │  │   API (3x)    │  │              │  │   API (3x)    │  │              │
+│  │  └───────────────┘  │              │  └───────────────┘  │              │
+│  │  ┌───────────────┐  │              │  ┌───────────────┐  │              │
+│  │  │   RainRef     │  │              │  │   RainRef     │  │              │
+│  │  │   Web (2x)    │  │              │  │   Web (2x)    │  │              │
+│  │  └───────────────┘  │              │  └───────────────┘  │              │
+│  │  ┌───────────────┐  │              │  ┌───────────────┐  │              │
+│  │  │  PostgreSQL   │  │              │  │  PostgreSQL   │  │              │
+│  │  │  (Primary)    │  │◄─────────────►│  │  (Replica)    │  │              │
+│  │  └───────────────┘  │              │  └───────────────┘  │              │
+│  │  ┌───────────────┐  │              │  ┌───────────────┐  │              │
+│  │  │    Redis      │  │              │  │    Redis      │  │              │
+│  │  │   Cluster     │  │              │  │   Cluster     │  │              │
+│  │  └───────────────┘  │              │  └───────────────┘  │              │
+│  └─────────────────────┘              └─────────────────────┘              │
+│           │                                     │                          │
+│           └─────────────────┬───────────────────┘                          │
+│                             │                                              │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                        LOAD BALANCER                               │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐     │   │
+│  │  │   Health        │  │   SSL           │  │   Rate          │     │   │
+│  │  │   Checks        │  │   Termination   │  │   Limiting      │     │   │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘     │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                             │                                              │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                        SHARED STORAGE                              │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐     │   │
+│  │  │   Azure Blob    │  │   Backup        │  │   Monitoring    │     │   │
+│  │  │   Storage       │  │   Storage       │  │   Storage       │     │   │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘     │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────┘
+            </div>
+            
+            <h3>Backup & Recovery</h3>
+            <div class="step">
+                <h4>Automated Backup Strategy</h4>
+                <div class="code-block">
+# Database backup script
+#!/bin/bash
+BACKUP_DIR="/backups/postgres"
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_FILE="rainref_backup_$DATE.sql"
+
+# Create backup
+pg_dump -h postgres -U rainref -d rainref > "$BACKUP_DIR/$BACKUP_FILE"
+
+# Compress backup
+gzip "$BACKUP_DIR/$BACKUP_FILE"
+
+# Upload to cloud storage
+az storage blob upload \
+  --account-name rainrefbackups \
+  --container-name database-backups \
+  --name "$BACKUP_FILE.gz" \
+  --file "$BACKUP_DIR/$BACKUP_FILE.gz"
+
+# Cleanup old backups (keep 30 days)
+find $BACKUP_DIR -name "*.gz" -mtime +30 -delete
+                </div>
+            </div>
+            
+            <div class="step">
+                <h4>Disaster Recovery Procedures</h4>
+                <div class="code-block">
+# Recovery script
+#!/bin/bash
+BACKUP_FILE=$1
+
+if [ -z "$BACKUP_FILE" ]; then
+    echo "Usage: $0 <backup_file>"
+    exit 1
+fi
+
+# Download backup from cloud storage
+az storage blob download \
+  --account-name rainrefbackups \
+  --container-name database-backups \
+  --name "$BACKUP_FILE" \
+  --file "/tmp/$BACKUP_FILE"
+
+# Decompress backup
+gunzip "/tmp/$BACKUP_FILE"
+
+# Restore database
+psql -h postgres -U rainref -d rainref < "/tmp/${BACKUP_FILE%.gz}"
+
+# Restart services
+docker-compose restart api web
+
+# Verify recovery
+curl -f http://localhost:8080/healthz || exit 1
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Monitoring & Observability</h2>
+            
+            <h3>Prometheus & Grafana Setup</h3>
+            <div class="step">
+                <h4>Install Monitoring Stack</h4>
+                <div class="code-block">
+# Add Prometheus Helm repository
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+# Install Prometheus
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace \
+  --set grafana.adminPassword=admin123 \
+  --set prometheus.prometheusSpec.retention=30d
+
+# Install Grafana dashboards
+kubectl apply -f - &lt;&lt;EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rainref-dashboard
+  namespace: monitoring
+data:
+  rainref.json: |
+    {
+      "dashboard": {
+        "title": "RainRef Metrics",
+        "panels": [
+          {
+            "title": "API Response Time",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+                "legendFormat": "95th percentile"
+              }
+            ]
+          }
+        ]
+      }
+    }
+EOF
+                </div>
+            </div>
+            
+            <h3>Log Aggregation</h3>
+            <div class="step">
+                <h4>ELK Stack Configuration</h4>
+                <div class="code-block">
+# Elasticsearch configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch-config
+data:
+  elasticsearch.yml: |
+    cluster.name: rainref-cluster
+    node.name: rainref-node
+    network.host: 0.0.0.0
+    discovery.type: single-node
+    xpack.security.enabled: false
+
+---
+# Logstash configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-config
+data:
+  logstash.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+    filter {
+      if [fields][service] == "rainref-api" {
+        grok {
+          match => { "message" => "%{TIMESTAMP_ISO8601:timestamp} %{LOGLEVEL:level} %{GREEDYDATA:message}" }
+        }
+      }
+    }
+    output {
+      elasticsearch {
+        hosts => ["elasticsearch:9200"]
+        index => "rainref-logs-%{+YYYY.MM.dd}"
+      }
+    }
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Security Configuration</h2>
+            
+            <h3>Network Security</h3>
+            <div class="step">
+                <h4>Network Policies</h4>
+                <div class="code-block">
+# Network policy for API pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rainref-api-netpol
+  namespace: rainref
+spec:
+  podSelector:
+    matchLabels:
+      app: rainref-api
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    - namespaceSelector:
+        matchLabels:
+          name: rainref
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: rainref
+    ports:
+    - protocol: TCP
+      port: 5432
+    - protocol: TCP
+      port: 6379
+                </div>
+            </div>
+            
+            <h3>Pod Security</h3>
+            <div class="step">
+                <h4>Security Context</h4>
+                <div class="code-block">
+# Pod security context
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rainref-api
+spec:
+  template:
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: api
+        image: rainref/api:latest
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: var-tmp
+          mountPath: /var/tmp
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: var-tmp
+        emptyDir: {}
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Performance Tuning</h2>
+            
+            <h3>Database Optimization</h3>
+            <div class="step">
+                <h4>PostgreSQL Configuration</h4>
+                <div class="code-block">
+# PostgreSQL tuning for high performance
+shared_buffers = 256MB
+effective_cache_size = 1GB
+maintenance_work_mem = 64MB
+checkpoint_completion_target = 0.9
+wal_buffers = 16MB
+default_statistics_target = 100
+random_page_cost = 1.1
+effective_io_concurrency = 200
+work_mem = 4MB
+min_wal_size = 1GB
+max_wal_size = 4GB
+max_worker_processes = 8
+max_parallel_workers_per_gather = 4
+max_parallel_workers = 8
+max_parallel_maintenance_workers = 4
+                </div>
+            </div>
+            
+            <h3>Application Tuning</h3>
+            <div class="step">
+                <h4>FastAPI Configuration</h4>
+                <div class="code-block">
+# Application performance settings
+WORKERS = 4
+WORKER_CONNECTIONS = 1000
+KEEP_ALIVE = 2
+MAX_REQUESTS = 1000
+MAX_REQUESTS_JITTER = 100
+TIMEOUT = 30
+GRACEFUL_TIMEOUT = 30
+PRELOAD_APP = true
+ACCESS_LOG = true
+ERROR_LOG = true
+
+# Database connection pool
+DB_POOL_SIZE = 20
+DB_MAX_OVERFLOW = 30
+DB_POOL_TIMEOUT = 30
+DB_POOL_RECYCLE = 3600
+
+# Redis configuration
+REDIS_MAX_CONNECTIONS = 100
+REDIS_RETRY_ON_TIMEOUT = true
+REDIS_SOCKET_KEEPALIVE = true
+REDIS_SOCKET_KEEPALIVE_OPTIONS = {1: 1, 3: 5, 5: 60}
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Troubleshooting</h2>
+            
+            <h3>Common Issues</h3>
+            <div class="warning">
+                <h4>⚠️ High Memory Usage</h4>
+                <ul>
+                    <li>Check for memory leaks in AI model loading</li>
+                    <li>Monitor vector search query complexity</li>
+                    <li>Review database connection pool settings</li>
+                    <li>Consider horizontal scaling</li>
+                </ul>
+            </div>
+            
+            <div class="warning">
+                <h4>⚠️ Slow Response Times</h4>
+                <ul>
+                    <li>Check database query performance</li>
+                    <li>Monitor external API response times</li>
+                    <li>Review caching configuration</li>
+                    <li>Optimize vector search indexes</li>
+                </ul>
+            </div>
+            
+            <div class="warning">
+                <h4>⚠️ Authentication Failures</h4>
+                <ul>
+                    <li>Verify JWT secret configuration</li>
+                    <li>Check OAuth provider connectivity</li>
+                    <li>Review token expiration settings</li>
+                    <li>Validate API key permissions</li>
+                </ul>
+            </div>
+            
+            <h3>Debugging Commands</h3>
+            <div class="code-block">
+# Check pod status
+kubectl get pods -n rainref
+
+# View pod logs
+kubectl logs -f deployment/rainref-api -n rainref
+
+# Check service endpoints
+kubectl get endpoints -n rainref
+
+# Test database connectivity
+kubectl exec -it deployment/rainref-api -n rainref -- psql $DATABASE_URL -c "SELECT 1"
+
+# Check Redis connectivity
+kubectl exec -it deployment/rainref-api -n rainref -- redis-cli -u $REDIS_URL ping
+
+# Monitor resource usage
+kubectl top pods -n rainref
+kubectl top nodes
+                </div>
+        </div>
+
+        <div class="section">
+            <h2>Support & Maintenance</h2>
+            
+            <h3>Regular Maintenance Tasks</h3>
+            <div class="step">
+                <h4>Weekly Tasks</h4>
+                <ul>
+                    <li>Review system metrics and alerts</li>
+                    <li>Check database performance and slow queries</li>
+                    <li>Verify backup completion and integrity</li>
+                    <li>Update security patches</li>
+                    <li>Review access logs for anomalies</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h4>Monthly Tasks</h4>
+                <ul>
+                    <li>Performance optimization review</li>
+                    <li>Security audit and penetration testing</li>
+                    <li>Capacity planning and scaling review</li>
+                    <li>Disaster recovery testing</li>
+                    <li>Documentation updates</li>
+                </ul>
+            </div>
+            
+            <h3>Support Contacts</h3>
+            <div class="deployment-grid">
+                <div class="deployment-card">
+                    <h4>🆘 Emergency Support</h4>
+                    <p>24/7 critical issue support</p>
+                    <p>Phone: +1 (555) EMERGENCY</p>
+                    <p>Email: emergency@rainref.ai</p>
+                </div>
+                
+                <div class="deployment-card">
+                    <h4>📞 Technical Support</h4>
+                    <p>Business hours support</p>
+                    <p>Phone: +1 (555) SUPPORT</p>
+                    <p>Email: support@rainref.ai</p>
+                </div>
+                
+                <div class="deployment-card">
+                    <h4>📋 Professional Services</h4>
+                    <p>Custom deployment assistance</p>
+                    <p>Email: proservices@rainref.ai</p>
+                    <p>Response: 24 hours</p>
+                </div>
+                
+                <div class="deployment-card">
+                    <h4>📚 Documentation</h4>
+                    <p>Comprehensive guides and APIs</p>
+                    <p>URL: docs.rainref.ai</p>
+                    <p>Updated: Weekly</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

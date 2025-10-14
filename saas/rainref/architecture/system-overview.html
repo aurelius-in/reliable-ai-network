@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RainRef - System Architecture Overview</title>
+    <link rel="icon" href="../rr-black-trans.png">
+    <style>
+        :root {
+            --bg: #ffffff; --fg: #000000; --panel: #f7f7f7; --hair: #e5e5e5;
+            --muted: #444444; --primary: #0066cc; --success: #28a745; --warning: #ffc107; --danger: #dc3545;
+        }
+        :root[data-theme="dark"] {
+            --bg: #000000; --fg: #ffffff; --panel: #0d0d0d; --hair: #222222;
+            --muted: #cccccc;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); color: var(--fg); line-height: 1.6; padding: 2rem;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .nav { margin-bottom: 2rem; }
+        .nav a { 
+            color: var(--primary); 
+            text-decoration: none; 
+            margin-right: 1rem; 
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--hair);
+            border-radius: 4px;
+        }
+        .nav a:hover { background: var(--panel); }
+        
+        .section {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--hair);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section h3 {
+            color: var(--fg);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .diagram {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .feature-card {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+        
+        .feature-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .tech-item {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .metric {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .metric-label {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Back to RainRef Demo</a>
+        
+        <div class="header">
+            <h1>🏗️ RainRef System Architecture Overview</h1>
+            <p>Enterprise-grade AI Support Intelligence Platform</p>
+        </div>
+        
+        <nav class="nav">
+            <a href="system-overview.html">System Overview</a>
+            <a href="security-model.html">Security Model</a>
+            <a href="deployment-guide.html">Deployment Guide</a>
+            <a href="api-reference.html">API Reference</a>
+        </nav>
+
+        <div class="section">
+            <h2>Executive Summary</h2>
+            <p>RainRef is a comprehensive AI-powered support intelligence platform designed to handle enterprise-scale customer support operations. The system processes millions of support tickets, provides cited AI responses, executes safe automated actions, and generates strategic product signals.</p>
+            
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">10M+</div>
+                    <div class="metric-label">Tickets/Day</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">99.99%</div>
+                    <div class="metric-label">Uptime SLA</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">&lt;2s</div>
+                    <div class="metric-label">Response Time</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">99.7%</div>
+                    <div class="metric-label">Accuracy</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>High-Level Architecture</h2>
+            <div class="diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              RAINREF PLATFORM                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+│  │  Zendesk    │  │  Intercom   │  │  ServiceNow │  │  GitHub     │        │
+│  │  Slack      │  │  Email/IMAP │  │  Salesforce │  │  Jira       │        │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘        │
+│         │                 │                 │                 │               │
+│         └─────────────────┼─────────────────┼─────────────────┘               │
+│                           │                 │                                 │
+│                  ┌────────▼────────┐  ┌────▼────┐                           │
+│                  │ Adapter Layer   │  │ Webhooks│                           │
+│                  │ (Normalize &    │  │ & APIs  │                           │
+│                  │  Ingest)        │  │         │                           │
+│                  └────────┬────────┘  └─────────┘                           │
+│                           │                                                 │
+│                  ┌────────▼────────┐                                         │
+│                  │ FastAPI Gateway │                                         │
+│                  │ • Authentication│                                         │
+│                  │ • Rate Limiting │                                         │
+│                  │ • Request Valid │                                         │
+│                  │ • Load Balancing│                                         │
+│                  └────────┬────────┘                                         │
+│                           │                                                 │
+│                  ┌────────▼────────┐                                         │
+│                  │ LangGraph       │                                         │
+│                  │ Orchestrator    │                                         │
+│                  │                 │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ Intake      │ │                                         │
+│                  │ │ Router      │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ Triage      │ │                                         │
+│                  │ │ Agent       │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ KB Grounder │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ Action      │ │                                         │
+│                  │ │ Planner     │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ Policy      │ │                                         │
+│                  │ │ Gate        │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ Executor    │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ Signalizer  │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  └────────┬────────┘                                         │
+│                           │                                                 │
+│                  ┌────────▼────────┐                                         │
+│                  │ Data & Storage  │                                         │
+│                  │ Layer           │                                         │
+│                  │                 │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ PostgreSQL  │ │                                         │
+│                  │ │ + pgvector  │ │                                         │
+│                  │ │ (Vector DB) │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ Azure Blob  │ │                                         │
+│                  │ │ Storage     │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ Redis Cache │ │                                         │
+│                  │ │ & Sessions  │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ OPA Policies│ │                                         │
+│                  │ │ & Governance│ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  └────────┬────────┘                                         │
+│                           │                                                 │
+│                  ┌────────▼────────┐                                         │
+│                  │ External        │                                         │
+│                  │ Integrations    │                                         │
+│                  │                 │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ RainDock    │ │                                         │
+│                  │ │ (Deploy)    │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ RainShip    │ │                                         │
+│                  │ │ (Release)   │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ RainBeacon  │ │                                         │
+│                  │ │ (Audit)     │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  │ ┌─────────────┐ │                                         │
+│                  │ │ RainScout   │ │                                         │
+│                  │ │ (Roadmap)   │ │                                         │
+│                  │ └─────────────┘ │                                         │
+│                  └─────────────────┘                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Core Components</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🔄 Adapter Layer</h4>
+                    <p>Normalizes data from 50+ enterprise tools into a common RefEvent format. Handles authentication, rate limiting, and data transformation.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">Python</span>
+                        <span class="tech-item">OAuth2</span>
+                        <span class="tech-item">Webhooks</span>
+                        <span class="tech-item">Rate Limiting</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>🚪 FastAPI Gateway</h4>
+                    <p>Enterprise-grade API gateway with authentication, authorization, rate limiting, request validation, and load balancing.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">FastAPI</span>
+                        <span class="tech-item">JWT</span>
+                        <span class="tech-item">OAuth2</span>
+                        <span class="tech-item">Pydantic</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>🤖 AI Orchestrator</h4>
+                    <p>LangGraph-based workflow engine that coordinates 9 specialized AI agents for end-to-end support processing.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">LangGraph</span>
+                        <span class="tech-item">OpenAI</span>
+                        <span class="tech-item">Anthropic</span>
+                        <span class="tech-item">Custom Models</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>🗄️ Data Layer</h4>
+                    <p>Multi-database architecture with PostgreSQL for transactional data, pgvector for embeddings, and Redis for caching.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">PostgreSQL</span>
+                        <span class="tech-item">pgvector</span>
+                        <span class="tech-item">Redis</span>
+                        <span class="tech-item">Azure Blob</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>🔒 Policy Engine</h4>
+                    <p>Open Policy Agent (OPA) integration for fine-grained access control and action approval workflows.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">OPA</span>
+                        <span class="tech-item">Rego</span>
+                        <span class="tech-item">RBAC</span>
+                        <span class="tech-item">ABAC</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>📊 Observability</h4>
+                    <p>Comprehensive monitoring with OpenTelemetry, custom metrics, distributed tracing, and alerting.</p>
+                    <div class="tech-stack">
+                        <span class="tech-item">OpenTelemetry</span>
+                        <span class="tech-item">Prometheus</span>
+                        <span class="tech-item">Grafana</span>
+                        <span class="tech-item">Jaeger</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>AI Agents Architecture</h2>
+            <p>RainRef employs 9 specialized AI agents, each with a specific purpose and policy controls:</p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>1. Intake Router</h4>
+                    <p>Normalizes incoming support items into RefEvent format, handles PII scrubbing, and initial classification.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>2. Triage Agent</h4>
+                    <p>Classifies intent (bug/feature/friction), assigns severity, identifies product area, and routes to appropriate playbook.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>3. KB Grounder</h4>
+                    <p>Searches knowledge base using hybrid BM25 + vector search, composes cited answers with source references.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>4. Action Planner</h4>
+                    <p>Analyzes tickets to suggest safe automated actions like password resets, email resends, or configuration changes.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>5. Policy Gate</h4>
+                    <p>Deterministic policy engine that approves or blocks suggested actions based on risk assessment and business rules.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>6. Executor</h4>
+                    <p>Executes approved actions through secure APIs, with rollback capabilities and comprehensive logging.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>7. Signalizer</h4>
+                    <p>Converts resolved tickets into structured ProductSignals for roadmap tools and strategic planning.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>8. Evaluator</h4>
+                    <p>Quality assurance agent that scores answer accuracy, detects knowledge drift, and flags policy violations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>9. KB Curator</h4>
+                    <p>Continuously improves knowledge base by suggesting new articles and updating existing content based on patterns.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Data Flow</h2>
+            <div class="diagram">
+1. INGEST
+   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+   │   Support   │───▶│   Adapter   │───▶│  RefEvent   │
+   │   Ticket    │    │   Layer     │    │  Creation   │
+   └─────────────┘    └─────────────┘    └─────────────┘
+
+2. TRIAGE
+   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+   │   RefEvent  │───▶│   Triage    │───▶│  Intent &   │
+   │             │    │   Agent     │    │  Severity   │
+   └─────────────┘    └─────────────┘    └─────────────┘
+
+3. GROUNDING
+   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+   │   Intent &  │───▶│   KB        │───▶│  Cited      │
+   │   Severity  │    │  Grounder   │    │  Answer     │
+   └─────────────┘    └─────────────┘    └─────────────┘
+
+4. ACTION PLANNING
+   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+   │   Ticket    │───▶│   Action    │───▶│  Suggested  │
+   │   Context   │    │  Planner    │    │  Actions    │
+   └─────────────┘    └─────────────┘    └─────────────┘
+
+5. POLICY GATE
+   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+   │  Suggested  │───▶│   Policy    │───▶│ Approved/   │
+   │   Actions   │    │    Gate     │    │  Blocked    │
+   └─────────────┘    └─────────────┘    └─────────────┘
+
+6. EXECUTION
+   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+   │  Approved   │───▶│  Executor   │───▶│  Receipt    │
+   │   Actions   │    │             │    │  Generation │
+   └─────────────┘    └─────────────┘    └─────────────┘
+
+7. SIGNALING
+   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+   │   Receipt   │───▶│ Signalizer  │───▶│  Product    │
+   │   + Ticket  │    │             │    │  Signals    │
+   └─────────────┘    └─────────────┘    └─────────────┘
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Scalability & Performance</h2>
+            
+            <h3>Horizontal Scaling</h3>
+            <ul>
+                <li><strong>Stateless Services:</strong> All components are stateless and can be scaled horizontally</li>
+                <li><strong>Load Balancing:</strong> Multiple FastAPI instances behind load balancer</li>
+                <li><strong>Database Sharding:</strong> PostgreSQL read replicas and connection pooling</li>
+                <li><strong>Cache Distribution:</strong> Redis cluster for distributed caching</li>
+            </ul>
+            
+            <h3>Performance Optimizations</h3>
+            <ul>
+                <li><strong>Vector Search:</strong> pgvector with HNSW indexing for sub-second similarity search</li>
+                <li><strong>Query Optimization:</strong> Prepared statements and query plan caching</li>
+                <li><strong>Async Processing:</strong> Celery workers for background tasks</li>
+                <li><strong>CDN Integration:</strong> Static assets served via Azure CDN</li>
+            </ul>
+            
+            <h3>Capacity Planning</h3>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">10M</div>
+                    <div class="metric-label">Tickets/Day</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">100K</div>
+                    <div class="metric-label">Concurrent Users</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">1PB</div>
+                    <div class="metric-label">Storage Capacity</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">99.99%</div>
+                    <div class="metric-label">Availability</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Technology Stack</h2>
+            
+            <h3>Backend</h3>
+            <div class="tech-stack">
+                <span class="tech-item">Python 3.11+</span>
+                <span class="tech-item">FastAPI</span>
+                <span class="tech-item">LangGraph</span>
+                <span class="tech-item">PostgreSQL</span>
+                <span class="tech-item">pgvector</span>
+                <span class="tech-item">Redis</span>
+                <span class="tech-item">Celery</span>
+                <span class="tech-item">OpenPolicyAgent</span>
+            </div>
+            
+            <h3>Frontend</h3>
+            <div class="tech-stack">
+                <span class="tech-item">React 18</span>
+                <span class="tech-item">TypeScript</span>
+                <span class="tech-item">Vite</span>
+                <span class="tech-item">Tailwind CSS</span>
+                <span class="tech-item">React Router</span>
+                <span class="tech-item">Axios</span>
+            </div>
+            
+            <h3>Infrastructure</h3>
+            <div class="tech-stack">
+                <span class="tech-item">Docker</span>
+                <span class="tech-item">Kubernetes</span>
+                <span class="tech-item">Azure</span>
+                <span class="tech-item">Terraform</span>
+                <span class="tech-item">Helm</span>
+                <span class="tech-item">GitHub Actions</span>
+            </div>
+            
+            <h3>Monitoring & Observability</h3>
+            <div class="tech-stack">
+                <span class="tech-item">OpenTelemetry</span>
+                <span class="tech-item">Prometheus</span>
+                <span class="tech-item">Grafana</span>
+                <span class="tech-item">Jaeger</span>
+                <span class="tech-item">ELK Stack</span>
+                <span class="tech-item">Sentry</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Integration Ecosystem</h2>
+            <p>RainRef integrates with 50+ enterprise tools across multiple categories:</p>
+            
+            <h3>Support Platforms</h3>
+            <div class="tech-stack">
+                <span class="tech-item">Zendesk</span>
+                <span class="tech-item">Intercom</span>
+                <span class="tech-item">ServiceNow</span>
+                <span class="tech-item">Freshdesk</span>
+                <span class="tech-item">HubSpot</span>
+                <span class="tech-item">Salesforce Service Cloud</span>
+            </div>
+            
+            <h3>Development Tools</h3>
+            <div class="tech-stack">
+                <span class="tech-item">GitHub</span>
+                <span class="tech-item">GitLab</span>
+                <span class="tech-item">Jira</span>
+                <span class="tech-item">Linear</span>
+                <span class="tech-item">Azure DevOps</span>
+                <span class="tech-item">Bitbucket</span>
+            </div>
+            
+            <h3>Communication</h3>
+            <div class="tech-stack">
+                <span class="tech-item">Slack</span>
+                <span class="tech-item">Microsoft Teams</span>
+                <span class="tech-item">Discord</span>
+                <span class="tech-item">Email/IMAP</span>
+                <span class="tech-item">WhatsApp Business</span>
+            </div>
+            
+            <h3>RainStorm Suite</h3>
+            <div class="tech-stack">
+                <span class="tech-item">RainDock</span>
+                <span class="tech-item">RainShip</span>
+                <span class="tech-item">RainBeacon</span>
+                <span class="tech-item">RainScout</span>
+                <span class="tech-item">RainPulse</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

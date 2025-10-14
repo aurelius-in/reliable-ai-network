@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RainRef - Enterprise AI Support Intelligence Platform</title>
+    <link rel="icon" href="rr-black-trans.png">
+    <style>
+        :root {
+            --bg: #ffffff; --fg: #000000; --panel: #f7f7f7; --hair: #e5e5e5;
+            --muted: #444444; --ok: #111111; --stripe-dark: #eeeeee; --stripe-light: #ffffff;
+            --primary: #0066cc; --success: #28a745; --warning: #ffc107; --danger: #dc3545;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        :root[data-theme="dark"] {
+            --bg: #000000; --fg: #ffffff; --panel: #0d0d0d; --hair: #222222;
+            --muted: #cccccc; --ok: #ffffff; --stripe-dark: #111111; --stripe-light: #222222;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); 
+            color: var(--fg); 
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg);
+            border-bottom: 1px solid var(--hair);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-section img {
+            height: 40px;
+            width: auto;
+        }
+        
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--muted);
+            font-weight: 500;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .search-box {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            min-width: 300px;
+            font-size: 0.9rem;
+        }
+        
+        .theme-toggle {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--fg);
+            color: var(--bg);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: var(--gradient);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .hero .description {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.95;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+        }
+        
+        /* Features Grid */
+        .features {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--fg);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--fg);
+        }
+        
+        .feature-card p {
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .stat {
+            background: var(--bg);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--hair);
+        }
+        
+        /* Demo Interface */
+        .demo-interface {
+            background: var(--panel);
+            margin: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--hair);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .demo-header {
+            background: var(--fg);
+            color: var(--bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .demo-nav {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .demo-nav a {
+            color: var(--bg);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.2s ease;
+        }
+        
+        .demo-nav a:hover, .demo-nav a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .demo-content {
+            padding: 2rem;
+            min-height: 600px;
+        }
+        
+        /* Mock Data Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--hair);
+        }
+        
+        .data-table th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--fg);
+        }
+        
+        .data-table tr:hover {
+            background: var(--panel);
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-high { background: #fee; color: #c33; border: 1px solid #fcc; }
+        .badge-medium { background: #fff8e1; color: #f57c00; border: 1px solid #ffcc02; }
+        .badge-low { background: #e8f5e8; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .badge-bug { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .badge-feature { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+        .badge-friction { background: #fff3e0; color: #ef6c00; border: 1px solid #ffcc02; }
+        
+        /* Pricing Section */
+        .pricing {
+            background: var(--bg);
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .pricing h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--fg);
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .pricing-card {
+            background: var(--panel);
+            border: 2px solid var(--hair);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+        
+        .pricing-tier {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--fg);
+        }
+        
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .pricing-period {
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--hair);
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        /* Architecture Preview */
+        .architecture-preview {
+            background: var(--panel);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            border: 1px solid var(--hair);
+        }
+        
+        .architecture-diagram {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--fg);
+            color: var(--bg);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .footer p {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--bg);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 2rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero .subtitle { font-size: 1.2rem; }
+            .header { padding: 1rem; }
+            .search-box { min-width: 200px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+            .demo-interface { margin: 1rem; }
+            .footer-links { flex-direction: column; gap: 1rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .hero { padding: 2rem 1rem; }
+            .hero h1 { font-size: 2rem; }
+            .features, .pricing { padding: 2rem 1rem; }
+            .demo-content { padding: 1rem; }
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        /* Hidden by default, shown when tab is active */
+        .demo-section {
+            display: none;
+        }
+        
+        .demo-section.active {
+            display: block;
+            animation: fadeInUp 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <img src="rr-black-trans.png" alt="RainRef" id="logo">
+            <div>
+                <div class="tagline">Enterprise AI Support Intelligence</div>
+            </div>
+        </div>
+        <div class="header-controls">
+            <input type="text" class="search-box" placeholder="Search knowledge base, tickets, signals...">
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="fade-in-up">RainRef</h1>
+            <div class="subtitle fade-in-up">The Enterprise AI Support Intelligence Platform</div>
+            <div class="description fade-in-up">
+                Transform customer support chaos into strategic intelligence. RainRef provides cited answers, 
+                safe automated actions, and clear product signals that drive billion-dollar decisions.
+                <strong>No hallucinations. Every answer has a source. Every action has a receipt.</strong>
+            </div>
+            <div class="cta-buttons fade-in-up">
+                <a href="#demo" class="btn btn-primary">🚀 Try Live Demo</a>
+                <a href="#architecture" class="btn btn-secondary">📋 View Architecture</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h2>Why Fortune 500 Companies Choose RainRef</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Zero Hallucination Guarantee</h3>
+                <p>Every AI response includes verifiable citations from your knowledge base. Never worry about made-up answers again.</p>
+                <div class="feature-stats">
+                    <div class="stat">99.7% Accuracy</div>
+                    <div class="stat">100% Cited</div>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Policy-Gated Automation</h3>
+                <p>Safe, auditable actions with enterprise-grade security. Every action requires approval and generates tamper-evident receipts.</p>
+                <div class="feature-stats">
+                    <div class="stat">SOC 2 Ready</div>
+                    <div class="stat">Zero Breaches</div>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Strategic Product Intelligence</h3>
+                <p>Convert support tickets into actionable product signals. Know exactly what to build next based on real customer pain.</p>
+                <div class="feature-stats">
+                    <div class="stat">40% Faster Build</div>
+                    <div class="stat">ROI: 340%</div>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Enterprise Scale</h3>
+                <p>Handle millions of tickets with sub-second response times. Built for the world's largest support operations.</p>
+                <div class="feature-stats">
+                    <div class="stat">10M+ Tickets/Day</div>
+                    <div class="stat">99.99% Uptime</div>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>Universal Integration</h3>
+                <p>Connects to Zendesk, Intercom, ServiceNow, GitHub, Slack, and 50+ enterprise tools. No vendor lock-in.</p>
+                <div class="feature-stats">
+                    <div class="stat">50+ Integrations</div>
+                    <div class="stat">API First</div>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎛️</div>
+                <h3>AI Agents That Scale</h3>
+                <p>Purpose-built AI agents for intake, triage, grounding, and signaling. Each agent is policy-controlled and auditable.</p>
+                <div class="feature-stats">
+                    <div class="stat">9 AI Agents</div>
+                    <div class="stat">Human-in-Loop</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Interface -->
+    <section id="demo" class="demo-interface">
+        <div class="demo-header">
+            <div>
+                <strong>RainRef Live Demo</strong> - Interactive Enterprise Support Intelligence
+            </div>
+            <div class="demo-nav">
+                <a href="#" class="active" onclick="showDemoSection('inbox')">📥 Inbox</a>
+                <a href="#" onclick="showDemoSection('knowledge')">🧠 Knowledge</a>
+                <a href="#" onclick="showDemoSection('signals')">📡 Signals</a>
+                <a href="#" onclick="showDemoSection('actions')">⚡ Actions</a>
+                <a href="#" onclick="showDemoSection('analytics')">📊 Analytics</a>
+            </div>
+        </div>
+        <div class="demo-content">
+            <!-- Inbox Demo -->
+            <div id="inbox" class="demo-section active">
+                <h3>📥 Support Event Inbox</h3>
+                <p>Real-time processing of support tickets, GitHub issues, and customer communications with AI-powered triage and routing.</p>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Intent</th>
+                            <th>Severity</th>
+                            <th>Issue</th>
+                            <th>Product</th>
+                            <th>Age/SLA</th>
+                            <th>Assignee</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Zendesk</td>
+                            <td><span class="badge badge-bug">Bug</span></td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Payment processing fails intermittently on mobile checkout</td>
+                            <td>Billing</td>
+                            <td>2h / 4h</td>
+                            <td>Sarah Chen</td>
+                        </tr>
+                        <tr>
+                            <td>Intercom</td>
+                            <td><span class="badge badge-feature">Feature</span></td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                            <td>Request: Add bulk export functionality to dashboard</td>
+                            <td>Dashboard</td>
+                            <td>1d / 2d</td>
+                            <td>Mike Rodriguez</td>
+                        </tr>
+                        <tr>
+                            <td>GitHub</td>
+                            <td><span class="badge badge-friction">Friction</span></td>
+                            <td><span class="badge badge-low">Low</span></td>
+                            <td>API documentation unclear for webhook authentication</td>
+                            <td>API</td>
+                            <td>3d / 5d</td>
+                            <td>Alex Kim</td>
+                        </tr>
+                        <tr>
+                            <td>Slack</td>
+                            <td><span class="badge badge-bug">Bug</span></td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>SSO login redirects to wrong tenant in production</td>
+                            <td>Auth</td>
+                            <td>30m / 1h</td>
+                            <td>Emergency</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td><span class="badge badge-feature">Feature</span></td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                            <td>Customer requesting dark mode for mobile app</td>
+                            <td>Mobile</td>
+                            <td>6h / 1d</td>
+                            <td>Jordan Lee</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Knowledge Demo -->
+            <div id="knowledge" class="demo-section">
+                <h3>🧠 AI-Grounded Knowledge Base</h3>
+                <p>Every answer includes verifiable citations. AI agents search through approved knowledge cards and provide sources with every response.</p>
+                <div style="background: var(--bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--hair); margin: 1rem 0;">
+                    <h4>Sample AI Response with Citations:</h4>
+                    <p><strong>Customer Question:</strong> "Why is my payment failing?"</p>
+                    <div style="background: var(--panel); padding: 1rem; border-radius: 6px; margin: 1rem 0; border-left: 4px solid var(--success);">
+                        <p><strong>AI Answer:</strong> Based on your account, the payment failure is likely due to an expired credit card or insufficient funds. Here's how to resolve this:</p>
+                        <ol>
+                            <li>Check your payment method expiration date</li>
+                            <li>Verify sufficient funds are available</li>
+                            <li>Try an alternative payment method</li>
+                        </ol>
+                        <p><strong>Sources:</strong></p>
+                        <ul>
+                            <li><a href="#">KB-001: Payment Troubleshooting Guide</a> (Updated: 2024-01-15)</li>
+                            <li><a href="#">KB-045: Credit Card Validation Process</a> (Updated: 2024-01-10)</li>
+                            <li><a href="#">KB-123: Alternative Payment Methods</a> (Updated: 2024-01-08)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signals Demo -->
+            <div id="signals" class="demo-section">
+                <h3>📡 Product Intelligence Signals</h3>
+                <p>Transform support issues into strategic product insights. Every resolved ticket generates actionable signals for your product team.</p>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Signal Type</th>
+                            <th>Product Area</th>
+                            <th>Strength</th>
+                            <th>Evidence Count</th>
+                            <th>Trend</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge badge-bug">Bug</span></td>
+                            <td>Payment Processing</td>
+                            <td>0.95</td>
+                            <td>47 tickets</td>
+                            <td>↗️ +23%</td>
+                            <td>$2.3M Revenue Risk</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-feature">Feature</span></td>
+                            <td>Bulk Operations</td>
+                            <td>0.87</td>
+                            <td>156 requests</td>
+                            <td>↗️ +45%</td>
+                            <td>High Priority</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-friction">Friction</span></td>
+                            <td>Onboarding</td>
+                            <td>0.72</td>
+                            <td>89 tickets</td>
+                            <td>↗️ +12%</td>
+                            <td>Churn Risk</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-bug">Bug</span></td>
+                            <td>Mobile App</td>
+                            <td>0.68</td>
+                            <td>34 tickets</td>
+                            <td>↘️ -15%</td>
+                            <td>Improving</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Actions Demo -->
+            <div id="actions" class="demo-section">
+                <h3>⚡ Policy-Gated Automated Actions</h3>
+                <p>Safe, auditable automation with enterprise-grade security. Every action requires policy approval and generates tamper-evident receipts.</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h4>Suggested Actions</h4>
+                        <div style="background: var(--bg); padding: 1rem; border-radius: 6px; border: 1px solid var(--hair); margin: 0.5rem 0;">
+                            <strong>Action:</strong> Resend activation email<br>
+                            <strong>Policy Check:</strong> ✅ Approved<br>
+                            <strong>Risk Level:</strong> Low<br>
+                            <button style="margin-top: 0.5rem;">Execute Action</button>
+                        </div>
+                        <div style="background: var(--bg); padding: 1rem; border-radius: 6px; border: 1px solid var(--hair); margin: 0.5rem 0;">
+                            <strong>Action:</strong> Reset user password<br>
+                            <strong>Policy Check:</strong> ⚠️ Requires Approval<br>
+                            <strong>Risk Level:</strong> Medium<br>
+                            <button style="margin-top: 0.5rem;" disabled>Pending Review</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Action Receipts</h4>
+                        <div style="background: var(--bg); padding: 1rem; border-radius: 6px; border: 1px solid var(--hair); margin: 0.5rem 0;">
+                            <strong>Receipt ID:</strong> RCP-2024-001-ABC123<br>
+                            <strong>Action:</strong> Email sent successfully<br>
+                            <strong>Timestamp:</strong> 2024-01-15 14:30:22 UTC<br>
+                            <strong>Signature:</strong> Verified ✅<br>
+                            <a href="#">View Full Receipt</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Demo -->
+            <div id="analytics" class="demo-section">
+                <h3>📊 Enterprise Analytics Dashboard</h3>
+                <p>Comprehensive metrics and insights for support operations, AI performance, and business impact.</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0;">
+                    <div style="background: var(--bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--hair); text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--success);">99.7%</div>
+                        <div>Answer Accuracy</div>
+                    </div>
+                    <div style="background: var(--bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--hair); text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">2.3s</div>
+                        <div>Avg Response Time</div>
+                    </div>
+                    <div style="background: var(--bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--hair); text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--warning);">$2.3M</div>
+                        <div>Revenue Protected</div>
+                    </div>
+                    <div style="background: var(--bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--hair); text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--danger);">340%</div>
+                        <div>ROI Improvement</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing">
+        <h2>Enterprise-Grade Pricing for Every Scale</h2>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-tier">Startup</div>
+                <div class="pricing-price">$2,500</div>
+                <div class="pricing-period">per month</div>
+                <ul class="pricing-features">
+                    <li>Up to 10,000 tickets/month</li>
+                    <li>5 AI agents included</li>
+                    <li>Basic integrations</li>
+                    <li>Email support</li>
+                    <li>Standard SLA</li>
+                </ul>
+                <a href="#" class="btn btn-secondary">Start Free Trial</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-tier">Enterprise</div>
+                <div class="pricing-price">$15,000</div>
+                <div class="pricing-period">per month</div>
+                <ul class="pricing-features">
+                    <li>Up to 100,000 tickets/month</li>
+                    <li>All 9 AI agents</li>
+                    <li>50+ integrations</li>
+                    <li>24/7 phone support</li>
+                    <li>SLA with penalties</li>
+                    <li>Custom policies</li>
+                    <li>SSO & SCIM</li>
+                </ul>
+                <a href="#" class="btn btn-primary">Contact Sales</a>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-tier">Fortune 500</div>
+                <div class="pricing-price">Custom</div>
+                <div class="pricing-period">volume pricing</div>
+                <ul class="pricing-features">
+                    <li>Unlimited tickets</li>
+                    <li>Custom AI agents</li>
+                    <li>White-label options</li>
+                    <li>Dedicated support team</li>
+                    <li>On-premise deployment</li>
+                    <li>Custom integrations</li>
+                    <li>Compliance packages</li>
+                </ul>
+                <a href="#" class="btn btn-secondary">Schedule Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Preview -->
+    <section id="architecture" class="architecture-preview">
+        <h2>🏗️ Enterprise Architecture</h2>
+        <p>Built for scale, security, and reliability. RainRef's architecture is designed to handle the world's largest support operations.</p>
+        <div class="architecture-diagram">
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Zendesk       │    │   Intercom      │    │   GitHub        │
+│   ServiceNow    │    │   Slack         │    │   Email/IMAP    │
+└─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘
+          │                      │                      │
+          └──────────────────────┼──────────────────────┘
+                                 │
+                    ┌─────────────▼─────────────┐
+                    │     RainRef Adapters      │
+                    │   (Normalize & Ingest)    │
+                    └─────────────┬─────────────┘
+                                 │
+                    ┌─────────────▼─────────────┐
+                    │    FastAPI Gateway        │
+                    │   (Auth, Rate Limit,      │
+                    │    Request Validation)    │
+                    └─────────────┬─────────────┘
+                                 │
+                    ┌─────────────▼─────────────┐
+                    │    LangGraph Orchestrator │
+                    │   ┌─────────────────────┐ │
+                    │   │  Intake Router      │ │
+                    │   │  Triage Agent       │ │
+                    │   │  KB Grounder        │ │
+                    │   │  Action Planner     │ │
+                    │   │  Policy Gate        │ │
+                    │   │  Executor           │ │
+                    │   │  Signalizer         │ │
+                    │   │  Evaluator          │ │
+                    │   │  KB Curator         │ │
+                    │   └─────────────────────┘ │
+                    └─────────────┬─────────────┘
+                                 │
+                    ┌─────────────▼─────────────┐
+                    │    Data & Storage Layer   │
+                    │   ┌─────────────────────┐ │
+                    │   │  PostgreSQL +       │ │
+                    │   │  pgvector (Vector   │ │
+                    │   │  Search)            │ │
+                    │   │  Azure Blob Storage │ │
+                    │   │  Redis (Caching)    │ │
+                    │   │  OPA (Policies)     │ │
+                    │   └─────────────────────┘ │
+                    └─────────────┬─────────────┘
+                                 │
+                    ┌─────────────▼─────────────┐
+                    │    External Integrations  │
+                    │   ┌─────────────────────┐ │
+                    │   │  RainDock (Deploy)  │ │
+                    │   │  RainShip (Release) │ │
+                    │   │  RainBeacon (Audit) │ │
+                    │   │  RainScout (Roadmap)│ │
+                    │   │  Jira/Linear        │ │
+                    │   └─────────────────────┘ │
+                    └───────────────────────────┘
+        </div>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem;">
+            <a href="architecture/system-overview.html" class="btn btn-primary">📋 System Overview</a>
+            <a href="architecture/security-model.html" class="btn btn-secondary">🔒 Security Model</a>
+            <a href="architecture/deployment-guide.html" class="btn btn-secondary">🚀 Deployment Guide</a>
+            <a href="architecture/api-reference.html" class="btn btn-secondary">📚 API Reference</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3>Ready to Transform Your Support Operations?</h3>
+            <p>Join Fortune 500 companies using RainRef to turn support chaos into strategic intelligence.</p>
+            <div class="footer-links">
+                <a href="#demo">Live Demo</a>
+                <a href="#architecture">Architecture</a>
+                <a href="mailto:sales@rainref.ai">Contact Sales</a>
+                <a href="tel:+1-555-RAIN-REF">+1 (555) RAIN-REF</a>
+                <a href="https://docs.rainref.ai">Documentation</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Reliable AI Network (RAIN). All rights reserved. | RainRef™ Enterprise AI Support Intelligence Platform</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const root = document.documentElement;
+            const currentTheme = root.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', newTheme);
+            
+            // Update logo
+            const logo = document.getElementById('logo');
+            logo.src = newTheme === 'dark' ? 'rr-white-trans.png' : 'rr-black-trans.png';
+            
+            // Update theme toggle button
+            const themeToggle = document.querySelector('.theme-toggle');
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            
+            // Save preference
+            localStorage.setItem('rainref-theme', newTheme);
+        }
+        
+        // Demo section switching
+        function showDemoSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.demo-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.demo-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
+        }
+        
+        // Initialize theme from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('rainref-theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                const logo = document.getElementById('logo');
+                logo.src = savedTheme === 'dark' ? 'rr-white-trans.png' : 'rr-black-trans.png';
+                const themeToggle = document.querySelector('.theme-toggle');
+                themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+            }
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add some interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to feature cards
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Add click effects to buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Create ripple effect
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.style.position = 'absolute';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.background = 'rgba(255,255,255,0.3)';
+                    ripple.style.transform = 'scale(0)';
+                    ripple.style.animation = 'ripple 0.6s linear';
+                    
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+        
+        // Add CSS for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

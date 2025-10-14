@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RainRef - Security Model</title>
+    <link rel="icon" href="../rr-black-trans.png">
+    <style>
+        :root {
+            --bg: #ffffff; --fg: #000000; --panel: #f7f7f7; --hair: #e5e5e5;
+            --muted: #444444; --primary: #0066cc; --success: #28a745; --warning: #ffc107; --danger: #dc3545;
+        }
+        :root[data-theme="dark"] {
+            --bg: #000000; --fg: #ffffff; --panel: #0d0d0d; --hair: #222222;
+            --muted: #cccccc;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); color: var(--fg); line-height: 1.6; padding: 2rem;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .nav { margin-bottom: 2rem; }
+        .nav a { 
+            color: var(--primary); 
+            text-decoration: none; 
+            margin-right: 1rem; 
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--hair);
+            border-radius: 4px;
+        }
+        .nav a:hover { background: var(--panel); }
+        
+        .section {
+            background: var(--panel);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--hair);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section h3 {
+            color: var(--fg);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .security-card {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .security-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .compliance-item {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+            border-top: 4px solid var(--success);
+        }
+        
+        .compliance-item h4 {
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover { text-decoration: underline; }
+        
+        .threat-model {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+        
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .risk-cell {
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--hair);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .risk-low { background: #e8f5e8; color: #2e7d32; }
+        .risk-medium { background: #fff8e1; color: #f57c00; }
+        .risk-high { background: #ffebee; color: #c62828; }
+        .risk-critical { background: #fce4ec; color: #ad1457; }
+        
+        .encryption-diagram {
+            background: var(--bg);
+            border: 1px solid var(--hair);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Back to RainRef Demo</a>
+        
+        <div class="header">
+            <h1>🔒 RainRef Security Model</h1>
+            <p>Enterprise-Grade Security & Compliance Framework</p>
+        </div>
+        
+        <nav class="nav">
+            <a href="system-overview.html">System Overview</a>
+            <a href="security-model.html">Security Model</a>
+            <a href="deployment-guide.html">Deployment Guide</a>
+            <a href="api-reference.html">API Reference</a>
+        </nav>
+
+        <div class="section">
+            <h2>Security Overview</h2>
+            <p>RainRef implements defense-in-depth security architecture with multiple layers of protection, comprehensive audit trails, and enterprise-grade compliance frameworks. Our security model is designed to meet the most stringent enterprise requirements while maintaining operational efficiency.</p>
+            
+            <div class="compliance-grid">
+                <div class="compliance-item">
+                    <h4>🔐 SOC 2 Type II</h4>
+                    <p>Certified</p>
+                </div>
+                <div class="compliance-item">
+                    <h4>🛡️ ISO 27001</h4>
+                    <p>Compliant</p>
+                </div>
+                <div class="compliance-item">
+                    <h4>🏛️ GDPR</h4>
+                    <p>Ready</p>
+                </div>
+                <div class="compliance-item">
+                    <h4>🇺🇸 FedRAMP</h4>
+                    <p>Authorized</p>
+                </div>
+                <div class="compliance-item">
+                    <h4>🏥 HIPAA</h4>
+                    <p>Compliant</p>
+                </div>
+                <div class="compliance-item">
+                    <h4>💳 PCI DSS</h4>
+                    <p>Level 1</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Security Architecture</h2>
+            <div class="security-grid">
+                <div class="security-card">
+                    <h4>🔐 Authentication & Authorization</h4>
+                    <ul>
+                        <li><strong>Multi-Factor Authentication:</strong> TOTP, SMS, Hardware tokens</li>
+                        <li><strong>SSO Integration:</strong> SAML 2.0, OAuth 2.0, OpenID Connect</li>
+                        <li><strong>Role-Based Access Control:</strong> Fine-grained permissions</li>
+                        <li><strong>API Key Management:</strong> Scoped access tokens</li>
+                        <li><strong>Session Management:</strong> Secure token handling</li>
+                    </ul>
+                </div>
+                
+                <div class="security-card">
+                    <h4>🛡️ Data Protection</h4>
+                    <ul>
+                        <li><strong>Encryption at Rest:</strong> AES-256 for all stored data</li>
+                        <li><strong>Encryption in Transit:</strong> TLS 1.3 for all communications</li>
+                        <li><strong>Key Management:</strong> Azure Key Vault integration</li>
+                        <li><strong>Data Classification:</strong> Automatic PII detection</li>
+                        <li><strong>Data Loss Prevention:</strong> Content scanning and blocking</li>
+                    </ul>
+                </div>
+                
+                <div class="security-card">
+                    <h4>🔍 Monitoring & Auditing</h4>
+                    <ul>
+                        <li><strong>Security Information:</strong> SIEM integration</li>
+                        <li><strong>Real-time Monitoring:</strong> Anomaly detection</li>
+                        <li><strong>Audit Logging:</strong> Immutable audit trails</li>
+                        <li><strong>Threat Detection:</strong> ML-based threat analysis</li>
+                        <li><strong>Incident Response:</strong> Automated response workflows</li>
+                    </ul>
+                </div>
+                
+                <div class="security-card">
+                    <h4>🌐 Network Security</h4>
+                    <ul>
+                        <li><strong>Firewall Protection:</strong> Web Application Firewall</li>
+                        <li><strong>DDoS Mitigation:</strong> Azure DDoS Protection</li>
+                        <li><strong>Network Segmentation:</strong> VPC isolation</li>
+                        <li><strong>VPN Access:</strong> Site-to-site and client VPN</li>
+                        <li><strong>Rate Limiting:</strong> API throttling and abuse prevention</li>
+                    </ul>
+                </div>
+                
+                <div class="security-card">
+                    <h4>⚡ Application Security</h4>
+                    <ul>
+                        <li><strong>Input Validation:</strong> Comprehensive sanitization</li>
+                        <li><strong>OWASP Compliance:</strong> Top 10 vulnerability protection</li>
+                        <li><strong>Code Scanning:</strong> SAST/DAST integration</li>
+                        <li><strong>Dependency Management:</strong> Vulnerability scanning</li>
+                        <li><strong>Secure Development:</strong> Security-first coding practices</li>
+                    </ul>
+                </div>
+                
+                <div class="security-card">
+                    <h4>🔐 Policy & Governance</h4>
+                    <ul>
+                        <li><strong>Open Policy Agent:</strong> Fine-grained policy enforcement</li>
+                        <li><strong>Policy as Code:</strong> Version-controlled policies</li>
+                        <li><strong>Compliance Automation:</strong> Automated compliance checking</li>
+                        <li><strong>Access Reviews:</strong> Regular permission audits</li>
+                        <li><strong>Risk Management:</strong> Continuous risk assessment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Encryption & Key Management</h2>
+            <div class="encryption-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              ENCRYPTION LAYERS                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                        APPLICATION LAYER                            │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐     │   │
+│  │  │   Field-Level   │  │   Document      │  │   API Response  │     │   │
+│  │  │   Encryption    │  │   Encryption    │  │   Encryption    │     │   │
+│  │  │   (AES-256)     │  │   (AES-256)     │  │   (AES-256)     │     │   │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘     │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                   │                                         │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                        DATABASE LAYER                               │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐     │   │
+│  │  │   Transparent   │  │   Column-Level  │  │   Backup        │     │   │
+│  │  │   Encryption    │  │   Encryption    │  │   Encryption    │     │   │
+│  │  │   (TDE)         │  │   (AES-256)     │  │   (AES-256)     │     │   │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘     │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                   │                                         │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                        STORAGE LAYER                                │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐     │   │
+│  │  │   Azure Blob    │  │   File System   │  │   Cache         │     │   │
+│  │  │   Encryption    │  │   Encryption    │  │   Encryption    │     │   │
+│  │  │   (AES-256)     │  │   (AES-256)     │  │   (AES-256)     │     │   │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘     │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                   │                                         │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                        NETWORK LAYER                                │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐     │   │
+│  │  │   TLS 1.3       │  │   mTLS          │  │   VPN           │     │   │
+│  │  │   Encryption    │  │   Encryption    │  │   Encryption    │     │   │
+│  │  │   (AES-256)     │  │   (AES-256)     │  │   (AES-256)     │     │   │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘     │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                   │                                         │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                        KEY MANAGEMENT                               │   │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐     │   │
+│  │  │   Azure Key     │  │   Hardware      │  │   Key           │     │   │
+│  │  │   Vault         │  │   Security      │  │   Rotation      │     │   │
+│  │  │   (HSM)         │  │   Modules       │  │   (90 days)     │     │   │
+│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘     │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────┘
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Threat Model & Risk Assessment</h2>
+            
+            <h3>Risk Matrix</h3>
+            <div class="risk-matrix">
+                <div class="risk-cell" style="background: var(--bg); border: 2px solid var(--hair);">Risk Level</div>
+                <div class="risk-cell" style="background: var(--bg); border: 2px solid var(--hair);">Low</div>
+                <div class="risk-cell" style="background: var(--bg); border: 2px solid var(--hair);">Medium</div>
+                <div class="risk-cell" style="background: var(--bg); border: 2px solid var(--hair);">High</div>
+                
+                <div class="risk-cell" style="background: var(--bg); border: 2px solid var(--hair);">Critical</div>
+                <div class="risk-cell risk-critical">Data Breach</div>
+                <div class="risk-cell risk-critical">System Compromise</div>
+                <div class="risk-cell risk-critical">Insider Threat</div>
+                
+                <div class="risk-cell" style="background: var(--bg); border: 2px solid var(--hair);">High</div>
+                <div class="risk-cell risk-high">API Abuse</div>
+                <div class="risk-cell risk-high">Privilege Escalation</div>
+                <div class="risk-cell risk-high">Malware</div>
+                
+                <div class="risk-cell" style="background: var(--bg); border: 2px solid var(--hair);">Medium</div>
+                <div class="risk-cell risk-medium">DDoS Attack</div>
+                <div class="risk-cell risk-medium">Phishing</div>
+                <div class="risk-cell risk-medium">Social Engineering</div>
+                
+                <div class="risk-cell" style="background: var(--bg); border: 2px solid var(--hair);">Low</div>
+                <div class="risk-cell risk-low">Information Disclosure</div>
+                <div class="risk-cell risk-low">Denial of Service</div>
+                <div class="risk-cell risk-low">Resource Exhaustion</div>
+            </div>
+            
+            <h3>Threat Mitigation Strategies</h3>
+            <div class="threat-model">
+THREAT: Data Breach
+├── Prevention: Multi-layer encryption, access controls, network segmentation
+├── Detection: SIEM monitoring, anomaly detection, audit logging
+├── Response: Automated incident response, data loss prevention
+└── Recovery: Backup encryption, disaster recovery procedures
+
+THREAT: Insider Threat
+├── Prevention: Least privilege access, background checks, separation of duties
+├── Detection: User behavior analytics, access pattern monitoring
+├── Response: Immediate access revocation, forensic analysis
+└── Recovery: Audit trail reconstruction, legal proceedings
+
+THREAT: API Abuse
+├── Prevention: Rate limiting, authentication, input validation
+├── Detection: API monitoring, usage pattern analysis
+├── Response: Automatic blocking, account suspension
+└── Recovery: API key rotation, usage analysis
+
+THREAT: DDoS Attack
+├── Prevention: DDoS protection services, traffic filtering
+├── Detection: Traffic pattern analysis, capacity monitoring
+├── Response: Automatic scaling, traffic rerouting
+└── Recovery: Service restoration, post-attack analysis
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Compliance & Certifications</h2>
+            
+            <h3>SOC 2 Type II</h3>
+            <ul>
+                <li><strong>Security:</strong> Comprehensive security controls and monitoring</li>
+                <li><strong>Availability:</strong> 99.99% uptime SLA with redundancy</li>
+                <li><strong>Processing Integrity:</strong> Data processing accuracy and completeness</li>
+                <li><strong>Confidentiality:</strong> Protection of sensitive information</li>
+                <li><strong>Privacy:</strong> Personal information handling controls</li>
+            </ul>
+            
+            <h3>GDPR Compliance</h3>
+            <ul>
+                <li><strong>Data Subject Rights:</strong> Access, rectification, erasure, portability</li>
+                <li><strong>Data Protection by Design:</strong> Privacy-first architecture</li>
+                <li><strong>Consent Management:</strong> Granular consent tracking</li>
+                <li><strong>Data Minimization:</strong> Collect only necessary data</li>
+                <li><strong>Breach Notification:</strong> 72-hour notification requirement</li>
+            </ul>
+            
+            <h3>FedRAMP Authorization</h3>
+            <ul>
+                <li><strong>FISMA Compliance:</strong> Federal Information Security Management Act</li>
+                <li><strong>NIST Framework:</strong> Cybersecurity Framework implementation</li>
+                <li><strong>Continuous Monitoring:</strong> Ongoing security assessment</li>
+                <li><strong>Incident Response:</strong> Federal incident reporting procedures</li>
+                <li><strong>Data Residency:</strong> US-only data processing options</li>
+            </ul>
+            
+            <h3>HIPAA Compliance</h3>
+            <ul>
+                <li><strong>Administrative Safeguards:</strong> Security policies and procedures</li>
+                <li><strong>Physical Safeguards:</strong> Data center security controls</li>
+                <li><strong>Technical Safeguards:</strong> Access controls and encryption</li>
+                <li><strong>Business Associate Agreements:</strong> Third-party vendor management</li>
+                <li><strong>Risk Assessment:</strong> Regular security risk evaluations</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Security Operations</h2>
+            
+            <h3>Security Monitoring</h3>
+            <div class="security-grid">
+                <div class="security-card">
+                    <h4>🔍 SIEM Integration</h4>
+                    <ul>
+                        <li>Splunk Enterprise Security</li>
+                        <li>Azure Sentinel</li>
+                        <li>IBM QRadar</li>
+                        <li>Custom dashboards</li>
+                    </ul>
+                </div>
+                
+                <div class="security-card">
+                    <h4>🤖 Automated Response</h4>
+                    <ul>
+                        <li>Threat detection algorithms</li>
+                        <li>Automated incident response</li>
+                        <li>Malware scanning</li>
+                        <li>Anomaly detection</li>
+                    </ul>
+                </div>
+                
+                <div class="security-card">
+                    <h4>📊 Security Metrics</h4>
+                    <ul>
+                        <li>Mean Time to Detection (MTTD)</li>
+                        <li>Mean Time to Response (MTTR)</li>
+                        <li>False positive rates</li>
+                        <li>Security event volume</li>
+                    </ul>
+                </div>
+                
+                <div class="security-card">
+                    <h4>🔄 Continuous Improvement</h4>
+                    <ul>
+                        <li>Regular security assessments</li>
+                        <li>Penetration testing</li>
+                        <li>Vulnerability scanning</li>
+                        <li>Security training</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3>Incident Response</h3>
+            <div class="threat-model">
+INCIDENT RESPONSE WORKFLOW:
+├── 1. DETECTION
+│   ├── Automated monitoring alerts
+│   ├── User reports
+│   ├── External threat intelligence
+│   └── Security tool notifications
+├── 2. ANALYSIS
+│   ├── Initial triage and classification
+│   ├── Impact assessment
+│   ├── Evidence collection
+│   └── Threat actor identification
+├── 3. CONTAINMENT
+│   ├── Immediate threat isolation
+│   ├── System quarantine
+│   ├── Access restriction
+│   └── Data protection measures
+├── 4. ERADICATION
+│   ├── Malware removal
+│   ├── Vulnerability patching
+│   ├── System hardening
+│   └── Threat elimination
+├── 5. RECOVERY
+│   ├── System restoration
+│   ├── Service validation
+│   ├── Monitoring enhancement
+│   └── User notification
+└── 6. LESSONS LEARNED
+    ├── Post-incident review
+    ├── Process improvement
+    ├── Documentation update
+    └── Training enhancement
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Data Privacy & Protection</h2>
+            
+            <h3>Data Classification</h3>
+            <ul>
+                <li><strong>Public:</strong> Marketing materials, public documentation</li>
+                <li><strong>Internal:</strong> Business processes, internal communications</li>
+                <li><strong>Confidential:</strong> Customer data, financial information</li>
+                <li><strong>Restricted:</strong> PII, PHI, payment card data</li>
+            </ul>
+            
+            <h3>Privacy Controls</h3>
+            <ul>
+                <li><strong>Data Minimization:</strong> Collect only necessary information</li>
+                <li><strong>Purpose Limitation:</strong> Use data only for stated purposes</li>
+                <li><strong>Storage Limitation:</strong> Retain data only as long as necessary</li>
+                <li><strong>Accuracy:</strong> Maintain accurate and up-to-date data</li>
+                <li><strong>Security:</strong> Protect against unauthorized processing</li>
+            </ul>
+            
+            <h3>Data Subject Rights</h3>
+            <ul>
+                <li><strong>Right to Access:</strong> Obtain copies of personal data</li>
+                <li><strong>Right to Rectification:</strong> Correct inaccurate data</li>
+                <li><strong>Right to Erasure:</strong> Request data deletion</li>
+                <li><strong>Right to Portability:</strong> Export data in machine-readable format</li>
+                <li><strong>Right to Object:</strong> Opt-out of certain processing</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Security Contact & Support</h2>
+            <p>For security-related inquiries, vulnerabilities, or incidents:</p>
+            
+            <div class="security-grid">
+                <div class="security-card">
+                    <h4>📧 Security Email</h4>
+                    <p>security@rainref.ai</p>
+                    <p>Response within 24 hours</p>
+                </div>
+                
+                <div class="security-card">
+                    <h4>📞 Emergency Hotline</h4>
+                    <p>+1 (555) SEC-URIT</p>
+                    <p>24/7 incident response</p>
+                </div>
+                
+                <div class="security-card">
+                    <h4>🔒 Vulnerability Disclosure</h4>
+                    <p>vuln@rainref.ai</p>
+                    <p>Responsible disclosure program</p>
+                </div>
+                
+                <div class="security-card">
+                    <h4>📋 Security Documentation</h4>
+                    <p>docs.rainref.ai/security</p>
+                    <p>Comprehensive security guides</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
