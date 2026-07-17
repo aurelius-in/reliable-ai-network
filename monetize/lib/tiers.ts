@@ -62,6 +62,17 @@ export function tierLabel(tier: string | null | undefined): string {
   }
 }
 
+const TIER_RANK: Record<TierName, number> = { starter: 1, growth: 2, pro: 3 };
+
+/** True when the user's current tier includes the tools of `required`. */
+export function hasTierAccess(
+  currentTier: string | null | undefined,
+  required: TierName
+): boolean {
+  const rank = TIER_RANK[currentTier as TierName] ?? 0;
+  return rank >= TIER_RANK[required];
+}
+
 export function trialDaysLeft(trialEndsAt: string | null | undefined): number | null {
   if (!trialEndsAt) return null;
   const ms = new Date(trialEndsAt).getTime() - Date.now();

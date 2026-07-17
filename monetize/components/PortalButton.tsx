@@ -36,7 +36,7 @@ export function PortalButton({
         disabled={loading}
         className={
           className ??
-          "inline-flex items-center gap-2 rounded-xl border border-night-600 bg-night-700 px-5 py-2.5 font-semibold text-white transition hover:border-electric hover:bg-night-600 disabled:opacity-60"
+          "inline-flex items-center gap-2 rounded-xl border border-night-600 bg-night-700 px-5 py-2.5 font-semibold text-white transition hover:border-rain hover:bg-night-600 disabled:opacity-60"
         }
       >
         {loading && <Loader2 size={16} className="animate-spin" />}

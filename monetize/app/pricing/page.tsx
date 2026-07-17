@@ -45,12 +45,12 @@ export default async function PricingPage() {
               key={tier.id}
               className={`relative flex flex-col rounded-2xl border p-7 ${
                 tier.highlight
-                  ? "glow-card border-gold/50 bg-gradient-to-b from-gold/10 via-night-700 to-night-800"
+                  ? "glow-card border-rain/50 bg-gradient-to-b from-rain/10 via-night-700 to-night-800"
                   : "border-night-600 bg-night-700"
               }`}
             >
               {tier.highlight && (
-                <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full bg-gradient-to-r from-gold to-gold-bright px-3.5 py-1 text-[11px] font-black uppercase tracking-wider text-night">
+                <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full bg-gradient-to-r from-rain to-rain-bright px-3.5 py-1 text-[11px] font-black uppercase tracking-wider text-white">
                   <Crown size={12} /> Most popular
                 </span>
               )}
@@ -67,7 +67,7 @@ export default async function PricingPage() {
                   <li key={feature} className="flex items-start gap-2 text-sm text-slate-200">
                     <Check
                       size={16}
-                      className={`mt-0.5 shrink-0 ${tier.highlight ? "text-gold" : "text-electric-bright"}`}
+                      className={`mt-0.5 shrink-0 ${tier.highlight ? "text-rain-bright" : "text-violet-bright"}`}
                     />
                     {feature}
                   </li>
@@ -85,7 +85,7 @@ export default async function PricingPage() {
                   }
                   className={
                     tier.highlight
-                      ? "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold to-gold-bright px-6 py-3 font-bold text-night transition hover:brightness-110 disabled:opacity-60"
+                      ? "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rain to-rain-bright px-6 py-3 font-bold text-white shadow-lg shadow-rain/30 transition hover:brightness-110 disabled:opacity-60"
                       : undefined
                   }
                 />

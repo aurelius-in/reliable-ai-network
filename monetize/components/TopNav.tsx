@@ -31,9 +31,9 @@ export function TopNav({ profile }: { profile: Profile | null }) {
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
               tier === "pro"
-                ? "bg-gold/15 text-gold ring-1 ring-gold/40"
+                ? "bg-violet/15 text-violet-bright ring-1 ring-violet/40"
                 : tier
-                  ? "bg-electric/15 text-electric-bright ring-1 ring-electric/40"
+                  ? "bg-rain/15 text-rain-bright ring-1 ring-rain/40"
                   : "bg-night-600 text-slate-300 ring-1 ring-night-600"
             }`}
           >
@@ -45,7 +45,7 @@ export function TopNav({ profile }: { profile: Profile | null }) {
           {tier !== "pro" && (
             <Link
               href="/pricing"
-              className="hidden rounded-lg bg-gradient-to-r from-gold to-gold-bright px-3.5 py-1.5 text-xs font-bold text-night transition hover:brightness-110 sm:inline-block"
+              className="hidden rounded-lg bg-gradient-to-r from-rain to-rain-bright px-3.5 py-1.5 text-xs font-bold text-white shadow shadow-rain/30 transition hover:brightness-110 sm:inline-block"
             >
               Upgrade
             </Link>

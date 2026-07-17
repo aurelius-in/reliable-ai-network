@@ -60,7 +60,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
 
   if (confirmationSent) {
     return (
-      <div className="fade-up rounded-2xl border border-electric/30 bg-night-700 p-8 text-center">
+      <div className="fade-up card-glow p-8 text-center">
         <h2 className="text-xl font-bold text-white">Check your email</h2>
         <p className="mt-2 text-sm text-slate-300">
           We sent a confirmation link to <span className="text-white">{email}</span>.
@@ -70,8 +70,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
     );
   }
 
-  const inputClass =
-    "w-full rounded-xl border border-night-600 bg-night-800 px-4 py-3 text-white placeholder:text-slate-500 outline-none transition focus:border-electric focus:ring-2 focus:ring-electric/30";
+  const inputClass = "input-dark";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -108,11 +107,8 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
 
       {error && <p className="text-sm text-red-400">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-electric to-electric-bright px-6 py-3 font-bold text-white shadow-lg shadow-electric/30 transition hover:brightness-110 disabled:opacity-60"
-      >
+      <button type="submit" disabled={loading} className="btn-primary w-full">
+
         {loading && <Loader2 size={16} className="animate-spin" />}
         {mode === "signup" ? "Create account" : "Sign in"}
       </button>
@@ -121,14 +117,14 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         {mode === "signup" ? (
           <>
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-electric-bright hover:underline">
+            <Link href="/login" className="font-semibold text-rain-bright hover:underline">
               Sign in
             </Link>
           </>
         ) : (
           <>
             New here?{" "}
-            <Link href="/signup" className="font-semibold text-electric-bright hover:underline">
+            <Link href="/signup" className="font-semibold text-rain-bright hover:underline">
               Create an account
             </Link>
           </>

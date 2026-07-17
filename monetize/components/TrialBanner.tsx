@@ -14,17 +14,19 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
       year: "numeric",
     });
     return (
-      <div className="fade-up rounded-2xl border border-gold/30 bg-gradient-to-r from-gold/10 via-night-700 to-electric/10 px-5 py-4">
+      <div className="fade-up rounded-2xl border border-rain/30 bg-gradient-to-r from-rain/10 via-night-700 to-violet/10 px-5 py-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-white">
-            <Sparkles size={18} className="text-gold" />
+            <Sparkles size={18} className="text-rain-bright" />
             You are on the {tierLabel(profile.current_tier)} trial — ends in{" "}
-            <span className="text-gold">{days} day{days === 1 ? "" : "s"}</span>
+            <span className="text-rain-bright">
+              {days} day{days === 1 ? "" : "s"}
+            </span>
             <span className="text-sm font-normal text-slate-400">({endDate})</span>
           </p>
           <Link
             href="/billing"
-            className="text-sm font-semibold text-electric-bright underline-offset-4 transition hover:underline"
+            className="text-sm font-semibold text-pink underline-offset-4 transition hover:underline"
           >
             Manage trial →
           </Link>
@@ -35,17 +37,17 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
 
   if (!status || status === "canceled") {
     return (
-      <div className="fade-up rounded-2xl border border-electric/30 bg-gradient-to-r from-electric/10 via-night-700 to-gold/10 px-5 py-4">
+      <div className="fade-up rounded-2xl border border-rain/30 bg-gradient-to-r from-rain/10 via-night-700 to-violet/10 px-5 py-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-white">
-            <Zap size={18} className="text-electric-bright" />
+            <Zap size={18} className="text-rain-bright" />
             {status === "canceled"
               ? "Your subscription ended. Rejoin to keep making it rain."
               : "Start your free 30-day Pro trial — full access, cancel anytime."}
           </p>
           <Link
             href="/pricing"
-            className="rounded-lg bg-gradient-to-r from-electric to-electric-bright px-4 py-2 text-sm font-bold text-white shadow shadow-electric/30 transition hover:brightness-110"
+            className="rounded-lg bg-gradient-to-r from-rain to-rain-bright px-4 py-2 text-sm font-bold text-white shadow shadow-rain/30 transition hover:brightness-110"
           >
             {status === "canceled" ? "Reactivate" : "Start free trial"}
           </Link>

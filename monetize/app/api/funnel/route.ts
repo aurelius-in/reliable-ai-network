@@ -2,19 +2,15 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { grokChatJSON } from "@/lib/grok";
 import {
-  PRICING_SYSTEM_PROMPT,
-  buildPricingUserPrompt,
-} from "@/prompts/pricing-recommendations";
-import { resolveCreation } from "@/lib/tool-request";
-import type { PricingRecommendation } from "@/types";
+  FUNNEL_ARCHITECT_SYSTEM_PROMPT,
+  buildFunnelUserPrompt,
+} from "@/prompts/funnel-architect";
+import { resolveCreation, requireTier } from "@/lib/tool-request";
+import type { FunnelPlan } from "@/types";
 
 export const maxDuration = 60;
 
-/**
- * Pricing & Packaging Builder (Starter).
- * Body: { creationId } for a saved creation, or inline
- * { title, description, type } for one-tap examples.
- */
+/** Funnel Architect (Growth): builds a 3-stage funnel with copy. */
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -25,11 +21,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
+  const tier = await requireTier(supabase, user.id, "growth");
+  if ("error" in tier) {
+    return NextResponse.json({ error: tier.error }, { status: tier.status });
+  }
+
   let body: {
     creationId?: string;
     title?: string;
     description?: string;
     type?: string;
+    priceBand?: string;
+    audience?: string;
   };
   try {
     body = await request.json();
@@ -45,16 +48,23 @@ export async function POST(request: Request) {
     );
   }
 
-  let pricing: PricingRecommendation;
+  let funnel: FunnelPlan;
   try {
-    pricing = await grokChatJSON<PricingRecommendation>([
-      { role: "system", content: PRICING_SYSTEM_PROMPT },
-      { role: "user", content: buildPricingUserPrompt(resolved.creation) },
+    funnel = await grokChatJSON<FunnelPlan>([
+      { role: "system", content: FUNNEL_ARCHITECT_SYSTEM_PROMPT },
+      {
+        role: "user",
+        content: buildFunnelUserPrompt({
+          ...resolved.creation,
+          priceBand: body.priceBand,
+          audience: body.audience,
+        }),
+      },
     ]);
   } catch (err) {
-    console.error("Pricing builder failed:", err);
+    console.error("Funnel Architect failed:", err);
     return NextResponse.json(
-      { error: "Pricing generation failed. Please try again in a moment." },
+      { error: "Funnel generation failed. Please try again in a moment." },
       { status: 502 }
     );
   }
@@ -64,15 +74,15 @@ export async function POST(request: Request) {
     .insert({
       user_id: user.id,
       creation_id: resolved.creation.id,
-      type: "pricing",
-      content: pricing,
+      type: "funnel",
+      content: funnel,
     })
     .select("id")
     .single();
 
   if (assetError) {
-    console.error("Failed to persist pricing asset:", assetError);
+    console.error("Failed to persist funnel asset:", assetError);
   }
 
-  return NextResponse.json({ assetId: asset?.id ?? null, pricing });
+  return NextResponse.json({ assetId: asset?.id ?? null, funnel });
 }

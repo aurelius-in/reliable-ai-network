@@ -59,8 +59,8 @@ export default async function BillingPage() {
         <h1 className="text-2xl font-black text-white">Billing</h1>
 
         {isTrialing && trialEndDate && (
-          <div className="fade-up rounded-2xl border border-gold/40 bg-gradient-to-r from-gold/10 to-night-700 p-6">
-            <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gold">
+          <div className="fade-up rounded-2xl border border-rain/40 bg-gradient-to-r from-rain/10 to-night-700 p-6">
+            <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-rain-bright">
               <CalendarClock size={16} /> Trial ending
             </p>
             <p className="mt-2 text-xl font-bold text-white">
@@ -93,7 +93,7 @@ export default async function BillingPage() {
                   className={`rounded-full px-3 py-1 text-xs font-bold ${
                     status === "past_due"
                       ? "bg-red-500/15 text-red-400 ring-1 ring-red-500/40"
-                      : "bg-electric/15 text-electric-bright ring-1 ring-electric/40"
+                      : "bg-rain/15 text-rain-bright ring-1 ring-rain/40"
                   }`}
                 >
                   {STATUS_LABELS[status!] ?? status}
@@ -133,7 +133,7 @@ export default async function BillingPage() {
             Want a different plan? Compare tiers on the{" "}
             <Link
               href="/pricing"
-              className="font-semibold text-electric-bright hover:underline"
+              className="font-semibold text-rain-bright hover:underline"
             >
               pricing page
             </Link>

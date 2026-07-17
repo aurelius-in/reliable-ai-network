@@ -53,7 +53,7 @@ export function CheckoutButton({
         disabled={loading}
         className={
           className ??
-          "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-electric to-electric-bright px-6 py-3 font-semibold text-white shadow-lg shadow-electric/30 transition hover:brightness-110 disabled:opacity-60"
+          "inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rain to-rain-bright px-6 py-3 font-semibold text-white shadow-lg shadow-rain/30 transition hover:brightness-110 disabled:opacity-60"
         }
       >
         {loading && <Loader2 size={16} className="animate-spin" />}

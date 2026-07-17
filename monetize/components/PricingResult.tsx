@@ -1,4 +1,5 @@
 import { BadgeDollarSign, Quote } from "lucide-react";
+import { CopyButton } from "@/components/ui";
 import type { PricingRecommendation } from "@/types";
 
 function money(n: number) {
@@ -9,11 +10,23 @@ function money(n: number) {
   });
 }
 
+function salesCopyText(pricing: PricingRecommendation): string {
+  const copy = pricing.sales_copy;
+  return [
+    copy?.headline,
+    copy?.subheadline,
+    "",
+    ...(copy?.bullets?.map((b) => `✓ ${b}`) ?? []),
+    "",
+    `[${copy?.cta}]`,
+  ].join("\n");
+}
+
 export function PricingResult({ pricing }: { pricing: PricingRecommendation }) {
   return (
     <div className="fade-up space-y-6">
-      <div className="rounded-2xl border border-electric/30 bg-night-700 p-6">
-        <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-electric-bright">
+      <div className="card-glow p-6">
+        <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-rain-bright">
           <BadgeDollarSign size={16} /> Recommended Model
         </h3>
         <p className="mt-2 text-xl font-bold capitalize text-white">
@@ -32,7 +45,7 @@ export function PricingResult({ pricing }: { pricing: PricingRecommendation }) {
               key={i}
               className={`rounded-xl border p-4 ${
                 recommended
-                  ? "border-gold/50 bg-gradient-to-b from-gold/10 to-night-700"
+                  ? "border-rain/50 bg-gradient-to-b from-rain/10 to-night-700"
                   : "border-night-600 bg-night-700"
               }`}
             >
@@ -49,7 +62,7 @@ export function PricingResult({ pricing }: { pricing: PricingRecommendation }) {
                 {range.notes}
               </p>
               {recommended && (
-                <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-gold">
+                <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-rain-bright">
                   ★ Recommended
                 </p>
               )}
@@ -59,10 +72,14 @@ export function PricingResult({ pricing }: { pricing: PricingRecommendation }) {
       </div>
 
       {pricing.value_anchors?.length > 0 && (
-        <div className="rounded-xl border border-night-600 bg-night-700 p-5">
+        <div className="card p-5">
           <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">
             Value anchors to use in your copy
           </h4>
+          <p className="helper-text">
+            A value anchor compares your price to something bigger, so it feels
+            tiny. Drop these into your sales page.
+          </p>
           <ul className="mt-2 space-y-1.5 text-sm text-slate-200">
             {pricing.value_anchors.map((anchor, i) => (
               <li key={i}>• {anchor}</li>
@@ -71,10 +88,13 @@ export function PricingResult({ pricing }: { pricing: PricingRecommendation }) {
         </div>
       )}
 
-      <div className="rounded-2xl border border-gold/30 bg-gradient-to-br from-gold/5 to-night-700 p-6">
-        <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gold">
-          <Quote size={16} /> AI Sales Copy
-        </h3>
+      <div className="rounded-2xl border border-violet/30 bg-gradient-to-br from-violet/8 to-night-700 p-6">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-violet-bright">
+            <Quote size={16} /> AI Sales Copy
+          </h3>
+          <CopyButton text={salesCopyText(pricing)} label="Copy all" />
+        </div>
         <p className="mt-3 text-2xl font-black leading-tight text-white">
           {pricing.sales_copy?.headline}
         </p>
@@ -82,13 +102,11 @@ export function PricingResult({ pricing }: { pricing: PricingRecommendation }) {
         <ul className="mt-4 space-y-2 text-sm text-slate-200">
           {pricing.sales_copy?.bullets?.map((bullet, i) => (
             <li key={i} className="flex items-start gap-2">
-              <span className="text-electric-bright">✓</span> {bullet}
+              <span className="text-rain-bright">✓</span> {bullet}
             </li>
           ))}
         </ul>
-        <p className="mt-5 inline-block rounded-xl bg-gradient-to-r from-gold to-gold-bright px-6 py-2.5 font-bold text-night">
-          {pricing.sales_copy?.cta}
-        </p>
+        <p className="btn-primary mt-5">{pricing.sales_copy?.cta}</p>
       </div>
     </div>
   );

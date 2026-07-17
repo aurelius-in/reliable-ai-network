@@ -109,7 +109,9 @@ create table if not exists public.progress_logs (
   user_id uuid not null references public.profiles (id) on delete cascade,
   milestone text not null,
   completed boolean not null default false,
-  date timestamptz not null default now()
+  date timestamptz not null default now(),
+  -- One row per user per milestone; the app upserts on (user_id, milestone).
+  constraint progress_logs_user_milestone_key unique (user_id, milestone)
 );
 
 alter table public.progress_logs enable row level security;
@@ -157,3 +159,28 @@ create index if not exists generated_assets_user_id_idx on public.generated_asse
 create index if not exists generated_assets_creation_id_idx on public.generated_assets (creation_id);
 create index if not exists billing_events_user_id_idx on public.billing_events (user_id);
 create index if not exists progress_logs_user_id_idx on public.progress_logs (user_id);
+
+-- ============================================================
+-- MIGRATION for EXISTING databases (created before the 9-tab
+-- dashboard update). New projects running this whole file are
+-- already covered — run this block ONLY on an existing database.
+-- ============================================================
+-- The Progress Tracker upserts milestones on (user_id, milestone),
+-- which requires this unique constraint:
+--
+--   -- Remove any duplicate milestone rows first (keeps the newest):
+--   delete from public.progress_logs a
+--   using public.progress_logs b
+--   where a.user_id = b.user_id
+--     and a.milestone = b.milestone
+--     and a.date < b.date;
+--
+--   alter table public.progress_logs
+--     add constraint progress_logs_user_milestone_key
+--     unique (user_id, milestone);
+--
+-- No other schema changes are needed: the new tools (funnel,
+-- content bundles, strategy reports, done-for-you requests) reuse
+-- generated_assets with new `type` values ('funnel', 'content_bundle',
+-- 'strategy_competitors', 'strategy_pricing_optimization',
+-- 'strategy_roadmap', 'strategy_ab_tests', 'dfy_request').

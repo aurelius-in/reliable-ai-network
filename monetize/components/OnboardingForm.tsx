@@ -4,34 +4,49 @@ import { useState } from "react";
 import Link from "next/link";
 import { Loader2, Sparkles } from "lucide-react";
 import { AnalysisResult } from "@/components/AnalysisResult";
+import { ChipGroup, ErrorText, FieldLabel, FunLoading } from "@/components/ui";
+import { AUDIENCE_OPTIONS, EXAMPLE_CREATIONS } from "@/lib/examples";
 import type { IdeaAnalysis } from "@/types";
 
 const CREATION_TYPES = [
-  { value: "app", label: "App" },
-  { value: "game", label: "Game" },
-  { value: "tool", label: "Tool" },
-  { value: "saas", label: "SaaS" },
-  { value: "content", label: "Content / Media" },
-  { value: "other", label: "Other" },
+  { value: "app", label: "📱 App" },
+  { value: "game", label: "🎮 Game" },
+  { value: "tool", label: "🔧 Tool" },
+  { value: "saas", label: "☁️ SaaS" },
+  { value: "content", label: "🎨 Content / Templates" },
+  { value: "other", label: "✨ Other" },
 ];
 
 export function OnboardingForm() {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [type, setType] = useState("app");
+  const [audience, setAudience] = useState("creators");
+  const [extra, setExtra] = useState("");
+  const [exampleId, setExampleId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<IdeaAnalysis | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  function applyExample(id: string) {
+    const example = EXAMPLE_CREATIONS.find((e) => e.id === id);
+    if (!example) return;
+    setExampleId(id);
+    setTitle(example.title);
+    setType(example.type);
+  }
+
+  async function runAnalysis(payload: {
+    title: string;
+    description: string;
+    type: string;
+  }) {
     setLoading(true);
     setError(null);
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, type }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -45,21 +60,41 @@ export function OnboardingForm() {
     }
   }
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const example = exampleId
+      ? EXAMPLE_CREATIONS.find((x) => x.id === exampleId)
+      : null;
+    const usingExample = example && title === example.title;
+
+    // Build a rich description from the chips — no typing required.
+    const audienceLabel =
+      AUDIENCE_OPTIONS.find((a) => a.value === audience)?.value ?? audience;
+    const description = usingExample
+      ? `${example.description}${extra.trim() ? ` Extra details: ${extra.trim()}` : ""}`
+      : `A ${type} called "${title.trim()}" made for ${audienceLabel}.${
+          extra.trim() ? ` ${extra.trim()}` : ""
+        }`;
+
+    await runAnalysis({
+      title: title.trim(),
+      description,
+      type: usingExample ? example.type : type,
+    });
+  }
+
   if (analysis) {
     return (
       <div className="space-y-8">
         <div className="fade-up text-center">
-          <p className="inline-flex items-center gap-2 rounded-full bg-gold/15 px-4 py-1.5 text-sm font-bold text-gold ring-1 ring-gold/40">
+          <p className="inline-flex items-center gap-2 rounded-full bg-rain/15 px-4 py-1.5 text-sm font-bold text-rain-bright ring-1 ring-rain/40">
             <Sparkles size={15} />
             Your personalized monetization system is ready
           </p>
         </div>
         <AnalysisResult analysis={analysis} />
         <div className="text-center">
-          <Link
-            href="/dashboard"
-            className="inline-block rounded-xl bg-gradient-to-r from-electric to-electric-bright px-8 py-3.5 font-bold text-white shadow-lg shadow-electric/30 transition hover:brightness-110"
-          >
+          <Link href="/dashboard" className="btn-primary px-8 py-3.5">
             Go to my dashboard →
           </Link>
         </div>
@@ -67,14 +102,33 @@ export function OnboardingForm() {
     );
   }
 
-  const inputClass =
-    "w-full rounded-xl border border-night-600 bg-night-800 px-4 py-3 text-white placeholder:text-slate-500 outline-none transition focus:border-electric focus:ring-2 focus:ring-electric/30";
+  if (loading) {
+    return <FunLoading headline="Analyzing your creation…" />;
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label htmlFor="title" className="mb-1.5 block text-sm font-semibold text-slate-300">
-          What did you build?
+        <FieldLabel helper="No idea yet? Tap one and we'll fill everything in for you.">
+          Try an example — one tap
+        </FieldLabel>
+        <div className="flex flex-wrap gap-2">
+          {EXAMPLE_CREATIONS.map((example) => (
+            <button
+              key={example.id}
+              type="button"
+              onClick={() => applyExample(example.id)}
+              className={`chip ${exampleId === example.id && title === example.title ? "chip-on" : ""}`}
+            >
+              {example.emoji} {example.title}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="title" className="mb-1.5 block text-sm font-semibold text-white">
+          What&apos;s it called?
         </label>
         <input
           id="title"
@@ -83,75 +137,62 @@ export function OnboardingForm() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. AI Recipe Generator"
-          className={inputClass}
+          className="input-dark"
+        />
+        <p className="helper-text">A working name is fine — you can change it later.</p>
+      </div>
+
+      <div>
+        <FieldLabel helper="Pick the closest match.">
+          What kind of creation is it?
+        </FieldLabel>
+        <ChipGroup
+          options={CREATION_TYPES}
+          value={type}
+          onChange={setType}
+          ariaLabel="Creation type"
         />
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-semibold text-slate-300">
-          What kind of creation is it?
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {CREATION_TYPES.map((t) => (
-            <button
-              key={t.value}
-              type="button"
-              onClick={() => setType(t.value)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                type === t.value
-                  ? "bg-electric text-white shadow shadow-electric/30"
-                  : "border border-night-600 bg-night-800 text-slate-300 hover:border-electric/50"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <FieldLabel helper="Who would love this the most?">
+          Who&apos;s it for?
+        </FieldLabel>
+        <ChipGroup
+          options={AUDIENCE_OPTIONS}
+          value={audience}
+          onChange={setAudience}
+          ariaLabel="Audience"
+        />
       </div>
 
       <div>
-        <label
-          htmlFor="description"
-          className="mb-1.5 block text-sm font-semibold text-slate-300"
-        >
-          Describe it — what does it do, and who is it for?
+        <label htmlFor="extra" className="mb-1.5 block text-sm font-semibold text-white">
+          Anything else? <span className="font-normal text-slate-500">(optional)</span>
         </label>
         <textarea
-          id="description"
-          required
-          rows={5}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="The more detail you give, the sharper your monetization plan will be."
-          className={inputClass}
+          id="extra"
+          rows={2}
+          value={extra}
+          onChange={(e) => setExtra(e.target.value)}
+          placeholder="e.g. It also makes shopping lists"
+          className="input-dark"
         />
+        <p className="helper-text">
+          More detail makes the plan sharper — but the chips alone are enough.
+        </p>
       </div>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      <ErrorText message={error} />
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-electric to-electric-bright px-6 py-3.5 font-bold text-white shadow-lg shadow-electric/30 transition hover:brightness-110 disabled:opacity-60"
-      >
+      <button type="submit" disabled={loading} className="btn-primary w-full py-3.5">
         {loading ? (
-          <>
-            <Loader2 size={18} className="animate-spin" />
-            Analyzing your creation…
-          </>
+          <Loader2 size={18} className="animate-spin" />
         ) : (
-          <>
-            <Sparkles size={18} />
-            Analyze my creation
-          </>
+          <Sparkles size={18} />
         )}
+        Analyze my creation
       </button>
-      {loading && (
-        <p className="text-center text-xs text-slate-500">
-          Our AI is scoring your idea against proven monetization frameworks. This
-          takes ~15 seconds.
-        </p>
-      )}
     </form>
   );
 }
