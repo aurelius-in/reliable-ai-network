@@ -8,7 +8,7 @@ import {
 import { requireTier } from "@/lib/tool-request";
 import type { MetricsAnalysis, MetricsEntry } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 function toCount(value: unknown): number | null {
   const n = Number(value);

@@ -8,7 +8,7 @@ import {
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { SalesKit } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /** Direct Sales Tools (Pro): outreach openers, follow-ups, objections, call agenda. */
 export async function POST(request: Request) {

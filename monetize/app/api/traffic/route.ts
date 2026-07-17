@@ -8,7 +8,7 @@ import {
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { TrafficPlan } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /** Get Eyes on Your Offer (Growth): channel picks + weekly traffic plan. */
 export async function POST(request: Request) {

@@ -8,7 +8,7 @@ import {
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { LaunchPlan } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /** 30-Day Launch Plan (Growth): day-by-day launch sequence with scripts. */
 export async function POST(request: Request) {

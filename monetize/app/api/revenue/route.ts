@@ -8,7 +8,7 @@ import {
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { RevenueStreamsPlan } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /** Multiple Ways to Get Paid (Pro): revenue-model comparison + build-first pick. */
 export async function POST(request: Request) {

@@ -8,7 +8,7 @@ import {
 import { resolveCreation } from "@/lib/tool-request";
 import type { BuyerProfilesResult } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /**
  * Find Your Buyers (Starter): generates 2-3 ideal customer profiles.
