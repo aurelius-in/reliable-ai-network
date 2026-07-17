@@ -94,6 +94,32 @@ export const GOAL_OPTIONS = [
   { value: "a real business", label: "🚀 Real business" },
 ];
 
+export const TIME_PER_WEEK_OPTIONS = [
+  { value: "2-3 hours a week", label: "⏱️ 2–3 hrs/week" },
+  { value: "5-7 hours a week", label: "🕐 5–7 hrs/week" },
+  { value: "10+ hours a week", label: "🔥 10+ hrs/week" },
+];
+
+export const COMFORT_OPTIONS = [
+  { value: "camera-shy, prefers not to show their face", label: "🙈 Camera-shy" },
+  { value: "loves writing posts and threads", label: "✍️ Loves writing" },
+  { value: "happy to talk on camera or record videos", label: "🎥 Fine on camera" },
+  { value: "prefers quiet 1-on-1 conversations over public posting", label: "🤫 Prefers 1-on-1" },
+];
+
+export const OUTREACH_CHANNEL_OPTIONS = [
+  { value: "Instagram or X DMs", label: "💬 Cold DMs" },
+  { value: "cold email", label: "📧 Cold email" },
+  { value: "LinkedIn messages", label: "💼 LinkedIn" },
+];
+
+export const TARGET_BUYER_OPTIONS = [
+  { value: "individual consumers", label: "🧑 Everyday people" },
+  { value: "creators and influencers", label: "🎨 Creators" },
+  { value: "small business owners", label: "🏪 Small businesses" },
+  { value: "startup founders and teams", label: "🚀 Startups" },
+];
+
 /** Rotating fun copy for loading states. */
 export const LOADING_LINES = [
   "Asking the money brains…",

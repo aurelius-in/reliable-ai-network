@@ -3,11 +3,14 @@ import { redirect } from "next/navigation";
 import {
   ArrowRight,
   BadgeDollarSign,
-  Brain,
   GitBranch,
+  Handshake,
+  Layers,
   Lightbulb,
   Megaphone,
   Rocket,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { createClient } from "@/lib/supabase/server";
@@ -83,29 +86,44 @@ export default async function HomePage() {
               body: "Get a monetization score, your best revenue paths, and quick wins — in one run.",
             },
             {
-              icon: <BadgeDollarSign className="text-pink" size={22} />,
+              icon: <Users className="text-pink" size={22} />,
+              title: "Find Your Buyers",
+              body: "Meet the 2-3 kinds of people most likely to pay you — and exactly where they hang out online.",
+            },
+            {
+              icon: <BadgeDollarSign className="text-violet-bright" size={22} />,
               title: "Pricing Builder",
               body: "Value-based price ranges and high-converting sales copy, tailored to what you built.",
             },
             {
-              icon: <GitBranch className="text-violet-bright" size={22} />,
+              icon: <GitBranch className="text-rain-bright" size={22} />,
               title: "Funnel Architect",
               body: "Tripwire → core offer → upsell, fully written, with a visual map of the money path.",
             },
             {
-              icon: <Megaphone className="text-rain-bright" size={22} />,
+              icon: <Rocket className="text-pink" size={22} />,
+              title: "30-Day Launch Plan",
+              body: "A day-by-day launch calendar with posts and emails pre-written. Just follow along.",
+            },
+            {
+              icon: <Megaphone className="text-violet-bright" size={22} />,
               title: "Content Generator",
               body: "One idea becomes posts, ads, listings, and emails. A week of launch content in a tap.",
             },
             {
-              icon: <Brain className="text-pink" size={22} />,
-              title: "Strategy Tools",
-              body: "Competitor scans, pricing optimization, and a custom 30/60/90-day roadmap.",
+              icon: <Handshake className="text-rain-bright" size={22} />,
+              title: "Direct Sales Tools",
+              body: "Word-for-word DMs, follow-ups, and objection answers. Selling without the sleaze.",
             },
             {
-              icon: <Rocket className="text-violet-bright" size={22} />,
-              title: "Launch Templates",
-              body: "Swipe files and templates the pros use. Fill in the brackets, ship today.",
+              icon: <TrendingUp className="text-pink" size={22} />,
+              title: "What's Working",
+              body: "Log four simple numbers a week; AI finds your bottleneck and hands you next week's fixes.",
+            },
+            {
+              icon: <Layers className="text-violet-bright" size={22} />,
+              title: "Multiple Ways to Get Paid",
+              body: "Subscriptions, one-time, freemium, services — compared for your product, with a clear first pick.",
             },
           ].map((f) => (
             <div

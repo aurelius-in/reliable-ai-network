@@ -72,6 +72,26 @@ export interface PricingRecommendation {
   };
 }
 
+/** Stored as generated_assets.content with type "buyer_profiles". */
+export interface BuyerPersona {
+  name: string;
+  emoji: string;
+  who: string;
+  where_online: string[];
+  pain_points: string[];
+  desires: string[];
+  objections: { objection: string; answer: string }[];
+  reachability: "easy" | "medium" | "hard";
+  reachability_why: string;
+  positioning_line: string;
+}
+
+export interface BuyerProfilesResult {
+  headline_insight: string;
+  personas: BuyerPersona[];
+  best_first_target: string;
+}
+
 /* ------------------------------------------------------------------ */
 /* Growth tools                                                        */
 /* ------------------------------------------------------------------ */
@@ -111,6 +131,49 @@ export interface ContentBundle {
     tags: string[];
   };
   email_sequence: { subject: string; preview_text: string; body: string }[];
+}
+
+/** Stored as generated_assets.content with type "traffic_plan". */
+export interface TrafficChannel {
+  name: string;
+  emoji: string;
+  why_it_fits: string;
+  effort: number; // 1-5
+  results_potential: number; // 1-5
+  time_to_results: string;
+  first_move: string;
+  post_template: string;
+}
+
+export interface TrafficPlan {
+  strategy_summary: string;
+  channels: TrafficChannel[];
+  weekly_plan: { day: string; action: string; channel: string; minutes: number }[];
+  golden_rule: string;
+}
+
+/** Stored as generated_assets.content with type "launch_plan". */
+export interface LaunchDay {
+  day: number;
+  title: string;
+  action: string;
+  script?: string;
+  script_label?: string;
+  time_needed: string;
+}
+
+export interface LaunchMilestone {
+  day: number;
+  target: string;
+  if_behind: string;
+}
+
+export interface LaunchPlan {
+  plan_name: string;
+  strategy_summary: string;
+  weeks: { theme: string; days: LaunchDay[] }[];
+  milestones: LaunchMilestone[];
+  contingency: { symptom: string; fix: string }[];
 }
 
 /* ------------------------------------------------------------------ */
@@ -176,6 +239,64 @@ export interface StrategyResults {
   pricing_optimization?: PricingOptimization;
   roadmap?: RoadmapPlan;
   ab_tests?: AbTestPlan;
+}
+
+/** Stored as generated_assets.content with type "sales_kit". */
+export interface SalesKit {
+  strategy_note: string;
+  opener_messages: { label: string; message: string }[];
+  follow_up_sequence: {
+    touch: number;
+    wait: string;
+    channel_note: string;
+    message: string;
+  }[];
+  objection_scripts: { objection: string; response: string }[];
+  call_agenda: { step: string; goal: string; say_this: string }[];
+  golden_rule: string;
+}
+
+/** Stored as generated_assets.content with type "metrics_log". */
+export interface MetricsEntry {
+  week_label: string;
+  visitors: number;
+  signups: number;
+  sales: number;
+  revenue: number;
+  logged_at: string;
+  demo?: boolean;
+}
+
+/** Stored as generated_assets.content with type "metrics_analysis". */
+export interface MetricsAnalysis {
+  whats_working: { finding: string; evidence: string }[];
+  bottleneck: { stage: string; diagnosis: string; why_it_matters: string };
+  next_tests: {
+    name: string;
+    action: string;
+    expected_result: string;
+    difficulty: "easy" | "medium" | "hard";
+  }[];
+  encouragement: string;
+}
+
+/** Stored as generated_assets.content with type "revenue_streams". */
+export interface RevenueStream {
+  model: string;
+  emoji: string;
+  how_it_works: string;
+  pros: string[];
+  cons: string[];
+  effort: "low" | "medium" | "high";
+  timeline: string;
+  revenue_shape: string;
+}
+
+export interface RevenueStreamsPlan {
+  strategy_summary: string;
+  streams: RevenueStream[];
+  build_first: { model: string; reasoning: string; first_step: string };
+  stack_later: string;
 }
 
 /** Stored as generated_assets.content with type "dfy_request". */

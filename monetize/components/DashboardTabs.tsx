@@ -6,42 +6,67 @@ import {
   BookOpen,
   Brain,
   Crown,
+  Eye,
   GitBranch,
   Gift,
+  Handshake,
+  Layers,
   Lightbulb,
   ListChecks,
   Lock,
   Megaphone,
+  Rocket,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 import { AnalyzerTab } from "@/components/tabs/AnalyzerTab";
+import { BuyersTab } from "@/components/tabs/BuyersTab";
 import { PricingTab } from "@/components/tabs/PricingTab";
 import { LibraryTab } from "@/components/tabs/LibraryTab";
 import { FunnelTab } from "@/components/tabs/FunnelTab";
+import { TrafficTab } from "@/components/tabs/TrafficTab";
+import { LaunchTab } from "@/components/tabs/LaunchTab";
 import { ContentTab } from "@/components/tabs/ContentTab";
 import { ProgressTab } from "@/components/tabs/ProgressTab";
 import { StrategyTab } from "@/components/tabs/StrategyTab";
+import { SalesTab } from "@/components/tabs/SalesTab";
+import { ResultsTab } from "@/components/tabs/ResultsTab";
+import { RevenueTab } from "@/components/tabs/RevenueTab";
 import { DfyTab } from "@/components/tabs/DfyTab";
 import { PremiumTab } from "@/components/tabs/PremiumTab";
 import { LockedPreview } from "@/components/ui";
 import { hasTierAccess, type TierName } from "@/lib/tiers";
 import type {
+  BuyerProfilesResult,
   ContentBundle,
   Creation,
   FunnelPlan,
   GeneratedAsset,
   IdeaAnalysis,
+  LaunchPlan,
+  MetricsAnalysis,
+  MetricsEntry,
   PricingRecommendation,
+  RevenueStreamsPlan,
+  SalesKit,
   StrategyResults,
+  TrafficPlan,
 } from "@/types";
 
 type TabId =
   | "analyzer"
+  | "buyers"
   | "pricing"
   | "library"
   | "funnel"
+  | "traffic"
+  | "launch"
   | "content"
   | "progress"
   | "strategy"
+  | "sales"
+  | "results"
+  | "revenue"
   | "dfy"
   | "premium";
 
@@ -54,12 +79,18 @@ interface TabDef {
 
 const TABS: TabDef[] = [
   { id: "analyzer", label: "Idea Analyzer", icon: <Lightbulb size={16} />, tier: "starter" },
+  { id: "buyers", label: "Find Your Buyers", icon: <Users size={16} />, tier: "starter" },
   { id: "pricing", label: "Pricing Builder", icon: <BadgeDollarSign size={16} />, tier: "starter" },
   { id: "library", label: "Quick-Start Library", icon: <BookOpen size={16} />, tier: "starter" },
   { id: "funnel", label: "Funnel Architect", icon: <GitBranch size={16} />, tier: "growth" },
+  { id: "traffic", label: "Get Eyes on Your Offer", icon: <Eye size={16} />, tier: "growth" },
+  { id: "launch", label: "30-Day Launch Plan", icon: <Rocket size={16} />, tier: "growth" },
   { id: "content", label: "Content Generator", icon: <Megaphone size={16} />, tier: "growth" },
   { id: "progress", label: "Progress Tracker", icon: <ListChecks size={16} />, tier: "growth" },
   { id: "strategy", label: "Strategy Tools", icon: <Brain size={16} />, tier: "pro" },
+  { id: "sales", label: "Direct Sales Tools", icon: <Handshake size={16} />, tier: "pro" },
+  { id: "results", label: "What's Working", icon: <TrendingUp size={16} />, tier: "pro" },
+  { id: "revenue", label: "Ways to Get Paid", icon: <Layers size={16} />, tier: "pro" },
   { id: "dfy", label: "Done-For-You", icon: <Gift size={16} />, tier: "pro" },
   { id: "premium", label: "Premium Library", icon: <Crown size={16} />, tier: "pro" },
 ];
@@ -75,8 +106,64 @@ const LOCKED_COPY: Record<
   { toolName: string; tagline: string; previews: string[] }
 > = {
   analyzer: { toolName: "", tagline: "", previews: [] },
+  buyers: { toolName: "", tagline: "", previews: [] },
   pricing: { toolName: "", tagline: "", previews: [] },
   library: { toolName: "", tagline: "", previews: [] },
+  traffic: {
+    toolName: "Get Eyes on Your Offer",
+    tagline:
+      "The 5-7 best places to promote YOUR product — scored by effort vs. payoff, with a ready-to-paste post for each and a weekly plan that fits your life.",
+    previews: [
+      "Channels ranked by effort vs. results, visually",
+      "A ready-to-publish post for every channel",
+      "A weekly traffic plan sized to your free hours",
+      "Respects your style — camera-shy friendly",
+    ],
+  },
+  launch: {
+    toolName: "30-Day Launch Plan",
+    tagline:
+      "A day-by-day calendar from zero to launched: one clear action per day, posts and emails pre-written, and checkpoints so you always know you're on track.",
+    previews: [
+      "30 days, one doable action per day",
+      "Pre-written posts, emails & DMs inline",
+      "Milestones like '50 signups by day 10'",
+      "A 'results are weak — do this' backup plan",
+    ],
+  },
+  sales: {
+    toolName: "Direct Sales Tools",
+    tagline:
+      "Word-for-word cold DMs, emails, and follow-ups personalized to your product — plus objection answers and a simple call plan. Selling without the sleaze.",
+    previews: [
+      "3 opener messages with different angles",
+      "A 3-5 touch follow-up sequence that isn't pushy",
+      "Scripts for 'too expensive' and 'let me think'",
+      "A 15-minute call agenda anyone can run",
+    ],
+  },
+  results: {
+    toolName: "What's Working",
+    tagline:
+      "Log four simple numbers a week and let AI find your bottleneck: what's working, what's leaking money, and exactly what to test next week.",
+    previews: [
+      "One-tap weekly logging — visitors, signups, sales, $",
+      "A clean trend chart of your growth",
+      "AI pinpoints the stage losing you money",
+      "2-3 concrete tests to run next week",
+    ],
+  },
+  revenue: {
+    toolName: "Multiple Ways to Get Paid",
+    tagline:
+      "Subscriptions? One-time? Freemium? Services? See every revenue model that fits your product, compared side by side — with a clear 'build this first' verdict.",
+    previews: [
+      "3-5 revenue models matched to your product",
+      "Honest pros, cons & effort for each",
+      "Realistic math like '$9/mo × 100 = $900/mo'",
+      "A prioritized 'build this first' pick",
+    ],
+  },
   funnel: {
     toolName: "Funnel Architect",
     tagline:
@@ -149,9 +236,16 @@ export interface DashboardData {
   creations: Creation[];
   initialAnalyses: Record<string, IdeaAnalysis>;
   initialPricings: Record<string, PricingRecommendation>;
+  initialBuyers: BuyerProfilesResult | null;
   initialFunnel: FunnelPlan | null;
+  initialTraffic: TrafficPlan | null;
+  initialLaunch: LaunchPlan | null;
   initialBundle: ContentBundle | null;
   initialStrategy: StrategyResults;
+  initialSalesKit: SalesKit | null;
+  initialRevenue: RevenueStreamsPlan | null;
+  metricsEntries: MetricsEntry[];
+  initialMetricsAnalysis: MetricsAnalysis | null;
   initialProgress: Record<string, boolean>;
   assetStats: { total: number; byLabel: { label: string; count: number }[] };
   dfyRequests: GeneratedAsset[];
@@ -252,11 +346,29 @@ export function DashboardTabs({
                 initialPricings={data.initialPricings}
               />
             )}
+            {tab === "buyers" && (
+              <BuyersTab
+                creations={data.creations}
+                initialResult={data.initialBuyers}
+              />
+            )}
             {tab === "library" && <LibraryTab />}
             {tab === "funnel" && (
               <FunnelTab
                 creations={data.creations}
                 initialFunnel={data.initialFunnel}
+              />
+            )}
+            {tab === "traffic" && (
+              <TrafficTab
+                creations={data.creations}
+                initialPlan={data.initialTraffic}
+              />
+            )}
+            {tab === "launch" && (
+              <LaunchTab
+                creations={data.creations}
+                initialPlan={data.initialLaunch}
               />
             )}
             {tab === "content" && (
@@ -275,6 +387,25 @@ export function DashboardTabs({
               <StrategyTab
                 creations={data.creations}
                 initialResults={data.initialStrategy}
+              />
+            )}
+            {tab === "sales" && (
+              <SalesTab
+                creations={data.creations}
+                initialKit={data.initialSalesKit}
+              />
+            )}
+            {tab === "results" && (
+              <ResultsTab
+                creations={data.creations}
+                initialEntries={data.metricsEntries}
+                initialAnalysis={data.initialMetricsAnalysis}
+              />
+            )}
+            {tab === "revenue" && (
+              <RevenueTab
+                creations={data.creations}
+                initialPlan={data.initialRevenue}
               />
             )}
             {tab === "dfy" && <DfyTab initialRequests={data.dfyRequests} />}

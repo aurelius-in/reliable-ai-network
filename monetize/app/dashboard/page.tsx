@@ -5,16 +5,23 @@ import { DashboardTabs, type DashboardData } from "@/components/DashboardTabs";
 import { createClient } from "@/lib/supabase/server";
 import { DFY_ASSET_TYPE } from "@/lib/dfy";
 import type {
+  BuyerProfilesResult,
   ContentBundle,
   Creation,
   FunnelPlan,
   GeneratedAsset,
   IdeaAnalysis,
+  LaunchPlan,
+  MetricsAnalysis,
+  MetricsEntry,
   PricingRecommendation,
   ProgressLog,
   Profile,
+  RevenueStreamsPlan,
+  SalesKit,
   StrategyResults,
   StrategyToolId,
+  TrafficPlan,
 } from "@/types";
 
 export const metadata = { title: "Dashboard — RAIN Monetize" };
@@ -22,12 +29,18 @@ export const metadata = { title: "Dashboard — RAIN Monetize" };
 const ASSET_LABELS: Record<string, string> = {
   idea_analysis: "Idea analyses",
   pricing: "Pricing plans",
+  buyer_profiles: "Buyer profiles",
   funnel: "Funnels",
+  traffic_plan: "Traffic plans",
+  launch_plan: "Launch plans",
   content_bundle: "Content bundles",
   strategy_competitors: "Competitor scans",
   strategy_pricing_optimization: "Pricing optimizations",
   strategy_roadmap: "Roadmaps",
   strategy_ab_tests: "A/B test plans",
+  sales_kit: "Sales kits",
+  metrics_analysis: "Results analyses",
+  revenue_streams: "Revenue maps",
   [DFY_ASSET_TYPE]: "Done-For-You requests",
 };
 
@@ -69,8 +82,15 @@ export default async function DashboardPage() {
   // Latest asset per creation wins (assets are sorted newest-first).
   const initialAnalyses: Record<string, IdeaAnalysis> = {};
   const initialPricings: Record<string, PricingRecommendation> = {};
+  let initialBuyers: BuyerProfilesResult | null = null;
   let initialFunnel: FunnelPlan | null = null;
+  let initialTraffic: TrafficPlan | null = null;
+  let initialLaunch: LaunchPlan | null = null;
   let initialBundle: ContentBundle | null = null;
+  let initialSalesKit: SalesKit | null = null;
+  let initialRevenue: RevenueStreamsPlan | null = null;
+  let initialMetricsAnalysis: MetricsAnalysis | null = null;
+  const metricsEntries: MetricsEntry[] = [];
   const initialStrategy: StrategyResults = {};
   const dfyRequests: GeneratedAsset[] = [];
 
@@ -83,10 +103,27 @@ export default async function DashboardPage() {
       if (!initialPricings[asset.creation_id]) {
         initialPricings[asset.creation_id] = asset.content as PricingRecommendation;
       }
+    } else if (asset.type === "buyer_profiles") {
+      if (!initialBuyers) initialBuyers = asset.content as BuyerProfilesResult;
     } else if (asset.type === "funnel") {
       if (!initialFunnel) initialFunnel = asset.content as FunnelPlan;
+    } else if (asset.type === "traffic_plan") {
+      if (!initialTraffic) initialTraffic = asset.content as TrafficPlan;
+    } else if (asset.type === "launch_plan") {
+      if (!initialLaunch) initialLaunch = asset.content as LaunchPlan;
     } else if (asset.type === "content_bundle") {
       if (!initialBundle) initialBundle = asset.content as ContentBundle;
+    } else if (asset.type === "sales_kit") {
+      if (!initialSalesKit) initialSalesKit = asset.content as SalesKit;
+    } else if (asset.type === "revenue_streams") {
+      if (!initialRevenue) initialRevenue = asset.content as RevenueStreamsPlan;
+    } else if (asset.type === "metrics_analysis") {
+      if (!initialMetricsAnalysis) {
+        initialMetricsAnalysis = asset.content as MetricsAnalysis;
+      }
+    } else if (asset.type === "metrics_log") {
+      // Assets arrive newest-first; the chart wants oldest-first.
+      metricsEntries.unshift(asset.content as MetricsEntry);
     } else if (asset.type === DFY_ASSET_TYPE) {
       dfyRequests.push(asset);
     } else if (asset.type.startsWith("strategy_")) {
@@ -98,10 +135,11 @@ export default async function DashboardPage() {
     }
   }
 
-  // "You have X assets ready" stats (DFY requests aren't finished assets).
+  // "You have X assets ready" stats (DFY requests and weekly metric
+  // log entries aren't finished assets).
   const countsByType = new Map<string, number>();
   for (const asset of allAssets) {
-    if (asset.type === DFY_ASSET_TYPE) continue;
+    if (asset.type === DFY_ASSET_TYPE || asset.type === "metrics_log") continue;
     countsByType.set(asset.type, (countsByType.get(asset.type) ?? 0) + 1);
   }
   const assetStats = {
@@ -120,9 +158,16 @@ export default async function DashboardPage() {
     creations: (creations ?? []) as Creation[],
     initialAnalyses,
     initialPricings,
+    initialBuyers,
     initialFunnel,
+    initialTraffic,
+    initialLaunch,
     initialBundle,
     initialStrategy,
+    initialSalesKit,
+    initialRevenue,
+    metricsEntries,
+    initialMetricsAnalysis,
     initialProgress,
     assetStats,
     dfyRequests,
@@ -144,7 +189,7 @@ export default async function DashboardPage() {
             Let&apos;s make it rain, {firstName}.
           </h1>
           <p className="mt-1.5 text-sm text-slate-400">
-            Nine tools. One goal: turn what you built into income.
+            Fifteen tools. One goal: turn what you built into income.
           </p>
         </div>
 
