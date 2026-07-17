@@ -16,7 +16,7 @@ export async function grokChatJSON<T>(messages: GrokMessage[]): Promise<T> {
     throw new Error("GROK_API_KEY is not set");
   }
 
-  const model = process.env.GROK_MODEL || "grok-3";
+  const model = process.env.GROK_MODEL || "grok-4.5";
 
   const res = await fetch(`${GROK_BASE_URL}/chat/completions`, {
     method: "POST",
