@@ -7,7 +7,7 @@ import {
 } from "@/prompts/idea-analyzer";
 import type { IdeaAnalysis } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /**
  * Runs the Idea Analyzer.

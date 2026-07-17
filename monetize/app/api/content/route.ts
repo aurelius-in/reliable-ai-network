@@ -8,7 +8,7 @@ import {
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { ContentBundle } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /** Ad & Content Generator (Growth): one idea → a full asset bundle. */
 export async function POST(request: Request) {

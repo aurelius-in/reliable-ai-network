@@ -8,7 +8,7 @@ import {
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { StrategyToolId } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 const VALID_TOOLS: StrategyToolId[] = [
   "competitors",

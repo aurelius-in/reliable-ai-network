@@ -8,7 +8,7 @@ import {
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { FunnelPlan } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /** Funnel Architect (Growth): builds a 3-stage funnel with copy. */
 export async function POST(request: Request) {
