@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { withProfileRepair } from "@/lib/supabase/ensure-profile";
 import { grokChatJSON } from "@/lib/grok";
 import {
   IDEA_ANALYZER_SYSTEM_PROMPT,
@@ -59,14 +60,20 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const { data, error } = await supabase
-      .from("creations")
-      .insert({ user_id: user.id, title, description, type })
-      .select("id, title, description, type")
-      .single();
+    const { data, error } = await withProfileRepair(user, () =>
+      supabase
+        .from("creations")
+        .insert({ user_id: user.id, title, description, type })
+        .select("id, title, description, type")
+        .single()
+    );
     if (error || !data) {
+      console.error("Failed to save creation:", error);
       return NextResponse.json(
-        { error: "Failed to save creation" },
+        {
+          error:
+            "Failed to save creation. Please try again — if this keeps happening, contact support and mention your account email.",
+        },
         { status: 500 }
       );
     }
@@ -87,16 +94,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const { data: asset, error: assetError } = await supabase
-    .from("generated_assets")
-    .insert({
-      user_id: user.id,
-      creation_id: creation.id,
-      type: "idea_analysis",
-      content: analysis,
-    })
-    .select("id, created_at")
-    .single();
+  const { data: asset, error: assetError } = await withProfileRepair(user, () =>
+    supabase
+      .from("generated_assets")
+      .insert({
+        user_id: user.id,
+        creation_id: creation.id,
+        type: "idea_analysis",
+        content: analysis,
+      })
+      .select("id, created_at")
+      .single()
+  );
 
   if (assetError) {
     console.error("Failed to persist analysis:", assetError);

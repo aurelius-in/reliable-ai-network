@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { withProfileRepair } from "@/lib/supabase/ensure-profile";
 import { grokChatJSON } from "@/lib/grok";
 import {
   METRICS_OPTIMIZER_SYSTEM_PROMPT,
@@ -79,16 +80,18 @@ export async function POST(request: Request) {
       logged_at: new Date().toISOString(),
     };
 
-    const { data: asset, error } = await supabase
-      .from("generated_assets")
-      .insert({
-        user_id: user.id,
-        creation_id: null,
-        type: "metrics_log",
-        content: entry,
-      })
-      .select("id")
-      .single();
+    const { data: asset, error } = await withProfileRepair(user, () =>
+      supabase
+        .from("generated_assets")
+        .insert({
+          user_id: user.id,
+          creation_id: null,
+          type: "metrics_log",
+          content: entry,
+        })
+        .select("id")
+        .single()
+    );
 
     if (error) {
       console.error("Failed to save metrics entry:", error);
@@ -149,16 +152,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: asset, error: assetError } = await supabase
-      .from("generated_assets")
-      .insert({
-        user_id: user.id,
-        creation_id: null,
-        type: "metrics_analysis",
-        content: analysis,
-      })
-      .select("id")
-      .single();
+    const { data: asset, error: assetError } = await withProfileRepair(user, () =>
+      supabase
+        .from("generated_assets")
+        .insert({
+          user_id: user.id,
+          creation_id: null,
+          type: "metrics_analysis",
+          content: analysis,
+        })
+        .select("id")
+        .single()
+    );
 
     if (assetError) {
       console.error("Failed to persist metrics analysis:", assetError);

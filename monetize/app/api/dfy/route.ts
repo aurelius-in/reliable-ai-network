@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { withProfileRepair } from "@/lib/supabase/ensure-profile";
 import { requireTier } from "@/lib/tool-request";
 import { DFY_ASSET_OPTIONS, DFY_ASSET_TYPE } from "@/lib/dfy";
 import type { DfyRequestContent } from "@/types";
@@ -76,16 +77,18 @@ export async function POST(request: Request) {
     requested_at: new Date().toISOString(),
   };
 
-  const { data: asset, error } = await supabase
-    .from("generated_assets")
-    .insert({
-      user_id: user.id,
-      creation_id: null,
-      type: DFY_ASSET_TYPE,
-      content,
-    })
-    .select("id, created_at")
-    .single();
+  const { data: asset, error } = await withProfileRepair(user, () =>
+    supabase
+      .from("generated_assets")
+      .insert({
+        user_id: user.id,
+        creation_id: null,
+        type: DFY_ASSET_TYPE,
+        content,
+      })
+      .select("id, created_at")
+      .single()
+  );
 
   if (error || !asset) {
     console.error("Failed to save DFY request:", error);
