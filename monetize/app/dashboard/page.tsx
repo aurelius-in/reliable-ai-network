@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { TopNav } from "@/components/TopNav";
 import { TrialBanner } from "@/components/TrialBanner";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { DashboardTabs, type DashboardData } from "@/components/DashboardTabs";
 import { createClient } from "@/lib/supabase/server";
 import { DFY_ASSET_TYPE } from "@/lib/dfy";
@@ -183,6 +184,8 @@ export default async function DashboardPage() {
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8">
         <TrialBanner profile={typedProfile} />
+
+        <InstallPrompt />
 
         <div>
           <h1 className="text-2xl font-black text-white sm:text-3xl">

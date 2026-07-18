@@ -295,7 +295,9 @@ export function DashboardTabs({
                   <Lock size={11} className="text-slate-500" />
                 )}
               </div>
-              <div className="flex flex-wrap gap-2">
+              {/* Phones: horizontal scroll strip (full-bleed so the cut-off
+                  next chip + thin scrollbar signal overflow). Desktop: wrap. */}
+              <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 lg:mx-0 lg:flex-wrap lg:overflow-x-visible lg:px-0 lg:pb-0">
                 {TABS.filter((t) => t.tier === group.tier).map((t) => {
                   const active = tab === t.id;
                   const unlocked = isUnlocked(t.tier);
@@ -303,7 +305,7 @@ export function DashboardTabs({
                     <button
                       key={t.id}
                       onClick={() => setTab(t.id)}
-                      className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition ${
+                      className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm font-semibold transition ${
                         active
                           ? "bg-gradient-to-r from-rain to-rain-bright text-white shadow-lg shadow-rain/30"
                           : unlocked
