@@ -1,72 +1,103 @@
-// One-off PWA icon generator: renders the RAIN cloud-rain-wind mark
-// (same glyph as components/Logo.tsx) in brand magenta on a #0B0B0D tile.
+// PWA icon + header logo generator: composites the real RAIN raindrop
+// artwork (glowing blue network mesh) onto a #0B0B0D tile.
+// Sources live in the repo root:
+//   rain-social.png   — 630px drop with "RAIN" wordmark inside, dark bg (icons)
+//   rain-black-sm.png — small drop without wordmark, dark bg (header logo)
 // Run from monetize/: node scripts/generate-icons.mjs
 import sharp from "sharp";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const OUT_DIR = path.join(process.cwd(), "public", "icons");
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(HERE, "..", "..");
+const PUBLIC_DIR = path.resolve(HERE, "..", "public");
+const ICONS_DIR = path.join(PUBLIC_DIR, "icons");
 
-// lucide cloud-rain-wind, 24x24 viewBox
-const GLYPH_PATHS = [
-  "M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242",
-  "m9.2 22 3-7",
-  "m9 13-3 7",
-  "m17 13-3 7",
-];
+const TILE = { r: 11, g: 11, b: 13, alpha: 1 }; // #0B0B0D
 
 /**
- * @param {number} size    output pixel size
- * @param {object} opts
- * @param {boolean} opts.rounded   rounded-corner tile with transparent corners
- * @param {number}  opts.scale     fraction of the tile the glyph spans
+ * The source art sits on pure black, which shows as a faint darker
+ * rectangle against the #0B0B0D tile. Fade near-black pixels to
+ * transparent so the drop's glow blends seamlessly into the tile.
  */
-function makeSvg(size, { rounded, scale }) {
-  const rx = rounded ? Math.round(size * 0.2) : 0;
-  // Glyph bounding box in its 24-unit space is roughly x:2..20.2, y:1..22.
-  const glyphCx = 11.5;
-  const glyphCy = 11.5;
-  const k = (size * scale) / 21; // 21 ≈ glyph extent in viewBox units
-  const tx = size / 2 - glyphCx * k;
-  const ty = size / 2 - glyphCy * k;
-  const paths = GLYPH_PATHS.map((d) => `<path d="${d}"/>`).join("\n      ");
-
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="mark" gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="21" y2="22">
-      <stop offset="0" stop-color="#FF4D9E"/>
-      <stop offset="1" stop-color="#E20074"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.62">
-      <stop offset="0" stop-color="#E20074" stop-opacity="0.30"/>
-      <stop offset="1" stop-color="#E20074" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect width="${size}" height="${size}" rx="${rx}" fill="#0B0B0D"/>
-  <rect width="${size}" height="${size}" rx="${rx}" fill="url(#glow)"/>
-  <g transform="translate(${tx} ${ty}) scale(${k})"
-     fill="none" stroke="url(#mark)" stroke-width="2"
-     stroke-linecap="round" stroke-linejoin="round">
-      ${paths}
-  </g>
-</svg>`;
+async function keyOutBlack(buf) {
+  const { data, info } = await sharp(buf)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  for (let i = 0; i < data.length; i += 4) {
+    const brightest = Math.max(data[i], data[i + 1], data[i + 2]);
+    const alpha = Math.min(255, brightest * 4);
+    if (alpha < data[i + 3]) data[i + 3] = alpha;
+  }
+  return sharp(data, { raw: info }).png().toBuffer();
 }
+
+function roundedMask(size, rx) {
+  return Buffer.from(
+    `<svg width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${rx}" fill="#fff"/></svg>`
+  );
+}
+
+/** Trimmed drop artwork resized to fit a scale×size box. */
+async function fitDrop(sourceBuffer, size, scale) {
+  const box = Math.round(size * scale);
+  return sharp(sourceBuffer)
+    .resize(box, box, { fit: "inside" })
+    .png()
+    .toBuffer();
+}
+
+async function makeIcon(sourceBuffer, outFile, size, { rounded, scale }) {
+  const drop = await fitDrop(sourceBuffer, size, scale);
+  let img = sharp({
+    create: { width: size, height: size, channels: 4, background: TILE },
+  }).composite([
+    { input: drop, gravity: "center" },
+    ...(rounded
+      ? [{ input: roundedMask(size, Math.round(size * 0.2)), blend: "dest-in" }]
+      : []),
+  ]);
+  await img.png().toFile(outFile);
+  console.log("wrote", path.relative(PUBLIC_DIR, outFile));
+}
+
+await mkdir(ICONS_DIR, { recursive: true });
+
+// Trim the icon source to the drop's bounds (background is near-black).
+const iconSource = await keyOutBlack(
+  await sharp(path.join(REPO_ROOT, "rain-social.png")).trim().png().toBuffer()
+);
 
 const TARGETS = [
-  // Standard launcher icons: rounded dark tile, generous glyph.
-  { file: "icon-192.png", size: 192, rounded: true, scale: 0.56 },
-  { file: "icon-512.png", size: 512, rounded: true, scale: 0.56 },
-  // Maskable: full-bleed square, glyph kept inside the ~80% safe zone.
-  { file: "icon-maskable-192.png", size: 192, rounded: false, scale: 0.46 },
-  { file: "icon-maskable-512.png", size: 512, rounded: false, scale: 0.46 },
+  // Standard launcher icons: rounded dark tile, generous drop.
+  { file: "icon-192.png", size: 192, rounded: true, scale: 0.78 },
+  { file: "icon-512.png", size: 512, rounded: true, scale: 0.78 },
+  // Maskable: full-bleed square, drop kept inside the ~80% safe zone.
+  { file: "icon-maskable-192.png", size: 192, rounded: false, scale: 0.6 },
+  { file: "icon-maskable-512.png", size: 512, rounded: false, scale: 0.6 },
   // iOS home screen icon: full-bleed square (iOS applies its own mask).
-  { file: "apple-touch-icon.png", size: 180, rounded: false, scale: 0.56 },
+  { file: "apple-touch-icon.png", size: 180, rounded: false, scale: 0.76 },
 ];
 
-await mkdir(OUT_DIR, { recursive: true });
 for (const t of TARGETS) {
-  const svg = makeSvg(t.size, { rounded: t.rounded, scale: t.scale });
-  await sharp(Buffer.from(svg)).png().toFile(path.join(OUT_DIR, t.file));
-  console.log("wrote", t.file);
+  await makeIcon(iconSource, path.join(ICONS_DIR, t.file), t.size, t);
 }
-console.log("done ->", OUT_DIR);
+
+// Header logo: drop only (crop off the small "RAIN" text at the bottom of
+// rain-black-sm.png), on a rounded dark tile, 144px so it stays crisp at
+// 36px display on retina.
+const logoCropped = await sharp(path.join(REPO_ROOT, "rain-black-sm.png"))
+  .extract({ left: 0, top: 0, width: 103, height: 88 })
+  .png()
+  .toBuffer();
+const logoSource = await keyOutBlack(
+  await sharp(logoCropped).trim().png().toBuffer()
+);
+await makeIcon(logoSource, path.join(PUBLIC_DIR, "rain-logo.png"), 144, {
+  rounded: true,
+  scale: 0.82,
+});
+
+console.log("done");

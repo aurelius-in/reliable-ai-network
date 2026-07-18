@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Share, SquarePlus, Smartphone, X } from "lucide-react";
+import { Share, SquarePlus, X } from "lucide-react";
 
 const DISMISS_KEY = "rain-install-dismissed";
 
@@ -69,9 +69,14 @@ export function InstallPrompt() {
         <X size={16} />
       </button>
 
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rain to-violet-dim text-white shadow-lg shadow-rain/30">
-        <Smartphone size={19} />
-      </span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/icons/icon-192.png"
+        alt=""
+        width={40}
+        height={40}
+        className="h-10 w-10 shrink-0 rounded-xl shadow-lg shadow-rain/20 ring-1 ring-night-600"
+      />
 
       <div className="min-w-0 flex-1 pr-6">
         <p className="text-sm font-bold text-white">
