@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Logo } from "@/components/Logo";
 import { AuthForm } from "@/components/AuthForm";
 
-export const metadata = { title: "Sign in — RAIN Monetize" };
+export const metadata = { title: "Sign in — Make it Rain" };
 
 export default function LoginPage() {
   return (

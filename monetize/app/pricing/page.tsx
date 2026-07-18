@@ -5,7 +5,7 @@ import { CheckoutButton } from "@/components/CheckoutButton";
 import { TIERS } from "@/lib/tiers";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata = { title: "Pricing — RAIN Monetize" };
+export const metadata = { title: "Pricing — Make it Rain" };
 
 export default async function PricingPage() {
   const supabase = await createClient();
@@ -24,7 +24,7 @@ export default async function PricingPage() {
             </Link>
           ) : (
             <Link href="/login" className="text-sm text-slate-300 hover:text-white">
-              Sign in
+              Login
             </Link>
           )}
         </div>

@@ -34,13 +34,13 @@ export default async function HomePage() {
             Pricing
           </Link>
           <Link href="/login" className="text-slate-300 transition hover:text-white">
-            Sign in
+            Login
           </Link>
           <Link
             href="/signup"
-            className="rounded-lg bg-gradient-to-r from-rain to-rain-bright px-4 py-2 font-bold text-white shadow shadow-rain/30 transition hover:brightness-110"
+            className="whitespace-nowrap rounded-lg bg-gradient-to-r from-rain to-rain-bright px-4 py-2 font-bold text-white shadow shadow-rain/30 transition hover:brightness-110"
           >
-            Start free trial
+            Start Trial
           </Link>
         </nav>
       </header>
@@ -55,8 +55,7 @@ export default async function HomePage() {
           <span className="gradient-text">Make it rain NOW!</span>
         </h1>
         <p className="fade-up mx-auto mt-6 max-w-2xl text-lg text-slate-300">
-          Stop guessing. The frameworks top marketers use to sell — applied to{" "}
-          <em>your</em> product in minutes.
+          Stop guessing. Use what top sellers do.
         </p>
 
         <div className="fade-up mt-9 flex flex-col items-center gap-3 sm:flex-row">
@@ -82,47 +81,47 @@ export default async function HomePage() {
             {
               icon: <Lightbulb className="text-rain-bright" size={22} />,
               title: "Idea Analyzer",
-              body: "Get a monetization score, your best revenue paths, and quick wins — in one run.",
+              body: "See if your idea sells.",
             },
             {
               icon: <Users className="text-pink" size={22} />,
               title: "Find Your Buyers",
-              body: "Meet the 2-3 kinds of people most likely to pay you — and exactly where they hang out online.",
+              body: "Know who will pay you.",
             },
             {
               icon: <BadgeDollarSign className="text-violet-bright" size={22} />,
               title: "Pricing Builder",
-              body: "Value-based price ranges and high-converting sales copy, tailored to what you built.",
+              body: "Pick the right price.",
             },
             {
               icon: <GitBranch className="text-rain-bright" size={22} />,
               title: "Funnel Architect",
-              body: "Tripwire → core offer → upsell, fully written, with a visual map of the money path.",
+              body: "Turn visitors into buyers.",
             },
             {
               icon: <Rocket className="text-pink" size={22} />,
               title: "30-Day Launch Plan",
-              body: "A day-by-day launch calendar with posts and emails pre-written. Just follow along.",
+              body: "One simple step each day.",
             },
             {
               icon: <Megaphone className="text-violet-bright" size={22} />,
               title: "Content Generator",
-              body: "One idea becomes posts, ads, listings, and emails. A week of launch content in a tap.",
+              body: "Posts and ads written for you.",
             },
             {
               icon: <Handshake className="text-rain-bright" size={22} />,
               title: "Direct Sales Tools",
-              body: "Word-for-word DMs, follow-ups, and objection answers. Selling without the sleaze.",
+              body: "Know exactly what to say.",
             },
             {
               icon: <TrendingUp className="text-pink" size={22} />,
               title: "What's Working",
-              body: "Log four simple numbers a week; AI finds your bottleneck and hands you next week's fixes.",
+              body: "See what makes you money.",
             },
             {
               icon: <Layers className="text-violet-bright" size={22} />,
               title: "Multiple Ways to Get Paid",
-              body: "Subscriptions, one-time, freemium, services — compared for your product, with a clear first pick.",
+              body: "Find more ways to earn.",
             },
           ].map((f) => (
             <div

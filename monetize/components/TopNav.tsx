@@ -13,7 +13,7 @@ export function TopNav({ profile }: { profile: Profile | null }) {
   return (
     <header className="sticky top-0 z-40 border-b border-night-600/60 bg-night-800/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-        <Logo href="/dashboard" tagline={false} />
+        <Logo href="/dashboard" />
 
         <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
           <Link href="/dashboard" className="transition hover:text-white">
@@ -53,13 +53,6 @@ export function TopNav({ profile }: { profile: Profile | null }) {
 
           <SignOutButton />
         </div>
-      </div>
-
-      {/* Tagline on its own line, under the nav bar */}
-      <div className="border-t border-night-600/40 bg-night/60">
-        <p className="mx-auto max-w-6xl px-4 py-1 text-[10px] font-semibold uppercase italic tracking-[0.35em] text-rain-bright/90">
-          Make It Rain
-        </p>
       </div>
     </header>
   );

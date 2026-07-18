@@ -1,7 +1,7 @@
 import { Logo } from "@/components/Logo";
 import { OnboardingForm } from "@/components/OnboardingForm";
 
-export const metadata = { title: "Onboarding — RAIN Monetize" };
+export const metadata = { title: "Onboarding — Make it Rain" };
 
 export default function OnboardingPage() {
   return (

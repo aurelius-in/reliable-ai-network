@@ -213,28 +213,13 @@ img { max-width: 100%; display: block; }
 .brand-logo { width: 38px; height: auto; border-radius: 8px; }
 .brand-name {
   font-family: var(--font-display);
+  font-style: italic;
   font-weight: 800;
   font-size: 1.05rem;
   letter-spacing: 0.02em;
 }
 .brand-name em {
-  font-style: normal;
   color: var(--gold);
-}
-.nav-tagline {
-  border-top: 1px solid var(--border);
-}
-.nav-tagline p {
-  padding: 0.28rem 0;
-  font-style: italic;
-  font-weight: 600;
-  font-size: 0.62rem;
-  letter-spacing: 0.38em;
-  text-transform: uppercase;
-  background: linear-gradient(100deg, var(--blue-bright) 0%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 .nav-links {
   display: flex;

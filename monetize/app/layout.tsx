@@ -3,13 +3,13 @@ import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "RAIN Monetize — Make It Rain",
+  title: "Make it Rain",
   description:
     "Turn what you've built into income using the exact frameworks top marketers use — now automated for you. Start free 30-day trial.",
-  applicationName: "RAIN Monetize",
+  applicationName: "Make it Rain",
   appleWebApp: {
     capable: true,
-    title: "Make It Rain",
+    title: "Make it Rain",
     statusBarStyle: "black-translucent",
   },
   icons: {
