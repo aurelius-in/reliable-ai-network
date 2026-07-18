@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "RAIN Monetize — Make It Rain",
   description:
-    "Turn what you've built into income using the exact frameworks top marketers use — now automated for you. Start your free 30-day Pro trial.",
+    "Turn what you've built into income using the exact frameworks top marketers use — now automated for you. Start free 30-day trial.",
   applicationName: "RAIN Monetize",
   appleWebApp: {
     capable: true,

@@ -49,10 +49,10 @@ export default async function HomePage() {
         <p className="fade-up rounded-full bg-rain/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-rain-bright ring-1 ring-rain/30">
           The Monetization OS for AI Creators
         </p>
-        <h1 className="fade-up mt-6 text-3xl font-black leading-tight text-white sm:text-5xl">
-          You built something real.
+        <h1 className="fade-up mt-6 text-2xl font-black leading-tight text-white sm:text-5xl">
+          You built something.
           <br />
-          <span className="gradient-text">Now make it rain.</span>
+          <span className="gradient-text">Make it rain NOW!</span>
         </h1>
         <p className="fade-up mx-auto mt-6 max-w-2xl text-lg text-slate-300">
           Stop guessing. The frameworks top marketers use to sell — applied to{" "}
@@ -64,7 +64,7 @@ export default async function HomePage() {
             href="/signup"
             className="glow-card inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-rain to-rain-bright px-8 py-4 text-lg font-bold text-white transition hover:brightness-110"
           >
-            Start your free 30-day Pro trial <ArrowRight size={20} />
+            Start free 30-day trial <ArrowRight size={20} />
           </Link>
           <Link
             href="/pricing"

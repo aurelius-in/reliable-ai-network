@@ -43,7 +43,7 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
             <Zap size={18} className="text-rain-bright" />
             {status === "canceled"
               ? "Your subscription ended. Rejoin to keep making it rain."
-              : "Start your free 30-day Pro trial — full access, cancel anytime."}
+              : "Start free 30-day trial — full access, cancel anytime."}
           </p>
           <Link
             href="/pricing"
