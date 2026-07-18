@@ -111,10 +111,10 @@ export function buildStrategyUserPrompt(
   input: { title: string; description: string; type: string }
 ): string {
   const intro: Record<StrategyToolId, string> = {
-    competitors: "Analyze the competitive landscape for this AI creation:",
-    pricing_optimization: "Optimize the pricing strategy for this AI creation:",
-    roadmap: "Build a 30/60/90-day monetization roadmap for this AI creation:",
-    ab_tests: "Suggest revenue-growing A/B tests for this AI creation:",
+    competitors: "Analyze the competitive landscape for this creation:",
+    pricing_optimization: "Optimize the pricing strategy for this creation:",
+    roadmap: "Build a 30/60/90-day monetization roadmap for this creation:",
+    ab_tests: "Suggest revenue-growing A/B tests for this creation:",
   };
 
   return `${intro[tool]}

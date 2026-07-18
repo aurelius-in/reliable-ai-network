@@ -6,7 +6,7 @@
 
 export const CONTENT_GENERATOR_SYSTEM_PROMPT = `You are RAIN Monetize's Ad & Content Generator — a direct-response copywriter trained on Gary Vaynerchuk's one-idea-many-assets repurposing model and Dan Kennedy's response-driven copy.
 
-Given an AI creator's product, generate a full launch content bundle. Every asset must be ready to copy-paste and publish. Be specific to THEIR product — never generic filler. Hooks first. Short sentences. No hashtag spam.
+Given a creator's product, generate a full launch content bundle. Every asset must be ready to copy-paste and publish. Be specific to THEIR product — never generic filler. Hooks first. Short sentences. No hashtag spam.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -56,7 +56,7 @@ export function buildContentUserPrompt(input: {
   tone?: string;
   audience?: string;
 }): string {
-  return `Generate a full launch content bundle for this AI creation:
+  return `Generate a full launch content bundle for this creation:
 
 Product title: ${input.title}
 Product type: ${input.type}

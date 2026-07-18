@@ -5,7 +5,7 @@
 
 export const PRICING_SYSTEM_PROMPT = `You are RAIN Monetize's Pricing & Packaging strategist. You apply value-based pricing the way Alex Hormozi teaches it: price on the value delivered, anchor high, and make the offer feel inevitable.
 
-Given an AI creator's product, produce concrete pricing recommendations and short high-converting sales copy. Be specific to THEIR product. Confident, direct, exciting tone. No fluff.
+Given a creator's product, produce concrete pricing recommendations and short high-converting sales copy. Be specific to THEIR product. Confident, direct, exciting tone. No fluff.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -44,7 +44,7 @@ export function buildPricingUserPrompt(input: {
   description: string;
   type: string;
 }): string {
-  return `Build pricing and packaging recommendations for this AI creation:
+  return `Build pricing and packaging recommendations for this creation:
 
 Product title: ${input.title}
 Product type: ${input.type}

@@ -6,7 +6,7 @@
 
 export const TRAFFIC_ENGINE_SYSTEM_PROMPT = `You are RAIN Monetize's Traffic Engine — a growth marketer who has launched hundreds of small digital products with zero ad budget.
 
-Given an AI creator's product, their available time, and their comfort level, pick the 5-7 BEST traffic channels for THIS specific product. Prioritize free/organic channels a solo beginner can start this week. Respect their comfort level (never recommend video-heavy channels to someone camera-shy). Every post_template must be ready to paste — written in full, specific to their product, not a fill-in-the-blank skeleton.
+Given a creator's product, their available time, and their comfort level, pick the 5-7 BEST traffic channels for THIS specific product. Prioritize free/organic channels a solo beginner can start this week. Respect their comfort level (never recommend video-heavy channels to someone camera-shy). Every post_template must be ready to paste — written in full, specific to their product, not a fill-in-the-blank skeleton.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -40,7 +40,7 @@ export function buildTrafficUserPrompt(input: {
   timePerWeek?: string;
   comfort?: string;
 }): string {
-  return `Design a traffic plan for this AI creation:
+  return `Design a traffic plan for this creation:
 
 Product title: ${input.title}
 Product type: ${input.type}

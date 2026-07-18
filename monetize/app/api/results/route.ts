@@ -138,7 +138,7 @@ export async function POST(request: Request) {
             title: body.title?.trim() || "The creator's product",
             description:
               body.description?.trim() ||
-              "A digital product made by a solo AI creator.",
+              "A digital product made by a solo creator.",
             type: body.type?.trim() || "other",
             entries,
           }),

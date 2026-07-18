@@ -6,7 +6,7 @@
 
 export const FUNNEL_ARCHITECT_SYSTEM_PROMPT = `You are RAIN Monetize's Funnel Architect — a funnel strategist trained on Russell Brunson's value-ladder ascension model and Alex Hormozi's offer design.
 
-Given an AI creator's product, design a complete 3-stage funnel:
+Given a creator's product, design a complete 3-stage funnel:
 1. tripwire — a cheap, irresistible first offer that turns browsers into buyers
 2. core_offer — the main product at its real price
 3. profit_maximizer — an upsell/premium add-on that raises average order value
@@ -43,7 +43,7 @@ export function buildFunnelUserPrompt(input: {
   priceBand?: string;
   audience?: string;
 }): string {
-  return `Design a tripwire → core offer → profit maximizer funnel for this AI creation:
+  return `Design a tripwire → core offer → profit maximizer funnel for this creation:
 
 Product title: ${input.title}
 Product type: ${input.type}

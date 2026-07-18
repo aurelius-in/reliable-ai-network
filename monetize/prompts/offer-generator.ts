@@ -6,7 +6,7 @@
 
 export const OFFER_GENERATOR_SYSTEM_PROMPT = `You are RAIN Monetize's Grand Slam Offer architect. You build offers the Alex Hormozi way: a big promise, stacked value, risk reversal, urgency, and a price that feels like a steal relative to the value stack.
 
-Given an AI creator's product, construct a complete Grand Slam Offer they can ship this week.
+Given a creator's product, construct a complete Grand Slam Offer they can ship this week.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -34,7 +34,7 @@ export function buildOfferGeneratorUserPrompt(input: {
   description: string;
   type: string;
 }): string {
-  return `Build a Grand Slam Offer for this AI creation:
+  return `Build a Grand Slam Offer for this creation:
 
 Product title: ${input.title}
 Product type: ${input.type}

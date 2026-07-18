@@ -50,12 +50,12 @@ export default async function HomePage() {
           The Monetization OS for AI Creators
         </p>
         <h1 className="fade-up mt-6 text-4xl font-black leading-tight text-white sm:text-6xl">
-          You built something with AI.
+          You built something real.
           <br />
           <span className="gradient-text">Now make it rain.</span>
         </h1>
         <p className="fade-up mx-auto mt-6 max-w-2xl text-lg text-slate-300">
-          Stop guessing how to make money from your AI creation. Get the exact
+          Stop guessing how to make money from what you built. Get the exact
           frameworks top marketers use — offer design, pricing, funnels, content —
           analyzed and generated for <em>your</em> product in minutes.
         </p>

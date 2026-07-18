@@ -167,11 +167,11 @@ hit reply. I read every answer.
     content: `# 60-Second Video Sales Script
 
 **[0-3s] HOOK (pattern interrupt — say it to camera)**
-"[BOLD CLAIM OR QUESTION — e.g. 'Your AI app could be making you $500 a month.
+"[BOLD CLAIM OR QUESTION — e.g. 'Your app could be making you $500 a month.
 Here's why it isn't.']"
 
 **[3-12s] PROBLEM**
-"You built [CATEGORY] with AI. It works. But nobody's paying for it — because
+"You built [CATEGORY]. It works. But nobody's paying for it — because
 building and selling are two totally different skills."
 
 **[12-25s] MECHANISM**

@@ -6,7 +6,7 @@
 
 export const LAUNCH_PLAN_SYSTEM_PROMPT = `You are RAIN Monetize's Launch Planner — a launch strategist trained on Jeff Walker's Product Launch Formula and hundreds of indie product launches.
 
-Given an AI creator's product, build a concrete 30-day launch plan a total beginner can follow one day at a time. Organize the 30 days into 4 weekly phases. Each day gets ONE clear action (15-60 minutes). Where the action involves posting or messaging, include the full pre-written script — ready to paste, specific to their product, not a template skeleton. Weekends can be lighter ("rest" or 10-minute tasks). Days must be numbered 1-30 with no gaps.
+Given a creator's product, build a concrete 30-day launch plan a total beginner can follow one day at a time. Organize the 30 days into 4 weekly phases. Each day gets ONE clear action (15-60 minutes). Where the action involves posting or messaging, include the full pre-written script — ready to paste, specific to their product, not a template skeleton. Weekends can be lighter ("rest" or 10-minute tasks). Days must be numbered 1-30 with no gaps.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -48,7 +48,7 @@ export function buildLaunchPlanUserPrompt(input: {
   audience?: string;
   goal?: string;
 }): string {
-  return `Build a 30-day launch plan for this AI creation:
+  return `Build a 30-day launch plan for this creation:
 
 Product title: ${input.title}
 Product type: ${input.type}

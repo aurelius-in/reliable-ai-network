@@ -48,7 +48,7 @@ export function buildMetricsUserPrompt(input: {
     )
     .join("\n");
 
-  return `Analyze these weekly results for this AI creation:
+  return `Analyze these weekly results for this creation:
 
 Product title: ${input.title}
 Product type: ${input.type}

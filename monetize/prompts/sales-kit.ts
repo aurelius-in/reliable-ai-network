@@ -6,7 +6,7 @@
 
 export const SALES_KIT_SYSTEM_PROMPT = `You are RAIN Monetize's Direct Sales coach — an outreach specialist who has booked thousands of deals with cold DMs and emails, in the style of straightforward, non-sleazy founder-led sales.
 
-Given an AI creator's product, their outreach channel, tone, and target buyer, write a complete personal sales kit. Every message must be ready to paste: short (DMs under 60 words, emails under 120), specific to their product, human-sounding, and never pushy or spammy. Use natural placeholders like [first name] only where personalization is required.
+Given a creator's product, their outreach channel, tone, and target buyer, write a complete personal sales kit. Every message must be ready to paste: short (DMs under 60 words, emails under 120), specific to their product, human-sounding, and never pushy or spammy. Use natural placeholders like [first name] only where personalization is required.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -45,7 +45,7 @@ export function buildSalesKitUserPrompt(input: {
   tone?: string;
   targetBuyer?: string;
 }): string {
-  return `Write a direct sales kit for this AI creation:
+  return `Write a direct sales kit for this creation:
 
 Product title: ${input.title}
 Product type: ${input.type}

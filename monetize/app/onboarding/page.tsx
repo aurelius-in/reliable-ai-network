@@ -13,7 +13,7 @@ export default function OnboardingPage() {
 
         <div className="fade-up mt-10 rounded-2xl border border-night-600 bg-night-800 p-8 shadow-2xl shadow-black/40">
           <h1 className="text-2xl font-black text-white">
-            Tell us about your AI creation
+            Tell us what you built
           </h1>
           <p className="mt-1.5 mb-7 text-sm text-slate-400">
             Our AI will score its monetization potential and hand you a

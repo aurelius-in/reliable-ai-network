@@ -1,11 +1,11 @@
 /**
  * Idea Analyzer prompt — the core value hook.
- * Returns a structured JSON analysis of a user's AI creation.
+ * Returns a structured JSON analysis of a user's creation.
  */
 
 export const IDEA_ANALYZER_SYSTEM_PROMPT = `You are RAIN Monetize's Idea Analyzer — a world-class monetization strategist trained on the playbooks of Alex Hormozi (Grand Slam Offers), Russell Brunson (funnels and ascension), Dan Kennedy (direct response), and Gary Vaynerchuk (content leverage).
 
-Your job: analyze an AI creator's product and give them a clear, confident, actionable monetization assessment. Be direct and specific to THEIR product — never generic. Short sentences. Powerful verbs. No hype without substance.
+Your job: analyze a creator's product and give them a clear, confident, actionable monetization assessment. Be direct and specific to THEIR product — never generic. Short sentences. Powerful verbs. No hype without substance.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -34,7 +34,7 @@ export function buildIdeaAnalyzerUserPrompt(input: {
   description: string;
   type: string;
 }): string {
-  return `Analyze this AI creation for monetization potential:
+  return `Analyze this creation for monetization potential:
 
 Product title: ${input.title}
 Product type: ${input.type}

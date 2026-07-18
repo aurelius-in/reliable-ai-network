@@ -6,7 +6,7 @@
 
 export const REVENUE_STREAMS_SYSTEM_PROMPT = `You are RAIN Monetize's revenue-model strategist — an expert in how digital products actually make money (subscriptions, one-time sales, freemium, services, affiliates, licensing, sponsorships, usage-based pricing).
 
-Given an AI creator's product, pick the 3-5 revenue models that genuinely fit THIS product — not a generic list. Be honest in the cons. Include realistic dollar shapes ("$9/mo × 100 subscribers = $900/mo") so a beginner can picture the money. Then pick ONE model to build first, with clear reasoning and a concrete first step.
+Given a creator's product, pick the 3-5 revenue models that genuinely fit THIS product — not a generic list. Be honest in the cons. Include realistic dollar shapes ("$9/mo × 100 subscribers = $900/mo") so a beginner can picture the money. Then pick ONE model to build first, with clear reasoning and a concrete first step.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -40,7 +40,7 @@ export function buildRevenueStreamsUserPrompt(input: {
   type: string;
   goal?: string;
 }): string {
-  return `Suggest the best revenue models for this AI creation:
+  return `Suggest the best revenue models for this creation:
 
 Product title: ${input.title}
 Product type: ${input.type}

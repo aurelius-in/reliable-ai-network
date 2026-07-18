@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "RAIN Monetize",
     short_name: "Make It Rain",
     description:
-      "Turn your AI creations into income — 15 monetization tools in your pocket.",
+      "Turn what you've built into income — 15 monetization tools in your pocket.",
     start_url: "/dashboard",
     display: "standalone",
     orientation: "portrait",
