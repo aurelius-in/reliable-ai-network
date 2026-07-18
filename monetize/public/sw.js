@@ -5,12 +5,13 @@
  * - Immutable static assets (/icons/, /_next/static/): cache-first.
  * - Everything else (API routes, auth callbacks, Stripe): untouched.
  */
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC_CACHE = `rain-static-${VERSION}`;
 const OFFLINE_URL = "/offline.html";
 
 const PRECACHE = [
   OFFLINE_URL,
+  "/rain-logo.png",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/icon-maskable-192.png",
@@ -65,6 +66,7 @@ self.addEventListener("fetch", (event) => {
   // Immutable static assets: cache-first.
   if (
     url.pathname.startsWith("/icons/") ||
+    url.pathname === "/rain-logo.png" ||
     url.pathname.startsWith("/_next/static/")
   ) {
     event.respondWith(
