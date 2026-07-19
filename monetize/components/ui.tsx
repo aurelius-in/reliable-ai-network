@@ -8,11 +8,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   Check,
   Copy,
   Download,
+  Loader2,
   Lock,
   Sparkles,
 } from "lucide-react";
@@ -93,6 +95,113 @@ export function choiceFromCreation(creation: Creation): ProductChoice {
   };
 }
 
+export const CREATION_TYPE_OPTIONS: ChipOption[] = [
+  { value: "app", label: "📱 App" },
+  { value: "game", label: "🎮 Game" },
+  { value: "tool", label: "🔧 Tool" },
+  { value: "saas", label: "☁️ SaaS" },
+  { value: "content", label: "🎨 Content / Templates" },
+  { value: "other", label: "✨ Other" },
+];
+
+/**
+ * Compact inline form to describe your own product from any tool tab.
+ * Saves it to the `creations` table so it shows up everywhere afterwards.
+ */
+export function DescribeProductForm({
+  onSaved,
+}: {
+  onSaved: (creation: Creation) => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [type, setType] = useState("app");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    if (!title.trim() || !description.trim()) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/creations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim(),
+          type,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.creation) {
+        throw new Error(data.error ?? "Failed to save your product");
+      }
+      onSaved(data.creation as Creation);
+      setTitle("");
+      setDescription("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form
+      onSubmit={save}
+      className="fade-up space-y-4 rounded-xl border border-rain/30 bg-night-800/70 p-4"
+    >
+      <div>
+        <label className="mb-1.5 block text-sm font-semibold text-white">
+          What&apos;s it called?
+        </label>
+        <input
+          type="text"
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. Meal Prep Genius"
+          className="input-dark"
+        />
+      </div>
+      <div>
+        <label className="mb-1.5 block text-sm font-semibold text-white">
+          What does it do, and for whom?
+        </label>
+        <textarea
+          required
+          rows={2}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="e.g. Plans a week of meals from your budget and diet. Made for busy parents."
+          className="input-dark"
+        />
+        <p className="helper-text">One or two plain sentences is plenty.</p>
+      </div>
+      <div>
+        <FieldLabel helper="Pick the closest match.">What kind of thing is it?</FieldLabel>
+        <ChipGroup
+          options={CREATION_TYPE_OPTIONS}
+          value={type}
+          onChange={setType}
+          ariaLabel="Product type"
+        />
+      </div>
+      <ErrorText message={error} />
+      <button type="submit" disabled={saving} className="btn-primary px-5 py-2.5 text-sm">
+        {saving ? (
+          <Loader2 size={15} className="animate-spin" />
+        ) : (
+          <Check size={15} />
+        )}
+        Save &amp; use this product
+      </button>
+    </form>
+  );
+}
+
 export function ProductPicker({
   creations,
   value,
@@ -102,15 +211,34 @@ export function ProductPicker({
   value: ProductChoice | null;
   onChange: (choice: ProductChoice) => void;
 }) {
+  const router = useRouter();
+  // Creations saved inline from this picker, shown immediately without
+  // waiting for the server refresh to land.
+  const [added, setAdded] = useState<Creation[]>([]);
+  const [describing, setDescribing] = useState(false);
+
+  const all = [
+    ...added.filter((a) => !creations.some((c) => c.id === a.id)),
+    ...creations,
+  ];
+
+  function handleSaved(creation: Creation) {
+    setAdded((prev) => [creation, ...prev]);
+    onChange(choiceFromCreation(creation));
+    setDescribing(false);
+    // Re-fetch server data so the new creation shows up in every tab.
+    router.refresh();
+  }
+
   return (
     <div className="space-y-3">
-      {creations.length > 0 && (
+      {all.length > 0 && (
         <div>
           <FieldLabel helper="Products you've already added.">
             Your creations
           </FieldLabel>
           <div className="flex flex-wrap gap-2">
-            {creations.map((creation) => (
+            {all.map((creation) => (
               <button
                 key={creation.id}
                 type="button"
@@ -127,26 +255,34 @@ export function ProductPicker({
       <div>
         <FieldLabel
           helper={
-            creations.length > 0
-              ? "No typing needed — tap one to see how it works."
-              : "No product yet? No problem. Tap an example and watch the magic."
+            all.length > 0
+              ? "Describe a new product, or tap an example — the examples are just demos."
+              : "Describe your own product to get real answers — the examples are just demos to show how it works."
           }
         >
-          {creations.length > 0 ? "…or try an example" : "Try an example"}
+          {all.length > 0 ? "…or something new" : "Your product"}
         </FieldLabel>
         <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setDescribing((open) => !open)}
+            className={`chip ${describing ? "chip-on" : "border-rain/50 text-white"}`}
+          >
+            ✏️ Describe your own
+          </button>
           {EXAMPLE_CREATIONS.map((example) => (
             <button
               key={example.id}
               type="button"
-              onClick={() =>
+              onClick={() => {
+                setDescribing(false);
                 onChange({
                   exampleId: example.id,
                   title: example.title,
                   description: example.description,
                   type: example.type,
-                })
-              }
+                });
+              }}
               className={`chip ${value?.exampleId === example.id ? "chip-on" : ""}`}
             >
               {example.emoji} {example.title}
@@ -154,6 +290,8 @@ export function ProductPicker({
           ))}
         </div>
       </div>
+
+      {describing && <DescribeProductForm onSaved={handleSaved} />}
     </div>
   );
 }

@@ -192,7 +192,7 @@ export default async function DashboardPage() {
             Let&apos;s make it rain, {firstName}.
           </h1>
           <p className="mt-1.5 text-sm text-slate-400">
-            Fifteen tools. One goal: turn what you built into income.
+            Turn what you built into income.
           </p>
         </div>
 

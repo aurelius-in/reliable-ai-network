@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Lightbulb, Loader2, Plus, RefreshCw, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Lightbulb, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import { AnalysisResult } from "@/components/AnalysisResult";
-import { ErrorText, FieldLabel, FunLoading } from "@/components/ui";
+import {
+  DescribeProductForm,
+  ErrorText,
+  FieldLabel,
+  FunLoading,
+} from "@/components/ui";
 import { EXAMPLE_CREATIONS } from "@/lib/examples";
 import type { Creation, IdeaAnalysis } from "@/types";
 
@@ -20,6 +25,7 @@ export function AnalyzerTab({
   creations: Creation[];
   initialAnalyses: Record<string, IdeaAnalysis>;
 }) {
+  const router = useRouter();
   const [localCreations, setLocalCreations] = useState<Creation[]>(creations);
   const [analyses, setAnalyses] =
     useState<Record<string, IdeaAnalysis>>(initialAnalyses);
@@ -28,7 +34,16 @@ export function AnalyzerTab({
   );
   const [runningId, setRunningId] = useState<string | null>(null);
   const [exampleRunning, setExampleRunning] = useState<string | null>(null);
+  const [describing, setDescribing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function handleSaved(creation: Creation) {
+    setLocalCreations((prev) => [creation, ...prev]);
+    setDescribing(false);
+    // Make the new creation available in every other tab too.
+    router.refresh();
+    void runAnalysis(creation.id);
+  }
 
   async function runAnalysis(creationId: string) {
     setRunningId(creationId);
@@ -98,22 +113,29 @@ export function AnalyzerTab({
               wins for this week — in about 15 seconds.
             </p>
           </div>
-          <Link href="/onboarding" className="btn-secondary text-sm">
-            <Plus size={15} /> Add my creation
-          </Link>
         </div>
 
         <div className="mt-5">
-          <FieldLabel helper="No typing. Tap one and we'll analyze it instantly, so you can see exactly how this works.">
-            Try an example — one tap
+          <FieldLabel helper="Describe your own product to get real answers — or tap an example (they're just demos).">
+            Your product
           </FieldLabel>
           <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setDescribing((open) => !open)}
+              className={`chip ${describing ? "chip-on" : "border-rain/50 text-white"}`}
+            >
+              ✏️ Describe your own
+            </button>
             {EXAMPLE_CREATIONS.map((example) => (
               <button
                 key={example.id}
                 type="button"
                 disabled={exampleRunning !== null}
-                onClick={() => runExample(example.id)}
+                onClick={() => {
+                  setDescribing(false);
+                  runExample(example.id);
+                }}
                 className="chip disabled:opacity-50"
               >
                 {exampleRunning === example.id ? (
@@ -126,6 +148,12 @@ export function AnalyzerTab({
             ))}
           </div>
         </div>
+
+        {describing && (
+          <div className="mt-4">
+            <DescribeProductForm onSaved={handleSaved} />
+          </div>
+        )}
       </div>
 
       <ErrorText message={error} />
