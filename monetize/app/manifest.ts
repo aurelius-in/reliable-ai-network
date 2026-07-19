@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Make it Rain",
-    short_name: "Make it Rain",
+    name: "Make it RAIN",
+    short_name: "Make it RAIN",
     description:
       "Turn what you've built into income — 15 monetization tools in your pocket.",
     start_url: "/dashboard",

@@ -52,7 +52,7 @@ export default async function HomePage() {
         <h1 className="fade-up mt-6 text-2xl font-black leading-tight text-white sm:text-5xl">
           You built something.
           <br />
-          <span className="gradient-text">Make it rain NOW!</span>
+          <span className="gradient-text">Make it RAIN now!</span>
         </h1>
         <p className="fade-up mx-auto mt-6 max-w-2xl text-lg text-slate-300">
           Stop guessing. Use what top sellers do.

@@ -80,7 +80,7 @@ export function InstallPrompt() {
 
       <div className="min-w-0 flex-1 pr-6">
         <p className="text-sm font-bold text-white">
-          Put Make it Rain on your home screen
+          Put Make it RAIN on your home screen
         </p>
         {showIOS ? (
           <p className="mt-1 flex flex-wrap items-center gap-1 text-xs text-slate-400">

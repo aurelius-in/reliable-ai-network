@@ -25,7 +25,7 @@ import type {
   TrafficPlan,
 } from "@/types";
 
-export const metadata = { title: "Dashboard — Make it Rain" };
+export const metadata = { title: "Dashboard — Make it RAIN" };
 
 const ASSET_LABELS: Record<string, string> = {
   idea_analysis: "Idea analyses",

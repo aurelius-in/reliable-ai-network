@@ -5,7 +5,7 @@ import { CheckoutButton } from "@/components/CheckoutButton";
 import { TIERS } from "@/lib/tiers";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata = { title: "Pricing — Make it Rain" };
+export const metadata = { title: "Pricing — Make it RAIN" };
 
 export default async function PricingPage() {
   const supabase = await createClient();

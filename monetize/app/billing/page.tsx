@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { TIERS, tierLabel, trialDaysLeft } from "@/lib/tiers";
 import type { Profile } from "@/types";
 
-export const metadata = { title: "Billing — Make it Rain" };
+export const metadata = { title: "Billing — Make it RAIN" };
 
 const STATUS_LABELS: Record<string, string> = {
   trialing: "Free trial",
