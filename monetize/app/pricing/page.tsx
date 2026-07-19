@@ -34,8 +34,18 @@ export default async function PricingPage() {
             Simple pricing. <span className="gradient-text">Serious upside.</span>
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-slate-300">
-            Every plan starts with a free 30-day <strong>Pro</strong> trial — full
-            access, nothing watered down. Cancel anytime with one click.
+            {user ? (
+              <>
+                Pick the plan that fits how you sell. Change or cancel anytime
+                from your billing page.
+              </>
+            ) : (
+              <>
+                Every plan starts with a free 30-day <strong>Pro</strong> trial
+                — full access, nothing watered down. Cancel anytime with one
+                click.
+              </>
+            )}
           </p>
         </div>
 
@@ -79,7 +89,7 @@ export default async function PricingPage() {
                   tier={tier.id}
                   authenticated={!!user}
                   label={
-                    tier.highlight
+                    tier.highlight && !user
                       ? "Start free 30-day trial"
                       : `Choose ${tier.name}`
                   }
@@ -94,11 +104,13 @@ export default async function PricingPage() {
           ))}
         </div>
 
-        <p className="mt-10 text-center text-sm text-slate-500">
-          The 30-day free trial runs on the Pro plan. Card collected upfront;
-          you&apos;re charged only if you don&apos;t cancel before the trial ends.
-          Downgrade or cancel anytime from your billing page.
-        </p>
+        {!user && (
+          <p className="mt-10 text-center text-sm text-slate-500">
+            The 30-day free trial runs on the Pro plan. Card collected upfront;
+            you&apos;re charged only if you don&apos;t cancel before the trial
+            ends. Downgrade or cancel anytime from your billing page.
+          </p>
+        )}
       </div>
     </div>
   );

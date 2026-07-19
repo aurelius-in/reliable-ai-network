@@ -114,14 +114,19 @@ export default async function BillingPage() {
                 {status === "canceled" ? "Subscription ended" : "No subscription yet"}
               </p>
               <p className="mt-1.5 text-sm text-slate-300">
-                Start free 30-day trial — full access to every tool,
-                cancel anytime before day 30 and pay nothing.
+                {status === "canceled"
+                  ? "Rejoin to get every tool back — manage or cancel anytime."
+                  : "Activate your 30-day Pro trial — full access to every tool, cancel anytime before day 30 and pay nothing."}
               </p>
               <div className="mt-5 max-w-xs">
                 <CheckoutButton
                   tier="pro"
                   authenticated
-                  label="Start free 30-day trial"
+                  label={
+                    status === "canceled"
+                      ? "Rejoin Pro"
+                      : "Activate 30-day Pro trial"
+                  }
                 />
               </div>
             </>

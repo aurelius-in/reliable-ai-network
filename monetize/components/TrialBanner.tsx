@@ -43,13 +43,13 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
             <Zap size={18} className="text-rain-bright" />
             {status === "canceled"
               ? "Your subscription ended. Rejoin to keep making it rain."
-              : "Start free 30-day trial — full access, cancel anytime."}
+              : "Your account isn't active yet — activate your 30-day Pro trial."}
           </p>
           <Link
-            href="/pricing"
+            href="/billing"
             className="rounded-lg bg-gradient-to-r from-rain to-rain-bright px-4 py-2 text-sm font-bold text-white shadow shadow-rain/30 transition hover:brightness-110"
           >
-            {status === "canceled" ? "Reactivate" : "Start free trial"}
+            {status === "canceled" ? "Reactivate" : "Activate trial"}
           </Link>
         </div>
       </div>
