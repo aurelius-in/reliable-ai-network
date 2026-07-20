@@ -11,8 +11,11 @@ export function TopNav({ profile }: { profile: Profile | null }) {
   const isTrialing = status === "trialing";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-night-600/60 bg-night-800/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
+    <header
+      className="sticky top-0 z-40 border-b border-night-600/60 bg-night-800/80 backdrop-blur"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
+    >
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 md:h-16">
         <Logo href="/dashboard" />
 
         <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
@@ -51,7 +54,10 @@ export function TopNav({ profile }: { profile: Profile | null }) {
             </Link>
           )}
 
-          <SignOutButton />
+          {/* On phones, sign-out lives in the bottom bar's Account sheet. */}
+          <span className="hidden md:block">
+            <SignOutButton />
+          </span>
         </div>
       </div>
     </header>

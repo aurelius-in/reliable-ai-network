@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { TopNav } from "@/components/TopNav";
+import { MobileTabBar } from "@/components/MobileTabBar";
 import { TrialBanner } from "@/components/TrialBanner";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { DashboardTabs, type DashboardData } from "@/components/DashboardTabs";
@@ -182,7 +183,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen">
       <TopNav profile={typedProfile} />
 
-      <main className="mx-auto max-w-6xl space-y-8 px-4 py-8">
+      <main className="mx-auto max-w-6xl space-y-6 px-4 pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] md:space-y-8 md:py-8">
         <TrialBanner profile={typedProfile} />
 
         <InstallPrompt />
@@ -201,6 +202,8 @@ export default async function DashboardPage() {
           data={data}
         />
       </main>
+
+      <MobileTabBar tier={typedProfile?.current_tier ?? null} />
     </div>
   );
 }

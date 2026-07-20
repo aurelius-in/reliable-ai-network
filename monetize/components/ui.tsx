@@ -274,7 +274,7 @@ export function ProductPicker({
         <button
           type="button"
           onClick={() => setDescribing((open) => !open)}
-          className={`block w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${
+          className={`block min-h-[44px] w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition active:scale-[0.98] ${
             describing
               ? "border-rain bg-rain/15 text-white shadow-[0_0_14px_rgba(226,0,116,0.22)]"
               : "border-rain/50 bg-night-800 text-white hover:border-rain"
@@ -303,7 +303,7 @@ export function ProductPicker({
                   type: example.type,
                 });
               }}
-              className={`rounded-lg border px-3 py-1.5 text-[13px] font-semibold transition ${
+              className={`min-h-[44px] rounded-lg border px-3 py-1.5 text-[13px] font-semibold transition active:scale-[0.97] md:min-h-0 ${
                 value?.exampleId === example.id
                   ? "border-rain bg-rain/15 text-white shadow-[0_0_14px_rgba(226,0,116,0.22)]"
                   : "border-night-600 bg-night-800 text-slate-300 hover:border-rain/50 hover:text-white"
@@ -345,7 +345,7 @@ export function CopyButton({
     <button
       type="button"
       onClick={copy}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-night-600 bg-night-800 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-rain/60 hover:text-white"
+      className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-night-600 bg-night-800 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-rain/60 hover:text-white active:scale-[0.96] md:min-h-0"
     >
       {copied ? (
         <Check size={13} className="text-emerald-400" />
@@ -380,7 +380,7 @@ export function DownloadButton({
     <button
       type="button"
       onClick={() => downloadText(filename, content)}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-night-600 bg-night-800 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-rain/60 hover:text-white"
+      className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-night-600 bg-night-800 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-rain/60 hover:text-white active:scale-[0.96] md:min-h-0"
     >
       <Download size={13} />
       {label}

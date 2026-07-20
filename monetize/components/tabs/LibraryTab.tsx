@@ -36,7 +36,7 @@ export function LibraryTab() {
                 onClick={() =>
                   setPreviewId(previewId === template.id ? null : template.id)
                 }
-                className="rounded-lg border border-night-600 px-3.5 py-2 text-sm font-semibold text-slate-200 transition hover:border-rain/50"
+                className="min-h-[44px] rounded-lg border border-night-600 px-3.5 py-2 text-sm font-semibold text-slate-200 transition hover:border-rain/50 active:scale-[0.96] md:min-h-0"
               >
                 {previewId === template.id ? "Hide" : "Preview"}
               </button>

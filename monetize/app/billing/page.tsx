@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarClock, CreditCard } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
+import { MobileTabBar } from "@/components/MobileTabBar";
 import { PortalButton } from "@/components/PortalButton";
 import { CheckoutButton } from "@/components/CheckoutButton";
 import { createClient } from "@/lib/supabase/server";
@@ -55,7 +56,7 @@ export default async function BillingPage() {
     <div className="min-h-screen">
       <TopNav profile={profile} />
 
-      <main className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+      <main className="mx-auto max-w-3xl space-y-6 px-4 pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] md:py-8">
         <h1 className="text-2xl font-black text-white">Billing</h1>
 
         {isTrialing && trialEndDate && (
@@ -148,6 +149,8 @@ export default async function BillingPage() {
           </p>
         </div>
       </main>
+
+      <MobileTabBar tier={profile?.current_tier ?? null} />
     </div>
   );
 }

@@ -122,7 +122,7 @@ export function AnalyzerTab({
           <button
             type="button"
             onClick={() => setDescribing((open) => !open)}
-            className={`block w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${
+            className={`block min-h-[44px] w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition active:scale-[0.98] ${
               describing
                 ? "border-rain bg-rain/15 text-white shadow-[0_0_14px_rgba(226,0,116,0.22)]"
                 : "border-rain/50 bg-night-800 text-white hover:border-rain"
@@ -147,7 +147,7 @@ export function AnalyzerTab({
                   setDescribing(false);
                   runExample(example.id);
                 }}
-                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-night-600 bg-night-800 px-3 py-1.5 text-[13px] font-semibold text-slate-300 transition hover:border-rain/50 hover:text-white disabled:opacity-50"
+                className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg border border-night-600 bg-night-800 px-3 py-1.5 text-[13px] font-semibold text-slate-300 transition hover:border-rain/50 hover:text-white active:scale-[0.97] disabled:opacity-50 md:min-h-0"
               >
                 {exampleRunning === example.id && (
                   <Loader2 size={13} className="animate-spin" />
@@ -199,7 +199,7 @@ export function AnalyzerTab({
                 {analysis && (
                   <button
                     onClick={() => setOpenId(isOpen ? null : creation.id)}
-                    className="rounded-lg border border-night-600 px-3.5 py-2 text-sm font-semibold text-slate-200 transition hover:border-rain/50"
+                    className="min-h-[44px] rounded-lg border border-night-600 px-3.5 py-2 text-sm font-semibold text-slate-200 transition hover:border-rain/50 active:scale-[0.96] md:min-h-0"
                   >
                     {isOpen ? "Hide" : "View"}
                   </button>

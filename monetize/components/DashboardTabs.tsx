@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BadgeDollarSign,
   BookOpen,
   Brain,
+  ChevronDown,
   Crown,
   Eye,
   GitBranch,
@@ -18,7 +19,9 @@ import {
   Rocket,
   TrendingUp,
   Users,
+  X,
 } from "lucide-react";
+import { MOBILE_NAV_EVENT, TAB_CHANGE_EVENT } from "@/components/MobileTabBar";
 import { AnalyzerTab } from "@/components/tabs/AnalyzerTab";
 import { BuyersTab } from "@/components/tabs/BuyersTab";
 import { PricingTab } from "@/components/tabs/PricingTab";
@@ -259,6 +262,59 @@ export function DashboardTabs({
   data: DashboardData;
 }) {
   const [tab, setTab] = useState<TabId>("analyzer");
+  // Mobile bottom-sheet tool picker (opened from the bottom tab bar).
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  function selectTab(next: TabId) {
+    setTab(next);
+    setSheetOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Wire up the mobile bottom tab bar (Home / Tools / Progress).
+  useEffect(() => {
+    function onNav(e: Event) {
+      const section = (e as CustomEvent).detail?.section;
+      if (section === "tools") {
+        setSheetOpen((open) => !open);
+      } else if (section === "progress") {
+        setTab("progress");
+        setSheetOpen(false);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (section === "home") {
+        setSheetOpen(false);
+        setTab((current) => (current === "progress" ? "analyzer" : current));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+    window.addEventListener(MOBILE_NAV_EVENT, onNav);
+    return () => window.removeEventListener(MOBILE_NAV_EVENT, onNav);
+  }, []);
+
+  // Deep link from other pages, e.g. /dashboard?view=tools from Billing.
+  useEffect(() => {
+    const view = new URLSearchParams(window.location.search).get("view");
+    if (view === "tools") setSheetOpen(true);
+    else if (view === "progress") setTab("progress");
+    if (view) window.history.replaceState(null, "", "/dashboard");
+  }, []);
+
+  // Keep the bottom bar's active state in sync.
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(TAB_CHANGE_EVENT, { detail: { tab, sheetOpen } })
+    );
+  }, [tab, sheetOpen]);
+
+  // Lock body scroll while the tool sheet is open.
+  useEffect(() => {
+    if (!sheetOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [sheetOpen]);
 
   // Starter tools are always usable — even before a subscription exists —
   // so brand-new users get value immediately.
@@ -270,8 +326,102 @@ export function DashboardTabs({
 
   return (
     <div>
-      {/* Tab bar, grouped by tier */}
-      <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-start lg:gap-6">
+      {/* Phones: compact current-tool header that opens the tool sheet. */}
+      <button
+        type="button"
+        onClick={() => setSheetOpen(true)}
+        className="flex w-full items-center justify-between gap-3 rounded-2xl border border-night-600 bg-night-700 px-4 py-3.5 transition active:scale-[0.98] md:hidden"
+      >
+        <span className="flex min-w-0 items-center gap-2.5 text-sm font-bold text-white">
+          <span className="text-rain-bright">{activeDef.icon}</span>
+          <span className="truncate">{activeDef.label}</span>
+          {!activeUnlocked && <Lock size={12} className="shrink-0 text-slate-500" />}
+        </span>
+        <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-rain-bright">
+          All tools <ChevronDown size={14} />
+        </span>
+      </button>
+
+      {/* Mobile tool sheet */}
+      {sheetOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setSheetOpen(false)}
+          />
+          <div className="sheet-up absolute inset-x-0 bottom-0 max-h-[78vh] overflow-y-auto rounded-t-3xl border-t border-night-600 bg-night-800 px-5 pt-3 pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-night-600" />
+            <div className="flex items-center justify-between">
+              <p className="text-base font-bold text-white">All tools</p>
+              <button
+                type="button"
+                onClick={() => setSheetOpen(false)}
+                aria-label="Close"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-night-700 text-slate-400"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            {TIER_GROUPS.map((group) => {
+              const groupUnlocked = isUnlocked(group.tier);
+              return (
+                <div key={group.tier} className="mt-4">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span
+                      className={`text-[11px] font-black uppercase tracking-widest ${
+                        group.tier === "pro"
+                          ? "text-violet-bright"
+                          : group.tier === "growth"
+                            ? "text-rain-bright"
+                            : "text-slate-400"
+                      }`}
+                    >
+                      {group.label}
+                    </span>
+                    <span className="rounded-full bg-night-700 px-2 py-0.5 text-[10px] font-bold text-slate-400 ring-1 ring-night-600">
+                      {group.price}
+                    </span>
+                    {!groupUnlocked && <Lock size={11} className="text-slate-500" />}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {TABS.filter((t) => t.tier === group.tier).map((t) => {
+                      const active = tab === t.id;
+                      const unlocked = isUnlocked(t.tier);
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => selectTab(t.id)}
+                          className={`flex min-h-[52px] items-center gap-2.5 rounded-xl border px-3 py-2 text-left text-[13px] font-semibold transition active:scale-[0.97] ${
+                            active
+                              ? "border-rain bg-rain/15 text-white shadow-[0_0_14px_rgba(226,0,116,0.25)]"
+                              : unlocked
+                                ? "border-night-600 bg-night-700 text-slate-300"
+                                : "border-night-600 bg-night-700/50 text-slate-500"
+                          }`}
+                        >
+                          <span className={active ? "text-rain-bright" : ""}>
+                            {t.icon}
+                          </span>
+                          <span className="min-w-0 flex-1 leading-tight">
+                            {t.label}
+                          </span>
+                          {!unlocked && (
+                            <Lock size={12} className="shrink-0 opacity-70" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Tab bar, grouped by tier — desktop/tablet only */}
+      <div className="hidden md:flex md:flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-start lg:gap-6">
         {TIER_GROUPS.map((group) => {
           const groupUnlocked = isUnlocked(group.tier);
           return (

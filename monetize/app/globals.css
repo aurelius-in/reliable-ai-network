@@ -78,6 +78,21 @@ body {
   animation: fade-up 0.5s ease-out both;
 }
 
+@keyframes sheet-up {
+  from {
+    opacity: 0.4;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sheet-up {
+  animation: sheet-up 0.25s ease-out both;
+}
+
 .gradient-text {
   background: linear-gradient(
     100deg,
@@ -212,4 +227,47 @@ body {
   font-size: 0.75rem;
   line-height: 1.4;
   color: #8f8a99;
+}
+
+/* Hide scrollbars (used on horizontal strips for a native-app feel). */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Native-app feel on phones                                           */
+/* ------------------------------------------------------------------ */
+
+/* Subtle press feedback, like tapping a native control. */
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+button.chip:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 767px) {
+  /* Comfortable 44px+ touch targets for chip selectors (buttons only —
+     decorative span.chip hints stay small). */
+  button.chip {
+    min-height: 44px;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
+  /* No visible scrollbars on phones — momentum scroll only. */
+  * {
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
 }

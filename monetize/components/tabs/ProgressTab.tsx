@@ -116,7 +116,7 @@ export function ProgressTab({
                 key={milestone.id}
                 onClick={() => toggle(milestone.id)}
                 disabled={savingId === milestone.id}
-                className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition ${
+                className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition active:scale-[0.98] ${
                   done
                     ? "border-emerald-500/40 bg-emerald-500/8"
                     : "border-night-600 bg-night-800 hover:border-rain/40"
