@@ -24,8 +24,8 @@ export function LibraryTab() {
 
       {QUICK_START_TEMPLATES.map((template) => (
         <div key={template.id} className="card overflow-hidden">
-          <div className="flex flex-wrap items-center gap-3 p-5">
-            <div className="min-w-0 flex-1">
+          <div className="space-y-3 p-5">
+            <div>
               <h3 className="font-bold text-white">{template.title}</h3>
               <p className="mt-0.5 text-sm text-slate-400">
                 {template.description}

@@ -188,10 +188,10 @@ export default async function DashboardPage() {
         <InstallPrompt />
 
         <div>
-          <h1 className="text-2xl font-black text-white sm:text-3xl">
-            Let&apos;s make it rain, {firstName}.
+          <h1 className="text-xl font-black text-white sm:text-2xl">
+            Let&apos;s make it RAIN, {firstName}.
           </h1>
-          <p className="mt-1.5 text-sm text-slate-400">
+          <p className="mt-1.5 text-sm text-aqua">
             Turn what you built into income.
           </p>
         </div>

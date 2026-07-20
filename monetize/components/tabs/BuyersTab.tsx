@@ -138,6 +138,7 @@ export function BuyersTab({
             value={goal}
             onChange={setGoal}
             ariaLabel="Income goal"
+            columns={3}
           />
         </div>
 
@@ -261,16 +262,16 @@ function BuyersResult({ result }: { result: BuyerProfilesResult }) {
                 ))}
               </div>
 
-              <div className="mt-4 flex items-start justify-between gap-2 rounded-xl border border-rain/40 bg-rain/10 p-3.5">
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-pink">
-                    Your one-liner for them
-                  </p>
-                  <p className="mt-1 text-sm font-bold leading-snug text-white">
-                    {persona.positioning_line}
-                  </p>
+              <div className="mt-4 rounded-xl border border-rain/40 bg-rain/10 p-3.5">
+                <p className="text-[10px] font-black uppercase tracking-widest text-pink">
+                  Your one-liner for them
+                </p>
+                <p className="mt-1 text-sm font-bold leading-snug text-white">
+                  {persona.positioning_line}
+                </p>
+                <div className="mt-2.5">
+                  <CopyButton text={persona.positioning_line} label="Copy" />
                 </div>
-                <CopyButton text={persona.positioning_line} label="Copy" />
               </div>
             </div>
           );

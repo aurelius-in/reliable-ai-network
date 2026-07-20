@@ -35,20 +35,29 @@ export function ChipGroup({
   value,
   onChange,
   ariaLabel,
+  columns,
 }: {
   options: ChipOption[];
   value: string;
   onChange: (value: string) => void;
   ariaLabel?: string;
+  /** Lay chips out in a fixed-column grid instead of a wrapping row. */
+  columns?: 2 | 3;
 }) {
+  const layout =
+    columns === 3
+      ? "grid grid-cols-3 gap-2"
+      : columns === 2
+        ? "grid grid-cols-2 gap-2"
+        : "flex flex-wrap gap-2";
   return (
-    <div className="flex flex-wrap gap-2" role="group" aria-label={ariaLabel}>
+    <div className={layout} role="group" aria-label={ariaLabel}>
       {options.map((option) => (
         <button
           key={option.value}
           type="button"
           onClick={() => onChange(option.value)}
-          className={`chip ${value === option.value ? "chip-on" : ""}`}
+          className={`chip ${columns ? "justify-center px-2 text-center" : ""} ${value === option.value ? "chip-on" : ""}`}
         >
           {option.label}
         </button>
@@ -172,7 +181,7 @@ export function DescribeProductForm({
         </label>
         <textarea
           required
-          rows={2}
+          rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="e.g. Plans a week of meals from your budget and diet. Made for busy parents."
@@ -262,14 +271,25 @@ export function ProductPicker({
         >
           {all.length > 0 ? "…or something new" : "Your product"}
         </FieldLabel>
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setDescribing((open) => !open)}
-            className={`chip ${describing ? "chip-on" : "border-rain/50 text-white"}`}
-          >
-            ✏️ Describe your own
-          </button>
+        <button
+          type="button"
+          onClick={() => setDescribing((open) => !open)}
+          className={`block w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${
+            describing
+              ? "border-rain bg-rain/15 text-white shadow-[0_0_14px_rgba(226,0,116,0.22)]"
+              : "border-rain/50 bg-night-800 text-white hover:border-rain"
+          }`}
+        >
+          Describe your own
+        </button>
+
+        {describing && (
+          <div className="mt-3">
+            <DescribeProductForm onSaved={handleSaved} />
+          </div>
+        )}
+
+        <div className="mt-2 grid grid-cols-2 gap-2">
           {EXAMPLE_CREATIONS.map((example) => (
             <button
               key={example.id}
@@ -283,15 +303,17 @@ export function ProductPicker({
                   type: example.type,
                 });
               }}
-              className={`chip ${value?.exampleId === example.id ? "chip-on" : ""}`}
+              className={`rounded-lg border px-3 py-1.5 text-[13px] font-semibold transition ${
+                value?.exampleId === example.id
+                  ? "border-rain bg-rain/15 text-white shadow-[0_0_14px_rgba(226,0,116,0.22)]"
+                  : "border-night-600 bg-night-800 text-slate-300 hover:border-rain/50 hover:text-white"
+              }`}
             >
-              {example.emoji} {example.title}
+              {example.title}
             </button>
           ))}
         </div>
       </div>
-
-      {describing && <DescribeProductForm onSaved={handleSaved} />}
     </div>
   );
 }

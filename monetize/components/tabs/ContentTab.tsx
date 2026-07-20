@@ -204,16 +204,16 @@ function ContentResult({ bundle }: { bundle: ContentBundle }) {
             const text = `${post.hook}\n\n${post.body}\n\n${post.hashtags?.map((h) => `#${h}`).join(" ") ?? ""}`;
             return (
               <div key={i} className="rounded-xl border border-night-600 bg-night-800 p-4">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-bold text-white">{post.hook}</p>
-                  <CopyButton text={text} />
-                </div>
+                <p className="font-bold text-white">{post.hook}</p>
                 <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-300">
                   {post.body}
                 </p>
                 <p className="mt-2 text-xs font-semibold text-pink">
                   {post.hashtags?.map((h) => `#${h}`).join(" ")}
                 </p>
+                <div className="mt-3">
+                  <CopyButton text={text} />
+                </div>
               </div>
             );
           })}
@@ -229,10 +229,12 @@ function ContentResult({ bundle }: { bundle: ContentBundle }) {
           {bundle.x_posts?.map((post, i) => (
             <div
               key={i}
-              className="flex items-start justify-between gap-3 rounded-xl border border-night-600 bg-night-800 p-4"
+              className="rounded-xl border border-night-600 bg-night-800 p-4"
             >
               <p className="text-sm leading-relaxed text-slate-200">{post}</p>
-              <CopyButton text={post} />
+              <div className="mt-3">
+                <CopyButton text={post} />
+              </div>
             </div>
           ))}
         </div>
@@ -312,21 +314,19 @@ function ContentResult({ bundle }: { bundle: ContentBundle }) {
         <div className="mt-4 space-y-3">
           {bundle.email_sequence?.map((email, i) => (
             <div key={i} className="rounded-xl border border-night-600 bg-night-800 p-4">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                    Email {i + 1}
-                  </p>
-                  <p className="font-bold text-white">{email.subject}</p>
-                  <p className="text-xs text-slate-500">{email.preview_text}</p>
-                </div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                Email {i + 1}
+              </p>
+              <p className="font-bold text-white">{email.subject}</p>
+              <p className="text-xs text-slate-500">{email.preview_text}</p>
+              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-300">
+                {email.body}
+              </p>
+              <div className="mt-3">
                 <CopyButton
                   text={`Subject: ${email.subject}\n\n${email.body}`}
                 />
               </div>
-              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-300">
-                {email.body}
-              </p>
             </div>
           ))}
         </div>

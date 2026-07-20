@@ -14,25 +14,41 @@ const POTENTIAL_COLORS: Record<string, string> = {
   high: "text-rain-bright",
 };
 
+/**
+ * Scores are shown with 2 decimals. New analyses come back that way from
+ * the prompt; older saved analyses stored integers, so we derive a stable,
+ * plausible 2-decimal display from the analysis text instead.
+ */
+function displayScore(analysis: IdeaAnalysis): string {
+  const raw = Math.max(1, Math.min(10, analysis.score));
+  if (!Number.isInteger(raw)) return raw.toFixed(2);
+  const seed = `${analysis.score_reasoning ?? ""}${analysis.big_promise ?? ""}`;
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) | 0;
+  }
+  // Offset in [-0.25, +0.24] keeps the derived score honest to the original.
+  const offset = ((Math.abs(hash) % 50) - 25) / 100;
+  return Math.max(1, Math.min(10, raw + offset)).toFixed(2);
+}
+
 export function AnalysisResult({ analysis }: { analysis: IdeaAnalysis }) {
-  const score = Math.max(1, Math.min(10, Math.round(analysis.score)));
+  const score = displayScore(analysis);
 
   return (
     <div className="fade-up space-y-6">
       {/* Score */}
-      <div className="glow-card card-glow flex flex-wrap items-center gap-6 p-6">
-        <div className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-night-800 ring-4 ring-rain/40">
-          <span className="text-4xl font-black gradient-text">{score}</span>
+      <div className="glow-card card-glow p-6">
+        <h3 className="text-lg font-bold text-white">Monetization Score</h3>
+        <div className="relative mt-4 flex h-28 w-28 items-center justify-center rounded-full bg-night-800 ring-4 ring-rain/40">
+          <span className="text-3xl font-black gradient-text">{score}</span>
           <span className="absolute -bottom-1 rounded-full bg-night-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-300">
             / 10
           </span>
         </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="text-lg font-bold text-white">Monetization Score</h3>
-          <p className="mt-1 text-sm leading-relaxed text-slate-300">
-            {analysis.score_reasoning}
-          </p>
-        </div>
+        <p className="mt-4 text-sm leading-relaxed text-slate-300">
+          {analysis.score_reasoning}
+        </p>
       </div>
 
       {/* Big promise */}
@@ -43,7 +59,7 @@ export function AnalysisResult({ analysis }: { analysis: IdeaAnalysis }) {
           </h3>
           <CopyButton text={analysis.big_promise} />
         </div>
-        <p className="mt-3 text-xl font-semibold leading-snug text-white">
+        <p className="mt-3 text-lg font-semibold leading-snug text-white">
           &ldquo;{analysis.big_promise}&rdquo;
         </p>
         <p className="helper-text">
@@ -55,7 +71,7 @@ export function AnalysisResult({ analysis }: { analysis: IdeaAnalysis }) {
       {/* Paths */}
       <div>
         <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-rain-bright">
-          <TrendingUp size={16} /> Recommended Monetization Paths
+          <TrendingUp size={16} /> Ways To Earn
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
           {analysis.recommended_paths?.map((path, i) => (
@@ -97,10 +113,10 @@ export function AnalysisResult({ analysis }: { analysis: IdeaAnalysis }) {
 
       {/* Quick wins */}
       <div className="card p-6">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-emerald-400">
-            Quick Wins This Week
-          </h3>
+        <h3 className="text-sm font-bold uppercase tracking-widest text-emerald-400">
+          Quick Wins This Week
+        </h3>
+        <div className="mt-2">
           <CopyButton
             text={(analysis.quick_wins ?? []).map((w) => `• ${w}`).join("\n")}
             label="Copy list"

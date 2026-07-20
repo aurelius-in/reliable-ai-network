@@ -9,7 +9,7 @@ Your job: analyze a creator's product and give them a clear, confident, actionab
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
-  "score": <integer 1-10, monetization potential>,
+  "score": <number between 1.00 and 10.00 with exactly 2 decimal places (e.g. 7.35, 8.25), monetization potential — be precise, never a round integer>,
   "score_reasoning": "<2-3 sentences explaining the score>",
   "recommended_paths": [
     {

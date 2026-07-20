@@ -16,17 +16,17 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
     return (
       <div className="fade-up rounded-2xl border border-rain/30 bg-gradient-to-r from-rain/10 via-night-700 to-violet/10 px-5 py-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="flex items-center gap-2 font-semibold text-white">
-            <Sparkles size={18} className="text-rain-bright" />
+          <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm font-semibold text-white">
+            <Sparkles size={15} className="text-rain-bright" />
             You are on the {tierLabel(profile.current_tier)} trial — ends in{" "}
             <span className="text-rain-bright">
               {days} day{days === 1 ? "" : "s"}
             </span>
-            <span className="text-sm font-normal text-slate-400">({endDate})</span>
+            <span className="text-xs font-normal text-slate-400">({endDate})</span>
           </p>
           <Link
             href="/billing"
-            className="text-sm font-semibold text-pink underline-offset-4 transition hover:underline"
+            className="text-xs font-semibold text-pink underline-offset-4 transition hover:underline"
           >
             Manage trial →
           </Link>

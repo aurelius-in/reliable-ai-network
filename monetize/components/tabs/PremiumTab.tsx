@@ -91,8 +91,8 @@ export function PremiumTab() {
         <div className="space-y-4">
           {templates.map((template) => (
             <div key={template.id} className="card overflow-hidden">
-              <div className="flex flex-wrap items-center gap-3 p-5">
-                <div className="min-w-0 flex-1">
+              <div className="space-y-3 p-5">
+                <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-bold text-white">{template.title}</h3>
                     <span className="rounded-full bg-violet/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-bright">

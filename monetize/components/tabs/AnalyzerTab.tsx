@@ -119,14 +119,25 @@ export function AnalyzerTab({
           <FieldLabel helper="Describe your own product to get real answers — or tap an example (they're just demos).">
             Your product
           </FieldLabel>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setDescribing((open) => !open)}
-              className={`chip ${describing ? "chip-on" : "border-rain/50 text-white"}`}
-            >
-              ✏️ Describe your own
-            </button>
+          <button
+            type="button"
+            onClick={() => setDescribing((open) => !open)}
+            className={`block w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${
+              describing
+                ? "border-rain bg-rain/15 text-white shadow-[0_0_14px_rgba(226,0,116,0.22)]"
+                : "border-rain/50 bg-night-800 text-white hover:border-rain"
+            }`}
+          >
+            Describe your own
+          </button>
+
+          {describing && (
+            <div className="mt-3">
+              <DescribeProductForm onSaved={handleSaved} />
+            </div>
+          )}
+
+          <div className="mt-2 grid grid-cols-2 gap-2">
             {EXAMPLE_CREATIONS.map((example) => (
               <button
                 key={example.id}
@@ -136,24 +147,16 @@ export function AnalyzerTab({
                   setDescribing(false);
                   runExample(example.id);
                 }}
-                className="chip disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-night-600 bg-night-800 px-3 py-1.5 text-[13px] font-semibold text-slate-300 transition hover:border-rain/50 hover:text-white disabled:opacity-50"
               >
-                {exampleRunning === example.id ? (
+                {exampleRunning === example.id && (
                   <Loader2 size={13} className="animate-spin" />
-                ) : (
-                  <span>{example.emoji}</span>
                 )}
                 {example.title}
               </button>
             ))}
           </div>
         </div>
-
-        {describing && (
-          <div className="mt-4">
-            <DescribeProductForm onSaved={handleSaved} />
-          </div>
-        )}
       </div>
 
       <ErrorText message={error} />

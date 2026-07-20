@@ -14,6 +14,8 @@
 
   /* Secondary accents — light pink + subtle violet */
   --color-pink: #ff9ecf;
+  /* Aqua — matches the electric-blue raindrop logo glow */
+  --color-aqua: #4fd2ff;
   --color-violet: #a78bfa;
   --color-violet-bright: #c4b5fd;
   --color-violet-dim: #6d28d9;

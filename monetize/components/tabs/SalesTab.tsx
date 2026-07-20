@@ -234,10 +234,10 @@ function SalesResult({ kit }: { kit: SalesKit }) {
                   <span className="text-xs text-slate-500">{touch.channel_note}</span>
                 </div>
                 <div className="mt-2 rounded-xl border border-night-600 bg-night-800 p-3.5">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-200">
-                      {touch.message}
-                    </p>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-200">
+                    {touch.message}
+                  </p>
+                  <div className="mt-3">
                     <CopyButton text={touch.message} label="Copy" />
                   </div>
                 </div>
@@ -256,11 +256,11 @@ function SalesResult({ kit }: { kit: SalesKit }) {
           {kit.objection_scripts.map((obj, i) => (
             <div key={i} className="rounded-xl bg-night-800 p-4 text-sm">
               <p className="italic text-slate-400">&ldquo;{obj.objection}&rdquo;</p>
-              <div className="mt-2 flex items-start justify-between gap-2">
-                <p className="leading-relaxed text-slate-200">
-                  <span className="font-bold text-rain-bright">You say:</span>{" "}
-                  {obj.response}
-                </p>
+              <p className="mt-2 leading-relaxed text-slate-200">
+                <span className="font-bold text-rain-bright">You say:</span>{" "}
+                {obj.response}
+              </p>
+              <div className="mt-3">
                 <CopyButton text={obj.response} label="Copy" />
               </div>
             </div>
