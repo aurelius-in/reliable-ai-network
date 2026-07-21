@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Brain, Loader2 } from "lucide-react";
+import { Brain, Building2, ExternalLink, Loader2 } from "lucide-react";
 import {
   CopyButton,
   ErrorText,
@@ -22,6 +22,26 @@ import type {
   StrategyToolId,
 } from "@/types";
 
+type ApolloCompanyRow = {
+  name: string;
+  domain: string | null;
+  industry: string | null;
+  employeeCount: number | null;
+  revenue: string | null;
+  foundedYear: number | null;
+  linkedinUrl: string | null;
+  websiteUrl: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  keywords: string[] | null;
+};
+
+type CompetitorEnrichResult = {
+  inputName: string;
+  company: ApolloCompanyRow | null;
+};
+
 const STRATEGY_TOOLS: {
   id: StrategyToolId;
   emoji: string;
@@ -38,7 +58,7 @@ const STRATEGY_TOOLS: {
     id: "pricing_optimization",
     emoji: "📈",
     label: "Pricing optimizer",
-    helper: "The money you're leaving on the table — and how to get it.",
+    helper: "The money you're leaving on the table, and how to get it.",
   },
   {
     id: "roadmap",
@@ -187,43 +207,173 @@ export function StrategyTab({
 }
 
 function CompetitorsResult({ result }: { result: CompetitorAnalysis }) {
+  const [enrichment, setEnrichment] = useState<CompetitorEnrichResult[] | null>(
+    null
+  );
+  const [enriching, setEnriching] = useState(false);
+  const [enrichError, setEnrichError] = useState<string | null>(null);
+
+  async function enrichCompetitors() {
+    setEnriching(true);
+    setEnrichError(null);
+    try {
+      const res = await fetch("/api/strategy/competitors/enrich", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          competitors: (result.competitors ?? []).map((c) => ({
+            name: c.name,
+          })),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Enrich failed");
+      setEnrichment(data.results ?? []);
+    } catch (err) {
+      setEnrichError(
+        err instanceof Error ? err.message : "Company enrich failed"
+      );
+    } finally {
+      setEnriching(false);
+    }
+  }
+
+  const enrichByName = new Map(
+    (enrichment ?? []).map((row) => [row.inputName.toLowerCase(), row.company])
+  );
+
   return (
     <div className="fade-up space-y-4">
       <div className="card-glow p-6">
-        <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-          🔍 Market snapshot
-        </h3>
-        <p className="mt-2 text-sm leading-relaxed text-slate-200">
-          {result.market_summary}
-        </p>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        {result.competitors?.map((competitor, i) => (
-          <div key={i} className="card p-5">
-            <div className="flex items-center justify-between gap-2">
-              <h4 className="font-bold text-white">{competitor.name}</h4>
-              <span className="rounded-full bg-night-800 px-2.5 py-0.5 text-[11px] font-bold text-slate-300">
-                {competitor.pricing}
-              </span>
-            </div>
-            <p className="mt-1.5 text-sm text-slate-400">
-              {competitor.description}
-            </p>
-            <div className="mt-3 space-y-1.5 text-sm">
-              <p className="text-slate-300">
-                <span className="font-semibold text-emerald-400">Strong:</span>{" "}
-                {competitor.strength}
-              </p>
-              <p className="text-slate-300">
-                <span className="font-semibold text-red-400">Weak:</span>{" "}
-                {competitor.weakness}
-              </p>
-            </div>
-            <p className="mt-3 rounded-lg bg-rain/10 p-3 text-sm leading-relaxed text-pink">
-              <span className="font-bold">Your edge:</span> {competitor.your_edge}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
+              🔍 Market snapshot
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-200">
+              {result.market_summary}
             </p>
           </div>
-        ))}
+          <button
+            type="button"
+            onClick={enrichCompetitors}
+            disabled={enriching}
+            className="btn-secondary inline-flex shrink-0 items-center gap-2"
+          >
+            {enriching ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <Building2 size={14} />
+            )}
+            {enrichment ? "Refresh Apollo data" : "Enrich with Apollo"}
+          </button>
+        </div>
+        <p className="mt-2 text-[11px] text-slate-500">
+          Pulls firmographics (size, industry, LinkedIn) for each competitor
+          name.
+        </p>
+        <ErrorText message={enrichError} />
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        {result.competitors?.map((competitor, i) => {
+          const company = enrichByName.get(competitor.name.toLowerCase());
+          const location = company
+            ? [company.city, company.state, company.country]
+                .filter(Boolean)
+                .join(", ")
+            : "";
+          return (
+            <div key={i} className="card p-5">
+              <div className="flex items-center justify-between gap-2">
+                <h4 className="font-bold text-white">{competitor.name}</h4>
+                <span className="rounded-full bg-night-800 px-2.5 py-0.5 text-[11px] font-bold text-slate-300">
+                  {competitor.pricing}
+                </span>
+              </div>
+              <p className="mt-1.5 text-sm text-slate-400">
+                {competitor.description}
+              </p>
+              {enrichment && (
+                <div className="mt-3 rounded-lg border border-aqua/20 bg-aqua/5 p-3 text-xs text-slate-300">
+                  {company ? (
+                    <>
+                      <p className="font-bold text-aqua">
+                        Apollo
+                        {company.domain ? ` · ${company.domain}` : ""}
+                      </p>
+                      <p className="mt-1">
+                        {[
+                          company.industry,
+                          company.employeeCount != null
+                            ? `~${company.employeeCount.toLocaleString()} employees`
+                            : null,
+                          company.foundedYear
+                            ? `Founded ${company.foundedYear}`
+                            : null,
+                          company.revenue ? `Rev ${company.revenue}` : null,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ") || "Matched, limited public fields"}
+                      </p>
+                      {location && (
+                        <p className="mt-0.5 text-slate-500">{location}</p>
+                      )}
+                      {company.keywords && company.keywords.length > 0 && (
+                        <p className="mt-1 text-slate-500">
+                          Keywords: {company.keywords.join(", ")}
+                        </p>
+                      )}
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {company.linkedinUrl && (
+                          <a
+                            href={company.linkedinUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 font-semibold text-aqua hover:underline"
+                          >
+                            LinkedIn <ExternalLink size={11} />
+                          </a>
+                        )}
+                        {company.websiteUrl && (
+                          <a
+                            href={
+                              company.websiteUrl.startsWith("http")
+                                ? company.websiteUrl
+                                : `https://${company.websiteUrl}`
+                            }
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 font-semibold text-aqua hover:underline"
+                          >
+                            Website <ExternalLink size={11} />
+                          </a>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-slate-500">
+                      No Apollo company match for this name.
+                    </p>
+                  )}
+                </div>
+              )}
+              <div className="mt-3 space-y-1.5 text-sm">
+                <p className="text-slate-300">
+                  <span className="font-semibold text-emerald-400">Strong:</span>{" "}
+                  {competitor.strength}
+                </p>
+                <p className="text-slate-300">
+                  <span className="font-semibold text-red-400">Weak:</span>{" "}
+                  {competitor.weakness}
+                </p>
+              </div>
+              <p className="mt-3 rounded-lg bg-rain/10 p-3 text-sm leading-relaxed text-pink">
+                <span className="font-bold">Your edge:</span>{" "}
+                {competitor.your_edge}
+              </p>
+            </div>
+          );
+        })}
       </div>
       <div className="card p-6">
         <h4 className="text-sm font-bold uppercase tracking-widest text-violet-bright">
@@ -232,7 +382,7 @@ function CompetitorsResult({ result }: { result: CompetitorAnalysis }) {
         <ul className="mt-3 space-y-2 text-sm text-slate-200">
           {result.positioning_moves?.map((move, i) => (
             <li key={i} className="flex items-start gap-2">
-              <span className="text-violet-bright">→</span> {move}
+              <span className="text-violet-bright">-</span> {move}
             </li>
           ))}
         </ul>

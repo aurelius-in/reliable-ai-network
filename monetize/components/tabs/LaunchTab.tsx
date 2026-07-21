@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Flag, Loader2, Rocket } from "lucide-react";
+import { ApolloLeadsPanel } from "@/components/ApolloLeadsPanel";
 import {
   ChipGroup,
   CopyButton,
@@ -15,6 +16,7 @@ import {
   type ProductChoice,
 } from "@/components/ui";
 import { AUDIENCE_OPTIONS, GOAL_OPTIONS } from "@/lib/examples";
+import { isOutreachLaunchDay } from "@/lib/apollo-icp";
 import type { Creation, LaunchPlan } from "@/types";
 
 const WEEK_ACCENTS = [
@@ -29,19 +31,31 @@ function launchToMarkdown(plan: LaunchPlan): string {
   for (const week of plan.weeks) {
     lines.push(`## ${week.theme}`, "");
     for (const day of week.days) {
-      lines.push(`### Day ${day.day} — ${day.title} (${day.time_needed})`, "", day.action, "");
+      lines.push(
+        `### Day ${day.day} - ${day.title} (${day.time_needed})`,
+        "",
+        day.action,
+        ""
+      );
       if (day.script) {
-        lines.push(`**${day.script_label ?? "Script"}:**`, "", "```", day.script, "```", "");
+        lines.push(
+          `**${day.script_label ?? "Script"}:**`,
+          "",
+          "```",
+          day.script,
+          "```",
+          ""
+        );
       }
     }
   }
   lines.push("## Milestones");
   for (const m of plan.milestones) {
-    lines.push(`- Day ${m.day}: ${m.target} — if behind: ${m.if_behind}`);
+    lines.push(`- Day ${m.day}: ${m.target} - if behind: ${m.if_behind}`);
   }
   lines.push("", "## If results are weak");
   for (const c of plan.contingency) {
-    lines.push(`- ${c.symptom} → ${c.fix}`);
+    lines.push(`- ${c.symptom} -> ${c.fix}`);
   }
   return lines.join("\n");
 }
@@ -107,8 +121,8 @@ export function LaunchTab({
           </h2>
           <p className="helper-text">
             No more &ldquo;what should I do today?&rdquo; One clear action per
-            day — posts and messages pre-written — plus checkpoints so you
-            know you&apos;re on track.
+            day, posts and messages pre-written, plus checkpoints so you know
+            you&apos;re on track. Outreach days include real people to message.
           </p>
         </div>
 
@@ -152,7 +166,13 @@ export function LaunchTab({
 
       {loading && <FunLoading headline="Mapping your 30-day launch…" />}
 
-      {!loading && plan && <LaunchResult plan={plan} />}
+      {!loading && plan && (
+        <LaunchResult
+          plan={plan}
+          audience={audience}
+          productTitle={choice?.title}
+        />
+      )}
 
       {!loading && !plan && (
         <TeachingEmptyState
@@ -165,7 +185,15 @@ export function LaunchTab({
   );
 }
 
-function LaunchResult({ plan }: { plan: LaunchPlan }) {
+function LaunchResult({
+  plan,
+  audience,
+  productTitle,
+}: {
+  plan: LaunchPlan;
+  audience: string;
+  productTitle?: string;
+}) {
   const milestoneByDay = new Map(plan.milestones.map((m) => [m.day, m]));
 
   return (
@@ -250,6 +278,19 @@ function LaunchResult({ plan }: { plan: LaunchPlan }) {
                         </p>
                       </div>
                     )}
+                    {isOutreachLaunchDay(day) && (
+                      <div className="mt-2.5 rounded-xl border border-aqua/25 bg-aqua/5 p-3.5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-aqua">
+                          Real people for this day
+                        </p>
+                        <ApolloLeadsPanel
+                          audience={audience}
+                          productTitle={productTitle}
+                          openerTemplate={day.script ?? undefined}
+                          compact
+                        />
+                      </div>
+                    )}
                     {milestone && (
                       <p className="mt-2.5 rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-xs font-bold text-emerald-400">
                         🏁 Checkpoint: {milestone.target}
@@ -272,7 +313,9 @@ function LaunchResult({ plan }: { plan: LaunchPlan }) {
           {plan.contingency.map((c, i) => (
             <div key={i} className="rounded-xl bg-night-800 p-4 text-sm">
               <p className="font-semibold text-slate-200">⚠️ {c.symptom}</p>
-              <p className="mt-1 leading-relaxed text-slate-400">→ {c.fix}</p>
+              <p className="mt-1 leading-relaxed text-slate-400">
+                Fix: {c.fix}
+              </p>
             </div>
           ))}
         </div>

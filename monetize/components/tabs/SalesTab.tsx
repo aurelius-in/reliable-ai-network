@@ -19,6 +19,7 @@ import {
   TARGET_BUYER_OPTIONS,
   TONE_OPTIONS,
 } from "@/lib/examples";
+import { ApolloLeadsPanel } from "@/components/ApolloLeadsPanel";
 import type { Creation, SalesKit } from "@/types";
 
 function kitToMarkdown(kit: SalesKit): string {
@@ -28,15 +29,23 @@ function kitToMarkdown(kit: SalesKit): string {
   }
   lines.push("", "## Follow-up sequence");
   for (const f of kit.follow_up_sequence) {
-    lines.push("", `### Touch ${f.touch} — ${f.wait}`, `_${f.channel_note}_`, "", f.message);
+    lines.push(
+      "",
+      `### Touch ${f.touch} - ${f.wait}`,
+      `_${f.channel_note}_`,
+      "",
+      f.message
+    );
   }
   lines.push("", "## Objection scripts");
   for (const o of kit.objection_scripts) {
-    lines.push(`- "${o.objection}" → ${o.response}`);
+    lines.push(`- "${o.objection}" -> ${o.response}`);
   }
   lines.push("", "## Call agenda");
   for (const step of kit.call_agenda) {
-    lines.push(`1. **${step.step}** — ${step.goal}. Say: "${step.say_this}"`);
+    lines.push(
+      `1. **${step.step}** - ${step.goal}. Say: "${step.say_this}"`
+    );
   }
   lines.push("", `> Golden rule: ${kit.golden_rule}`);
   return lines.join("\n");
@@ -106,7 +115,7 @@ export function SalesTab({
           <p className="helper-text">
             Sometimes the fastest money is just messaging people. Get
             word-for-word openers, follow-ups, and answers to &ldquo;let me
-            think about it&rdquo; — all written for your product.
+            think about it,&rdquo; then pull real people to message.
           </p>
         </div>
 
@@ -157,7 +166,13 @@ export function SalesTab({
 
       {loading && <FunLoading headline="Writing messages people reply to…" />}
 
-      {!loading && kit && <SalesResult kit={kit} />}
+      {!loading && kit && (
+        <SalesResult
+          kit={kit}
+          targetBuyer={targetBuyer}
+          productTitle={choice?.title}
+        />
+      )}
 
       {!loading && !kit && (
         <TeachingEmptyState
@@ -170,7 +185,17 @@ export function SalesTab({
   );
 }
 
-function SalesResult({ kit }: { kit: SalesKit }) {
+function SalesResult({
+  kit,
+  targetBuyer,
+  productTitle,
+}: {
+  kit: SalesKit;
+  targetBuyer: string;
+  productTitle?: string;
+}) {
+  const firstOpener = kit.opener_messages[0]?.message;
+
   return (
     <div className="fade-up space-y-5">
       <div className="card-glow p-6">
@@ -189,10 +214,25 @@ function SalesResult({ kit }: { kit: SalesKit }) {
         </p>
       </div>
 
+      <div className="card p-6">
+        <h4 className="text-sm font-bold uppercase tracking-widest text-aqua">
+          🎯 People to message first
+        </h4>
+        <p className="mt-1 text-xs text-slate-400">
+          Matches your selected buyer type. Copy DM uses your first opener.
+        </p>
+        <ApolloLeadsPanel
+          targetBuyer={targetBuyer}
+          productTitle={productTitle}
+          openerTemplate={firstOpener}
+          compact
+        />
+      </div>
+
       {/* Openers */}
       <div className="card p-6">
         <h4 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-pink">
-          <MessageCircle size={15} /> First messages — pick your favorite
+          <MessageCircle size={15} /> First messages - pick your favorite
         </h4>
         <div className="mt-4 grid gap-3 lg:grid-cols-3">
           {kit.opener_messages.map((opener, i) => (
@@ -271,7 +311,7 @@ function SalesResult({ kit }: { kit: SalesKit }) {
       {/* Call agenda */}
       <div className="card p-6">
         <h4 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-emerald-400">
-          <PhoneCall size={15} /> If they say &ldquo;let&apos;s talk&rdquo; — your call plan
+          <PhoneCall size={15} /> If they say &ldquo;let&apos;s talk&rdquo; - your call plan
         </h4>
         <div className="mt-4 space-y-3">
           {kit.call_agenda.map((step, i) => (

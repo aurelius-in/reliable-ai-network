@@ -35,6 +35,17 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         });
         if (error) throw error;
 
+        // Fire-and-forget founder alert + counter bump email.
+        void fetch("/api/notify-signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            name,
+            userId: data.user?.id,
+          }),
+        }).catch(() => {});
+
         if (data.session) {
           router.push("/onboarding");
           router.refresh();
