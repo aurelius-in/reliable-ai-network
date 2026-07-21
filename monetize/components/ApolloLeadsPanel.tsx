@@ -88,7 +88,7 @@ export function ApolloLeadsPanel({
 
       {leads && leads.length === 0 && !loading && (
         <p className="mt-3 text-xs text-slate-400">
-          No strong matches yet. Try a sharper buyer description.
+          Apollo returned no people for these filters. Try refresh once.
         </p>
       )}
 

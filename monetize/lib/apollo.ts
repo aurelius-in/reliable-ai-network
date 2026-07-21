@@ -73,7 +73,8 @@ export async function apolloPeopleSearch(
   const apiKey = requireApolloKey();
 
   const body: Record<string, unknown> = {
-    per_page: Math.min(input.perPage ?? 15, 25),
+    // Keep <= 10 so a single bulk_match can enrich the full page.
+    per_page: Math.min(input.perPage ?? 10, 10),
     page: input.page ?? 1,
   };
   if (input.personTitles?.length) body.person_titles = input.personTitles;
@@ -135,57 +136,65 @@ async function apolloBulkMatchPeople(
   ids: string[]
 ): Promise<Map<string, Partial<ApolloLead>>> {
   const out = new Map<string, Partial<ApolloLead>>();
-  const cleanIds = ids.filter(Boolean).slice(0, 25);
+  const cleanIds = ids.filter(Boolean).slice(0, 20);
   if (cleanIds.length === 0) return out;
 
-  const res = await fetch(`${APOLLO_BASE}/people/bulk_match`, {
-    method: "POST",
-    headers: apolloHeaders(apiKey),
-    body: JSON.stringify({
-      details: cleanIds.map((id) => ({ id })),
-    }),
-  });
+  // Apollo bulk_match allows max 10 records per request.
+  for (let i = 0; i < cleanIds.length; i += 10) {
+    const chunk = cleanIds.slice(i, i + 10);
+    const res = await fetch(`${APOLLO_BASE}/people/bulk_match`, {
+      method: "POST",
+      headers: apolloHeaders(apiKey),
+      body: JSON.stringify({
+        details: chunk.map((id) => ({ id })),
+      }),
+    });
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    console.error("[apollo] bulk_match failed", res.status, text.slice(0, 300));
-    return out;
-  }
-
-  const data = (await res.json()) as { matches?: unknown[] };
-  const matches = Array.isArray(data.matches) ? data.matches : [];
-  for (const row of matches) {
-    if (!row || typeof row !== "object") continue;
-    const p = row as Record<string, unknown>;
-    const id = String(p.id ?? "").trim();
-    if (!id) continue;
-
-    const name =
-      String(p.name ?? "").trim() ||
-      `${String(p.first_name ?? "").trim()} ${String(p.last_name ?? "").trim()}`.trim();
-    const title = String(p.title ?? "").trim();
-    const org =
-      p.organization && typeof p.organization === "object"
-        ? (p.organization as Record<string, unknown>)
-        : {};
-
-    let linkedin = String(p.linkedin_url ?? "").trim();
-    if (linkedin && !linkedin.startsWith("http")) {
-      linkedin = `https://www.linkedin.com/${linkedin.replace(/^\//, "")}`;
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      console.error(
+        "[apollo] bulk_match failed",
+        res.status,
+        text.slice(0, 300)
+      );
+      continue;
     }
 
-    out.set(id, {
-      name: name || undefined,
-      title: title || undefined,
-      company:
-        String(org.name ?? p.organization_name ?? "").trim() || null,
-      linkedinUrl: linkedin || null,
-      email: String(p.email ?? "").trim() || null,
-      city: String(p.city ?? "").trim() || null,
-      state: String(p.state ?? "").trim() || null,
-      country: String(p.country ?? "").trim() || null,
-      headline: String(p.headline ?? "").trim() || null,
-    });
+    const data = (await res.json()) as { matches?: unknown[] };
+    const matches = Array.isArray(data.matches) ? data.matches : [];
+    for (const row of matches) {
+      if (!row || typeof row !== "object") continue;
+      const p = row as Record<string, unknown>;
+      const id = String(p.id ?? "").trim();
+      if (!id) continue;
+
+      const name =
+        String(p.name ?? "").trim() ||
+        `${String(p.first_name ?? "").trim()} ${String(p.last_name ?? "").trim()}`.trim();
+      const title = String(p.title ?? "").trim();
+      const org =
+        p.organization && typeof p.organization === "object"
+          ? (p.organization as Record<string, unknown>)
+          : {};
+
+      let linkedin = String(p.linkedin_url ?? "").trim();
+      if (linkedin && !linkedin.startsWith("http")) {
+        linkedin = `https://www.linkedin.com/${linkedin.replace(/^\//, "")}`;
+      }
+
+      out.set(id, {
+        name: name || undefined,
+        title: title || undefined,
+        company:
+          String(org.name ?? p.organization_name ?? "").trim() || null,
+        linkedinUrl: linkedin || null,
+        email: String(p.email ?? "").trim() || null,
+        city: String(p.city ?? "").trim() || null,
+        state: String(p.state ?? "").trim() || null,
+        country: String(p.country ?? "").trim() || null,
+        headline: String(p.headline ?? "").trim() || null,
+      });
+    }
   }
 
   return out;

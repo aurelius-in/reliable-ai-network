@@ -4,6 +4,9 @@ import type { ApolloPeopleSearchInput } from "@/lib/apollo";
 /**
  * Map a RAIN buyer persona into Apollo people_search filters.
  * Heuristic only (no extra LLM call) so lead lookup stays fast/cheap.
+ *
+ * Important: Apollo q_keywords is AND-ish and fragile. Do NOT dump
+ * persona names, ages, or free-form "who" prose into keywords.
  */
 export function personaToApolloSearch(
   persona: BuyerPersona
@@ -22,65 +25,85 @@ export function audienceTextToApolloSearch(
   const seniorities = new Set<string>();
   const keywordParts: string[] = [];
 
-  if (
-    /founder|startup|indie|saas|builder|hack|solopreneur|bootstrapp/.test(text)
-  ) {
+  const isIndie =
+    /founder|startup|indie|saas|builder|hack|solopreneur|bootstrapp|buildinpublic/.test(
+      text
+    );
+  const isCreator = /creator|influencer|youtuber|content/.test(text);
+  const isSmb = /small business|shop|store|local business/.test(text);
+  const isStudent = /student|college|university/.test(text);
+  const isParent = /parent|family|\bmom\b|\bdad\b/.test(text);
+  const isGamer = /gamer|gaming|discord|\bgame\b/.test(text);
+  const isPro = /professional|busy|corporate|executive/.test(text);
+  const isConsumer = /consumer|everyday|individual/.test(text);
+  const isDev = /developer|engineer|\bdev\b|coder|ios|android|programming/.test(
+    text
+  );
+  const isNoCode = /no-?code|bubble|glide|adalo|webflow/.test(text);
+
+  if (isIndie || isNoCode) {
     ["Founder", "Co-Founder", "CEO", "Owner"].forEach((t) => titles.add(t));
-    ["owner", "founder", "c_suite"].forEach((s) => seniorities.add(s));
-    keywordParts.push("SaaS", "startup", "founder");
+    ["founder", "c_suite", "owner"].forEach((s) => seniorities.add(s));
+    // Prefer 1-2 keywords max. 3+ terms often returns zero on Apollo.
+    if (isNoCode) keywordParts.push("no-code");
+    else if (/indie|hack|buildinpublic|solopreneur/.test(text)) {
+      keywordParts.push("indie");
+    } else {
+      keywordParts.push("SaaS", "startup");
+    }
   }
 
-  if (/creator|influencer|youtuber|content/.test(text)) {
+  if (isCreator) {
     ["Content Creator", "Founder", "Owner", "Creator"].forEach((t) =>
       titles.add(t)
     );
-    keywordParts.push("creator", "content", "influencer");
+    if (keywordParts.length === 0) keywordParts.push("creator");
   }
 
-  if (/small business|owner|shop|store|local/.test(text)) {
+  if (isSmb) {
     ["Owner", "Founder", "General Manager", "CEO"].forEach((t) =>
       titles.add(t)
     );
     ["owner", "founder", "c_suite", "manager"].forEach((s) =>
       seniorities.add(s)
     );
-    keywordParts.push("small business", "owner");
+    if (keywordParts.length === 0) keywordParts.push("small business");
   }
 
-  if (/student|college|university/.test(text)) {
+  if (isStudent) {
     ["Student", "Intern", "Teaching Assistant"].forEach((t) => titles.add(t));
-    keywordParts.push("student", "university");
+    if (keywordParts.length === 0) keywordParts.push("student");
   }
 
-  if (/parent|family|mom|dad/.test(text)) {
+  if (isParent) {
     ["Parent", "Teacher", "Owner"].forEach((t) => titles.add(t));
-    keywordParts.push("parent", "family");
+    if (keywordParts.length === 0) keywordParts.push("parent");
   }
 
-  if (/gamer|gaming|discord|game/.test(text)) {
+  if (isGamer) {
     ["Community Manager", "Game Developer", "Founder"].forEach((t) =>
       titles.add(t)
     );
-    keywordParts.push("gaming", "community");
+    if (keywordParts.length === 0) keywordParts.push("gaming");
   }
 
-  if (/professional|busy|corporate|executive/.test(text)) {
+  if (isPro) {
     ["Manager", "Director", "VP", "Consultant"].forEach((t) => titles.add(t));
     ["manager", "director", "vp", "senior"].forEach((s) => seniorities.add(s));
-    keywordParts.push("professional");
   }
 
-  if (/consumer|everyday|individual/.test(text)) {
+  if (isConsumer) {
     ["Founder", "Owner", "Manager", "Consultant"].forEach((t) => titles.add(t));
-    keywordParts.push("consumer");
   }
 
-  if (/developer|engineer|dev|coder/.test(text)) {
-    ["Software Engineer", "Full Stack Developer", "CTO"].forEach((t) =>
-      titles.add(t)
+  // Indie founders who code: keep founder titles primary; don't AND
+  // developer keywords or Apollo often returns zero.
+  if (isDev && !isIndie && !isNoCode) {
+    ["Software Engineer", "Full Stack Developer", "CTO", "Founder"].forEach(
+      (t) => titles.add(t)
     );
     ["senior", "founder", "c_suite"].forEach((s) => seniorities.add(s));
-    keywordParts.push("software", "developer");
+    if (keywordParts.length === 0) keywordParts.push("software");
   }
 
   if (titles.size === 0) {
@@ -88,20 +111,17 @@ export function audienceTextToApolloSearch(
     ["owner", "founder", "c_suite", "manager"].forEach((s) =>
       seniorities.add(s)
     );
+    if (keywordParts.length === 0) keywordParts.push("SaaS", "startup");
   }
 
-  const whoBits = audienceText
-    .replace(/[^a-zA-Z0-9\s-]/g, " ")
-    .split(/\s+/)
-    .filter((w) => w.length > 3)
-    .slice(0, 8);
-  keywordParts.push(...whoBits);
+  // Apollo q_keywords is fragile past ~2 terms.
+  const qKeywords = [...new Set(keywordParts)].slice(0, 2).join(" ");
 
   return {
-    personTitles: [...titles].slice(0, 8),
-    personSeniorities: [...seniorities].slice(0, 6),
-    qKeywords: [...new Set(keywordParts)].slice(0, 12).join(" "),
-    perPage: 20,
+    personTitles: [...titles].slice(0, 5),
+    personSeniorities: [...seniorities].slice(0, 3),
+    qKeywords,
+    perPage: 10,
   };
 }
 

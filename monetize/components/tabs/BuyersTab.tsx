@@ -371,8 +371,8 @@ function PersonaCard({
 
         {leads && leads.length === 0 && !leadsLoading && (
           <p className="mt-3 text-xs text-slate-400">
-            No strong matches yet. Try regenerating buyers with a sharper
-            product description, or broaden the persona.
+            Apollo returned no people for this profile&apos;s filters. Hit
+            refresh once, or try the other persona.
           </p>
         )}
 
