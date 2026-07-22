@@ -137,12 +137,12 @@ export default async function HomePage() {
       </main>
 
       <footer className="border-t border-white/10 py-6 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} RAIN · Reliable AI Network ·{" "}
+        © {new Date().getFullYear()} Make it RAIN ·{" "}
         <a
-          href="https://reliableainetwork.com"
+          href="https://MakeItRainApp.com"
           className="transition hover:text-slate-300"
         >
-          reliableainetwork.com
+          MakeItRainApp.com
         </a>
       </footer>
     </div>

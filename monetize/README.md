@@ -59,7 +59,7 @@ Create an API key at [console.x.ai](https://console.x.ai) → `GROK_API_KEY`. Op
 ## 4. Deploy to Vercel
 
 1. Import the GitHub repo into Vercel and set **Root Directory** to `monetize`.
-2. Add every variable from `.env.example` in Project → Settings → Environment Variables, with `NEXT_PUBLIC_APP_URL` set to the deployed URL (e.g. `https://app.reliableainetwork.com`, no trailing slash).
+2. Add every variable from `.env.example` in Project → Settings → Environment Variables, with `NEXT_PUBLIC_APP_URL` set to the deployed URL (e.g. `https://MakeItRainApp.com`, no trailing slash).
 3. Deploy, then point your Stripe webhook endpoint and Supabase redirect URLs at the deployed domain.
 4. Verify the money path in Stripe test mode: sign up → onboarding analysis → start trial checkout (card `4242 4242 4242 4242`) → webhook sets `current_tier=pro`, `subscription_status=trialing`, `trial_ends_at` → `/billing` shows the trial banner → cancel via the portal. Then switch to live keys.
 
