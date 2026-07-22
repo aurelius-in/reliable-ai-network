@@ -9,27 +9,27 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/dashboard",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#0B0B0D",
-    theme_color: "#0B0B0D",
+    background_color: "#070a12",
+    theme_color: "#070a12",
     icons: [
       {
-        src: "/icons/icon-192.png",
+        src: "/icons/icon-192.png?v=3",
         sizes: "192x192",
         type: "image/png",
       },
       {
-        src: "/icons/icon-512.png",
+        src: "/icons/icon-512.png?v=3",
         sizes: "512x512",
         type: "image/png",
       },
       {
-        src: "/icons/icon-maskable-192.png",
+        src: "/icons/icon-maskable-192.png?v=3",
         sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/icons/icon-maskable-512.png",
+        src: "/icons/icon-maskable-512.png?v=3",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

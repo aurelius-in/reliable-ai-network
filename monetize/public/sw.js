@@ -5,7 +5,7 @@
  * - Immutable static assets (/icons/, /_next/static/): cache-first.
  * - Everything else (API routes, auth callbacks, Stripe): untouched.
  */
-const VERSION = "v2";
+const VERSION = "v3-glass";
 const STATIC_CACHE = `rain-static-${VERSION}`;
 const OFFLINE_URL = "/offline.html";
 
