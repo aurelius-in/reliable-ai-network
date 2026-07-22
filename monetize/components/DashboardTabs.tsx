@@ -38,6 +38,7 @@ import { RevenueTab } from "@/components/tabs/RevenueTab";
 import { DfyTab } from "@/components/tabs/DfyTab";
 import { PremiumTab } from "@/components/tabs/PremiumTab";
 import { LockedPreview } from "@/components/ui";
+import { BrandSplash } from "@/components/BrandSplash";
 import { hasTierAccess, type TierName } from "@/lib/tiers";
 import type {
   BuyerProfilesResult,
@@ -264,8 +265,12 @@ export function DashboardTabs({
   const [tab, setTab] = useState<TabId>("analyzer");
   // Mobile bottom-sheet tool picker (opened from the bottom tab bar).
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [splashKey, setSplashKey] = useState("boot");
 
   function selectTab(next: TabId) {
+    if (next !== tab) {
+      setSplashKey(`${next}-${Date.now()}`);
+    }
     setTab(next);
     setSheetOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -278,12 +283,16 @@ export function DashboardTabs({
       if (section === "tools") {
         setSheetOpen((open) => !open);
       } else if (section === "progress") {
-        setTab("progress");
-        setSheetOpen(false);
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        selectTab("progress");
       } else if (section === "home") {
         setSheetOpen(false);
-        setTab((current) => (current === "progress" ? "analyzer" : current));
+        setTab((current) => {
+          const next = current === "progress" ? "analyzer" : current;
+          if (next !== current) {
+            setSplashKey(`${next}-${Date.now()}`);
+          }
+          return next;
+        });
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     }
@@ -326,6 +335,8 @@ export function DashboardTabs({
 
   return (
     <div>
+      <BrandSplash triggerKey={splashKey} />
+
       {/* Phones: compact current-tool header that opens the tool sheet. */}
       <button
         type="button"
@@ -454,7 +465,7 @@ export function DashboardTabs({
                   return (
                     <button
                       key={t.id}
-                      onClick={() => setTab(t.id)}
+                      onClick={() => selectTab(t.id)}
                       className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm font-semibold transition ${
                         active
                           ? "bg-gradient-to-r from-aqua via-violet to-rain text-white shadow-lg shadow-aqua/25"

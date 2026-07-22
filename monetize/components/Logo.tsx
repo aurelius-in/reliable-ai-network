@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 /**
- * Header lockup: full Make it RAIN wordmark (logo1).
+ * Header lockup: full Make it RAIN wordmark (logo1, transparent plate).
  * App icon / PWA mark stays the glass squircle (button_cool).
  */
 export function Logo({ href = "/" }: { href?: string }) {
@@ -13,7 +13,9 @@ export function Logo({ href = "/" }: { href?: string }) {
         alt="Make it RAIN"
         width={168}
         height={56}
-        className="h-9 w-auto object-contain sm:h-10"
+        decoding="async"
+        className="h-9 w-auto bg-transparent object-contain sm:h-10"
+        style={{ backgroundColor: "transparent" }}
       />
     </Link>
   );
