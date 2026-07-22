@@ -71,11 +71,11 @@ export function InstallPrompt() {
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/icons/icon-192.png"
+        src="/brand/mark.jpg"
         alt=""
         width={40}
         height={40}
-        className="h-10 w-10 shrink-0 rounded-xl shadow-lg shadow-rain/20 ring-1 ring-night-600"
+        className="h-10 w-10 shrink-0 rounded-xl object-cover shadow-[0_0_16px_rgba(0,229,255,0.25)] ring-1 ring-white/15"
       />
 
       <div className="min-w-0 flex-1 pr-6">

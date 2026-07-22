@@ -457,7 +457,7 @@ export function DashboardTabs({
                       onClick={() => setTab(t.id)}
                       className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm font-semibold transition ${
                         active
-                          ? "bg-gradient-to-r from-rain to-rain-bright text-white shadow-lg shadow-rain/30"
+                          ? "bg-gradient-to-r from-aqua via-violet to-rain text-white shadow-lg shadow-aqua/25"
                           : unlocked
                             ? "border border-night-600 bg-night-700 text-slate-300 hover:border-rain/50 hover:text-white"
                             : "border border-night-600 bg-night-700/50 text-slate-500 hover:border-violet/40 hover:text-slate-300"

@@ -47,7 +47,7 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
           </p>
           <Link
             href="/billing"
-            className="rounded-lg bg-gradient-to-r from-rain to-rain-bright px-4 py-2 text-sm font-bold text-white shadow shadow-rain/30 transition hover:brightness-110"
+            className="btn-primary !rounded-lg !px-4 !py-2 text-sm shadow-[0_0_18px_rgba(0,229,255,0.25)]"
           >
             {status === "canceled" ? "Reactivate" : "Activate trial"}
           </Link>

@@ -1,27 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  /* Backgrounds — deep near-black */
-  --color-night: #0b0b0d;
-  --color-night-800: #121216;
-  --color-night-700: #17171d;
-  --color-night-600: #27272f;
+  /* Backgrounds — deep navy charcoal from brand */
+  --color-night: #070a12;
+  --color-night-800: #0c1220;
+  --color-night-700: #121a2b;
+  --color-night-600: #243049;
 
-  /* Primary — T-Mobile-inspired magenta */
-  --color-rain: #e20074;
-  --color-rain-bright: #ff4d9e;
-  --color-rain-dim: #8a0047;
+  /* Primary — iridescent magenta (brand edge) */
+  --color-rain: #e600ff;
+  --color-rain-bright: #ff4de8;
+  --color-rain-dim: #8a00a8;
 
-  /* Secondary accents — light pink + subtle violet */
-  --color-pink: #ff9ecf;
-  /* Aqua — matches the electric-blue raindrop logo glow */
-  --color-aqua: #4fd2ff;
-  --color-violet: #a78bfa;
-  --color-violet-bright: #c4b5fd;
+  /* Cyan / aqua — electric brand highlight */
+  --color-aqua: #00e5ff;
+  --color-aqua-bright: #7af0ff;
+  --color-aqua-dim: #00a8c4;
+
+  /* Soft pink + violet for secondary accents */
+  --color-pink: #ff9ad8;
+  --color-violet: #b388ff;
+  --color-violet-bright: #d4b8ff;
   --color-violet-dim: #6d28d9;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Geometric brand sans — matches 3D wordmark energy */
+  --font-sans: var(--font-outfit), "Outfit", ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-outfit), "Outfit", ui-sans-serif, system-ui,
+    sans-serif;
 }
 
 html {
@@ -31,15 +37,28 @@ html {
 body {
   background-color: var(--color-night);
   background-image:
-    radial-gradient(1200px 500px at 85% -10%, rgba(226, 0, 116, 0.08), transparent 60%),
-    radial-gradient(900px 420px at -10% 0%, rgba(109, 40, 217, 0.07), transparent 55%);
+    radial-gradient(
+      1000px 480px at 90% -15%,
+      rgba(0, 229, 255, 0.1),
+      transparent 55%
+    ),
+    radial-gradient(
+      900px 420px at -5% 5%,
+      rgba(230, 0, 255, 0.09),
+      transparent 50%
+    ),
+    radial-gradient(
+      700px 360px at 50% 110%,
+      rgba(0, 168, 196, 0.06),
+      transparent 45%
+    );
   background-attachment: fixed;
-  color: #f4f2f5;
+  color: #f2f6ff;
   font-family: var(--font-sans);
 }
 
 ::selection {
-  background: var(--color-rain);
+  background: rgba(0, 229, 255, 0.35);
   color: #fff;
 }
 
@@ -52,10 +71,14 @@ body {
 @keyframes rain-glow {
   0%,
   100% {
-    box-shadow: 0 0 24px rgba(226, 0, 116, 0.22);
+    box-shadow:
+      0 0 22px rgba(0, 229, 255, 0.16),
+      0 0 36px rgba(230, 0, 255, 0.12);
   }
   50% {
-    box-shadow: 0 0 44px rgba(226, 0, 116, 0.4);
+    box-shadow:
+      0 0 36px rgba(0, 229, 255, 0.28),
+      0 0 52px rgba(230, 0, 255, 0.2);
   }
 }
 
@@ -93,36 +116,68 @@ body {
   animation: sheet-up 0.25s ease-out both;
 }
 
+@keyframes iridescent-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .gradient-text {
   background: linear-gradient(
-    100deg,
-    var(--color-rain-bright) 0%,
-    var(--color-pink) 55%,
+    105deg,
+    var(--color-aqua) 0%,
+    #ffffff 38%,
+    var(--color-rain-bright) 72%,
     var(--color-violet-bright) 100%
   );
+  background-size: 180% 180%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
+.gradient-text-live {
+  animation: iridescent-shift 8s ease-in-out infinite;
+}
+
 /* ------------------------------------------------------------------ */
-/* Shared component classes — keep the whole app visually consistent   */
+/* Shared component classes — glassy iridescence brand system          */
 /* ------------------------------------------------------------------ */
 
 .card {
-  border-radius: 1rem;
-  border: 1px solid var(--color-night-600);
-  background-color: var(--color-night-700);
+  border-radius: 1.1rem;
+  border: 1px solid rgba(122, 240, 255, 0.14);
+  background: linear-gradient(
+    165deg,
+    rgba(18, 28, 48, 0.88) 0%,
+    rgba(12, 18, 32, 0.92) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 10px 28px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(12px);
 }
 
 .card-glow {
-  border-radius: 1rem;
-  border: 1px solid rgba(226, 0, 116, 0.35);
+  border-radius: 1.1rem;
+  border: 1px solid rgba(0, 229, 255, 0.28);
   background: linear-gradient(
-    160deg,
-    rgba(226, 0, 116, 0.09) 0%,
-    var(--color-night-700) 45%
+    155deg,
+    rgba(0, 229, 255, 0.1) 0%,
+    rgba(230, 0, 255, 0.07) 38%,
+    rgba(12, 18, 32, 0.94) 72%
   );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 28px rgba(0, 229, 255, 0.12),
+    0 12px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(14px);
 }
 
 .btn-primary {
@@ -130,22 +185,33 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 0.75rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   background: linear-gradient(
-    100deg,
-    var(--color-rain) 0%,
-    var(--color-rain-bright) 100%
+    115deg,
+    var(--color-aqua) 0%,
+    #5b8cff 42%,
+    var(--color-rain) 100%
   );
-  padding: 0.7rem 1.4rem;
+  background-size: 160% 160%;
+  padding: 0.72rem 1.45rem;
   font-weight: 700;
+  letter-spacing: 0.01em;
   color: #fff;
-  box-shadow: 0 8px 24px rgba(226, 0, 116, 0.28);
-  transition: filter 0.15s ease, transform 0.15s ease;
+  box-shadow:
+    0 8px 28px rgba(0, 229, 255, 0.22),
+    0 4px 18px rgba(230, 0, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-primary:hover:not(:disabled) {
-  filter: brightness(1.12);
+  filter: brightness(1.1);
   transform: translateY(-1px);
+  box-shadow:
+    0 10px 32px rgba(0, 229, 255, 0.28),
+    0 6px 22px rgba(230, 0, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .btn-primary:disabled {
@@ -157,18 +223,27 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--color-night-600);
-  background-color: var(--color-night-700);
-  padding: 0.7rem 1.4rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(122, 240, 255, 0.22);
+  background: linear-gradient(
+    165deg,
+    rgba(18, 28, 48, 0.9) 0%,
+    rgba(12, 18, 32, 0.95) 100%
+  );
+  padding: 0.72rem 1.45rem;
   font-weight: 600;
-  color: #e9e6ec;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  color: #e8f4ff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  border-color: rgba(226, 0, 116, 0.55);
+  border-color: rgba(0, 229, 255, 0.55);
   color: #fff;
+  box-shadow:
+    0 0 18px rgba(0, 229, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .btn-secondary:disabled {
@@ -180,33 +255,37 @@ body {
   align-items: center;
   gap: 0.4rem;
   border-radius: 9999px;
-  border: 1px solid var(--color-night-600);
-  background-color: var(--color-night-800);
+  border: 1px solid rgba(122, 240, 255, 0.16);
+  background-color: rgba(12, 18, 32, 0.88);
   padding: 0.5rem 1rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #c9c4cf;
+  color: #b8c7dc;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .chip:hover {
-  border-color: rgba(226, 0, 116, 0.55);
+  border-color: rgba(0, 229, 255, 0.45);
   color: #fff;
 }
 
 .chip-on {
-  border-color: var(--color-rain);
-  background-color: rgba(226, 0, 116, 0.16);
+  border-color: rgba(0, 229, 255, 0.55);
+  background: linear-gradient(
+    120deg,
+    rgba(0, 229, 255, 0.18) 0%,
+    rgba(230, 0, 255, 0.14) 100%
+  );
   color: #fff;
-  box-shadow: 0 0 14px rgba(226, 0, 116, 0.22);
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.18);
 }
 
 .input-dark {
   width: 100%;
-  border-radius: 0.75rem;
-  border: 1px solid var(--color-night-600);
-  background-color: var(--color-night-800);
+  border-radius: 0.85rem;
+  border: 1px solid rgba(122, 240, 255, 0.16);
+  background-color: rgba(8, 12, 22, 0.88);
   padding: 0.75rem 1rem;
   color: #fff;
   outline: none;
@@ -214,19 +293,19 @@ body {
 }
 
 .input-dark::placeholder {
-  color: #7d7887;
+  color: #6f7f96;
 }
 
 .input-dark:focus {
-  border-color: var(--color-rain);
-  box-shadow: 0 0 0 3px rgba(226, 0, 116, 0.22);
+  border-color: rgba(0, 229, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.18);
 }
 
 .helper-text {
   margin-top: 0.4rem;
   font-size: 0.75rem;
   line-height: 1.4;
-  color: #8f8a99;
+  color: #8b9bb3;
 }
 
 /* Hide scrollbars (used on horizontal strips for a native-app feel). */
@@ -243,7 +322,6 @@ body {
 /* Native-app feel on phones                                           */
 /* ------------------------------------------------------------------ */
 
-/* Subtle press feedback, like tapping a native control. */
 .btn-primary:active:not(:disabled),
 .btn-secondary:active:not(:disabled) {
   transform: scale(0.97);
@@ -254,15 +332,12 @@ button.chip:active {
 }
 
 @media (max-width: 767px) {
-  /* Comfortable 44px+ touch targets for chip selectors (buttons only —
-     decorative span.chip hints stay small). */
   button.chip {
     min-height: 44px;
     padding-top: 0.6rem;
     padding-bottom: 0.6rem;
   }
 
-  /* No visible scrollbars on phones — momentum scroll only. */
   * {
     scrollbar-width: none;
   }

@@ -38,7 +38,7 @@ export default async function HomePage() {
           </Link>
           <Link
             href="/signup"
-            className="whitespace-nowrap rounded-lg bg-gradient-to-r from-rain to-rain-bright px-4 py-2 font-bold text-white shadow shadow-rain/30 transition hover:brightness-110"
+            className="btn-primary whitespace-nowrap !px-4 !py-2 text-sm"
           >
             Start Trial
           </Link>
@@ -46,13 +46,13 @@ export default async function HomePage() {
       </header>
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-4 py-16 text-center">
-        <p className="fade-up rounded-full bg-rain/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-rain-bright ring-1 ring-rain/30">
+        <p className="fade-up rounded-full bg-aqua/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-aqua ring-1 ring-aqua/30">
           The Monetization OS for AI Creators
         </p>
-        <h1 className="fade-up mt-6 text-2xl font-black leading-tight text-white sm:text-5xl">
+        <h1 className="fade-up mt-6 text-2xl font-black leading-tight tracking-tight text-white sm:text-5xl">
           You built something.
           <br />
-          <span className="gradient-text">Make it RAIN now!</span>
+          <span className="gradient-text gradient-text-live">Make it RAIN now!</span>
         </h1>
         <p className="fade-up mx-auto mt-6 max-w-2xl text-lg text-slate-300">
           Stop guessing. Use what top sellers do.
@@ -61,7 +61,7 @@ export default async function HomePage() {
         <div className="fade-up mt-9 flex flex-col items-center gap-3 sm:flex-row">
           <Link
             href="/signup"
-            className="glow-card inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-rain to-rain-bright px-8 py-4 text-lg font-bold text-white transition hover:brightness-110"
+            className="btn-primary glow-card !px-8 !py-4 text-lg"
           >
             Start free 30-day trial <ArrowRight size={20} />
           </Link>
@@ -69,7 +69,7 @@ export default async function HomePage() {
             href="/pricing"
             className="text-sm font-semibold text-slate-300 underline-offset-4 transition hover:text-white hover:underline"
           >
-            See pricing →
+            See pricing
           </Link>
         </div>
         <p className="mt-3 text-xs text-slate-500">
@@ -126,7 +126,7 @@ export default async function HomePage() {
           ].map((f) => (
             <div
               key={f.title}
-              className="rounded-2xl border border-night-600 bg-night-700 p-6 transition hover:border-rain/40 hover:shadow-lg hover:shadow-rain/10"
+              className="card p-6 transition hover:border-aqua/40 hover:shadow-[0_0_24px_rgba(0,229,255,0.12)]"
             >
               {f.icon}
               <h3 className="mt-3 font-bold text-white">{f.title}</h3>
@@ -136,8 +136,8 @@ export default async function HomePage() {
         </div>
       </main>
 
-      <footer className="border-t border-night-600/60 py-6 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} RAIN — Reliable AI Network ·{" "}
+      <footer className="border-t border-white/10 py-6 text-center text-xs text-slate-500">
+        © {new Date().getFullYear()} RAIN · Reliable AI Network ·{" "}
         <a
           href="https://reliableainetwork.com"
           className="transition hover:text-slate-300"

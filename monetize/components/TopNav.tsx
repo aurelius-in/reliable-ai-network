@@ -12,7 +12,7 @@ export function TopNav({ profile }: { profile: Profile | null }) {
 
   return (
     <header
-      className="sticky top-0 z-40 border-b border-night-600/60 bg-night-800/80 backdrop-blur"
+      className="sticky top-0 z-40 border-b border-white/10 bg-night-800/70 backdrop-blur-xl"
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 md:h-16">
@@ -48,7 +48,7 @@ export function TopNav({ profile }: { profile: Profile | null }) {
           {tier !== "pro" && (
             <Link
               href="/pricing"
-              className="hidden rounded-lg bg-gradient-to-r from-rain to-rain-bright px-3.5 py-1.5 text-xs font-bold text-white shadow shadow-rain/30 transition hover:brightness-110 sm:inline-block"
+              className="hidden rounded-lg bg-gradient-to-r from-aqua via-violet to-rain px-3.5 py-1.5 text-xs font-bold text-white shadow-[0_0_18px_rgba(0,229,255,0.25)] transition hover:brightness-110 sm:inline-block"
             >
               Upgrade
             </Link>
