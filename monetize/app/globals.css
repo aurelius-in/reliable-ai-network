@@ -308,6 +308,27 @@ body {
   color: #8b9bb3;
 }
 
+/* Brand raindrop as list marker */
+.rain-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.rain-list > li {
+  position: relative;
+  padding-left: 1.35rem;
+}
+
+.rain-list > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.35em;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: url("/brand/bullet.png") center / contain no-repeat;
+}
+
 /* Hide scrollbars (used on horizontal strips for a native-app feel). */
 .no-scrollbar {
   scrollbar-width: none;

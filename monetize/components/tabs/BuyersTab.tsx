@@ -21,6 +21,7 @@ import {
   choiceFromCreation,
   type ProductChoice,
 } from "@/components/ui";
+import { RainBullet } from "@/components/RainBullet";
 import { GOAL_OPTIONS } from "@/lib/examples";
 import { buildLeadDm } from "@/lib/apollo-icp";
 import type { BuyerPersona, BuyerProfilesResult, Creation } from "@/types";
@@ -311,7 +312,10 @@ function PersonaCard({
           </p>
           <ul className="mt-1.5 space-y-1 text-xs leading-relaxed text-slate-300">
             {persona.pain_points.map((pain, pi) => (
-              <li key={pi}>• {pain}</li>
+              <li key={pi} className="flex items-start gap-1.5">
+                <RainBullet size={12} className="mt-0.5" />
+                <span>{pain}</span>
+              </li>
             ))}
           </ul>
         </div>
@@ -321,7 +325,10 @@ function PersonaCard({
           </p>
           <ul className="mt-1.5 space-y-1 text-xs leading-relaxed text-slate-300">
             {persona.desires.map((desire, di) => (
-              <li key={di}>• {desire}</li>
+              <li key={di} className="flex items-start gap-1.5">
+                <RainBullet size={12} className="mt-0.5" />
+                <span>{desire}</span>
+              </li>
             ))}
           </ul>
         </div>

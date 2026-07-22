@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Sparkles, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
+import { RainBullet } from "@/components/RainBullet";
 import { tierLabel, trialDaysLeft } from "@/lib/tiers";
 import type { Profile } from "@/types";
 
@@ -14,12 +15,12 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
       year: "numeric",
     });
     return (
-      <div className="fade-up rounded-2xl border border-rain/30 bg-gradient-to-r from-rain/10 via-night-700 to-violet/10 px-5 py-4">
+      <div className="fade-up rounded-2xl border border-aqua/25 bg-gradient-to-r from-aqua/10 via-night-700 to-rain/10 px-5 py-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm font-semibold text-white">
-            <Sparkles size={15} className="text-rain-bright" />
+            <RainBullet size={15} />
             You are on the {tierLabel(profile.current_tier)} trial — ends in{" "}
-            <span className="text-rain-bright">
+            <span className="text-aqua">
               {days} day{days === 1 ? "" : "s"}
             </span>
             <span className="text-xs font-normal text-slate-400">({endDate})</span>
@@ -28,7 +29,7 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
             href="/billing"
             className="text-xs font-semibold text-pink underline-offset-4 transition hover:underline"
           >
-            Manage trial →
+            Manage trial
           </Link>
         </div>
       </div>
@@ -40,7 +41,7 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
       <div className="fade-up rounded-2xl border border-rain/30 bg-gradient-to-r from-rain/10 via-night-700 to-violet/10 px-5 py-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="flex items-center gap-2 font-semibold text-white">
-            <Zap size={18} className="text-rain-bright" />
+            <Zap size={18} className="text-aqua" />
             {status === "canceled"
               ? "Your subscription ended. Rejoin to keep making it rain."
               : "Your account isn't active yet — activate your 30-day Pro trial."}

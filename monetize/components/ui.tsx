@@ -16,10 +16,12 @@ import {
   Download,
   Loader2,
   Lock,
-  Sparkles,
 } from "lucide-react";
 import { EXAMPLE_CREATIONS, LOADING_LINES } from "@/lib/examples";
+import { RainBullet } from "@/components/RainBullet";
 import type { Creation } from "@/types";
+
+export { RainBullet } from "@/components/RainBullet";
 
 /* ------------------------------------------------------------------ */
 /* Chips                                                               */
@@ -406,9 +408,9 @@ export function FunLoading({ headline }: { headline: string }) {
   return (
     <div className="card fade-up flex flex-col items-center gap-4 p-10 text-center">
       <span className="relative flex h-14 w-14 items-center justify-center">
-        <span className="absolute inset-0 animate-ping rounded-full bg-rain/25" />
-        <span className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-rain to-violet-dim text-white shadow-lg shadow-rain/40">
-          <Sparkles size={22} className="animate-pulse" />
+        <span className="absolute inset-0 animate-ping rounded-full bg-aqua/20" />
+        <span className="relative flex h-14 w-14 items-center justify-center">
+          <RainBullet size={40} className="drop-shadow-[0_0_12px_rgba(0,229,255,0.45)]" />
         </span>
       </span>
       <div>
@@ -439,7 +441,9 @@ export function TeachingEmptyState({
       <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-slate-400">
         {body}
       </p>
-      <p className="mt-3 text-sm font-bold text-rain-bright">Start here ↑</p>
+      <p className="mx-auto mt-3 flex items-center justify-center gap-1.5 text-sm font-bold text-aqua">
+        <RainBullet size={14} /> Start here
+      </p>
     </div>
   );
 }
@@ -499,10 +503,7 @@ export function LockedPreview({
               key={preview}
               className="flex items-start gap-2 rounded-xl border border-night-600 bg-night-800/70 p-3 text-sm text-slate-300"
             >
-              <Sparkles
-                size={15}
-                className={`mt-0.5 shrink-0 ${tier === "Pro" ? "text-violet-bright" : "text-rain-bright"}`}
-              />
+              <RainBullet size={15} className="mt-0.5" />
               {preview}
             </li>
           ))}

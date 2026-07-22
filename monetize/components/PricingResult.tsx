@@ -80,9 +80,9 @@ export function PricingResult({ pricing }: { pricing: PricingRecommendation }) {
             A value anchor compares your price to something bigger, so it feels
             tiny. Drop these into your sales page.
           </p>
-          <ul className="mt-2 space-y-1.5 text-sm text-slate-200">
+          <ul className="rain-list mt-2 space-y-1.5 text-sm text-slate-200">
             {pricing.value_anchors.map((anchor, i) => (
-              <li key={i}>• {anchor}</li>
+              <li key={i}>{anchor}</li>
             ))}
           </ul>
         </div>
