@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  ArrowLeft,
+  ArrowRight,
   BadgeDollarSign,
   BookOpen,
   Brain,
@@ -37,9 +39,21 @@ import { ResultsTab } from "@/components/tabs/ResultsTab";
 import { RevenueTab } from "@/components/tabs/RevenueTab";
 import { DfyTab } from "@/components/tabs/DfyTab";
 import { PremiumTab } from "@/components/tabs/PremiumTab";
+import { JourneyPie } from "@/components/JourneyPie";
+import { NextBestActionCard } from "@/components/NextBestAction";
 import { LockedPreview } from "@/components/ui";
 import { BrandSplash } from "@/components/BrandSplash";
 import { hasTierAccess, type TierName } from "@/lib/tiers";
+import {
+  adjacentStep,
+  countCompleted,
+  getNextBestAction,
+  getSliceCompletion,
+  JOURNEY_STEPS,
+  loadVisitedSteps,
+  markStepVisited,
+  type JourneyTabId,
+} from "@/lib/journey";
 import type {
   BuyerProfilesResult,
   ContentBundle,
@@ -57,22 +71,7 @@ import type {
   TrafficPlan,
 } from "@/types";
 
-type TabId =
-  | "analyzer"
-  | "buyers"
-  | "pricing"
-  | "library"
-  | "funnel"
-  | "traffic"
-  | "launch"
-  | "content"
-  | "progress"
-  | "strategy"
-  | "sales"
-  | "results"
-  | "revenue"
-  | "dfy"
-  | "premium";
+type TabId = JourneyTabId;
 
 interface TabDef {
   id: TabId;
@@ -81,29 +80,30 @@ interface TabDef {
   tier: TierName;
 }
 
-const TABS: TabDef[] = [
-  { id: "analyzer", label: "Idea Analyzer", icon: <Lightbulb size={16} />, tier: "starter" },
-  { id: "buyers", label: "Find Your Buyers", icon: <Users size={16} />, tier: "starter" },
-  { id: "pricing", label: "Pricing Builder", icon: <BadgeDollarSign size={16} />, tier: "starter" },
-  { id: "library", label: "Quick-Start Library", icon: <BookOpen size={16} />, tier: "starter" },
-  { id: "funnel", label: "Funnel Architect", icon: <GitBranch size={16} />, tier: "growth" },
-  { id: "traffic", label: "Get Eyes on Your Offer", icon: <Eye size={16} />, tier: "growth" },
-  { id: "launch", label: "30-Day Launch Plan", icon: <Rocket size={16} />, tier: "growth" },
-  { id: "content", label: "Content Generator", icon: <Megaphone size={16} />, tier: "growth" },
-  { id: "progress", label: "Progress Tracker", icon: <ListChecks size={16} />, tier: "growth" },
-  { id: "strategy", label: "Strategy Tools", icon: <Brain size={16} />, tier: "pro" },
-  { id: "sales", label: "Direct Sales Tools", icon: <Handshake size={16} />, tier: "pro" },
-  { id: "results", label: "What's Working", icon: <TrendingUp size={16} />, tier: "pro" },
-  { id: "revenue", label: "Ways to Get Paid", icon: <Layers size={16} />, tier: "pro" },
-  { id: "dfy", label: "Done-For-You", icon: <Gift size={16} />, tier: "pro" },
-  { id: "premium", label: "Premium Library", icon: <Crown size={16} />, tier: "pro" },
-];
+const TAB_ICONS: Record<TabId, React.ReactNode> = {
+  analyzer: <Lightbulb size={16} />,
+  buyers: <Users size={16} />,
+  pricing: <BadgeDollarSign size={16} />,
+  library: <BookOpen size={16} />,
+  funnel: <GitBranch size={16} />,
+  traffic: <Eye size={16} />,
+  launch: <Rocket size={16} />,
+  content: <Megaphone size={16} />,
+  progress: <ListChecks size={16} />,
+  strategy: <Brain size={16} />,
+  sales: <Handshake size={16} />,
+  results: <TrendingUp size={16} />,
+  revenue: <Layers size={16} />,
+  dfy: <Gift size={16} />,
+  premium: <Crown size={16} />,
+};
 
-const TIER_GROUPS: { tier: TierName; label: string; price: string }[] = [
-  { tier: "starter", label: "Starter", price: "$20/mo" },
-  { tier: "growth", label: "Growth", price: "$50/mo" },
-  { tier: "pro", label: "Pro", price: "$100/mo" },
-];
+const TABS: TabDef[] = JOURNEY_STEPS.map((step) => ({
+  id: step.id,
+  label: step.label,
+  icon: TAB_ICONS[step.id],
+  tier: step.tier,
+}));
 
 const LOCKED_COPY: Record<
   TabId,
@@ -263,15 +263,21 @@ export function DashboardTabs({
   data: DashboardData;
 }) {
   const [tab, setTab] = useState<TabId>("analyzer");
-  // Mobile bottom-sheet tool picker (opened from the bottom tab bar).
+  // Mobile bottom-sheet journey picker (opened from the bottom tab bar).
   const [sheetOpen, setSheetOpen] = useState(false);
   const [splashKey, setSplashKey] = useState("boot");
+  const [visited, setVisited] = useState<Set<JourneyTabId>>(() => new Set());
+
+  useEffect(() => {
+    setVisited(loadVisitedSteps());
+  }, []);
 
   function selectTab(next: TabId) {
     if (next !== tab) {
       setSplashKey(`${next}-${Date.now()}`);
     }
     setTab(next);
+    setVisited(markStepVisited(next));
     setSheetOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -330,40 +336,110 @@ export function DashboardTabs({
   const isUnlocked = (tier: TierName) =>
     tier === "starter" || hasTierAccess(currentTier, tier);
 
+  const completion = useMemo(
+    () => getSliceCompletion(data, visited),
+    [data, visited]
+  );
+  const doneCount = countCompleted(completion);
+  const pieComplete = doneCount === JOURNEY_STEPS.length;
+  const nextAction = useMemo(
+    () => getNextBestAction(completion, isUnlocked),
+    // isUnlocked closes over currentTier; depend on that instead.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [completion, currentTier]
+  );
+
   const activeDef = TABS.find((t) => t.id === tab)!;
   const activeUnlocked = isUnlocked(activeDef.tier);
+  const prevStep = adjacentStep(tab, -1);
+  const nextStep = adjacentStep(tab, 1);
+  // Pulse the card when the user is off-path; hide while they work the suggested slice.
+  const showNbaBanner = tab !== nextAction.step.id || pieComplete;
+
+  function goNextBest() {
+    if (nextAction.locked) {
+      window.location.href = "/billing";
+      return;
+    }
+    selectTab(nextAction.step.id);
+  }
+
+  const pieBlock = (compact: boolean) => (
+    <JourneyPie
+      activeId={tab}
+      nextId={nextAction.step.id}
+      completion={completion}
+      isUnlocked={(id) => {
+        const step = JOURNEY_STEPS.find((s) => s.id === id)!;
+        return isUnlocked(step.tier);
+      }}
+      onSelect={selectTab}
+      doneCount={doneCount}
+      compact={compact}
+    />
+  );
 
   return (
     <div>
       <BrandSplash triggerKey={splashKey} />
 
-      {/* Phones: compact current-tool header that opens the tool sheet. */}
-      <button
-        type="button"
-        onClick={() => setSheetOpen(true)}
-        className="flex w-full items-center justify-between gap-3 rounded-2xl border border-night-600 bg-night-700 px-4 py-3.5 transition active:scale-[0.98] md:hidden"
-      >
-        <span className="flex min-w-0 items-center gap-2.5 text-sm font-bold text-white">
-          <span className="text-rain-bright">{activeDef.icon}</span>
-          <span className="truncate">{activeDef.label}</span>
-          {!activeUnlocked && <Lock size={12} className="shrink-0 text-slate-500" />}
-        </span>
-        <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-rain-bright">
-          All tools <ChevronDown size={14} />
-        </span>
-      </button>
+      {/* Story header: next action + pie path */}
+      <div className="space-y-4">
+        {showNbaBanner && (
+          <NextBestActionCard
+            action={nextAction}
+            completion={completion}
+            onGo={goNextBest}
+            pieComplete={pieComplete}
+          />
+        )}
 
-      {/* Mobile tool sheet */}
+        {/* Desktop / tablet pie */}
+        <div className="hidden md:block">
+          <div className="card-glow overflow-hidden p-5 lg:p-6">
+            <div className="flex flex-col items-center gap-2 text-center">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                Your monetization pie
+              </p>
+              <p className="max-w-md text-sm text-slate-300">
+                Complete each slice in order. When the pie is full, you&apos;ve
+                built the path to revenue — then you get to eat.
+              </p>
+            </div>
+            <div className="mt-4 flex justify-center">{pieBlock(false)}</div>
+          </div>
+        </div>
+
+        {/* Phones: compact current-step chip that opens the pie sheet */}
+        <button
+          type="button"
+          onClick={() => setSheetOpen(true)}
+          className="flex w-full items-center justify-between gap-3 rounded-2xl border border-night-600 bg-night-700 px-4 py-3.5 transition active:scale-[0.98] md:hidden"
+        >
+          <span className="flex min-w-0 items-center gap-2.5 text-sm font-bold text-white">
+            <span className="text-rain-bright">{activeDef.icon}</span>
+            <span className="truncate">{activeDef.label}</span>
+            {!activeUnlocked && (
+              <Lock size={12} className="shrink-0 text-slate-500" />
+            )}
+          </span>
+          <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-rain-bright">
+            Pie {doneCount}/15 <ChevronDown size={14} />
+          </span>
+        </button>
+      </div>
+
+      {/* Mobile journey sheet */}
       {sheetOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div
             className="absolute inset-0 bg-black/60"
             onClick={() => setSheetOpen(false)}
           />
-          <div className="sheet-up absolute inset-x-0 bottom-0 max-h-[78vh] overflow-y-auto rounded-t-3xl border-t border-night-600 bg-night-800 px-5 pt-3 pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
+          <div className="sheet-up absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl border-t border-night-600 bg-night-800 px-5 pt-3 pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
             <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-night-600" />
             <div className="flex items-center justify-between">
-              <p className="text-base font-bold text-white">All tools</p>
+              <p className="text-base font-bold text-white">Your pie</p>
               <button
                 type="button"
                 onClick={() => setSheetOpen(false)}
@@ -373,120 +449,80 @@ export function DashboardTabs({
                 <X size={16} />
               </button>
             </div>
-            {TIER_GROUPS.map((group) => {
-              const groupUnlocked = isUnlocked(group.tier);
-              return (
-                <div key={group.tier} className="mt-4">
-                  <div className="mb-2 flex items-center gap-2">
+            <p className="mt-1 text-sm text-slate-400">
+              Tap a slice to jump. Follow the pulse for the next best move.
+            </p>
+            <div className="mt-4 flex justify-center">{pieBlock(true)}</div>
+            <div className="mt-5 space-y-1.5">
+              {JOURNEY_STEPS.map((step, i) => {
+                const active = tab === step.id;
+                const unlocked = isUnlocked(step.tier);
+                const done = completion[step.id];
+                const isNext = step.id === nextAction.step.id;
+                return (
+                  <button
+                    key={step.id}
+                    type="button"
+                    onClick={() => selectTab(step.id)}
+                    className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left text-sm transition active:scale-[0.98] ${
+                      active
+                        ? "border-rain bg-rain/15 text-white"
+                        : isNext
+                          ? "border-aqua/50 bg-aqua/10 text-white"
+                          : unlocked
+                            ? "border-night-600 bg-night-700 text-slate-300"
+                            : "border-night-600 bg-night-700/50 text-slate-500"
+                    }`}
+                  >
                     <span
-                      className={`text-[11px] font-black uppercase tracking-widest ${
-                        group.tier === "pro"
-                          ? "text-violet-bright"
-                          : group.tier === "growth"
-                            ? "text-rain-bright"
-                            : "text-slate-400"
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black ${
+                        done
+                          ? "bg-aqua/20 text-aqua-bright"
+                          : "bg-night-800 text-slate-400"
                       }`}
                     >
-                      {group.label}
+                      {done ? "✓" : i + 1}
                     </span>
-                    <span className="rounded-full bg-night-700 px-2 py-0.5 text-[10px] font-bold text-slate-400 ring-1 ring-night-600">
-                      {group.price}
+                    <span className="min-w-0 flex-1 font-semibold leading-tight">
+                      {step.label}
                     </span>
-                    {!groupUnlocked && <Lock size={11} className="text-slate-500" />}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {TABS.filter((t) => t.tier === group.tier).map((t) => {
-                      const active = tab === t.id;
-                      const unlocked = isUnlocked(t.tier);
-                      return (
-                        <button
-                          key={t.id}
-                          type="button"
-                          onClick={() => selectTab(t.id)}
-                          className={`flex min-h-[52px] items-center gap-2.5 rounded-xl border px-3 py-2 text-left text-[13px] font-semibold transition active:scale-[0.97] ${
-                            active
-                              ? "border-rain bg-rain/15 text-white shadow-[0_0_14px_rgba(226,0,116,0.25)]"
-                              : unlocked
-                                ? "border-night-600 bg-night-700 text-slate-300"
-                                : "border-night-600 bg-night-700/50 text-slate-500"
-                          }`}
-                        >
-                          <span className={active ? "text-rain-bright" : ""}>
-                            {t.icon}
-                          </span>
-                          <span className="min-w-0 flex-1 leading-tight">
-                            {t.label}
-                          </span>
-                          {!unlocked && (
-                            <Lock size={12} className="shrink-0 opacity-70" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
+                    {!unlocked && (
+                      <Lock size={12} className="shrink-0 opacity-70" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Tab bar, grouped by tier — desktop/tablet only */}
-      <div className="hidden md:flex md:flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-start lg:gap-6">
-        {TIER_GROUPS.map((group) => {
-          const groupUnlocked = isUnlocked(group.tier);
-          return (
-            <div key={group.tier} className="min-w-0">
-              <div className="mb-2 flex items-center gap-2">
-                <span
-                  className={`text-[11px] font-black uppercase tracking-widest ${
-                    group.tier === "pro"
-                      ? "text-violet-bright"
-                      : group.tier === "growth"
-                        ? "text-rain-bright"
-                        : "text-slate-400"
-                  }`}
-                >
-                  {group.label}
-                </span>
-                <span className="rounded-full bg-night-700 px-2 py-0.5 text-[10px] font-bold text-slate-400 ring-1 ring-night-600">
-                  {group.price}
-                </span>
-                {!groupUnlocked && (
-                  <Lock size={11} className="text-slate-500" />
-                )}
-              </div>
-              {/* Phones: horizontal scroll strip (full-bleed so the cut-off
-                  next chip + thin scrollbar signal overflow). Desktop: wrap. */}
-              <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 lg:mx-0 lg:flex-wrap lg:overflow-x-visible lg:px-0 lg:pb-0">
-                {TABS.filter((t) => t.tier === group.tier).map((t) => {
-                  const active = tab === t.id;
-                  const unlocked = isUnlocked(t.tier);
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => selectTab(t.id)}
-                      className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm font-semibold transition ${
-                        active
-                          ? "bg-gradient-to-r from-aqua via-violet to-rain text-white shadow-lg shadow-aqua/25"
-                          : unlocked
-                            ? "border border-night-600 bg-night-700 text-slate-300 hover:border-rain/50 hover:text-white"
-                            : "border border-night-600 bg-night-700/50 text-slate-500 hover:border-violet/40 hover:text-slate-300"
-                      }`}
-                    >
-                      {t.icon}
-                      {t.label}
-                      {!unlocked && <Lock size={12} className="opacity-70" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+      {/* Linear path controls */}
+      <div className="mt-5 flex items-center justify-between gap-3">
+        <button
+          type="button"
+          disabled={!prevStep}
+          onClick={() => prevStep && selectTab(prevStep.id)}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-night-600 bg-night-700 px-3.5 py-2.5 text-sm font-semibold text-slate-300 transition enabled:hover:border-rain/50 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <ArrowLeft size={16} />
+          <span className="hidden sm:inline">Back</span>
+        </button>
+        <p className="text-center text-xs font-bold uppercase tracking-widest text-slate-500">
+          Stay on the path
+        </p>
+        <button
+          type="button"
+          disabled={!nextStep}
+          onClick={() => nextStep && selectTab(nextStep.id)}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-night-600 bg-night-700 px-3.5 py-2.5 text-sm font-semibold text-slate-300 transition enabled:hover:border-aqua/50 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <span className="hidden sm:inline">Next</span>
+          <ArrowRight size={16} />
+        </button>
       </div>
 
-      <div className="mt-7">
+      <div className="mt-5 fade-up">
         {!activeUnlocked ? (
           <LockedPreview
             tier={activeDef.tier === "pro" ? "Pro" : "Growth"}

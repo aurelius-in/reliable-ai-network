@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { track } from "@/lib/track";
 
 export function AuthForm({ mode }: { mode: "signup" | "login" }) {
   const router = useRouter();
@@ -25,6 +26,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
 
     try {
       if (mode === "signup") {
+        track("signup_submit");
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -34,6 +36,8 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
           },
         });
         if (error) throw error;
+
+        track("signup_success", { userId: data.user?.id ?? "" });
 
         // Fire-and-forget founder alert + counter bump email.
         void fetch("/api/notify-signup", {
@@ -51,20 +55,27 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
           router.refresh();
         } else {
           // Email confirmation is enabled on the Supabase project.
+          track("signup_needs_confirmation");
           setConfirmationSent(true);
           setLoading(false);
         }
       } else {
+        track("login_submit");
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
+        track("login_success");
         router.push(searchParams.get("next") ?? "/dashboard");
         router.refresh();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      track(mode === "signup" ? "signup_error" : "login_error", {
+        message: message.slice(0, 160),
+      });
+      setError(message);
       setLoading(false);
     }
   }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Share, SquarePlus, X } from "lucide-react";
+import { track } from "@/lib/track";
 
 const DISMISS_KEY = "rain-install-dismissed";
 
@@ -23,13 +24,24 @@ export function InstallPrompt() {
       window.matchMedia("(display-mode: standalone)").matches ||
       // iOS Safari exposes navigator.standalone when launched from Home Screen.
       (navigator as unknown as { standalone?: boolean }).standalone === true;
-    if (standalone) return;
+    if (standalone) {
+      try {
+        if (!sessionStorage.getItem("rain-standalone-tracked")) {
+          sessionStorage.setItem("rain-standalone-tracked", "1");
+          track("app_opened_standalone");
+        }
+      } catch {
+        track("app_opened_standalone");
+      }
+      return;
+    }
 
     const ua = window.navigator.userAgent;
     const isIOS = /iPhone|iPad|iPod/.test(ua);
     if (isIOS) {
       setShowIOS(true);
       setHidden(false);
+      track("install_prompt_shown", { platform: "ios" });
       return;
     }
 
@@ -37,20 +49,24 @@ export function InstallPrompt() {
       e.preventDefault();
       setInstallEvent(e as BeforeInstallPromptEvent);
       setHidden(false);
+      track("install_prompt_shown", { platform: "chromium" });
     };
     window.addEventListener("beforeinstallprompt", onPrompt);
     return () => window.removeEventListener("beforeinstallprompt", onPrompt);
   }, []);
 
   const dismiss = () => {
+    track("install_dismissed", { platform: showIOS ? "ios" : "chromium" });
     localStorage.setItem(DISMISS_KEY, "1");
     setHidden(true);
   };
 
   const install = async () => {
     if (!installEvent) return;
+    track("install_click");
     await installEvent.prompt();
     const { outcome } = await installEvent.userChoice;
+    track(outcome === "accepted" ? "install_accepted" : "install_prompt_dismissed");
     if (outcome === "accepted") {
       setHidden(true);
     }

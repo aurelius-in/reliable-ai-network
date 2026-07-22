@@ -367,3 +367,80 @@ button.chip:active {
     display: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Journey pie + next-best-action motion                               */
+/* ------------------------------------------------------------------ */
+
+@keyframes pie-slice-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.25);
+  }
+}
+
+.pie-slice-pulse {
+  animation: pie-slice-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes nba-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+.nba-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(0, 229, 255, 0.12) 50%,
+    transparent 65%
+  );
+  animation: nba-shimmer 3.2s ease-in-out infinite;
+}
+
+@keyframes nba-spark {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: rotate(12deg) scale(1.15);
+    opacity: 1;
+  }
+}
+
+.nba-spark {
+  animation: nba-spark 2s ease-in-out infinite;
+}
+
+@keyframes nba-arrow {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+.nba-arrow {
+  animation: nba-arrow 1.4s ease-in-out infinite;
+}
+
+.nba-card {
+  animation: fade-up 0.45s ease-out both;
+}
+
+.nba-cta {
+  animation: rain-glow 3.5s ease-in-out infinite;
+}

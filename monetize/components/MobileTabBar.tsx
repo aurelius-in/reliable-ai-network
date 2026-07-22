@@ -14,9 +14,9 @@ import {
   CircleUserRound,
   CreditCard,
   Home,
-  LayoutGrid,
   ListChecks,
   LogOut,
+  PieChart,
   Tags,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -31,7 +31,7 @@ type Section = "home" | "tools" | "progress" | "billing" | "account";
 
 const ITEMS: { id: Section; label: string; icon: React.ReactNode }[] = [
   { id: "home", label: "Home", icon: <Home size={22} /> },
-  { id: "tools", label: "Tools", icon: <LayoutGrid size={22} /> },
+  { id: "tools", label: "Pie", icon: <PieChart size={22} /> },
   { id: "progress", label: "Progress", icon: <ListChecks size={22} /> },
   { id: "billing", label: "Billing", icon: <CreditCard size={22} /> },
   { id: "account", label: "Account", icon: <CircleUserRound size={22} /> },

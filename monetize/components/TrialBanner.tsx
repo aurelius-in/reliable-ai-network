@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Zap } from "lucide-react";
 import { RainBullet } from "@/components/RainBullet";
 import { tierLabel, trialDaysLeft } from "@/lib/tiers";
+import { track } from "@/lib/track";
 import type { Profile } from "@/types";
 
 export function TrialBanner({ profile }: { profile: Profile | null }) {
@@ -27,6 +30,7 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
           </p>
           <Link
             href="/billing"
+            onClick={() => track("manage_trial_click", { status: "trialing" })}
             className="text-xs font-semibold text-pink underline-offset-4 transition hover:underline"
           >
             Manage trial
@@ -48,6 +52,11 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
           </p>
           <Link
             href="/billing"
+            onClick={() =>
+              track("activate_trial_click", {
+                status: status ?? "none",
+              })
+            }
             className="btn-primary !rounded-lg !px-4 !py-2 text-sm shadow-[0_0_18px_rgba(0,229,255,0.25)]"
           >
             {status === "canceled" ? "Reactivate" : "Activate trial"}
@@ -66,6 +75,7 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
           </p>
           <Link
             href="/billing"
+            onClick={() => track("fix_payment_click")}
             className="rounded-lg bg-red-500 px-4 py-2 text-sm font-bold text-white transition hover:brightness-110"
           >
             Fix payment

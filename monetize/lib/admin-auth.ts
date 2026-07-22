@@ -1,5 +1,5 @@
 /**
- * Shared secret gate for founder-only admin routes (signup counter, etc.).
+ * Shared secret gate for founder-only admin routes (Counter, etc.).
  * Pass via ?key=... or Authorization: Bearer ...
  */
 export function assertAdminSecret(

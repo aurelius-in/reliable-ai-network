@@ -5,8 +5,8 @@ import { loadCounterStats } from "@/lib/counter-stats";
 export const dynamic = "force-dynamic";
 
 /**
- * GET /api/admin/signups?key=SECRET
- * Legacy alias → Counter payload (accounts + activity).
+ * GET /api/admin/counter?key=SECRET
+ * Founder Counter: accounts + funnel activity.
  */
 export async function GET(request: Request) {
   const gate = assertAdminSecret(adminKeyFromRequest(request));
@@ -16,16 +16,7 @@ export async function GET(request: Request) {
 
   const stats = await loadCounterStats();
   if ("error" in stats) {
-    console.error("[admin/signups]", stats.error);
     return NextResponse.json({ error: stats.error }, { status: 500 });
   }
-
-  // Keep old shape fields for any bookmarks that expect them.
-  return NextResponse.json({
-    ...stats,
-    total: stats.accounts.total,
-    last7Days: stats.accounts.last7Days,
-    last24Hours: stats.accounts.last24Hours,
-    trialing: stats.accounts.trialing,
-  });
+  return NextResponse.json(stats);
 }

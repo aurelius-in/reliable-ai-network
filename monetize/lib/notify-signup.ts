@@ -41,7 +41,7 @@ export async function notifyFounderOfSignup(
     input.userId ? `User id: ${input.userId}` : "",
     totalLine,
     "",
-    "Counter: open /admin/signups?key=YOUR_ADMIN_STATS_SECRET",
+    "Counter: open /admin/counter?key=YOUR_ADMIN_STATS_SECRET",
   ]
     .filter(Boolean)
     .join("\n");
@@ -59,7 +59,7 @@ export async function notifyFounderOfSignup(
             : ""
         }
       </ul>
-      <p style="margin:0;color:#555;font-size:13px">Check the counter anytime at /admin/signups</p>
+      <p style="margin:0;color:#555;font-size:13px">Check the Counter anytime at /admin/counter</p>
     </div>
   `;
 

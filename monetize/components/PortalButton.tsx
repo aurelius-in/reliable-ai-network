@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { track } from "@/lib/track";
 
 export function PortalButton({
   label = "Manage / Cancel subscription",
@@ -14,6 +15,7 @@ export function PortalButton({
   const [error, setError] = useState<string | null>(null);
 
   async function handleClick() {
+    track("billing_portal_open", { label });
     setLoading(true);
     setError(null);
     try {
@@ -24,7 +26,9 @@ export function PortalButton({
       }
       window.location.href = data.url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      track("billing_portal_error", { message: message.slice(0, 160) });
+      setError(message);
       setLoading(false);
     }
   }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { track } from "@/lib/track";
 
 interface CheckoutButtonProps {
   tier?: "starter" | "growth" | "pro";
@@ -23,7 +24,9 @@ export function CheckoutButton({
   const [error, setError] = useState<string | null>(null);
 
   async function handleClick() {
+    track("checkout_click", { tier, authenticated });
     if (!authenticated) {
+      track("checkout_redirect_signup", { tier });
       router.push("/signup");
       return;
     }
@@ -39,9 +42,12 @@ export function CheckoutButton({
       if (!res.ok || !data.url) {
         throw new Error(data.error ?? "Checkout failed");
       }
+      track("checkout_redirect_stripe", { tier });
       window.location.href = data.url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      track("checkout_error", { tier, message: message.slice(0, 160) });
+      setError(message);
       setLoading(false);
     }
   }
