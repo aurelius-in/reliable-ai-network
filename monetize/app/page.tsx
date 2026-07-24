@@ -50,7 +50,7 @@ export default async function HomePage() {
           The Monetization OS for AI Creators
         </p>
         <h1 className="fade-up mt-6 text-2xl font-black leading-tight tracking-tight text-white sm:text-5xl">
-          You built something.
+          You built something real.
           <br />
           <span className="gradient-text gradient-text-live">Make it RAIN now!</span>
         </h1>
