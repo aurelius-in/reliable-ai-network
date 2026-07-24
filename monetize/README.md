@@ -25,7 +25,13 @@ npm run dev
    - Project URL → `NEXT_PUBLIC_SUPABASE_URL`
    - `anon` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY` (server-only; used by the Stripe webhook)
-4. In **Authentication → URL Configuration**, set the Site URL to your app URL and add `https://<your-app-domain>/auth/callback` to the redirect list. (For local dev: `http://localhost:3000/auth/callback`.)
+4. In **Authentication → URL Configuration**, set the Site URL to your app URL (e.g. `https://MakeItRainApp.com`) and add these to **Redirect URLs**:
+   - `https://MakeItRainApp.com/auth/confirm`
+   - `https://MakeItRainApp.com/auth/callback`
+   - `https://www.MakeItRainApp.com/auth/confirm`
+   - `https://www.MakeItRainApp.com/auth/callback`
+   - Local: `http://localhost:3000/auth/confirm` and `http://localhost:3000/auth/callback`
+   Email confirmation lands on `/auth/confirm` (token_hash). Do not leave Site URL as localhost in production.
    - Optional: disable "Confirm email" under Authentication → Providers → Email while testing, so signups log in immediately.
 
 ## 2. Stripe setup
