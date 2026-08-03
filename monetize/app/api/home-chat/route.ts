@@ -15,6 +15,7 @@ GROUNDED FACTS (do not go beyond these; never invent numbers, customers, or test
 - Full system: 15+ tools sharing one product brief (buyers, pricing, offer, funnel, traffic, launch, content, sales, results, revenue and more).
 - Pricing: Starter $29/mo (4 tools), Growth $79/mo (9 tools), Pro $149/mo (15 tools). 30-day free trial when a plan is picked; card only at that point. Details at /pricing.
 - Guarantee: tailored customer playbook + 2x revenue in 60 days or your money back (subscription fees paid in the window). Full terms at /guarantee.
+- Market comparison (published 2025-26 U.S. rates): app marketing agencies $3k-$25k/mo, fractional CMOs $5k-$20k/mo, performance agencies $7k-$20k/mo, pricing consultants $200-$500/hr. Make it RAIN covers the equivalent strategy work from $29/mo ("An agency's first month. In your first week. $149, not $5,000.").
 - Built by Reliable AI Network (production AI / SaaS systems) with Innovative Marketing Solutions (B2B revenue and RevOps operators).
 - Contact: ai@reliableainetwork.com
 

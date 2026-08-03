@@ -54,6 +54,14 @@ export const metadata: Metadata = {
   },
 };
 
+const TENK_MENU = [
+  { item: "Go-to-market plan", via: "fractional CMO", price: "$5k–$20k/mo" },
+  { item: "Buyer research + named leads", via: "agency", price: "$3k+/mo" },
+  { item: "Pricing strategy", via: "consultant", price: "$200–$500/hr" },
+  { item: "Launch + funnel plan", via: "performance agency", price: "$7k–$20k/mo" },
+  { item: "Outreach + content copy", via: "marketing agency", price: "$3k–$25k/mo" },
+];
+
 const HOW_STEPS = [
   {
     n: "1",
@@ -282,6 +290,47 @@ export default async function HomePage() {
               Open the system free <ArrowRight size={18} />
             </TrackedLink>
           </div>
+        </section>
+
+        <section
+          id="tenk-menu"
+          className="fade-up mt-8 w-full max-w-2xl scroll-mt-24 sm:mt-10"
+        >
+          <p className="text-center text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
+            The $10k menu
+          </p>
+          <h2 className="mt-1.5 text-center text-lg font-bold text-white sm:mt-2 sm:text-2xl">
+            What this work costs à la carte
+          </h2>
+          <ul className="mt-4 divide-y divide-white/5 rounded-2xl border border-white/10 bg-night-800/70 sm:mt-5">
+            {TENK_MENU.map((row) => (
+              <li
+                key={row.item}
+                className="flex items-baseline justify-between gap-3 px-4 py-2.5 sm:py-3"
+              >
+                <span className="text-sm text-slate-200">
+                  {row.item}{" "}
+                  <span className="hidden text-xs text-slate-500 sm:inline">
+                    · {row.via}
+                  </span>
+                </span>
+                <span className="shrink-0 text-sm font-semibold text-slate-400">
+                  {row.price}
+                </span>
+              </li>
+            ))}
+            <li className="flex items-baseline justify-between gap-3 px-4 py-3 sm:py-3.5">
+              <span className="text-sm font-bold text-white">
+                Make it RAIN · all of it
+              </span>
+              <span className="shrink-0 text-sm font-black text-aqua-bright">
+                from $29/mo
+              </span>
+            </li>
+          </ul>
+          <p className="mt-2 text-center text-[11px] text-slate-500">
+            Typical published 2025–26 U.S. market rates.
+          </p>
         </section>
 
         <HomeDepth />
