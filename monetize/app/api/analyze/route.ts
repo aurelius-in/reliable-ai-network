@@ -6,14 +6,29 @@ import {
   IDEA_ANALYZER_SYSTEM_PROMPT,
   buildIdeaAnalyzerUserPrompt,
 } from "@/prompts/idea-analyzer";
+import type { EvidenceAnswers } from "@/lib/evidence-quality";
 import type { IdeaAnalysis } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
+import {
+  CREATION_CONTEXT_SELECT,
+  toProductContext,
+  type ProductContext,
+} from "@/lib/product-context";
+import {
+  enrichCompetitorNames,
+  formatApolloCompetitorsForPrompt,
+  parseCompetitorNames,
+} from "@/lib/competitor-enrich";
 
 export const maxDuration = 300;
+
+const STAGES = new Set(["idea", "building", "beta", "launched", "revenue"]);
 
 /**
  * Runs the Idea Analyzer.
  * Body: { creationId } to re-run on an existing creation,
- * or { title, description, type } to create a creation and analyze it.
+ * or { title, description, type, ...expert } to create a creation and analyze it.
+ * Optional evidenceChecklist answers are graded into the prompt.
  */
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -30,6 +45,12 @@ export async function POST(request: Request) {
     title?: string;
     description?: string;
     type?: string;
+    stage?: string;
+    traction?: string;
+    current_price?: string;
+    competitors_notes?: string;
+    github_repo_url?: string;
+    evidenceChecklist?: EvidenceAnswers;
   };
   try {
     body = await request.json();
@@ -37,19 +58,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  let creation: { id: string; title: string; description: string; type: string };
+  let creation: ProductContext & { id: string };
 
   if (body.creationId) {
     const { data, error } = await supabase
       .from("creations")
-      .select("id, title, description, type")
+      .select(CREATION_CONTEXT_SELECT)
       .eq("id", body.creationId)
       .eq("user_id", user.id)
       .single();
     if (error || !data) {
       return NextResponse.json({ error: "Creation not found" }, { status: 404 });
     }
-    creation = data;
+    const ctx = toProductContext(data as Record<string, unknown>);
+    creation = { ...ctx, id: body.creationId };
   } else {
     const title = body.title?.trim();
     const description = body.description?.trim();
@@ -60,11 +82,23 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    const stage = body.stage?.trim() || null;
+    const row = {
+      user_id: user.id,
+      title,
+      description,
+      type,
+      stage: stage && STAGES.has(stage) ? stage : null,
+      traction: body.traction?.trim() || null,
+      current_price: body.current_price?.trim() || null,
+      competitors_notes: body.competitors_notes?.trim() || null,
+      github_repo_url: body.github_repo_url?.trim() || null,
+    };
     const { data, error } = await withProfileRepair(user, () =>
       supabase
         .from("creations")
-        .insert({ user_id: user.id, title, description, type })
-        .select("id, title, description, type")
+        .insert(row)
+        .select(CREATION_CONTEXT_SELECT)
         .single()
     );
     if (error || !data) {
@@ -77,14 +111,25 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-    creation = data;
+    const ctx = toProductContext(data as Record<string, unknown>);
+    creation = { ...ctx, id: String(data.id) };
   }
+
+  const competitorNames = parseCompetitorNames(creation.competitors_notes);
+  const enrichment = await enrichCompetitorNames(competitorNames);
+  const apolloBlock = formatApolloCompetitorsForPrompt(enrichment);
 
   let analysis: IdeaAnalysis;
   try {
     analysis = await grokChatJSON<IdeaAnalysis>([
       { role: "system", content: IDEA_ANALYZER_SYSTEM_PROMPT },
-      { role: "user", content: buildIdeaAnalyzerUserPrompt(creation) },
+      {
+        role: "user",
+        content: buildIdeaAnalyzerUserPrompt(creation, {
+          evidenceChecklist: body.evidenceChecklist ?? null,
+          apolloCompetitors: apolloBlock || null,
+        }),
+      },
     ]);
   } catch (err) {
     console.error("Idea Analyzer failed:", err);
@@ -92,6 +137,13 @@ export async function POST(request: Request) {
       { error: "Analysis failed. Please try again in a moment." },
       { status: 502 }
     );
+  }
+
+  if (enrichment.length > 0) {
+    analysis = {
+      ...analysis,
+      competitor_enrichment: enrichment,
+    };
   }
 
   const { data: asset, error: assetError } = await withProfileRepair(user, () =>
@@ -111,6 +163,7 @@ export async function POST(request: Request) {
     console.error("Failed to persist analysis:", assetError);
   }
 
+  trackToolRun("analyzer", {}, { userId: user.id, path: "/api/analyze" });
   return NextResponse.json({
     creationId: creation.id,
     assetId: asset?.id ?? null,

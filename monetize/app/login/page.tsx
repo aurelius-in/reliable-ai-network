@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Logo } from "@/components/Logo";
 import { AuthForm } from "@/components/AuthForm";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata = { title: "Sign in — Make it RAIN" };
 
@@ -17,6 +18,7 @@ export default function LoginPage() {
           <AuthForm mode="login" />
         </Suspense>
       </div>
+      <SiteFooter className="mt-10 w-full max-w-md border-0" />
     </div>
   );
 }

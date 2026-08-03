@@ -18,31 +18,36 @@ export const DFY_ASSET_OPTIONS: DfyAssetOption[] = [
     id: "offer_page",
     emoji: "📝",
     label: "Offer page copy",
-    description: "A complete high-converting sales page, written for your product.",
+    description:
+      "Full offer / sales page draft for your product, aimed at a clear paid CTA.",
   },
   {
     id: "ad_set",
     emoji: "📣",
-    label: "Ad set (5 ads)",
-    description: "Five scroll-stopping ad variations ready for Meta, YouTube, or TikTok.",
+    label: "Campaign ad set (5)",
+    description:
+      "Five ad variations for LinkedIn, Meta, or YouTube, sized for a thin budget test.",
   },
   {
     id: "email_launch",
     emoji: "✉️",
     label: "Email launch sequence",
-    description: "A 5-email launch sequence that builds hype and closes sales.",
+    description:
+      "A 5-email sequence that warms, handles objections, and asks for the sale or demo.",
   },
   {
     id: "listing_overhaul",
     emoji: "🛍️",
-    label: "Marketplace listing overhaul",
-    description: "Your Gumroad / App Store listing rewritten to convert browsers into buyers.",
+    label: "Listing / store page overhaul",
+    description:
+      "App Store, marketplace, or product listing rewritten to convert browsers into buyers.",
   },
   {
     id: "brand_kit",
     emoji: "🎨",
-    label: "Mini brand kit",
-    description: "Name options, tagline, bio, and a one-liner pitch that make you look pro.",
+    label: "Positioning kit",
+    description:
+      "Name options, tagline, one-liner pitch, and bio language that sound operator-grade.",
   },
 ];
 

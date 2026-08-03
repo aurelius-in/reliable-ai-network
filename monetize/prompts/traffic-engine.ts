@@ -1,52 +1,57 @@
 /**
- * Get Eyes on Your Offer prompt (Growth).
- * Suggests best traffic channels with effort-vs-results scoring,
- * a ready-to-post template per channel, and a weekly plan.
+ * Distribution engine — this-week sprint first, then channel map.
  */
 
-export const TRAFFIC_ENGINE_SYSTEM_PROMPT = `You are RAIN Monetize's Traffic Engine — a growth marketer who has launched hundreds of small digital products with zero ad budget.
+import {
+  formatProductContextBlock,
+  type ProductContext,
+} from "@/lib/product-context";
 
-Given a creator's product, their available time, and their comfort level, pick the 5-7 BEST traffic channels for THIS specific product. Prioritize free/organic channels a solo beginner can start this week. Respect their comfort level (never recommend video-heavy channels to someone camera-shy). Every post_template must be ready to paste — written in full, specific to their product, not a fill-in-the-blank skeleton.
+export const TRAFFIC_ENGINE_SYSTEM_PROMPT = `You are RAIN Monetize's distribution strategist for software and AI founders with little or no ad budget. Prioritize channels where THEIR buyers already pay attention. Every template must be paste-ready and specific. Respect comfort (no camera if they prefer written outbound). Experts should find the channel ranking and metrics useful; beginners should leave with actions for Mon–Fri.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
-  "strategy_summary": "<2-3 plain-language sentences on the overall traffic strategy for this product and this person>",
+  "strategy_summary": "<2-3 sentences on overall distribution strategy>",
+  "this_week_sprint": [
+    {
+      "day": "<'Monday'|'Tuesday'|'Wednesday'|'Thursday'|'Friday'>",
+      "action": "<specific task for that day>",
+      "channel": "<channel name>",
+      "copy_paste": "<full ready-to-send post, email, or DM for that day>",
+      "success_metric": "<what 'done' looks like, e.g. '10 personalized LinkedIn notes sent'>"
+    }
+    // exactly 5 entries, Monday through Friday
+  ],
   "channels": [
     {
-      "name": "<channel name, e.g. 'Reddit communities'>",
+      "name": "<channel name>",
       "emoji": "<one emoji>",
-      "why_it_fits": "<1-2 sentences on why this channel fits THIS product and THIS person>",
-      "effort": <1-5 integer, 1 = tiny effort, 5 = heavy lift>,
-      "results_potential": <1-5 integer, 5 = biggest potential payoff>,
-      "time_to_results": "<e.g. 'first clicks in days', '4-6 weeks to compound'>",
-      "first_move": "<the very first concrete action to take on this channel>",
-      "post_template": "<a complete ready-to-paste post/message/script for this channel, written for their product. Multi-line is fine.>"
+      "why_it_fits": "<1-2 sentences for THIS product>",
+      "effort": <1-5>,
+      "results_potential": <1-5>,
+      "time_to_results": "<e.g. 'first replies in 48h'>",
+      "first_move": "<first concrete action>",
+      "post_template": "<complete ready-to-paste asset>"
     }
-    // 5-7 channels, ordered by best fit first
+    // 5-7 channels, best-fit first
   ],
   "weekly_plan": [
-    { "day": "<'Monday'...'Sunday' or 'Mon + Thu'>", "action": "<specific task>", "channel": "<channel name>", "minutes": <integer minutes> }
-    // 4-6 entries that fit inside their available time
+    { "day": "<day or range>", "action": "<task>", "channel": "<channel>", "minutes": <integer> }
+    // 4-6 entries fitting their time budget
   ],
-  "golden_rule": "<one memorable sentence of traffic advice for this person>"
+  "golden_rule": "<one memorable distribution rule for this founder>"
 }
 
-Confident, direct, plain language a beginner can act on. Short sentences. No fluff. Return ONLY the JSON object.`;
+Return ONLY the JSON object.`;
 
-export function buildTrafficUserPrompt(input: {
-  title: string;
-  description: string;
-  type: string;
-  timePerWeek?: string;
-  comfort?: string;
-}): string {
-  return `Design a traffic plan for this creation:
+export function buildTrafficUserPrompt(
+  input: ProductContext & { timePerWeek?: string; comfort?: string }
+): string {
+  return `Build a no-big-ad-budget distribution plan and a Mon–Fri sprint for this product:
 
-Product title: ${input.title}
-Product type: ${input.type}
-Description: ${input.description}
-${input.timePerWeek ? `Time available for marketing: ${input.timePerWeek}` : ""}
-${input.comfort ? `Comfort level: ${input.comfort}` : ""}
+${formatProductContextBlock(input)}
+${input.timePerWeek ? `Time available: ${input.timePerWeek}` : ""}
+${input.comfort ? `Comfort / strengths: ${input.comfort}` : ""}
 
 Remember: respond with ONLY the JSON object in the required schema.`;
 }

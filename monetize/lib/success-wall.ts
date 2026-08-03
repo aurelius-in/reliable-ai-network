@@ -1,6 +1,6 @@
 /**
- * Read-only Success Wall — curated example wins shown in the
- * Progress Tracker tab. Static content; refreshed by the team.
+ * Illustrative example plays for the Progress Tracker tab.
+ * Static scenarios — not customer testimonials or measured results.
  */
 
 export interface SuccessStory {

@@ -87,3 +87,18 @@ export function trackPageView(path?: string): void {
     page: path ?? (typeof window !== "undefined" ? window.location.pathname : ""),
   });
 }
+
+/** User opened one of the 15 journey tools. */
+export function trackToolView(tool: string, label?: string): void {
+  track("tool_view", { tool, label: label ?? tool });
+}
+
+/** User ran/generated inside a tool (client-side fallback). */
+export function trackToolRun(tool: string, extra: TrackProps = {}): void {
+  track("tool_run", { tool, ...extra });
+}
+
+/** Named UI control click (CTA, nav, etc.). */
+export function trackUiClick(target: string, extra: TrackProps = {}): void {
+  track("ui_click", { target, ...extra });
+}

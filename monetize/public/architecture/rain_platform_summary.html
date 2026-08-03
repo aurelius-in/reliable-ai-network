@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Make it RAIN — Platform Summary</title>
+  <link rel="stylesheet" href="/architecture/assets/arch.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="/architecture">Make it <span>RAIN</span> · Arch</a>
+      <nav class="nav-mini" aria-label="Documents">
+        <a href="/architecture">Hub</a>
+        <a href="/architecture/rain_conceptual.html">Conceptual</a>
+        <a href="/architecture/rain_logical.html">Logical</a>
+        <a href="/architecture/rain_implementable.html">Implementable</a>
+        <a href="/architecture/rain_ai_extensibility.html">AI</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="inner">
+      <p class="eyebrow">RM-ODP · Platform summary</p>
+      <h1>Make it RAIN architecture one-pager</h1>
+      <p>Executive view of the monetization platform: what it is, how value flows, where AI sits, and what investors should expect from the as-built system.</p>
+      <div class="meta">
+        <span class="pill">Last updated: 2026-07-31</span>
+        <span class="pill">Owner: Reliable AI Network, LLC</span>
+        <span class="pill">Audience: Investors · Architecture critics</span>
+        <span class="pill">Live: MakeItRainApp.com</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <aside class="toc">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#pattern">Pattern</a></li>
+        <li><a href="#usecases">Use cases</a></li>
+        <li><a href="#journey">Journey</a></li>
+        <li><a href="#ai">AI value</a></li>
+        <li><a href="#stack">As-built stack</a></li>
+        <li><a href="#boundaries">Boundaries</a></li>
+        <li><a href="#read">Where to go next</a></li>
+      </ol>
+    </aside>
+
+    <main class="content">
+      <section id="problem">
+        <h2><span class="n">01</span>Problem and product thesis</h2>
+        <div class="lede">
+          <p><strong>Make it RAIN</strong> is a subscription SaaS that helps software and AI creators turn an idea or product into a priced offer, find buyers, launch distribution, and measure what works. The product is a guided 15-tool journey, not a chat toy and not a generic CRM.</p>
+        </div>
+        <ul>
+          <li>Creators stall between “I built something” and “someone paid me.”</li>
+          <li>Advice is scattered; execution assets (pricing, funnels, outreach, plans) are not.</li>
+          <li>RAIN packages that path into tiered tools with durable artifacts per creation.</li>
+        </ul>
+      </section>
+
+      <section id="pattern">
+        <h2><span class="n">02</span>Architectural pattern</h2>
+        <p>RM-ODP-aligned separation of concerns, implemented as a thin Next.js application with clear authority boundaries:</p>
+        <div class="diagram"><pre>
+┌─────────────────────────────────────────────────────────────┐
+│  Enterprise intent: monetize a creation through a journey   │
+└─────────────────────────────────────────────────────────────┘
+              │
+              ▼
+┌──────────────┐   ┌──────────────┐   ┌──────────────────────┐
+│  Identity &  │   │  Billing     │   │  Tool APIs           │
+│  Profile     │◄──┤  (Stripe)    │   │  (Grok + Apollo)     │
+│  (Supabase)  │   │  source of   │   │  → generated_assets  │
+└──────────────┘   │  truth       │   └──────────────────────┘
+                   └──────────────┘
+              │
+              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Persistence: Postgres + RLS · Analytics · Referrals · Leads│
+└─────────────────────────────────────────────────────────────┘
+        </pre></div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Authority</h3>
+            <p>Stripe webhooks own subscription state. Supabase RLS owns data access. AI proposes artifacts; it does not authorize billing or mutate entitlements.</p>
+          </div>
+          <div class="card">
+            <h3>Composition</h3>
+            <p>One vertical slice: Auth → Creation → Tool run → Saved asset → Next best action. Everything else (referrals, nurture, Counter) orbits that slice.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="usecases">
+        <h2><span class="n">03</span>Core use cases</h2>
+        <table>
+          <thead>
+            <tr><th>Use case</th><th>Actor</th><th>Outcome</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Start trial and pick a plan</td><td>Creator</td><td>Stripe trial (30 days) on a selected tier; profile synced</td></tr>
+            <tr><td>Define a creation</td><td>Creator</td><td>Durable product context for all tools</td></tr>
+            <tr><td>Run a monetization tool</td><td>Creator</td><td>Structured JSON asset stored under the creation</td></tr>
+            <tr><td>Find buyer leads</td><td>Creator</td><td>Apollo people search against ICP from buyer tool</td></tr>
+            <tr><td>Refer a builder</td><td>Subscriber</td><td>50% of referee first paid invoice as Stripe balance credit</td></tr>
+            <tr><td>Capture checklist lead</td><td>Prospect</td><td>5-email Resend nurture with unsubscribe</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="journey">
+        <h2><span class="n">04</span>Journey at a glance</h2>
+        <p>Four phases, fifteen tools, three paid tiers (Starter $29 · Growth $79 · Pro $149).</p>
+        <table>
+          <thead>
+            <tr><th>Phase</th><th>Tools</th><th>Tier floor</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Plan</td><td>Idea Analyzer, Find Your Buyers, Pricing Builder, Quick-Start Library</td><td>Starter</td></tr>
+            <tr><td>Execute</td><td>Funnel Architect, Traffic, 30-Day Launch, Content Generator</td><td>Growth</td></tr>
+            <tr><td>Measure</td><td>Progress Tracker, Strategy Tools, Direct Sales, What’s Working</td><td>Growth / Pro</td></tr>
+            <tr><td>Scale</td><td>Ways to Get Paid, Done-For-You, Premium Library</td><td>Pro</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="ai">
+        <h2><span class="n">05</span>Strongest AI value</h2>
+        <ul>
+          <li><strong>Contracted JSON outputs</strong> via Grok (<code>response_format: json_object</code>), not freeform chat.</li>
+          <li><strong>Prompt modules per tool</strong> under <code>prompts/</code>; business rules and tier gates stay in application code.</li>
+          <li><strong>Enrichment, not invention, for leads</strong>: Apollo for people/company data when ICP is known.</li>
+          <li><strong>Human authority</strong>: creators edit, discard, or re-run; AI never charges a card or upgrades a tier.</li>
+        </ul>
+        <div class="note">Detail lives in <a href="/architecture/rain_ai_extensibility.html">AI Extensibility</a>. Wire contracts live in Logical and Implementable docs.</div>
+      </section>
+
+      <section id="stack">
+        <h2><span class="n">06</span>As-built stack (today)</h2>
+        <table>
+          <thead>
+            <tr><th>Layer</th><th>Choice</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>App</td><td>Next.js 15 App Router · React 19 · TypeScript · Vercel</td></tr>
+            <tr><td>Identity + data</td><td>Supabase Auth · Postgres · Row Level Security</td></tr>
+            <tr><td>Billing</td><td>Stripe Checkout (embedded) · Customer Portal · signed webhooks</td></tr>
+            <tr><td>Reasoning</td><td>xAI Grok chat completions (JSON mode)</td></tr>
+            <tr><td>Lead data</td><td>Apollo.io people search + company enrich</td></tr>
+            <tr><td>Email</td><td>Resend (transactional + scheduled nurture)</td></tr>
+            <tr><td>Analytics</td><td>First-party Counter → <code>analytics_events</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="boundaries">
+        <h2><span class="n">07</span>What the platform does NOT do (today)</h2>
+        <ul>
+          <li>Does not host the creator’s product runtime or payment processor for their end customers.</li>
+          <li>Does not act as a marketplace or escrow between creators and buyers.</li>
+          <li>Does not let the model authorize subscription changes or write Stripe state.</li>
+          <li>Does not train proprietary foundation models; it orchestrates a contracted reasoning API.</li>
+          <li>Does not expose this architecture site in product navigation or the public sitemap.</li>
+        </ul>
+      </section>
+
+      <section id="read">
+        <h2><span class="n">08</span>Where to go next</h2>
+        <table>
+          <thead>
+            <tr><th>If you need…</th><th>Read</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Stakeholders, nouns, principles, narrative framing</td><td><a href="/architecture/rain_conceptual.html">Conceptual Architecture</a></td></tr>
+            <tr><td>Identifiers, services, API surface, sequences</td><td><a href="/architecture/rain_logical.html">Logical Architecture</a></td></tr>
+            <tr><td>As-built checklist, persistence, env, deploy evidence</td><td><a href="/architecture/rain_implementable.html">Implementable Architecture</a></td></tr>
+            <tr><td>AI layers, non-goals, extensibility</td><td><a href="/architecture/rain_ai_extensibility.html">AI Extensibility</a></td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="inner">
+      <span>Reliable AI Network, LLC · Make it RAIN architecture set</span>
+      <a href="/architecture">Back to hub</a>
+    </div>
+  </footer>
+</body>
+</html>

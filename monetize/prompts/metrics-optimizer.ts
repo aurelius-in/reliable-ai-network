@@ -4,6 +4,12 @@
  * the bottleneck, and concrete tests for next week.
  */
 
+import {
+  formatProductContextBlock,
+  type ProductContext,
+} from "@/lib/product-context";
+
+
 import type { MetricsEntry } from "@/types";
 
 export const METRICS_OPTIMIZER_SYSTEM_PROMPT = `You are RAIN Monetize's results optimizer — a conversion-rate specialist who reads simple funnel numbers (visitors → signups → sales → revenue) and tells beginners exactly what to do next.
@@ -50,9 +56,7 @@ export function buildMetricsUserPrompt(input: {
 
   return `Analyze these weekly results for this creation:
 
-Product title: ${input.title}
-Product type: ${input.type}
-Description: ${input.description}
+${formatProductContextBlock(input)}
 
 Weekly numbers (oldest first):
 ${rows}

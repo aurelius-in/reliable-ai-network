@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Loader2, Sparkles } from "lucide-react";
 import { AnalysisResult } from "@/components/AnalysisResult";
+import { EvidenceChecklist } from "@/components/EvidenceChecklist";
 import { ChipGroup, ErrorText, FieldLabel, FunLoading } from "@/components/ui";
 import { AUDIENCE_OPTIONS, EXAMPLE_CREATIONS } from "@/lib/examples";
 import type { IdeaAnalysis } from "@/types";
@@ -89,7 +90,7 @@ export function OnboardingForm() {
         <div className="fade-up text-center">
           <p className="inline-flex items-center gap-2 rounded-full bg-rain/15 px-4 py-1.5 text-sm font-bold text-rain-bright ring-1 ring-rain/40">
             <Sparkles size={15} />
-            Your personalized monetization system is ready
+            Your first monetization draft is ready
           </p>
         </div>
         <AnalysisResult analysis={analysis} />
@@ -182,6 +183,8 @@ export function OnboardingForm() {
           More detail makes the plan sharper — but the chips alone are enough.
         </p>
       </div>
+
+      <EvidenceChecklist />
 
       <ErrorText message={error} />
 

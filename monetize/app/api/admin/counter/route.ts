@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { adminKeyFromRequest, assertAdminSecret } from "@/lib/admin-auth";
-import { loadCounterStats } from "@/lib/counter-stats";
+import { loadCounterStats, parseCounterRange } from "@/lib/counter-stats";
 
 export const dynamic = "force-dynamic";
 
 /**
- * GET /api/admin/counter?key=SECRET
+ * GET /api/admin/counter?key=SECRET&range=today|7d|month|all
  * Founder Counter: accounts + funnel activity.
  */
 export async function GET(request: Request) {
@@ -14,7 +14,10 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
 
-  const stats = await loadCounterStats();
+  const range = parseCounterRange(
+    new URL(request.url).searchParams.get("range")
+  );
+  const stats = await loadCounterStats(range);
   if ("error" in stats) {
     return NextResponse.json({ error: stats.error }, { status: 500 });
   }

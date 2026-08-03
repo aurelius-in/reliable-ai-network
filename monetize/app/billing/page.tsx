@@ -3,9 +3,16 @@ import { redirect } from "next/navigation";
 import { CalendarClock, CreditCard } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
 import { MobileTabBar } from "@/components/MobileTabBar";
-import { PortalButton } from "@/components/PortalButton";
+import { ManageSubscription } from "@/components/ManageSubscription";
 import { CheckoutButton } from "@/components/CheckoutButton";
+import { ReferralShareCard } from "@/components/ReferralShareCard";
+import { ReferralAttributor } from "@/components/ReferralAttributor";
+import { AccessCodeAutoRedeem } from "@/components/AccessCodeAutoRedeem";
+import { isComplimentaryStatus } from "@/lib/access-codes";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { ensureReferralCode } from "@/lib/referral-server";
+import { getAppUrl } from "@/lib/stripe";
 import { TIERS, tierLabel, trialDaysLeft } from "@/lib/tiers";
 import type { Profile } from "@/types";
 
@@ -13,6 +20,8 @@ export const metadata = { title: "Billing — Make it RAIN" };
 
 const STATUS_LABELS: Record<string, string> = {
   trialing: "Free trial",
+  reviewer: "Reviewer (no card)",
+  retention: "Complimentary Pro",
   active: "Active",
   past_due: "Past due — payment failed",
   canceled: "Canceled",
@@ -37,8 +46,20 @@ export default async function BillingPage() {
     .single();
   const profile = data as Profile | null;
 
+  const admin = createAdminClient();
+  const referralCode =
+    profile?.referral_code || (await ensureReferralCode(admin, user.id));
+
+  const { count: rewardedCount } = await supabase
+    .from("referral_rewards")
+    .select("id", { count: "exact", head: true })
+    .eq("referrer_id", user.id)
+    .eq("status", "credited");
+
   const status = profile?.subscription_status;
-  const hasSubscription = !!status && status !== "canceled";
+  const isComp = isComplimentaryStatus(status);
+  const hasSubscription =
+    !!status && status !== "canceled" && !isComplimentaryStatus(status);
   const isTrialing = status === "trialing";
   const days = trialDaysLeft(profile?.trial_ends_at);
   const trialEndDate = profile?.trial_ends_at
@@ -57,6 +78,7 @@ export default async function BillingPage() {
       <TopNav profile={profile} />
 
       <main className="mx-auto max-w-3xl space-y-6 px-4 pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] md:py-8">
+        <ReferralAttributor />
         <h1 className="text-2xl font-black text-white">Billing</h1>
 
         {isTrialing && trialEndDate && (
@@ -70,8 +92,27 @@ export default async function BillingPage() {
             </p>
             <p className="mt-1.5 text-sm text-slate-300">
               After that, your card is charged ${tierInfo?.price ?? 100}/mo
-              automatically. Don&apos;t want that? Cancel below in one click —
-              you keep access until the trial ends.
+              automatically. To change or end your plan, use Manage subscription
+              below.
+            </p>
+          </div>
+        )}
+
+        {isComp && (
+          <div className="fade-up rounded-2xl border border-violet/40 bg-gradient-to-r from-violet/10 to-night-700 p-6">
+            <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-violet-bright">
+              <CalendarClock size={16} />{" "}
+              {status === "retention" ? "Complimentary access" : "Reviewer access"}
+            </p>
+            <p className="mt-2 text-xl font-bold text-white">
+              Full {tierLabel(profile?.current_tier)} access
+              {trialEndDate
+                ? ` through ${trialEndDate}`
+                : " (complimentary)"}
+              {days != null ? ` · ${days} day${days === 1 ? "" : "s"} left` : ""}.
+            </p>
+            <p className="mt-1.5 text-sm text-slate-300">
+              No active paid billing on this account during complimentary access.
             </p>
           </div>
         )}
@@ -81,7 +122,21 @@ export default async function BillingPage() {
             <CreditCard size={16} /> Current plan
           </p>
 
-          {hasSubscription ? (
+          {isComp ? (
+            <>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <span className="text-3xl font-black text-white">
+                  {tierLabel(profile?.current_tier)}
+                </span>
+                <span className="rounded-full bg-violet/15 px-3 py-1 text-xs font-bold text-violet-bright ring-1 ring-violet/40">
+                  {STATUS_LABELS[status!] ?? status}
+                </span>
+              </div>
+              <p className="mt-3 text-sm text-slate-300">
+                No paid Stripe billing while complimentary access is active.
+              </p>
+            </>
+          ) : hasSubscription ? (
             <>
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 <span className="text-3xl font-black text-white">
@@ -101,12 +156,11 @@ export default async function BillingPage() {
                 </span>
               </div>
 
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <PortalButton label="Manage / Cancel subscription" />
-                <p className="text-xs text-slate-500">
-                  Opens the secure Stripe portal — cancel, upgrade, downgrade,
-                  or update your card.
-                </p>
+              <div className="mt-6">
+                <ManageSubscription
+                  tierLabel={tierLabel(profile?.current_tier)}
+                  price={tierInfo?.price}
+                />
               </div>
             </>
           ) : (
@@ -117,7 +171,7 @@ export default async function BillingPage() {
               <p className="mt-1.5 text-sm text-slate-300">
                 {status === "canceled"
                   ? "Rejoin to get every tool back — manage or cancel anytime."
-                  : "Activate your 30-day Pro trial — full access to every tool, cancel anytime before day 30 and pay nothing."}
+                  : "Pick a plan and start your 30-day free trial — card upfront, cancel anytime before day 30 and pay nothing."}
               </p>
               <div className="mt-5 max-w-xs">
                 <CheckoutButton
@@ -126,13 +180,23 @@ export default async function BillingPage() {
                   label={
                     status === "canceled"
                       ? "Rejoin Pro"
-                      : "Activate 30-day Pro trial"
+                      : "Start 30-day free trial"
                   }
                 />
               </div>
             </>
           )}
         </div>
+
+        {!isComp && <AccessCodeAutoRedeem />}
+
+        {referralCode && (
+          <ReferralShareCard
+            code={referralCode}
+            rewardedCount={rewardedCount ?? 0}
+            appUrl={getAppUrl()}
+          />
+        )}
 
         <div className="rounded-2xl border border-night-600 bg-night-700/60 p-6 text-sm text-slate-400">
           <p>
@@ -144,7 +208,7 @@ export default async function BillingPage() {
               pricing page
             </Link>
             {hasSubscription &&
-              " — upgrades and downgrades happen through the Stripe portal above and take effect immediately"}
+              ". Use Manage subscription to change plan or payment method"}
             .
           </p>
         </div>

@@ -6,13 +6,48 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { track } from "@/lib/track";
+import {
+  HOME_AB_COOKIE,
+  normalizeHomeVariant,
+} from "@/lib/home-ab";
+import {
+  REFERRAL_STORAGE_KEY,
+  normalizeReferralCode,
+} from "@/lib/referrals";
 
-export function AuthForm({ mode }: { mode: "signup" | "login" }) {
+function readHomeAbVariant(): string | undefined {
+  if (typeof document === "undefined") return undefined;
+  try {
+    const match = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith(`${HOME_AB_COOKIE}=`));
+    const raw = match
+      ? decodeURIComponent(match.split("=")[1] ?? "")
+      : null;
+    return normalizeHomeVariant(raw) ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function AuthForm({
+  mode,
+  variant = "default",
+  submitLabel,
+  collectCompany = false,
+}: {
+  mode: "signup" | "login";
+  variant?: "default" | "reviewer";
+  submitLabel?: string;
+  collectCompany?: boolean;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [name, setName] = useState("");
+  const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmationSent, setConfirmationSent] = useState(false);
@@ -22,22 +57,51 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
     setLoading(true);
     setError(null);
 
+    if (mode === "signup" && !agreedToTerms) {
+      setError("Please agree to the Terms and Privacy Policy to continue.");
+      setLoading(false);
+      return;
+    }
+
     const supabase = createClient();
 
     try {
       if (mode === "signup") {
         track("signup_submit");
+        let referralCode: string | null = normalizeReferralCode(
+          searchParams.get("ref")
+        );
+        if (!referralCode) {
+          try {
+            referralCode = normalizeReferralCode(
+              localStorage.getItem(REFERRAL_STORAGE_KEY)
+            );
+          } catch {
+            referralCode = null;
+          }
+        }
+
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            data: { name },
+            data: {
+              name,
+              ...(company.trim() ? { company: company.trim() } : {}),
+              ...(referralCode ? { referral_code: referralCode } : {}),
+              ...(variant === "reviewer" ? { signup_variant: "reviewer" } : {}),
+            },
             emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin}/auth/confirm?next=/onboarding`,
           },
         });
         if (error) throw error;
 
-        track("signup_success", { userId: data.user?.id ?? "" });
+        const homeAb = readHomeAbVariant();
+        track("signup_success", {
+          userId: data.user?.id ?? "",
+          variant,
+          ...(homeAb ? { home_ab: homeAb } : {}),
+        });
 
         // Fire-and-forget founder alert + counter bump email.
         void fetch("/api/notify-signup", {
@@ -46,9 +110,20 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
           body: JSON.stringify({
             email,
             name,
+            company: company.trim() || undefined,
+            variant,
+            homeAb,
             userId: data.user?.id,
           }),
         }).catch(() => {});
+
+        if (referralCode && data.session) {
+          void fetch("/api/referral/apply", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: referralCode }),
+          }).catch(() => {});
+        }
 
         if (data.session) {
           router.push("/onboarding");
@@ -102,9 +177,20 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Your name"
+          placeholder="First and last name"
           className={inputClass}
           autoComplete="name"
+        />
+      )}
+      {mode === "signup" && collectCompany && (
+        <input
+          type="text"
+          required
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          placeholder="Company or app name"
+          className={inputClass}
+          autoComplete="organization"
         />
       )}
       <input
@@ -127,12 +213,60 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         autoComplete={mode === "signup" ? "new-password" : "current-password"}
       />
 
+      {mode === "login" && (
+        <div className="-mt-1 text-right">
+          <Link
+            href="/forgot-password"
+            className="text-sm font-medium text-slate-400 hover:text-rain-bright hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
+      )}
+
+      {mode === "signup" && (
+        <label className="flex cursor-pointer items-start gap-3 text-left text-xs leading-relaxed text-slate-400">
+          <input
+            type="checkbox"
+            required
+            checked={agreedToTerms}
+            onChange={(e) => setAgreedToTerms(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-night-600 bg-night-800 text-aqua focus:ring-aqua"
+          />
+          <span>
+            I agree to the{" "}
+            <Link
+              href="/terms"
+              target="_blank"
+              className="text-slate-300 underline hover:text-white"
+            >
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy"
+              target="_blank"
+              className="text-slate-300 underline hover:text-white"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </span>
+        </label>
+      )}
+
       {error && <p className="text-sm text-red-400">{error}</p>}
 
-      <button type="submit" disabled={loading} className="btn-primary w-full">
+      <button
+        type="submit"
+        disabled={loading || (mode === "signup" && !agreedToTerms)}
+        className="btn-primary w-full"
+      >
 
         {loading && <Loader2 size={16} className="animate-spin" />}
-        {mode === "signup" ? "Create account" : "Sign in"}
+        {mode === "signup"
+          ? submitLabel || "Get my tailored playbook"
+          : "Sign in"}
       </button>
 
       <p className="text-center text-sm text-slate-400">

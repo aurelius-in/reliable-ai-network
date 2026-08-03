@@ -7,6 +7,7 @@ import {
 } from "@/prompts/funnel-architect";
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { FunnelPlan } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 300;
 
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
     type?: string;
     priceBand?: string;
     audience?: string;
+    motion?: string;
   };
   try {
     body = await request.json();
@@ -58,6 +60,7 @@ export async function POST(request: Request) {
           ...resolved.creation,
           priceBand: body.priceBand,
           audience: body.audience,
+          motion: body.motion,
         }),
       },
     ]);
@@ -84,5 +87,6 @@ export async function POST(request: Request) {
     console.error("Failed to persist funnel asset:", assetError);
   }
 
+  trackToolRun("funnel", {}, { userId: user.id, path: "/api/funnel" });
   return NextResponse.json({ assetId: asset?.id ?? null, funnel });
 }

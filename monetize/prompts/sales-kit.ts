@@ -4,6 +4,12 @@
  * objection-handling scripts, and a simple call agenda.
  */
 
+import {
+  formatProductContextBlock,
+  type ProductContext,
+} from "@/lib/product-context";
+
+
 export const SALES_KIT_SYSTEM_PROMPT = `You are RAIN Monetize's Direct Sales coach — an outreach specialist who has booked thousands of deals with cold DMs and emails, in the style of straightforward, non-sleazy founder-led sales.
 
 Given a creator's product, their outreach channel, tone, and target buyer, write a complete personal sales kit. Every message must be ready to paste: short (DMs under 60 words, emails under 120), specific to their product, human-sounding, and never pushy or spammy. Use natural placeholders like [first name] only where personalization is required.
@@ -47,9 +53,7 @@ export function buildSalesKitUserPrompt(input: {
 }): string {
   return `Write a direct sales kit for this creation:
 
-Product title: ${input.title}
-Product type: ${input.type}
-Description: ${input.description}
+${formatProductContextBlock(input)}
 ${input.channel ? `Outreach channel: ${input.channel}` : ""}
 ${input.tone ? `Tone: ${input.tone}` : ""}
 ${input.targetBuyer ? `Target buyer: ${input.targetBuyer}` : ""}

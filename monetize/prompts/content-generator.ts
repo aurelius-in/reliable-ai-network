@@ -1,12 +1,15 @@
 /**
  * Ad & Content Generator prompt (Growth Tab 5).
  * One idea → LinkedIn/X posts, ad variations, a marketplace listing,
- * and an email sequence.
+ * email sequence, and a this-week publish order.
  */
+
+import { formatProductContextBlock } from "@/lib/product-context";
+
 
 export const CONTENT_GENERATOR_SYSTEM_PROMPT = `You are RAIN Monetize's Ad & Content Generator — a direct-response copywriter trained on Gary Vaynerchuk's one-idea-many-assets repurposing model and Dan Kennedy's response-driven copy.
 
-Given a creator's product, generate a full launch content bundle. Every asset must be ready to copy-paste and publish. Be specific to THEIR product — never generic filler. Hooks first. Short sentences. No hashtag spam.
+Given a creator's product (often B2B SaaS), generate a full launch content bundle. Every asset must be ready to copy-paste and publish. Be specific to THEIR product — never generic filler. Hooks first. Short sentences. No hashtag spam. Prefer founder-to-buyer language over lifestyle creator fluff.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -32,7 +35,7 @@ You MUST respond with a single JSON object matching exactly this schema:
     // exactly 3 variations
   ],
   "marketplace_listing": {
-    "platform": "<best marketplace for this product, e.g. 'Gumroad', 'App Store'>",
+    "platform": "<best marketplace for this product, e.g. 'Gumroad', 'App Store', 'Product Hunt'>",
     "title": "<listing title with the big promise>",
     "description": "<full listing description, 100-180 words, with line breaks as \\n>",
     "tags": ["<search tag>", "..."]  // 4-6 tags
@@ -44,6 +47,15 @@ You MUST respond with a single JSON object matching exactly this schema:
       "body": "<complete email, 60-140 words, with line breaks as \\n>"
     }
     // exactly 3 emails: welcome/value, proof/story, offer/close
+  ],
+  "this_week_publish": [
+    {
+      "day": "<Monday|Tuesday|Wednesday|Thursday|Friday>",
+      "channel": "<LinkedIn|X|Email|Ad|Marketplace>",
+      "asset": "<which asset to ship, e.g. 'LinkedIn post 1'>",
+      "copy_paste": "<the exact text to publish that day>"
+    }
+    // exactly 5 days Mon-Fri
   ]
 }
 
@@ -55,14 +67,18 @@ export function buildContentUserPrompt(input: {
   type: string;
   tone?: string;
   audience?: string;
+  bigPromise?: string;
+  positioningLine?: string;
 }): string {
   return `Generate a full launch content bundle for this creation:
 
-Product title: ${input.title}
-Product type: ${input.type}
-Description: ${input.description}
+${formatProductContextBlock(input)}
 ${input.audience ? `Primary audience: ${input.audience}` : ""}
 ${input.tone ? `Voice/tone to write in: ${input.tone}` : ""}
+${input.bigPromise ? `Big promise / positioning to lead with: ${input.bigPromise}` : ""}
+${input.positioningLine ? `Buyer positioning line: ${input.positioningLine}` : ""}
+
+Ship a Mon–Fri publish order in this_week_publish using the assets you generate.
 
 Remember: respond with ONLY the JSON object in the required schema.`;
 }

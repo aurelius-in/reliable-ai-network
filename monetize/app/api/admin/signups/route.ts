@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { adminKeyFromRequest, assertAdminSecret } from "@/lib/admin-auth";
-import { loadCounterStats } from "@/lib/counter-stats";
+import { loadCounterStats, parseCounterRange } from "@/lib/counter-stats";
 
 export const dynamic = "force-dynamic";
 
 /**
- * GET /api/admin/signups?key=SECRET
+ * GET /api/admin/signups?key=SECRET&range=today|7d|month|all
  * Legacy alias → Counter payload (accounts + activity).
  */
 export async function GET(request: Request) {
@@ -14,7 +14,10 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
 
-  const stats = await loadCounterStats();
+  const range = parseCounterRange(
+    new URL(request.url).searchParams.get("range")
+  );
+  const stats = await loadCounterStats(range);
   if ("error" in stats) {
     console.error("[admin/signups]", stats.error);
     return NextResponse.json({ error: stats.error }, { status: 500 });
@@ -24,8 +27,9 @@ export async function GET(request: Request) {
   return NextResponse.json({
     ...stats,
     total: stats.accounts.total,
-    last7Days: stats.accounts.last7Days,
-    last24Hours: stats.accounts.last24Hours,
+    last7Days: stats.accounts.newInRange,
+    last24Hours:
+      stats.range === "today" ? stats.accounts.newInRange : undefined,
     trialing: stats.accounts.trialing,
   });
 }

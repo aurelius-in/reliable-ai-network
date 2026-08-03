@@ -13,11 +13,11 @@ export interface QuickStartTemplate {
 
 export const QUICK_START_TEMPLATES: QuickStartTemplate[] = [
   {
-    id: "gumroad-description",
-    title: "Gumroad Product Description",
+    id: "offer-page",
+    title: "Offer / product page copy",
     description:
-      "A high-converting product page description built on the Grand Slam Offer structure. Fill in the brackets and publish.",
-    filename: "gumroad-product-description.md",
+      "High-converting offer page structure (site, marketplace, or checkout). Fill brackets or auto-fill from your product.",
+    filename: "offer-page-copy.md",
     content: `# [PRODUCT NAME] — [BIG PROMISE IN ONE LINE]
 
 **Stop [PAINFUL PROBLEM]. Start [DESIRED OUTCOME] — in [TIMEFRAME].**

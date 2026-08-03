@@ -15,6 +15,7 @@ import {
   choiceFromCreation,
   type ProductChoice,
 } from "@/components/ui";
+import { OutputCaveat } from "@/components/OutputCaveat";
 import { AUDIENCE_OPTIONS, GOAL_OPTIONS } from "@/lib/examples";
 import { isOutreachLaunchDay } from "@/lib/apollo-icp";
 import type { Creation, LaunchPlan } from "@/types";
@@ -76,8 +77,8 @@ export function LaunchTab({
   const [choice, setChoice] = useState<ProductChoice | null>(
     first ? choiceFromCreation(first) : null
   );
-  const [audience, setAudience] = useState("creators");
-  const [goal, setGoal] = useState("steady side income");
+  const [audience, setAudience] = useState("B2B SaaS buyers");
+  const [goal, setGoal] = useState("first paying customers");
   const [plan, setPlan] = useState<LaunchPlan | null>(initialPlan);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -198,6 +199,7 @@ function LaunchResult({
 
   return (
     <div className="fade-up space-y-5">
+      <OutputCaveat tool="launch" />
       <div className="card-glow p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-xl font-black text-white">{plan.plan_name}</h3>

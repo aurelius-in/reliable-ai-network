@@ -7,6 +7,7 @@ import {
 } from "@/prompts/revenue-streams";
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { RevenueStreamsPlan } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 300;
 
@@ -82,5 +83,6 @@ export async function POST(request: Request) {
     console.error("Failed to persist revenue streams plan:", assetError);
   }
 
+  trackToolRun("revenue", {}, { userId: user.id, path: "/api/revenue" });
   return NextResponse.json({ assetId: asset?.id ?? null, plan });
 }

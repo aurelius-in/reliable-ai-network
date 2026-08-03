@@ -1,10 +1,11 @@
 "use client";
 
 /**
- * Animated next-best-action strip — one clear move, not a wall of tools.
+ * Quiet “still open” strip — points at unfinished slices without competing
+ * with the linear Next step control.
  */
 
-import { ArrowRight, Lock, Sparkles } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
 import type { NextBestAction } from "@/lib/journey";
 import { countCompleted, JOURNEY_STEPS } from "@/lib/journey";
 import type { JourneyTabId } from "@/lib/journey";
@@ -25,58 +26,53 @@ export function NextBestActionCard({
 
   return (
     <div
-      className={`nba-card relative overflow-hidden rounded-2xl border p-4 sm:p-5 ${
+      className={`rounded-xl border px-3.5 py-3 sm:px-4 ${
         pieComplete
-          ? "border-aqua/40 bg-aqua/10"
+          ? "border-aqua/25 bg-aqua/5"
           : action.locked
-            ? "border-violet/40 bg-violet/10"
-            : "border-rain/40 bg-gradient-to-r from-aqua/10 via-violet/10 to-rain/10"
+            ? "border-night-600 bg-night-800/80"
+            : "border-night-600 bg-night-800/80"
       }`}
     >
-      <div className="nba-shimmer pointer-events-none absolute inset-0" aria-hidden />
-      <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="min-w-0">
-          <p className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-aqua-bright">
-            <Sparkles size={12} className="nba-spark" />
-            {pieComplete ? "Pie complete" : "Next best action"}
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+            {pieComplete ? "Pie complete" : "Still open"}
           </p>
-          <p className="mt-1.5 text-lg font-bold text-white sm:text-xl">
+          <p className="mt-0.5 text-sm font-semibold text-slate-200">
             {pieComplete
-              ? "You ate the whole pie"
+              ? "You finished every slice"
               : action.locked
-                ? `Unlock ${action.step.label}`
+                ? `Locked: ${action.step.label}`
                 : action.step.label}
           </p>
-          <p className="mt-1 text-sm text-slate-300">{action.reason}</p>
-          {!pieComplete && (
-            <p className="mt-2 text-xs font-semibold text-slate-500">
-              {remaining} slice{remaining === 1 ? "" : "s"} left · stay on the
-              path
-            </p>
-          )}
+          <p className="mt-0.5 text-xs leading-snug text-slate-500">
+            {pieComplete
+              ? action.reason
+              : action.locked
+                ? action.reason
+                : `${remaining} unfinished · jump here if you skipped ahead`}
+          </p>
         </div>
         <button
           type="button"
           onClick={onGo}
-          className="nba-cta group inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-aqua via-violet to-rain px-5 py-3 text-sm font-bold text-white shadow-lg shadow-aqua/20 transition hover:brightness-110 active:scale-[0.98]"
+          className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-night-600 bg-night-700 px-3.5 py-2 text-xs font-semibold text-slate-200 transition hover:border-aqua/40 hover:text-white sm:self-center"
         >
           {action.locked ? (
             <>
-              <Lock size={16} />
-              See upgrade
+              <Lock size={13} />
+              Upgrade
             </>
           ) : pieComplete ? (
             <>
               Open {action.step.short}
-              <ArrowRight size={16} className="transition group-hover:translate-x-0.5" />
+              <ArrowRight size={13} />
             </>
           ) : (
             <>
-              Continue
-              <ArrowRight
-                size={16}
-                className="nba-arrow transition group-hover:translate-x-0.5"
-              />
+              Jump to slice
+              <ArrowRight size={13} />
             </>
           )}
         </button>

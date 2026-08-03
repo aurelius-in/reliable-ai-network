@@ -1,8 +1,11 @@
-import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
+import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
+import { ReferralCapture } from "@/components/ReferralCapture";
+import { AccessCodeCapture } from "@/components/AccessCodeCapture";
+import { CookieNotice } from "@/components/CookieNotice";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -12,11 +15,25 @@ const outfit = Outfit({
   weight: ["400", "500", "600", "700", "800"],
 });
 
+const SITE_URL = (
+  process.env.NEXT_PUBLIC_APP_URL || "https://makeitrainapp.com"
+).replace(/\/$/, "");
+
+const DEFAULT_DESCRIPTION =
+  "Guided monetization and go-to-market for software and AI founders. Find buyers, price, launch, and sell what you already built. Not an app builder. Free 30-day trial.";
+
 export const metadata: Metadata = {
-  title: "Make it RAIN",
-  description:
-    "Turn what you've built into income using the exact frameworks top marketers use, now automated for you. Start free 30-day trial.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Make it RAIN | Monetization for software & AI founders",
+    template: "%s | Make it RAIN",
+  },
+  description: DEFAULT_DESCRIPTION,
   applicationName: "Make it RAIN",
+  authors: [{ name: "Reliable AI Network, LLC" }],
+  creator: "Reliable AI Network, LLC",
+  publisher: "Reliable AI Network, LLC",
+  category: "business",
   appleWebApp: {
     capable: true,
     title: "Make it RAIN",
@@ -28,6 +45,23 @@ export const metadata: Metadata = {
       { url: "/icons/icon-512.png?v=3", sizes: "512x512", type: "image/png" },
     ],
     apple: [{ url: "/icons/apple-touch-icon.png?v=3", sizes: "180x180" }],
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    siteName: "Make it RAIN",
+    title: "Make it RAIN | Monetization for software & AI founders",
+    description: DEFAULT_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Make it RAIN | Monetization for software & AI founders",
+    description: DEFAULT_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -47,6 +81,13 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <AnalyticsProvider>{children}</AnalyticsProvider>
         </Suspense>
+        <Suspense fallback={null}>
+          <ReferralCapture />
+        </Suspense>
+        <Suspense fallback={null}>
+          <AccessCodeCapture />
+        </Suspense>
+        <CookieNotice />
         <ServiceWorkerRegister />
       </body>
     </html>

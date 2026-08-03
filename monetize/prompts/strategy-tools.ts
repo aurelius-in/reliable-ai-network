@@ -4,13 +4,19 @@
  * 30/60/90-day roadmap, and A/B test suggestions.
  */
 
+import {
+  formatProductContextBlock,
+  type ProductContext,
+} from "@/lib/product-context";
+
+
 import type { StrategyToolId } from "@/types";
 
 const BASE_PERSONA = `You are RAIN Monetize's Advanced Strategy engine — a monetization strategist combining Alex Hormozi's offer economics, Russell Brunson's funnel ascension, and Dan Kennedy's direct-response testing discipline. Be specific to THE USER'S product. Confident, direct, plain language a beginner can act on. Short sentences. No fluff.`;
 
 const COMPETITORS_PROMPT = `${BASE_PERSONA}
 
-Analyze the competitive landscape for the user's product. Use realistic, representative competitors and typical market pricing for this category (name real products where you are confident; otherwise describe the archetype, e.g. "Big recipe apps like ...").
+Analyze the competitive landscape for the user's product. Prefer archetypes and clearly labeled examples unless the user named specific competitors. Never invent precise competitor prices as measured facts — use ranges or "typical for this category" and mark uncertain pricing as an estimate to verify.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -108,7 +114,7 @@ export const STRATEGY_SYSTEM_PROMPTS: Record<StrategyToolId, string> = {
 
 export function buildStrategyUserPrompt(
   tool: StrategyToolId,
-  input: { title: string; description: string; type: string }
+  input: ProductContext
 ): string {
   const intro: Record<StrategyToolId, string> = {
     competitors: "Analyze the competitive landscape for this creation:",
@@ -119,9 +125,7 @@ export function buildStrategyUserPrompt(
 
   return `${intro[tool]}
 
-Product title: ${input.title}
-Product type: ${input.type}
-Description: ${input.description}
+${formatProductContextBlock(input)}
 
 Remember: respond with ONLY the JSON object in the required schema.`;
 }

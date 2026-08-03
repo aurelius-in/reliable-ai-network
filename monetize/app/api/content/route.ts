@@ -7,6 +7,7 @@ import {
 } from "@/prompts/content-generator";
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { ContentBundle } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 300;
 
@@ -33,6 +34,8 @@ export async function POST(request: Request) {
     type?: string;
     tone?: string;
     audience?: string;
+    bigPromise?: string;
+    positioningLine?: string;
   };
   try {
     body = await request.json();
@@ -58,6 +61,8 @@ export async function POST(request: Request) {
           ...resolved.creation,
           tone: body.tone,
           audience: body.audience,
+          bigPromise: body.bigPromise,
+          positioningLine: body.positioningLine,
         }),
       },
     ]);
@@ -84,5 +89,6 @@ export async function POST(request: Request) {
     console.error("Failed to persist content bundle:", assetError);
   }
 
+  trackToolRun("content", {}, { userId: user.id, path: "/api/content" });
   return NextResponse.json({ assetId: asset?.id ?? null, bundle });
 }

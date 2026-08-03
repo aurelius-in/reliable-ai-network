@@ -13,6 +13,9 @@ export async function POST(request: Request) {
     const body = (await request.json().catch(() => null)) as {
       email?: string;
       name?: string;
+      company?: string;
+      variant?: string;
+      homeAb?: string;
       userId?: string;
     } | null;
 
@@ -54,6 +57,9 @@ export async function POST(request: Request) {
       const result = await notifyFounderOfSignup({
         email,
         name: body?.name,
+        company: body?.company,
+        variant: body?.variant,
+        homeAb: body?.homeAb,
         userId: body?.userId,
         totalSignups: (count ?? 0) + 1,
       });
@@ -77,6 +83,9 @@ export async function POST(request: Request) {
     const result = await notifyFounderOfSignup({
       email: profile.email,
       name: profile.name ?? body?.name,
+      company: body?.company,
+      variant: body?.variant,
+      homeAb: body?.homeAb,
       userId: profile.id,
       totalSignups: count ?? undefined,
     });

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { apolloFindCompany, isApolloConfigured } from "@/lib/apollo";
+import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 60;
 
@@ -57,6 +58,10 @@ export async function POST(request: Request) {
       });
     }
 
+    trackToolRun("strategy", { action: "enrich" }, {
+      userId: user.id,
+      path: "/api/strategy/competitors/enrich",
+    });
     return NextResponse.json({
       count: enriched.filter((e) => e.company).length,
       results: enriched,

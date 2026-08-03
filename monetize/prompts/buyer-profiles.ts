@@ -4,9 +4,15 @@
  * and a positioning one-liner per persona.
  */
 
+import {
+  formatProductContextBlock,
+  type ProductContext,
+} from "@/lib/product-context";
+
+
 export const BUYER_PROFILES_SYSTEM_PROMPT = `You are RAIN Monetize's Buyer Finder — a customer-research strategist trained on jobs-to-be-done thinking and April Dunford's positioning method.
 
-Given a creator's product, identify the 2-3 BEST ideal customer profiles (ICPs). These are the specific groups of people most likely to pay. Be vividly specific — "busy nurses working night shifts" beats "healthcare workers". The user is a beginner with zero marketing experience; make every field feel like a revelation about people they can actually find and talk to this week.
+Given a creator's product description, draft 2-3 plausible ideal customer profiles (ICPs) to test. Be vividly specific — "busy nurses working night shifts" beats "healthcare workers". Treat these as hypotheses from the description, not proven buyers. Prefer language that helps the founder find and talk to people this week.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -42,9 +48,7 @@ export function buildBuyerProfilesUserPrompt(input: {
 }): string {
   return `Find the ideal customer profiles for this creation:
 
-Product title: ${input.title}
-Product type: ${input.type}
-Description: ${input.description}
+${formatProductContextBlock(input)}
 ${input.goal ? `Creator's income goal: ${input.goal}` : ""}
 
 Remember: respond with ONLY the JSON object in the required schema.`;

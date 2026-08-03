@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Make it RAIN — Logical Architecture</title>
+  <link rel="stylesheet" href="/architecture/assets/arch.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="/architecture">Make it <span>RAIN</span> · Arch</a>
+      <nav class="nav-mini" aria-label="Documents">
+        <a href="/architecture">Hub</a>
+        <a href="/architecture/rain_conceptual.html">Conceptual</a>
+        <a href="/architecture/rain_implementable.html">Implementable</a>
+        <a href="/architecture/rain_ai_extensibility.html">AI</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="inner">
+      <p class="eyebrow">RM-ODP · Logical</p>
+      <h1>Logical architecture</h1>
+      <p>Identifiers, information model, service boundaries, API surface, and key sequences. Deployment and as-built checklists live in Implementable.</p>
+      <div class="meta">
+        <span class="pill">Last updated: 2026-07-31</span>
+        <span class="pill">Viewpoints: Information · Computational · Engineering</span>
+      </div>
+      <p style="margin-top:16px;font-size:13px;color:var(--text-dim)">
+        Related:
+        <a href="/architecture/rain_conceptual.html">Conceptual</a> ·
+        <a href="/architecture/rain_implementable.html">Implementable</a> ·
+        <a href="/architecture/rain_ai_extensibility.html">AI extensibility</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <aside class="toc">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#map">Reader’s map</a></li>
+        <li><a href="#ids">Identifiers</a></li>
+        <li><a href="#model">Information model</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#apis">API surface</a></li>
+        <li><a href="#sequences">Sequences</a></li>
+        <li><a href="#gating">Tier gating</a></li>
+        <li><a href="#obs">Observability</a></li>
+      </ol>
+    </aside>
+
+    <main class="content">
+      <section id="map">
+        <h2><span class="n">0</span>Reader’s map</h2>
+        <table>
+          <thead>
+            <tr><th>Section</th><th>Use when</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>§1 Identifiers</td><td>You need join keys across Stripe, Supabase, assets</td></tr>
+            <tr><td>§2 Information model</td><td>You need table-level relationships</td></tr>
+            <tr><td>§3 Services</td><td>You need Does / Does NOT per logical component</td></tr>
+            <tr><td>§4 API surface</td><td>You need route inventory mapped to responsibility</td></tr>
+            <tr><td>§5 Sequences</td><td>You need checkout, tool-run, referral flows</td></tr>
+            <tr><td>§6 Tier gating</td><td>You need entitlement rules</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="ids">
+        <h2><span class="n">01</span>Identifiers and join keys</h2>
+        <table>
+          <thead>
+            <tr><th>Identifier</th><th>Space</th><th>Joins</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>auth.users.id</code> / <code>profiles.id</code></td><td>Supabase UUID</td><td>creations.user_id, assets, progress, analytics.user_id</td></tr>
+            <tr><td><code>profiles.stripe_customer_id</code></td><td>Stripe <code>cus_</code></td><td>Checkout, portal, webhooks, referral credits</td></tr>
+            <tr><td><code>profiles.referral_code</code></td><td>8-hex string</td><td>Signup <code>?ref=</code>, attribution, reward lookup</td></tr>
+            <tr><td><code>profiles.referred_by</code></td><td>UUID → profiles</td><td>Referral reward beneficiary</td></tr>
+            <tr><td><code>creations.id</code></td><td>UUID</td><td>generated_assets.creation_id, tool requests</td></tr>
+            <tr><td><code>generated_assets.type</code></td><td>String discriminator</td><td>Journey completion checks</td></tr>
+            <tr><td><code>billing_events.stripe_event_id</code></td><td>Stripe <code>evt_</code></td><td>Idempotent webhook ingest</td></tr>
+            <tr><td><code>referral_rewards.referee_id</code></td><td>UUID</td><td>One reward row per referee</td></tr>
+            <tr><td><code>session_id</code> (client)</td><td>Opaque</td><td>analytics_events session stitch</td></tr>
+            <tr><td>Unsubscribe token</td><td>HMAC’d lead id</td><td>/unsubscribe → email_leads.unsubscribed_at</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="model">
+        <h2><span class="n">02</span>Logical information model</h2>
+        <div class="diagram"><pre>
+profiles 1──* creations 1──* generated_assets
+    │              │
+    │              └──* progress_logs (via user + milestone)
+    │
+    ├── stripe_customer_id
+    ├── current_tier / subscription_status / trial_ends_at
+    ├── referral_code
+    └── referred_by ──► profiles.id
+
+profiles 1──* referral_rewards (as referrer)
+profiles 1──1 referral_rewards (as referee, at most one)
+
+billing_events *── stripe_event_id (unique)
+analytics_events *── user_id? , session_id
+email_leads 1── nurture_emails[] (ids) + unsubscribed_at?
+        </pre></div>
+
+        <h3>2.1 Asset typing (logical)</h3>
+        <p>Tool outputs land in <code>generated_assets</code> with a <code>type</code> that journey logic understands (analysis, pricing, funnel, strategy_*, dfy_request, etc.). Library/premium completion may also use client visit markers; that is an engineering detail called out in Implementable.</p>
+      </section>
+
+      <section id="services">
+        <h2><span class="n">03</span>Logical component model</h2>
+
+        <div class="card" style="margin-bottom:12px">
+          <h3>Identity & session</h3>
+          <p><strong>Does:</strong> Supabase email/password; cookie session refresh in middleware; protect dashboard/billing/onboarding; profile ensure on signup paths.</p>
+          <p><strong>Does NOT:</strong> Own subscription tier truth; call Grok; write Stripe.</p>
+        </div>
+        <div class="card" style="margin-bottom:12px">
+          <h3>Entitlement & billing sync</h3>
+          <p><strong>Does:</strong> Checkout session creation; portal sessions; webhook verification; map price → tier; write profile fields; append billing_events; trigger referral credit on first paid invoice.</p>
+          <p><strong>Does NOT:</strong> Trust client-posted tier; run nurture email content generation via Grok.</p>
+        </div>
+        <div class="card" style="margin-bottom:12px">
+          <h3>Tool orchestration</h3>
+          <p><strong>Does:</strong> Authenticate; resolve creation; <code>requireTier</code> for Growth/Pro; load prompt module; call <code>grokChatJSON</code>; persist asset; track tool_run.</p>
+          <p><strong>Does NOT:</strong> Mutate Stripe; bypass RLS with user JWT for other users’ rows.</p>
+        </div>
+        <div class="card" style="margin-bottom:12px">
+          <h3>Enrichment (Apollo)</h3>
+          <p><strong>Does:</strong> People search for ICP; company enrich for competitor strategy.</p>
+          <p><strong>Does NOT:</strong> Become the system of record for CRM; authorize sends.</p>
+        </div>
+        <div class="card" style="margin-bottom:12px">
+          <h3>Growth: referrals & nurture</h3>
+          <p><strong>Does:</strong> Attribute ref codes; credit 50% of amount_paid; checklist capture; schedule Resend sequence; honor unsubscribe.</p>
+          <p><strong>Does NOT:</strong> Cap lifetime referral earnings (product rule: stacks, no cap); send after unsubscribe.</p>
+        </div>
+        <div class="card">
+          <h3>Counter (analytics)</h3>
+          <p><strong>Does:</strong> Accept beacon events; store name/path/UTM/session/user/props; admin aggregates behind secret.</p>
+          <p><strong>Does NOT:</strong> Affect entitlement; expose PII beyond what the event payload already contains.</p>
+        </div>
+      </section>
+
+      <section id="apis">
+        <h2><span class="n">04</span>API surface map</h2>
+        <h3>4.1 Monetization tools</h3>
+        <table>
+          <thead>
+            <tr><th>Route</th><th>Tier floor</th><th>Reasoning</th><th>Persist</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>POST /api/analyze</code></td><td>Auth (Starter+)</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/buyers</code></td><td>Auth</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/buyers/leads</code></td><td>Auth</td><td>Apollo</td><td>response / asset context</td></tr>
+            <tr><td><code>POST /api/pricing</code></td><td>Auth</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/funnel</code></td><td>Growth</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/traffic</code></td><td>Growth</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/launch</code></td><td>Growth</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/content</code></td><td>Growth</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/progress</code></td><td>Growth</td><td>—</td><td>progress_logs</td></tr>
+            <tr><td><code>POST /api/strategy</code></td><td>Pro</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/strategy/competitors/enrich</code></td><td>Pro</td><td>Apollo</td><td>enrichment payload</td></tr>
+            <tr><td><code>POST /api/sales</code></td><td>Pro</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/results</code></td><td>Pro</td><td>Grok</td><td>metrics + asset</td></tr>
+            <tr><td><code>POST /api/revenue</code></td><td>Pro</td><td>Grok</td><td>generated_assets</td></tr>
+            <tr><td><code>POST /api/dfy</code></td><td>Pro</td><td>—</td><td>dfy request asset</td></tr>
+            <tr><td><code>POST /api/creations</code></td><td>Auth</td><td>—</td><td>creations</td></tr>
+          </tbody>
+        </table>
+
+        <h3>4.2 Commercial & growth</h3>
+        <table>
+          <thead>
+            <tr><th>Route</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>POST /api/stripe/checkout</code></td><td>Embedded subscription Checkout client secret</td></tr>
+            <tr><td><code>POST /api/stripe/portal</code></td><td>Customer Portal URL</td></tr>
+            <tr><td><code>POST /api/stripe/webhook</code></td><td>Billing source of truth + referral hook</td></tr>
+            <tr><td><code>POST /api/referral/apply</code></td><td>Attribute logged-in user to a code</td></tr>
+            <tr><td><code>POST /api/checklist</code></td><td>Lead capture + nurture enroll</td></tr>
+            <tr><td><code>POST /api/unsubscribe</code></td><td>Stop nurture; cancel scheduled sends</td></tr>
+            <tr><td><code>POST /api/track</code></td><td>Counter beacon</td></tr>
+            <tr><td><code>POST /api/notify-signup</code></td><td>Founder alert</td></tr>
+            <tr><td><code>GET /api/admin/*</code></td><td>Operator stats (secret-gated)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="sequences">
+        <h2><span class="n">05</span>Key sequences</h2>
+
+        <h3>5.1 Checkout and entitlement sync</h3>
+        <div class="diagram"><pre>
+Client                App API              Stripe               DB
+  │  POST /checkout      │                   │                   │
+  │─────────────────────►│ create customer   │                   │
+  │                      │──────────────────►│                   │
+  │                      │ create session    │                   │
+  │◄── clientSecret ─────│                   │                   │
+  │  (embedded UI)       │                   │                   │
+  │                      │   webhook: checkout.session.completed │
+  │                      │◄──────────────────│                   │
+  │                      │ sync tier/status  │──────────────────►│
+  │                      │ billing_events    │                   │
+        </pre></div>
+
+        <h3>5.2 Tool run</h3>
+        <div class="diagram"><pre>
+Client → POST /api/{tool}
+       → auth user
+       → requireTier? (growth/pro)
+       → resolveCreation (owned id or inline example)
+       → prompts/* + grokChatJSON
+       → insert generated_assets
+       → trackToolRun
+       → JSON response to UI
+        </pre></div>
+
+        <h3>5.3 Referral reward</h3>
+        <div class="diagram"><pre>
+invoice.payment_succeeded (amount_paid > 0)
+  → load referee profile (referred_by set, not yet rewarded)
+  → credit = 50% of amount_paid
+  → insert referral_rewards (unique referee)
+  → Stripe customer balance transaction on referrer
+        </pre></div>
+      </section>
+
+      <section id="gating">
+        <h2><span class="n">06</span>Tier gating logic</h2>
+        <ul>
+          <li>Ranks: starter = 1, growth = 2, pro = 3. Access is inclusive upward.</li>
+          <li>Null tier = Free (marketing surfaces only; tools require auth and often a paid/trial tier).</li>
+          <li>Trial: product places <code>current_tier = pro</code> while trial is active so the full journey is evaluable.</li>
+          <li>UI locks via <code>lib/journey.ts</code>; API enforces via <code>requireTier</code> on Growth/Pro routes.</li>
+          <li>Starter AI routes require authentication; Growth/Pro routes require both auth and tier.</li>
+        </ul>
+        <div class="note">Price ID → tier mapping is configuration in <code>lib/stripe.ts</code> / env (<code>STRIPE_PRICE_*</code>). See Implementable.</div>
+      </section>
+
+      <section id="obs">
+        <h2><span class="n">07</span>Engineering viewpoint (logical ops)</h2>
+        <table>
+          <thead>
+            <tr><th>Concern</th><th>Approach</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Authn refresh</td><td>Middleware <code>getUser()</code> on protected page routes</td></tr>
+            <tr><td>Idempotency</td><td><code>billing_events.stripe_event_id</code> unique upsert</td></tr>
+            <tr><td>Long AI calls</td><td><code>maxDuration = 300</code> on Grok routes (Vercel)</td></tr>
+            <tr><td>Admin</td><td>Shared secret header/query for Counter and signups</td></tr>
+            <tr><td>Email compliance</td><td>Unsubscribe token + List-Unsubscribe headers + postal address</td></tr>
+          </tbody>
+        </table>
+        <div class="note">For persistence DDL, env inventory, and as-built checklist, open <a href="/architecture/rain_implementable.html">Implementable Architecture</a>.</div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="inner">
+      <span>Reliable AI Network, LLC · Logical · RM-ODP</span>
+      <a href="/architecture">Back to hub</a>
+    </div>
+  </footer>
+</body>
+</html>

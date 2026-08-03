@@ -1,6 +1,10 @@
 type NotifySignupInput = {
   email: string;
   name?: string | null;
+  company?: string | null;
+  variant?: string | null;
+  /** Homepage A/B/C cookie at signup time */
+  homeAb?: string | null;
   userId?: string | null;
   totalSignups?: number;
 };
@@ -33,11 +37,16 @@ export async function notifyFounderOfSignup(
       ? `Total accounts now: ${input.totalSignups}`
       : "";
 
-  const subject = `New Make it RAIN signup: ${input.email}`;
+  const subject = `New Make it RAIN signup: ${input.email}${
+    input.variant === "reviewer" ? " (reviewer)" : ""
+  }`;
   const text = [
     `${name} just signed up for Make it RAIN.`,
     "",
     `Email: ${input.email}`,
+    input.company ? `Company / app: ${input.company}` : "",
+    input.variant ? `Variant: ${input.variant}` : "",
+    input.homeAb ? `Homepage A/B: ${input.homeAb}` : "",
     input.userId ? `User id: ${input.userId}` : "",
     totalLine,
     "",
@@ -52,6 +61,21 @@ export async function notifyFounderOfSignup(
       <p style="margin:0 0 12px"><strong>${escapeHtml(name)}</strong> just created an account.</p>
       <ul style="padding-left:18px;margin:0 0 16px">
         <li>Email: ${escapeHtml(input.email)}</li>
+        ${
+          input.company
+            ? `<li>Company / app: ${escapeHtml(input.company)}</li>`
+            : ""
+        }
+        ${
+          input.variant
+            ? `<li>Variant: ${escapeHtml(input.variant)}</li>`
+            : ""
+        }
+        ${
+          input.homeAb
+            ? `<li>Homepage A/B: ${escapeHtml(input.homeAb)}</li>`
+            : ""
+        }
         ${input.userId ? `<li>User id: ${escapeHtml(input.userId)}</li>` : ""}
         ${
           typeof input.totalSignups === "number"

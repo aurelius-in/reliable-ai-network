@@ -2,9 +2,16 @@ import { redirect } from "next/navigation";
 import { TopNav } from "@/components/TopNav";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import { TrialBanner } from "@/components/TrialBanner";
+import { AccessCodeAutoRedeem } from "@/components/AccessCodeAutoRedeem";
+import { ReviewerFeedbackBanner } from "@/components/ReviewerFeedbackBanner";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { ReferralAttributor } from "@/components/ReferralAttributor";
+import { ReferralNudge } from "@/components/ReferralNudge";
 import { DashboardTabs, type DashboardData } from "@/components/DashboardTabs";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { ensureReferralCode } from "@/lib/referral-server";
+import { getAppUrl } from "@/lib/stripe";
 import { DFY_ASSET_TYPE } from "@/lib/dfy";
 import type {
   BuyerProfilesResult,
@@ -179,14 +186,30 @@ export default async function DashboardPage() {
   const firstName =
     typedProfile?.name?.split(" ")[0] ?? user.email?.split("@")[0] ?? "creator";
 
+  const admin = createAdminClient();
+  const referralCode =
+    typedProfile?.referral_code ||
+    (await ensureReferralCode(admin, user.id));
+
   return (
     <div className="min-h-screen">
       <TopNav profile={typedProfile} />
 
       <main className="mx-auto max-w-6xl space-y-6 px-4 pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] md:space-y-8 md:py-8">
+        <ReferralAttributor />
         <TrialBanner profile={typedProfile} />
 
+        <AccessCodeAutoRedeem />
+
+        <ReviewerFeedbackBanner
+          subscriptionStatus={typedProfile?.subscription_status}
+        />
+
         <InstallPrompt />
+
+        {referralCode ? (
+          <ReferralNudge code={referralCode} appUrl={getAppUrl()} />
+        ) : null}
 
         <div>
           <h1 className="text-xl font-black text-white sm:text-2xl">

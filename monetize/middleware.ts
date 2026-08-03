@@ -46,10 +46,31 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Legacy reviewer links used ?access=RAIN26ADMIN (looks like an admin secret).
+  // Send them to the dedicated invite page with an opaque path.
+  const accessParam =
+    request.nextUrl.searchParams.get("access") ||
+    request.nextUrl.searchParams.get("code");
+  if (
+    accessParam &&
+    accessParam.trim().toUpperCase() === "RAIN26ADMIN" &&
+    !pathname.startsWith("/invite")
+  ) {
+    const inviteUrl = request.nextUrl.clone();
+    inviteUrl.pathname = "/invite/reviewer";
+    inviteUrl.search = "";
+    return NextResponse.redirect(inviteUrl);
+  }
+
   if ((pathname === "/login" || pathname === "/signup") && user) {
     const dashUrl = request.nextUrl.clone();
     dashUrl.pathname = "/dashboard";
+    // Preserve invite/access so logged-in reviewers still redeem.
+    const invite = request.nextUrl.searchParams.get("invite");
+    const access = request.nextUrl.searchParams.get("access");
     dashUrl.search = "";
+    if (invite) dashUrl.searchParams.set("invite", invite);
+    if (access) dashUrl.searchParams.set("access", access);
     return NextResponse.redirect(dashUrl);
   }
 

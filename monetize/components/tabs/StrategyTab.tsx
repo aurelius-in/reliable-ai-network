@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Brain, Building2, ExternalLink, Loader2 } from "lucide-react";
 import {
   CopyButton,
+  DownloadButton,
   ErrorText,
   FieldLabel,
   FunLoading,
@@ -12,6 +13,7 @@ import {
   choiceFromCreation,
   type ProductChoice,
 } from "@/components/ui";
+import { OutputCaveat } from "@/components/OutputCaveat";
 import type {
   AbTestPlan,
   CompetitorAnalysis,
@@ -143,8 +145,9 @@ export function StrategyTab({
             Think like a strategist
           </h2>
           <p className="helper-text">
-            The analysis a $500/hr consultant would do — done for your product
-            in seconds.
+            Structured strategy drafts from your product description —
+            competitors, pricing tests, roadmap, and experiments. Stronger when
+            you add real market evidence.
           </p>
         </div>
 
@@ -179,6 +182,8 @@ export function StrategyTab({
       </div>
 
       {loading && <FunLoading headline={`Running the ${activeMeta.label}…`} />}
+
+      {!loading && activeResult && <OutputCaveat tool={`strategy_${tool}`} />}
 
       {!loading && tool === "competitors" && results.competitors && (
         <CompetitorsResult result={results.competitors} />
@@ -248,25 +253,48 @@ function CompetitorsResult({ result }: { result: CompetitorAnalysis }) {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-              🔍 Market snapshot
+              Competitor scan
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-slate-200">
               {result.market_summary}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={enrichCompetitors}
-            disabled={enriching}
-            className="btn-secondary inline-flex shrink-0 items-center gap-2"
-          >
-            {enriching ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <Building2 size={14} />
-            )}
-            {enrichment ? "Refresh Apollo data" : "Enrich with Apollo"}
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <DownloadButton
+              filename="competitor-scan.md"
+              content={[
+                "# Competitor scan",
+                "",
+                result.market_summary,
+                "",
+                ...result.competitors.flatMap((c) => [
+                  `## ${c.name}`,
+                  c.description,
+                  `Pricing: ${c.pricing}`,
+                  `Strength: ${c.strength}`,
+                  `Weakness: ${c.weakness}`,
+                  `Your edge: ${c.your_edge}`,
+                  "",
+                ]),
+                "## Positioning moves",
+                ...result.positioning_moves.map((m) => `- ${m}`),
+              ].join("\n")}
+              label="Download"
+            />
+            <button
+              type="button"
+              onClick={enrichCompetitors}
+              disabled={enriching}
+              className="btn-secondary inline-flex shrink-0 items-center gap-2"
+            >
+              {enriching ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Building2 size={14} />
+              )}
+              {enrichment ? "Refresh Apollo data" : "Enrich with Apollo"}
+            </button>
+          </div>
         </div>
         <p className="mt-2 text-[11px] text-slate-500">
           Pulls firmographics (size, industry, LinkedIn) for each competitor
@@ -392,12 +420,39 @@ function CompetitorsResult({ result }: { result: CompetitorAnalysis }) {
 }
 
 function PricingOptResult({ result }: { result: PricingOptimization }) {
+  const md = [
+    "# Pricing optimization",
+    "",
+    result.diagnosis,
+    "",
+    `## Do this first`,
+    "",
+    result.recommended_move,
+    "",
+    "## Experiments",
+    "",
+    ...(result.experiments ?? []).flatMap((e) => [
+      `### ${e.name}`,
+      e.change,
+      `Expect: ${e.expected_impact}`,
+      `Risk: ${e.risk}`,
+      "",
+    ]),
+  ].join("\n");
+
   return (
     <div className="fade-up space-y-4">
       <div className="card-glow p-6">
-        <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-          📈 Diagnosis
-        </h3>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
+            Pricing diagnosis
+          </h3>
+          <DownloadButton
+            filename="pricing-optimization.md"
+            content={md}
+            label="Download"
+          />
+        </div>
         <p className="mt-2 text-sm leading-relaxed text-slate-200">
           {result.diagnosis}
         </p>
@@ -438,12 +493,38 @@ function PricingOptResult({ result }: { result: PricingOptimization }) {
 }
 
 function RoadmapResult({ result }: { result: RoadmapPlan }) {
+  const md = [
+    "# Growth roadmap",
+    "",
+    `**North star:** ${result.north_star}`,
+    "",
+    ...(result.phases ?? []).flatMap((phase) => [
+      `## ${phase.period} — ${phase.theme}`,
+      "",
+      "Goals:",
+      ...(phase.goals ?? []).map((g) => `- ${g}`),
+      "",
+      "Actions:",
+      ...(phase.actions ?? []).map((a) => `- **${a.task}** — ${a.why}`),
+      "",
+      `Success: ${phase.success_metric}`,
+      "",
+    ]),
+  ].join("\n");
+
   return (
     <div className="fade-up space-y-4">
       <div className="card-glow p-6">
-        <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-          🗺️ North star
-        </h3>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
+            North star
+          </h3>
+          <DownloadButton
+            filename="growth-roadmap.md"
+            content={md}
+            label="Download"
+          />
+        </div>
         <p className="mt-2 text-lg font-bold text-white">{result.north_star}</p>
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
@@ -478,14 +559,38 @@ function RoadmapResult({ result }: { result: RoadmapPlan }) {
 }
 
 function AbTestsResult({ result }: { result: AbTestPlan }) {
+  const md = [
+    "# A/B test plan",
+    "",
+    ...(result.tests ?? []).flatMap((t) => [
+      `## ${t.name}`,
+      `Hypothesis: ${t.hypothesis}`,
+      `A: ${t.variant_a}`,
+      `B: ${t.variant_b}`,
+      `Metric: ${t.metric}`,
+      `Duration: ${t.duration}`,
+      `Difficulty: ${t.difficulty}`,
+      "",
+    ]),
+    "## Principles",
+    ...(result.principles ?? []).map((p) => `- ${p}`),
+  ].join("\n");
+
   return (
     <div className="fade-up space-y-4">
+      <div className="flex justify-end">
+        <DownloadButton
+          filename="ab-test-plan.md"
+          content={md}
+          label="Download plan"
+        />
+      </div>
       <div className="space-y-3">
         {result.tests?.map((test, i) => (
           <div key={i} className="card p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h4 className="font-bold text-white">
-                🧪 {test.name}
+                {test.name}
               </h4>
               <div className="flex items-center gap-2">
                 <span

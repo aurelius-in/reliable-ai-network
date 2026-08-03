@@ -7,6 +7,7 @@ import {
 } from "@/prompts/launch-plan";
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { LaunchPlan } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 300;
 
@@ -84,5 +85,6 @@ export async function POST(request: Request) {
     console.error("Failed to persist launch plan:", assetError);
   }
 
+  trackToolRun("launch", {}, { userId: user.id, path: "/api/launch" });
   return NextResponse.json({ assetId: asset?.id ?? null, plan });
 }

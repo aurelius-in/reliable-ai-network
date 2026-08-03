@@ -1,5 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { makeReferralCode } from "@/lib/referrals";
 
 /** Postgres error code for a foreign-key violation. */
 const FOREIGN_KEY_VIOLATION = "23503";
@@ -23,6 +24,7 @@ export async function ensureProfile(user: User): Promise<boolean> {
         name:
           (user.user_metadata?.name as string | undefined) ??
           (email ? email.split("@")[0] : null),
+        referral_code: makeReferralCode(),
       },
       { onConflict: "id", ignoreDuplicates: true }
     );

@@ -14,27 +14,54 @@ import {
   choiceFromCreation,
   type ProductChoice,
 } from "@/components/ui";
+import { FirstDollarPath } from "@/components/FirstDollarPath";
+import { OutputCaveat } from "@/components/OutputCaveat";
+import { TermHint } from "@/components/TermHint";
 import { AUDIENCE_OPTIONS, PRICE_BAND_OPTIONS } from "@/lib/examples";
-import type { Creation, FunnelPlan, FunnelStage } from "@/types";
+import {
+  defaultAudienceFromBuyers,
+  defaultMotionFromCreation,
+} from "@/lib/tool-defaults";
+import type {
+  BuyerProfilesResult,
+  Creation,
+  FunnelPlan,
+  FunnelStage,
+} from "@/types";
+
+const MOTION_OPTIONS = [
+  { value: "outbound", label: "Outbound / sales-led" },
+  { value: "plg", label: "Product-led (PLG)" },
+  { value: "hybrid", label: "Hybrid" },
+];
 
 const STAGE_META: Record<
   FunnelStage["stage"],
-  { label: string; emoji: string; helper: string; accent: string }
+  {
+    label: string;
+    termId: "tripwire" | "core_offer" | "profit_maximizer";
+    emoji: string;
+    helper: string;
+    accent: string;
+  }
 > = {
   tripwire: {
     label: "Tripwire",
+    termId: "tripwire",
     emoji: "🪤",
     helper: "A cheap first offer that turns browsers into buyers.",
     accent: "border-pink/40",
   },
   core_offer: {
     label: "Core Offer",
+    termId: "core_offer",
     emoji: "💎",
     helper: "Your main product at its real price — where most money is made.",
     accent: "border-rain/50",
   },
   profit_maximizer: {
     label: "Profit Maximizer",
+    termId: "profit_maximizer",
     emoji: "🚀",
     helper: "An upsell for your happiest buyers. Pure extra profit.",
     accent: "border-violet/50",
@@ -74,16 +101,25 @@ function funnelToMarkdown(funnel: FunnelPlan): string {
 export function FunnelTab({
   creations,
   initialFunnel,
+  initialBuyers = null,
+  onJumpTab,
 }: {
   creations: Creation[];
   initialFunnel: FunnelPlan | null;
+  initialBuyers?: BuyerProfilesResult | null;
+  onJumpTab?: (tabId: string) => void;
 }) {
   const first = creations[0];
   const [choice, setChoice] = useState<ProductChoice | null>(
     first ? choiceFromCreation(first) : null
   );
-  const [priceBand, setPriceBand] = useState("mid");
-  const [audience, setAudience] = useState("creators");
+  const [priceBand, setPriceBand] = useState("mid-market");
+  const [audience, setAudience] = useState(() =>
+    defaultAudienceFromBuyers(initialBuyers)
+  );
+  const [motion, setMotion] = useState<string>(() =>
+    defaultMotionFromCreation(first)
+  );
   const [funnel, setFunnel] = useState<FunnelPlan | null>(initialFunnel);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -108,6 +144,7 @@ export function FunnelTab({
             PRICE_BAND_OPTIONS.find((p) => p.value === priceBand)?.label ??
             priceBand,
           audience,
+          motion,
         }),
       });
       const data = await res.json();
@@ -125,16 +162,31 @@ export function FunnelTab({
       <div className="card space-y-5 p-5">
         <div>
           <h2 className="text-lg font-bold text-white">
-            Build your money funnel
+            Path to paid (funnel)
           </h2>
           <p className="helper-text">
-            What&apos;s a funnel? A path that turns strangers into buyers:
-            a cheap first offer (tripwire) → your main product → a premium
-            upsell. We write the copy for every step.
+            A <TermHint id="funnel">funnel</TermHint> is the path from stranger
+            to paid: entry offer (
+            <TermHint id="tripwire">tripwire</TermHint> / pilot) →{" "}
+            <TermHint id="core_offer">core offer</TermHint> → expansion (
+            <TermHint id="profit_maximizer">upsell</TermHint>). Paste-ready copy
+            for every stage.
           </p>
         </div>
 
         <ProductPicker creations={creations} value={choice} onChange={setChoice} />
+
+        <div>
+          <FieldLabel helper="Shapes how the ladder is framed.">
+            Go-to-market motion
+          </FieldLabel>
+          <ChipGroup
+            options={MOTION_OPTIONS}
+            value={motion}
+            onChange={setMotion}
+            ariaLabel="Motion"
+          />
+        </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
@@ -150,7 +202,7 @@ export function FunnelTab({
           </div>
           <div>
             <FieldLabel helper="Who is most likely to pay for this?">
-              Who's it for?
+              Who&apos;s it for?
             </FieldLabel>
             <ChipGroup
               options={AUDIENCE_OPTIONS}
@@ -174,7 +226,13 @@ export function FunnelTab({
 
       {loading && <FunLoading headline="Designing your 3-step funnel…" />}
 
-      {!loading && funnel && <FunnelResult funnel={funnel} />}
+      {!loading && funnel && (
+        <FunnelResult
+          funnel={funnel}
+          buyerWho={initialBuyers?.best_first_target}
+          onJumpTab={onJumpTab}
+        />
+      )}
 
       {!loading && !funnel && (
         <TeachingEmptyState
@@ -187,9 +245,18 @@ export function FunnelTab({
   );
 }
 
-function FunnelResult({ funnel }: { funnel: FunnelPlan }) {
+function FunnelResult({
+  funnel,
+  buyerWho,
+  onJumpTab,
+}: {
+  funnel: FunnelPlan;
+  buyerWho?: string;
+  onJumpTab?: (tabId: string) => void;
+}) {
   return (
     <div className="fade-up space-y-6">
+      <OutputCaveat tool="funnel" />
       <div className="card-glow p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-xl font-black text-white">{funnel.funnel_name}</h3>
@@ -202,7 +269,32 @@ function FunnelResult({ funnel }: { funnel: FunnelPlan }) {
         <p className="mt-2 text-sm leading-relaxed text-slate-300">
           {funnel.strategy_summary}
         </p>
+        {funnel.motion && (
+          <p className="mt-2 text-xs font-semibold uppercase tracking-wider text-aqua">
+            Motion: {funnel.motion}
+          </p>
+        )}
       </div>
+
+      {funnel.first_dollar_offer && (
+        <FirstDollarPath
+          steps={{
+            offer: funnel.first_dollar_offer.name,
+            price: funnel.first_dollar_offer.price,
+            who: buyerWho || "Primary buyer for this funnel",
+            channel:
+              funnel.motion === "outbound"
+                ? "Outbound + landing page"
+                : funnel.motion === "plg"
+                  ? "Product-led signup + upgrade"
+                  : "Hybrid: outreach + product",
+            ask: funnel.first_dollar_offer.ask,
+            pay_how: "Checkout / invoice linked from CTA",
+            this_week: funnel.next_steps?.slice(0, 5) ?? [],
+          }}
+          onJump={onJumpTab}
+        />
+      )}
 
       {/* Visual flow diagram */}
       <div className="card p-6">
@@ -219,7 +311,12 @@ function FunnelResult({ funnel }: { funnel: FunnelPlan }) {
                 >
                   <p className="text-2xl">{meta?.emoji}</p>
                   <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                    Step {i + 1} · {meta?.label}
+                    Step {i + 1} ·{" "}
+                    {meta ? (
+                      <TermHint id={meta.termId}>{meta.label}</TermHint>
+                    ) : (
+                      stage.stage
+                    )}
                   </p>
                   <p className="mt-1 font-bold text-white">{stage.name}</p>
                   <p className="mt-1 text-lg font-black gradient-text">
@@ -255,7 +352,13 @@ function FunnelResult({ funnel }: { funnel: FunnelPlan }) {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                  {meta?.emoji} {meta?.label} · {stage.price}
+                  {meta?.emoji}{" "}
+                  {meta ? (
+                    <TermHint id={meta.termId}>{meta.label}</TermHint>
+                  ) : (
+                    stage.stage
+                  )}{" "}
+                  · {stage.price}
                 </p>
                 <p className="helper-text">{meta?.helper}</p>
               </div>
@@ -275,9 +378,16 @@ function FunnelResult({ funnel }: { funnel: FunnelPlan }) {
               ))}
             </ul>
             <p className="btn-primary mt-4 px-4 py-2 text-sm">{stage.cta}</p>
+            <p className="mt-1 text-[11px] text-slate-500">
+              That button text is your{" "}
+              <TermHint id="cta">CTA (call to action)</TermHint>.
+            </p>
             <p className="mt-4 rounded-lg bg-night-800 p-3 text-xs leading-relaxed text-slate-400">
-              💡 <span className="font-semibold text-slate-300">Pro tip:</span>{" "}
-              {stage.conversion_tip}
+              💡{" "}
+              <TermHint id="conversion" className="font-semibold !text-slate-300">
+                Conversion tip
+              </TermHint>
+              : {stage.conversion_tip}
             </p>
           </div>
         );

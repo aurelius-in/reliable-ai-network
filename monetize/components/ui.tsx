@@ -1,9 +1,9 @@
 "use client";
 
 /**
- * Shared beginner-friendly UI primitives used across every dashboard tool:
- * chip selectors, copy/download buttons, fun loading states, teaching
- * empty states, and the locked-tier preview card.
+ * Shared UI primitives used across dashboard tools:
+ * chip selectors, copy/download buttons, loading states, empty states,
+ * and the locked-tier preview card.
  */
 
 import { useEffect, useState } from "react";
@@ -18,8 +18,10 @@ import {
   Lock,
 } from "lucide-react";
 import { EXAMPLE_CREATIONS, LOADING_LINES } from "@/lib/examples";
+import { STAGE_OPTIONS } from "@/lib/product-context";
 import { RainBullet } from "@/components/RainBullet";
-import type { Creation } from "@/types";
+import { TermHint } from "@/components/TermHint";
+import type { Creation, EvidenceDoc } from "@/types";
 
 export { RainBullet } from "@/components/RainBullet";
 
@@ -107,17 +109,17 @@ export function choiceFromCreation(creation: Creation): ProductChoice {
 }
 
 export const CREATION_TYPE_OPTIONS: ChipOption[] = [
-  { value: "app", label: "📱 App" },
-  { value: "game", label: "🎮 Game" },
-  { value: "tool", label: "🔧 Tool" },
-  { value: "saas", label: "☁️ SaaS" },
-  { value: "content", label: "🎨 Content / Templates" },
-  { value: "other", label: "✨ Other" },
+  { value: "saas", label: "SaaS" },
+  { value: "app", label: "App" },
+  { value: "tool", label: "Tool / API" },
+  { value: "platform", label: "Platform" },
+  { value: "content", label: "Content / templates" },
+  { value: "other", label: "Other" },
 ];
 
 /**
- * Compact inline form to describe your own product from any tool tab.
- * Saves it to the `creations` table so it shows up everywhere afterwards.
+ * Expert product brief form — stage, traction, price, comps, GitHub, docs.
+ * Saves to `creations` so every tool can use the same evidence.
  */
 export function DescribeProductForm({
   onSaved,
@@ -126,9 +128,59 @@ export function DescribeProductForm({
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState("app");
+  const [type, setType] = useState("saas");
+  const [stage, setStage] = useState("building");
+  const [traction, setTraction] = useState("");
+  const [currentPrice, setCurrentPrice] = useState("");
+  const [competitors, setCompetitors] = useState("");
+  const [productUrl, setProductUrl] = useState("");
+  const [fetchWebsite, setFetchWebsite] = useState(true);
+  const [githubUrl, setGithubUrl] = useState("");
+  const [fetchGithub, setFetchGithub] = useState(true);
+  const [pendingDocs, setPendingDocs] = useState<EvidenceDoc[]>([]);
+  const [pendingPdfs, setPendingPdfs] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setError(null);
+    try {
+      const isPdf =
+        file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+      if (isPdf) {
+        setPendingPdfs((prev) =>
+          [...prev.filter((f) => f.name !== file.name), file].slice(-5)
+        );
+        return;
+      }
+      if (
+        !/\.(txt|md|markdown|csv|json|xml|yml|yaml|tsv)$/i.test(file.name) &&
+        !file.type.startsWith("text/") &&
+        file.type !== "application/json"
+      ) {
+        throw new Error(
+          "Upload evidence as .txt, .md, .csv, .json, or .pdf."
+        );
+      }
+      const text = await file.text();
+      const excerpt = text.replace(/\u0000/g, "").trim().slice(0, 8000);
+      if (!excerpt) throw new Error("That file looked empty.");
+      const doc: EvidenceDoc = {
+        name: file.name,
+        mime: file.type || "text/plain",
+        text_excerpt: excerpt,
+        uploaded_at: new Date().toISOString(),
+      };
+      setPendingDocs((prev) =>
+        [...prev.filter((d) => d.name !== doc.name), doc].slice(-5)
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not read file");
+    }
+  }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -143,15 +195,43 @@ export function DescribeProductForm({
           title: title.trim(),
           description: description.trim(),
           type,
+          stage,
+          traction: traction.trim() || null,
+          current_price: currentPrice.trim() || null,
+          competitors_notes: competitors.trim() || null,
+          product_url: productUrl.trim() || null,
+          github_repo_url: githubUrl.trim() || null,
+          evidence_docs: pendingDocs,
+          fetch_website: Boolean(fetchWebsite && productUrl.trim()),
+          fetch_github: Boolean(fetchGithub && githubUrl.trim()),
         }),
       });
       const data = await res.json();
       if (!res.ok || !data.creation) {
         throw new Error(data.error ?? "Failed to save your product");
       }
-      onSaved(data.creation as Creation);
+      let creation = data.creation as Creation;
+      for (const pdf of pendingPdfs) {
+        const form = new FormData();
+        form.set("creationId", creation.id);
+        form.set("file", pdf);
+        const up = await fetch("/api/creations/evidence", {
+          method: "POST",
+          body: form,
+        });
+        const upData = await up.json();
+        if (up.ok && upData.creation) creation = upData.creation as Creation;
+      }
+      onSaved(creation);
       setTitle("");
       setDescription("");
+      setTraction("");
+      setCurrentPrice("");
+      setCompetitors("");
+      setProductUrl("");
+      setGithubUrl("");
+      setPendingDocs([]);
+      setPendingPdfs([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -166,39 +246,191 @@ export function DescribeProductForm({
     >
       <div>
         <label className="mb-1.5 block text-sm font-semibold text-white">
-          What&apos;s it called?
+          Product name
         </label>
         <input
           type="text"
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. Meal Prep Genius"
+          placeholder="e.g. Ops Copilot"
           className="input-dark"
         />
       </div>
       <div>
         <label className="mb-1.5 block text-sm font-semibold text-white">
-          What does it do, and for whom?
+          What you sell, who buys, and why they pay
         </label>
         <textarea
           required
-          rows={3}
+          rows={5}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="e.g. Plans a week of meals from your budget and diet. Made for busy parents."
+          placeholder="Who buys, the problem, how they find you today, and the outcome they pay for. Specifics beat slogans."
           className="input-dark"
         />
-        <p className="helper-text">One or two plain sentences is plenty.</p>
+        <p className="helper-text mt-1.5">
+          Name your <TermHint id="icp">ICP</TermHint> (ideal buyer) and your{" "}
+          <TermHint id="distribution">distribution</TermHint> if you have any.
+          Tap dotted words for plain English.
+        </p>
       </div>
       <div>
-        <FieldLabel helper="Pick the closest match.">What kind of thing is it?</FieldLabel>
+        <label className="mb-1.5 block text-sm font-semibold text-white">
+          Product URL
+        </label>
+        <input
+          type="url"
+          value={productUrl}
+          onChange={(e) => setProductUrl(e.target.value)}
+          placeholder="https://yourproduct.com"
+          className="input-dark"
+        />
+        <label className="mt-2 flex items-center gap-2 text-xs text-slate-400">
+          <input
+            type="checkbox"
+            checked={fetchWebsite}
+            onChange={(e) => setFetchWebsite(e.target.checked)}
+            className="rounded border-night-600"
+          />
+          Pull public page copy into the audit (title, meta, body text)
+        </label>
+        <p className="helper-text mt-1.5">
+          Optional but recommended. Works alongside your description — we scrape
+          static HTML, not a full browser render.
+        </p>
+      </div>
+      <div>
+        <FieldLabel helper="Closest category.">Product type</FieldLabel>
         <ChipGroup
           options={CREATION_TYPE_OPTIONS}
           value={type}
           onChange={setType}
           ariaLabel="Product type"
         />
+      </div>
+      <div>
+        <FieldLabel helper="Shapes how aggressive the memo can be.">
+          <TermHint id="stage">Stage</TermHint>
+        </FieldLabel>
+        <ChipGroup
+          options={STAGE_OPTIONS.map((s) => ({
+            value: s.value,
+            label: s.label,
+          }))}
+          value={stage}
+          onChange={setStage}
+          ariaLabel="Product stage"
+        />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-white">
+            Current price / <TermHint id="packaging">packaging</TermHint>
+          </label>
+          <input
+            type="text"
+            value={currentPrice}
+            onChange={(e) => setCurrentPrice(e.target.value)}
+            placeholder="e.g. Free beta · planning $49/mo"
+            className="input-dark"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-white">
+            Public GitHub repo
+          </label>
+          <input
+            type="url"
+            value={githubUrl}
+            onChange={(e) => setGithubUrl(e.target.value)}
+            placeholder="https://github.com/owner/repo"
+            className="input-dark"
+          />
+          <label className="mt-2 flex items-center gap-2 text-xs text-slate-400">
+            <input
+              type="checkbox"
+              checked={fetchGithub}
+              onChange={(e) => setFetchGithub(e.target.checked)}
+              className="rounded border-night-600"
+            />
+            Pull README + repo summary into the brief
+          </label>
+        </div>
+      </div>
+      <div>
+        <label className="mb-1.5 block text-sm font-semibold text-white">
+          <TermHint id="traction">Traction</TermHint> / metrics
+        </label>
+        <textarea
+          rows={2}
+          value={traction}
+          onChange={(e) => setTraction(e.target.value)}
+          placeholder="e.g. 120 waitlist · 8 design partners · $0 MRR · 3 paid pilots last quarter"
+          className="input-dark"
+        />
+        <p className="helper-text mt-1.5">
+          Even tiny numbers help —{" "}
+          <TermHint id="waitlist">waitlist</TermHint>,{" "}
+          <TermHint id="design_partner">design partners</TermHint>,{" "}
+          <TermHint id="mrr">MRR</TermHint>, or{" "}
+          <TermHint id="pilot">paid pilots</TermHint>.
+        </p>
+      </div>
+      <div>
+        <label className="mb-1.5 block text-sm font-semibold text-white">
+          Competitors / alternatives
+        </label>
+        <textarea
+          rows={2}
+          value={competitors}
+          onChange={(e) => setCompetitors(e.target.value)}
+          placeholder="Who they use today, typical price bands, where you win/lose"
+          className="input-dark"
+        />
+      </div>
+      <div>
+        <FieldLabel helper="Text or PDF (.txt, .md, .csv, .json, .pdf). Max 5.">
+          Evidence docs
+        </FieldLabel>
+        <input
+          type="file"
+          accept=".txt,.md,.markdown,.csv,.json,.xml,.yml,.yaml,.tsv,.pdf,text/plain,text/markdown,text/csv,application/json,application/pdf"
+          onChange={onFileChange}
+          className="block w-full text-xs text-slate-400 file:mr-3 file:rounded-lg file:border-0 file:bg-night-700 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
+        />
+        {(pendingDocs.length > 0 || pendingPdfs.length > 0) && (
+          <ul className="mt-2 space-y-1 text-xs text-slate-300">
+            {pendingDocs.map((d) => (
+              <li key={d.name} className="flex items-center justify-between gap-2">
+                <span className="truncate">{d.name}</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPendingDocs((prev) => prev.filter((x) => x.name !== d.name))
+                  }
+                  className="text-slate-500 hover:text-white"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+            {pendingPdfs.map((f) => (
+              <li key={f.name} className="flex items-center justify-between gap-2">
+                <span className="truncate">{f.name} (PDF)</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPendingPdfs((prev) => prev.filter((x) => x.name !== f.name))
+                  }
+                  className="text-slate-500 hover:text-white"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <ErrorText message={error} />
       <button type="submit" disabled={saving} className="btn-primary px-5 py-2.5 text-sm">
@@ -430,19 +662,19 @@ export function TeachingEmptyState({
   title,
   body,
 }: {
-  emoji: string;
+  emoji?: string;
   title: string;
   body: string;
 }) {
   return (
     <div className="rounded-2xl border border-dashed border-night-600 bg-night-700/40 p-8 text-center">
-      <p className="text-3xl">{emoji}</p>
-      <h3 className="mt-2 font-bold text-white">{title}</h3>
+      {emoji ? <p className="text-3xl">{emoji}</p> : null}
+      <h3 className={`font-bold text-white ${emoji ? "mt-2" : ""}`}>{title}</h3>
       <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-slate-400">
         {body}
       </p>
-      <p className="mx-auto mt-3 flex items-center justify-center gap-1.5 text-sm font-bold text-aqua">
-        <RainBullet size={14} /> Start here
+      <p className="mx-auto mt-3 flex items-center justify-center gap-1.5 text-sm font-semibold text-aqua">
+        <RainBullet size={14} /> Configure inputs above, then run
       </p>
     </div>
   );

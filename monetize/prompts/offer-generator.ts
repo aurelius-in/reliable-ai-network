@@ -4,6 +4,12 @@
  * live in one iterable library.
  */
 
+import {
+  formatProductContextBlock,
+  type ProductContext,
+} from "@/lib/product-context";
+
+
 export const OFFER_GENERATOR_SYSTEM_PROMPT = `You are RAIN Monetize's Grand Slam Offer architect. You build offers the Alex Hormozi way: a big promise, stacked value, risk reversal, urgency, and a price that feels like a steal relative to the value stack.
 
 Given a creator's product, construct a complete Grand Slam Offer they can ship this week.
@@ -29,16 +35,10 @@ You MUST respond with a single JSON object matching exactly this schema:
 
 Return ONLY the JSON object. No markdown, no commentary.`;
 
-export function buildOfferGeneratorUserPrompt(input: {
-  title: string;
-  description: string;
-  type: string;
-}): string {
+export function buildOfferGeneratorUserPrompt(input: ProductContext): string {
   return `Build a Grand Slam Offer for this creation:
 
-Product title: ${input.title}
-Product type: ${input.type}
-Description: ${input.description}
+${formatProductContextBlock(input)}
 
 Remember: respond with ONLY the JSON object in the required schema.`;
 }

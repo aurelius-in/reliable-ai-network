@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Make it RAIN — Implementable Architecture</title>
+  <link rel="stylesheet" href="/architecture/assets/arch.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="/architecture">Make it <span>RAIN</span> · Arch</a>
+      <nav class="nav-mini" aria-label="Documents">
+        <a href="/architecture">Hub</a>
+        <a href="/architecture/rain_conceptual.html">Conceptual</a>
+        <a href="/architecture/rain_logical.html">Logical</a>
+        <a href="/architecture/rain_ai_extensibility.html">AI</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="inner">
+      <p class="eyebrow">RM-ODP · Implementable / Technology</p>
+      <h1>Implementable architecture</h1>
+      <p>As-built aligned checklist: what must exist in persistence, APIs, configuration, and evidence that the vertical slice works in production.</p>
+      <div class="meta">
+        <span class="pill">Last updated: 2026-07-31</span>
+        <span class="pill">Viewpoints: Engineering · Technology</span>
+        <span class="pill">Repo: rain-monetize / monetize</span>
+      </div>
+      <p style="margin-top:16px;font-size:13px;color:var(--text-dim)">
+        Related:
+        <a href="/architecture/rain_logical.html">Logical</a> ·
+        <a href="/architecture/rain_ai_extensibility.html">AI extensibility</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <aside class="toc">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#map">Reader’s map</a></li>
+        <li><a href="#stack">Technology stack</a></li>
+        <li><a href="#persist">Persistence</a></li>
+        <li><a href="#apis">Required APIs</a></li>
+        <li><a href="#env">Configuration</a></li>
+        <li><a href="#deploy">Deployment</a></li>
+        <li><a href="#security">Security boundaries</a></li>
+        <li><a href="#slice">Vertical slice checklist</a></li>
+        <li><a href="#evidence">Test evidence</a></li>
+      </ol>
+    </aside>
+
+    <main class="content">
+      <section id="map">
+        <h2><span class="n">0</span>Reader’s map</h2>
+        <div class="lede">
+          <p>This document answers: <strong>what must be true in the running system</strong> for Make it RAIN to match the Logical architecture. It is a critic’s checklist, not a tutorial.</p>
+        </div>
+      </section>
+
+      <section id="stack">
+        <h2><span class="n">01</span>Technology stack (as-built)</h2>
+        <table>
+          <thead>
+            <tr><th>Concern</th><th>Implementation</th><th>Location</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Web app</td><td>Next.js 15 App Router, React 19, TypeScript, Tailwind 4</td><td><code>app/</code>, <code>components/</code></td></tr>
+            <tr><td>Hosting</td><td>Vercel project <code>rain-monetize</code></td><td>prod: MakeItRainApp.com</td></tr>
+            <tr><td>Auth</td><td>Supabase Auth + <code>@supabase/ssr</code> cookies</td><td><code>lib/supabase/*</code>, <code>middleware.ts</code></td></tr>
+            <tr><td>Database</td><td>Supabase Postgres + RLS</td><td><code>supabase/*.sql</code></td></tr>
+            <tr><td>Billing</td><td>Stripe embedded Checkout, Portal, webhooks</td><td><code>app/api/stripe/*</code>, <code>lib/stripe.ts</code></td></tr>
+            <tr><td>AI</td><td>xAI Grok OpenAI-compatible chat + JSON mode</td><td><code>lib/grok.ts</code>, <code>prompts/*</code></td></tr>
+            <tr><td>Leads</td><td>Apollo.io REST</td><td><code>lib/apollo.ts</code></td></tr>
+            <tr><td>Email</td><td>Resend HTTP API</td><td><code>lib/email.ts</code>, <code>lib/nurture.ts</code></td></tr>
+            <tr><td>Analytics</td><td>First-party Counter</td><td><code>lib/track.ts</code>, <code>/api/track</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="persist">
+        <h2><span class="n">02</span>Persistence concepts that must exist</h2>
+        <table>
+          <thead>
+            <tr><th>Table</th><th>Must support</th><th>SQL source</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>profiles</code></td><td>tier, subscription_status, trial_ends_at, stripe_customer_id, referral_code, referred_by</td><td><code>schema.sql</code> + <code>referrals.sql</code></td></tr>
+            <tr><td><code>creations</code></td><td>user-owned product context</td><td><code>schema.sql</code></td></tr>
+            <tr><td><code>generated_assets</code></td><td>typed JSON outputs per creation</td><td><code>schema.sql</code></td></tr>
+            <tr><td><code>billing_events</code></td><td>idempotent Stripe event audit</td><td><code>schema.sql</code></td></tr>
+            <tr><td><code>progress_logs</code></td><td>unique (user, milestone)</td><td><code>schema.sql</code></td></tr>
+            <tr><td><code>analytics_events</code></td><td>service-role inserts for Counter</td><td><code>analytics_events.sql</code></td></tr>
+            <tr><td><code>referral_rewards</code></td><td>one row per referee; credit audit</td><td><code>referrals.sql</code></td></tr>
+            <tr><td><code>email_leads</code></td><td>nurture_enrolled_at, nurture_emails, unsubscribed_at</td><td><code>email_leads*.sql</code></td></tr>
+          </tbody>
+        </table>
+        <div class="note">Signup trigger <code>handle_new_user</code> must create a profile (and referral code). Repair path: <code>lib/supabase/ensure-profile.ts</code>.</div>
+
+        <h3>2.1 RLS posture</h3>
+        <ul>
+          <li>User JWT: read/write own creations, assets, progress, profile fields allowed by policy.</li>
+          <li>Service role: webhooks, analytics insert, referral credit writes, lead/unsubscribe, admin reads.</li>
+          <li>Public must not insert into <code>analytics_events</code> or <code>billing_events</code> directly.</li>
+        </ul>
+      </section>
+
+      <section id="apis">
+        <h2><span class="n">03</span>Required API contracts (evidence of slice)</h2>
+        <p>Minimum set that proves the product vertical slice is live:</p>
+        <ol>
+          <li><code>POST /api/stripe/checkout</code> returns embedded <code>clientSecret</code> for a mapped price.</li>
+          <li><code>POST /api/stripe/webhook</code> verifies signature; syncs profile; records <code>billing_events</code>.</li>
+          <li><code>POST /api/creations</code> creates a row owned by the session user.</li>
+          <li>At least one Starter tool (<code>/api/analyze</code> or <code>/api/pricing</code>) returns JSON and persists <code>generated_assets</code>.</li>
+          <li>At least one Growth tool returns 403 for Starter-only entitlements and 200 for Growth+.</li>
+          <li><code>POST /api/track</code> accepts beacon and inserts via service role.</li>
+          <li><code>POST /api/checklist</code> + <code>POST /api/unsubscribe</code> enroll and stop nurture.</li>
+        </ol>
+      </section>
+
+      <section id="env">
+        <h2><span class="n">04</span>Configuration inventory (names only)</h2>
+        <table>
+          <thead>
+            <tr><th>Group</th><th>Variables</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Supabase</td><td><code>NEXT_PUBLIC_SUPABASE_URL</code>, <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code></td></tr>
+            <tr><td>Stripe</td><td><code>STRIPE_SECRET_KEY</code>, <code>NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code>, <code>STRIPE_WEBHOOK_SECRET</code>, <code>STRIPE_PRICE_STARTER</code>, <code>STRIPE_PRICE_GROWTH</code>, <code>STRIPE_PRICE_PRO</code></td></tr>
+            <tr><td>Grok</td><td><code>GROK_API_KEY</code>, <code>GROK_MODEL</code></td></tr>
+            <tr><td>App</td><td><code>NEXT_PUBLIC_APP_URL</code></td></tr>
+            <tr><td>Email / admin</td><td><code>RESEND_API_KEY</code>, <code>RESEND_FROM_EMAIL</code>, <code>ADMIN_STATS_SECRET</code>, <code>ADMIN_NOTIFY_EMAIL</code></td></tr>
+            <tr><td>Apollo</td><td><code>APOLLO_API_KEY</code></td></tr>
+            <tr><td>Optional</td><td><code>UNSUBSCRIBE_SECRET</code></td></tr>
+          </tbody>
+        </table>
+        <div class="badge-row">
+          <span class="badge">Live Stripe prices</span>
+          <span class="badge">Starter $29 · Growth $79 · Pro $149</span>
+        </div>
+      </section>
+
+      <section id="deploy">
+        <h2><span class="n">05</span>Deployment topology</h2>
+        <div class="diagram"><pre>
+[ Browser ]
+     │ HTTPS
+     ▼
+[ Vercel Edge / Node  — Next.js App Router ]
+     │                    │
+     │ supabase-js        │ fetch
+     ▼                    ▼
+[ Supabase Auth+DB ]   [ Stripe | xAI Grok | Apollo | Resend ]
+        </pre></div>
+        <ul>
+          <li>Webhook endpoint must be excluded from naive auth middleware blocking (<code>api/stripe/webhook</code>).</li>
+          <li>Supabase redirect URLs must include <code>/auth/callback</code>, <code>/auth/confirm</code>, <code>/reset-password</code>.</li>
+          <li>Production domain: <strong>https://MakeItRainApp.com</strong>.</li>
+        </ul>
+      </section>
+
+      <section id="security">
+        <h2><span class="n">06</span>Security boundaries</h2>
+        <table>
+          <thead>
+            <tr><th>Boundary</th><th>Control</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Session</td><td>HTTP-only cookies via Supabase SSR helpers</td></tr>
+            <tr><td>Data</td><td>Postgres RLS; service role never shipped to browser</td></tr>
+            <tr><td>Billing</td><td>Stripe signature verification on webhooks</td></tr>
+            <tr><td>Admin</td><td><code>ADMIN_STATS_SECRET</code> gate on admin APIs/pages</td></tr>
+            <tr><td>Email</td><td>Tokenized unsubscribe; cancel scheduled Resend ids</td></tr>
+            <tr><td>Architecture site</td><td>Unlisted: no nav/footer/sitemap; <code>noindex</code> on HTML docs</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="slice">
+        <h2><span class="n">07</span>Vertical slice checklist</h2>
+        <table>
+          <thead>
+            <tr><th>#</th><th>Capability</th><th>As-built artifact</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Signup → profile</td><td>Auth + trigger / ensure-profile</td></tr>
+            <tr><td>2</td><td>Checkout → trial Pro entitlement</td><td>Stripe + webhook sync</td></tr>
+            <tr><td>3</td><td>Create creation</td><td><code>/api/creations</code></td></tr>
+            <tr><td>4</td><td>Run Idea Analyzer</td><td><code>/api/analyze</code> + asset row</td></tr>
+            <tr><td>5</td><td>Journey next action</td><td><code>lib/journey.ts</code></td></tr>
+            <tr><td>6</td><td>Upgrade / portal</td><td>Checkout + Portal routes</td></tr>
+            <tr><td>7</td><td>Referral credit on first pay</td><td>webhook → <code>maybeCreditReferralReward</code></td></tr>
+            <tr><td>8</td><td>Checklist nurture + unsubscribe</td><td>Resend sequence + token</td></tr>
+            <tr><td>9</td><td>Counter event</td><td><code>/api/track</code></td></tr>
+            <tr><td>10</td><td>Legal surface</td><td><code>/terms</code>, <code>/privacy</code>, footer links on marketing pages</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="evidence">
+        <h2><span class="n">08</span>Suggested proof plan for critics</h2>
+        <ol>
+          <li><strong>Auth:</strong> Create account; confirm middleware blocks <code>/dashboard</code> when logged out.</li>
+          <li><strong>Billing:</strong> Start Checkout in test or carefully in live; confirm profile tier after webhook.</li>
+          <li><strong>Tool:</strong> Run analyzer; inspect <code>generated_assets</code> for user.</li>
+          <li><strong>Gate:</strong> With Starter (non-trial), call Growth API; expect 403.</li>
+          <li><strong>Referral:</strong> Attribute ref; complete first paid invoice; expect balance credit + reward row.</li>
+          <li><strong>Nurture:</strong> Submit checklist; receive email 1; unsubscribe; confirm no further sends.</li>
+          <li><strong>Ops:</strong> Hit <code>/api/track</code>; see row in <code>analytics_events</code>.</li>
+        </ol>
+        <div class="note">Journey tool catalog and AI policy: <a href="/architecture/rain_ai_extensibility.html">AI Extensibility</a>. Enterprise intent: <a href="/architecture/rain_conceptual.html">Conceptual</a>.</div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="inner">
+      <span>Reliable AI Network, LLC · Implementable · RM-ODP</span>
+      <a href="/architecture">Back to hub</a>
+    </div>
+  </footer>
+</body>
+</html>

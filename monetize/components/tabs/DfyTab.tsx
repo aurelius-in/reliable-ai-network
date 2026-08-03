@@ -1,18 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Gift, Loader2, Send } from "lucide-react";
 import {
   ChipGroup,
+  DownloadButton,
   ErrorText,
   FieldLabel,
+  ProductPicker,
+  choiceFromCreation,
+  type ProductChoice,
 } from "@/components/ui";
 import { AUDIENCE_OPTIONS, GOAL_OPTIONS, TONE_OPTIONS } from "@/lib/examples";
 import {
   DFY_ASSET_OPTIONS,
   DFY_STATUS_LABELS,
 } from "@/lib/dfy";
-import type { DfyRequestContent, GeneratedAsset } from "@/types";
+import { buildDfyInstantBrief } from "@/lib/dfy-brief";
+import { defaultAudienceFromBuyers } from "@/lib/tool-defaults";
+import type {
+  BuyerProfilesResult,
+  Creation,
+  DfyRequestContent,
+  GeneratedAsset,
+  PricingRecommendation,
+} from "@/types";
 
 const STATUS_STYLES: Record<string, string> = {
   queued: "bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/40",
@@ -27,18 +39,54 @@ const STATUS_STYLES: Record<string, string> = {
  */
 export function DfyTab({
   initialRequests,
+  creations = [],
+  initialBuyers = null,
+  initialPricings = {},
 }: {
   initialRequests: GeneratedAsset[];
+  creations?: Creation[];
+  initialBuyers?: BuyerProfilesResult | null;
+  initialPricings?: Record<string, PricingRecommendation>;
 }) {
+  const first = creations[0];
   const [requests, setRequests] = useState<GeneratedAsset[]>(initialRequests);
+  const [choice, setChoice] = useState<ProductChoice | null>(
+    first ? choiceFromCreation(first) : null
+  );
   const [assetType, setAssetType] = useState(DFY_ASSET_OPTIONS[0].id);
-  const [audience, setAudience] = useState("creators");
-  const [goal, setGoal] = useState("steady side income");
-  const [tone, setTone] = useState("bold and confident");
+  const [audience, setAudience] = useState(() =>
+    defaultAudienceFromBuyers(initialBuyers)
+  );
+  const [goal, setGoal] = useState("first paying customers");
+  const [tone, setTone] = useState("direct and executive");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [justSubmitted, setJustSubmitted] = useState(false);
+
+  const pricing = useMemo(() => {
+    if (choice?.creationId && initialPricings[choice.creationId]) {
+      return initialPricings[choice.creationId];
+    }
+    return Object.values(initialPricings)[0];
+  }, [choice, initialPricings]);
+
+  const sweetSpot = pricing?.price_ranges?.find(
+    (r) => r.model === pricing.recommended_model
+  )?.sweet_spot;
+
+  const instantBrief = buildDfyInstantBrief({
+    assetType,
+    productTitle: choice?.title || "Your product",
+    productDescription: choice?.description || "",
+    audience,
+    goal,
+    tone,
+    notes,
+    bestFirstTarget: initialBuyers?.best_first_target,
+    positioningLine: initialBuyers?.personas?.[0]?.positioning_line,
+    sweetSpotPrice: sweetSpot != null ? String(sweetSpot) : undefined,
+  });
 
   const now = new Date();
   const usedThisMonth = requests.some((request) => {
@@ -59,7 +107,14 @@ export function DfyTab({
       const res = await fetch("/api/dfy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assetType, audience, goal, tone, notes }),
+        body: JSON.stringify({
+          assetType,
+          audience,
+          goal,
+          tone,
+          notes,
+          creationId: choice?.creationId ?? null,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Could not submit request");
@@ -82,10 +137,10 @@ export function DfyTab({
             <Gift size={20} />
           </span>
           <div>
-            <p className="font-bold text-white">Monthly custom asset</p>
+            <p className="font-bold text-white">Monthly custom asset request</p>
             <p className="text-xs text-slate-400">
-              A human + AI team crafts one asset for you each month. Included
-              with Pro.
+              Submit one brief per month. It enters a queue and is delivered when
+              ready — not an instant auto-generate. Included with Pro.
             </p>
           </div>
         </div>
@@ -120,9 +175,32 @@ export function DfyTab({
               What should we make for you?
             </h2>
             <p className="helper-text">
-              Tap your picks — no long forms. We use everything you&apos;ve
-              generated in RAIN as context.
+              Download an instant creative brief now. Submit the monthly request
+              when you want the polished asset crafted for you.
             </p>
+          </div>
+
+          <ProductPicker
+            creations={creations}
+            value={choice}
+            onChange={setChoice}
+          />
+
+          <div className="rounded-xl border border-aqua/25 bg-aqua/5 p-4">
+            <p className="text-sm font-bold text-white">Instant creative brief</p>
+            <p className="mt-1 text-xs text-slate-400">
+              Available immediately. Does not use your monthly request.
+            </p>
+            <div className="mt-3">
+              <DownloadButton
+                filename={`${(choice?.title || "product")
+                  .toLowerCase()
+                  .replace(/[^a-z0-9]+/g, "-")
+                  .slice(0, 40)}-dfy-brief.md`}
+                content={instantBrief}
+                label="Download brief now"
+              />
+            </div>
           </div>
 
           <div>
@@ -224,6 +302,9 @@ export function DfyTab({
               const option = DFY_ASSET_OPTIONS.find(
                 (o) => o.id === content.asset_type
               );
+              const productName = creations.find(
+                (c) => c.id === request.creation_id
+              )?.title;
               return (
                 <div
                   key={request.id}
@@ -233,6 +314,9 @@ export function DfyTab({
                     <p className="font-bold text-white">
                       {option ? `${option.emoji} ${option.label}` : content.asset_type}
                     </p>
+                    {productName && (
+                      <p className="text-xs text-slate-300">For {productName}</p>
+                    )}
                     <p className="text-xs text-slate-400">
                       Requested{" "}
                       {new Date(request.created_at).toLocaleDateString("en-US", {

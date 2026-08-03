@@ -254,11 +254,12 @@ export function JourneyPie({
           Step {JOURNEY_STEPS.findIndex((s) => s.id === activeId) + 1} of 15
         </p>
         <p className="mt-1 flex items-center justify-center gap-1.5 text-base font-bold text-white">
-          {active.label}
+          {active.outcome}
           {!isUnlocked(activeId) && (
             <Lock size={14} className="text-slate-500" />
           )}
         </p>
+        <p className="mt-0.5 text-sm font-semibold text-aqua">{active.label}</p>
         <p className="mx-auto mt-1 max-w-[280px] text-sm text-slate-400">
           {active.beat}
         </p>

@@ -8,6 +8,7 @@ import {
 } from "@/prompts/metrics-optimizer";
 import { requireTier } from "@/lib/tool-request";
 import type { MetricsAnalysis, MetricsEntry } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 300;
 
@@ -101,6 +102,7 @@ export async function POST(request: Request) {
       );
     }
 
+    trackToolRun("results", {}, { userId: user.id, path: "/api/results" });
     return NextResponse.json({ assetId: asset.id, entry });
   }
 
@@ -169,6 +171,10 @@ export async function POST(request: Request) {
       console.error("Failed to persist metrics analysis:", assetError);
     }
 
+    trackToolRun("results", { action: "analyze" }, {
+      userId: user.id,
+      path: "/api/results",
+    });
     return NextResponse.json({ assetId: asset?.id ?? null, analysis });
   }
 

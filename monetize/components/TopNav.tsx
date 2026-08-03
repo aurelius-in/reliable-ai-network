@@ -9,6 +9,9 @@ export function TopNav({ profile }: { profile: Profile | null }) {
   const tier = profile?.current_tier;
   const status = profile?.subscription_status;
   const isTrialing = status === "trialing";
+  const isReviewer = status === "reviewer";
+  const isRetention = status === "retention";
+  const isComp = isReviewer || isRetention;
 
   return (
     <header
@@ -43,9 +46,15 @@ export function TopNav({ profile }: { profile: Profile | null }) {
             {tier === "pro" && <Crown size={12} />}
             {tierLabel(tier)}
             {isTrialing && <span className="font-medium normal-case">trial</span>}
+            {isReviewer && (
+              <span className="font-medium normal-case">reviewer</span>
+            )}
+            {isRetention && (
+              <span className="font-medium normal-case">comp</span>
+            )}
           </span>
 
-          {tier !== "pro" && (
+          {tier !== "pro" && !isComp && (
             <Link
               href="/pricing"
               className="hidden rounded-lg bg-gradient-to-r from-aqua via-violet to-rain px-3.5 py-1.5 text-xs font-bold text-white shadow-[0_0_18px_rgba(0,229,255,0.25)] transition hover:brightness-110 sm:inline-block"

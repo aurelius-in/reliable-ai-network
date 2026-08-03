@@ -1,7 +1,5 @@
 /**
- * The launch-journey milestone checklist shown in the Progress Tracker.
- * Completion state is persisted per-user in the `progress_logs` table,
- * keyed by the milestone `id` string.
+ * Path-to-revenue checklist for Momentum & next move.
  */
 
 export interface Milestone {
@@ -14,50 +12,50 @@ export interface Milestone {
 export const MILESTONES: Milestone[] = [
   {
     id: "analyzed_idea",
-    label: "Analyze my first idea",
-    helper: "Run the Idea Analyzer so you know your best money paths.",
+    label: "Score the opportunity",
+    helper: "Run the commercial opportunity brief so you know paths and kill criteria.",
     emoji: "💡",
   },
   {
+    id: "named_buyers",
+    label: "Name who will pay",
+    helper: "Lock ideal buyers and where to reach them before you write more code.",
+    emoji: "🎯",
+  },
+  {
     id: "built_pricing",
-    label: "Pick my price",
-    helper: "Use the Pricing Builder to choose a price that feels fair and pays you well.",
+    label: "Set a defensible price",
+    helper: "Pick a model, sweet spot, and a pricing experiment you can run.",
     emoji: "🏷️",
   },
   {
     id: "built_funnel",
-    label: "Build my funnel",
-    helper: "Tripwire → core offer → upsell. The Funnel Architect writes it for you.",
+    label: "Map the path to paid",
+    helper: "Tripwire → core offer → upsell (or your B2B equivalent).",
     emoji: "🌀",
   },
   {
     id: "created_content",
-    label: "Create launch content",
-    helper: "Generate posts, ads, and emails with the Content Generator.",
+    label: "Create launch messaging",
+    helper: "Posts, emails, and listing copy ready to publish this week.",
     emoji: "📣",
   },
   {
-    id: "published_page",
-    label: "Publish my product page",
-    helper: "Put your offer live on Gumroad, an app store, or your own site.",
-    emoji: "🌐",
-  },
-  {
-    id: "shared_publicly",
-    label: "Tell people about it",
-    helper: "Post about your product somewhere real people will see it.",
+    id: "first_outreach",
+    label: "Start real conversations",
+    helper: "Send outreach or publish where buyers already pay attention.",
     emoji: "📢",
   },
   {
     id: "first_dollar",
-    label: "Make my first $1",
-    helper: "The hardest dollar you'll ever earn — and the most important.",
+    label: "Make the first $1",
+    helper: "The hardest dollar. Proof the offer works with a real buyer.",
     emoji: "💵",
   },
   {
     id: "first_100",
     label: "Reach $100 total",
-    helper: "Proof this is real. Now it's about repeating what worked.",
+    helper: "Repeat what worked. Now it is a system, not a fluke.",
     emoji: "💰",
   },
 ];

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BadgeDollarSign, Loader2 } from "lucide-react";
+import { MonetizationBriefExport } from "@/components/MonetizationBriefExport";
 import { PricingResult } from "@/components/PricingResult";
 import {
   ErrorText,
@@ -11,6 +12,7 @@ import {
   choiceFromCreation,
   type ProductChoice,
 } from "@/components/ui";
+import { TermHint } from "@/components/TermHint";
 import type { Creation, PricingRecommendation } from "@/types";
 
 /**
@@ -39,6 +41,9 @@ export function PricingTab({
   const pricing = choice?.creationId
     ? pricings[choice.creationId]
     : examplePricing;
+  const selectedCreation = choice?.creationId
+    ? creations.find((c) => c.id === choice.creationId)
+    : null;
 
   async function generate() {
     if (!choice) return;
@@ -77,11 +82,14 @@ export function PricingTab({
       <div className="card space-y-5 p-5">
         <div>
           <h2 className="text-lg font-bold text-white">
-            What should you charge?
+            <TermHint id="pricing_economics">Pricing economics</TermHint>
           </h2>
           <p className="helper-text">
-            We&apos;ll suggest a price that pays you well without scaring buyers
-            away — plus sales copy you can paste anywhere.
+            <TermHint id="willingness_to_pay">Willingness-to-pay</TermHint>{" "}
+            logic, <TermHint id="packaging">packaging</TermHint> tradeoffs, and
+            a concrete experiment — not just a price guess. Better briefs
+            produce better numbers. Tap dotted words for plain-English
+            meanings.
           </p>
         </div>
 
@@ -115,7 +123,28 @@ export function PricingTab({
 
       {loading && <FunLoading headline="Building your pricing…" />}
 
-      {!loading && pricing && <PricingResult pricing={pricing} />}
+      {!loading && pricing && choice && (
+        <>
+          <MonetizationBriefExport
+            product={{
+              title: choice.title,
+              description: choice.description,
+              type: choice.type,
+              stage: selectedCreation?.stage,
+              traction: selectedCreation?.traction,
+              current_price: selectedCreation?.current_price,
+              competitors_notes: selectedCreation?.competitors_notes,
+              evidence_docs: selectedCreation?.evidence_docs,
+              github_repo_url: selectedCreation?.github_repo_url,
+              github_context: selectedCreation?.github_context,
+              product_url: selectedCreation?.product_url,
+              website_context: selectedCreation?.website_context,
+            }}
+            pricing={pricing}
+          />
+          <PricingResult pricing={pricing} />
+        </>
+      )}
 
       {!loading && !pricing && (
         <TeachingEmptyState

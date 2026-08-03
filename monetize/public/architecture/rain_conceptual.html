@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Make it RAIN — Conceptual Architecture</title>
+  <link rel="stylesheet" href="/architecture/assets/arch.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="/architecture">Make it <span>RAIN</span> · Arch</a>
+      <nav class="nav-mini" aria-label="Documents">
+        <a href="/architecture">Hub</a>
+        <a href="/architecture/rain_platform_summary.html">Summary</a>
+        <a href="/architecture/rain_logical.html">Logical</a>
+        <a href="/architecture/rain_implementable.html">Implementable</a>
+        <a href="/architecture/rain_ai_extensibility.html">AI</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="inner">
+      <p class="eyebrow">RM-ODP · Conceptual</p>
+      <h1>Conceptual architecture</h1>
+      <p>Stakeholder-readable view of intent, roles, core nouns, and computational story. Wire detail lives in Logical and Implementable documents.</p>
+      <div class="meta">
+        <span class="pill">Last updated: 2026-07-31</span>
+        <span class="pill">Owner: Reliable AI Network, LLC</span>
+        <span class="pill">Viewpoints: Enterprise · Information · Computational</span>
+      </div>
+      <p style="margin-top:16px;font-size:13px;color:var(--text-dim)">
+        Related:
+        <a href="/architecture/rain_platform_summary.html">Platform summary</a> ·
+        <a href="/architecture/rain_logical.html">Logical</a> ·
+        <a href="/architecture/rain_implementable.html">Implementable</a> ·
+        <a href="/architecture/rain_ai_extensibility.html">AI extensibility</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <aside class="toc">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#map">Reader’s map</a></li>
+        <li><a href="#terms">Term mapping</a></li>
+        <li><a href="#purpose">Purpose</a></li>
+        <li><a href="#enterprise">Enterprise</a></li>
+        <li><a href="#information">Information</a></li>
+        <li><a href="#computational">Computational</a></li>
+        <li><a href="#narrative">Narrative framing</a></li>
+        <li><a href="#nongoals">Non-goals</a></li>
+      </ol>
+    </aside>
+
+    <main class="content">
+      <section id="map">
+        <h2><span class="n">0</span>Reader’s map</h2>
+        <table>
+          <thead>
+            <tr><th>Section</th><th>What you get</th><th>Skip if…</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>§0.1 Term mapping</td><td>Canonical nouns and what they are not</td><td>You already know RAIN vocabulary</td></tr>
+            <tr><td>§1 Purpose</td><td>One-paragraph intent + bullets</td><td>—</td></tr>
+            <tr><td>§2 Enterprise</td><td>Objectives, constraints, stakeholders</td><td>You only need data shapes</td></tr>
+            <tr><td>§3 Information</td><td>Conceptual entity model</td><td>You need APIs (see Logical)</td></tr>
+            <tr><td>§4 Computational</td><td>Value flows at story level</td><td>You need sequence diagrams with IDs</td></tr>
+            <tr><td>§5 Narrative</td><td>Configure → Operate → Govern</td><td>Exec-only skim</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="terms">
+        <h2><span class="n">0.1</span>Term mapping</h2>
+        <table>
+          <thead>
+            <tr><th>Term</th><th>What it is</th><th>What it is not</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Creation</strong></td>
+              <td>The creator’s product or offer context (title, description, type) that tools operate on</td>
+              <td>Not a deployed app instance; not a Stripe product</td>
+            </tr>
+            <tr>
+              <td><strong>Tool</strong></td>
+              <td>A journey step that produces or records a durable asset (often via Grok)</td>
+              <td>Not an unconstrained chatbot; not a billing action</td>
+            </tr>
+            <tr>
+              <td><strong>Generated asset</strong></td>
+              <td>Versioned JSON (or structured) output stored for a creation and tool type</td>
+              <td>Not ephemeral chat history; not the source of entitlement</td>
+            </tr>
+            <tr>
+              <td><strong>Tier</strong></td>
+              <td>Entitlement floor: Starter, Growth, or Pro, synced from Stripe</td>
+              <td>Not a feature flag set by the model</td>
+            </tr>
+            <tr>
+              <td><strong>Journey</strong></td>
+              <td>Ordered 15-tool path across plan → execute → measure → scale</td>
+              <td>Not a marketing funnel for RAIN itself (that is separate)</td>
+            </tr>
+            <tr>
+              <td><strong>Profile</strong></td>
+              <td>User record holding billing, trial, referral, and tier state</td>
+              <td>Not the creation; not analytics events</td>
+            </tr>
+            <tr>
+              <td><strong>Reasoning layer</strong></td>
+              <td>Grok JSON completions used by tool APIs under app-owned prompts</td>
+              <td>Not the authority for money, identity, or RLS</td>
+            </tr>
+            <tr>
+              <td><strong>Counter</strong></td>
+              <td>First-party analytics pipeline into <code>analytics_events</code></td>
+              <td>Not a third-party marketing pixel substitute for product truth</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="purpose">
+        <h2><span class="n">01</span>Purpose</h2>
+        <div class="lede">
+          <p>This document states <strong>why the system exists</strong>, who it serves, which nouns matter, and how value moves at a conceptual level. It is written so an investor or architecture reviewer can judge whether the product was designed with clear boundaries before reading APIs or schemas.</p>
+        </div>
+        <ul>
+          <li>Separate enterprise intent from technology choices.</li>
+          <li>Make authority boundaries explicit (billing, identity, AI).</li>
+          <li>Give a stable vocabulary for Logical and Implementable docs.</li>
+        </ul>
+      </section>
+
+      <section id="enterprise">
+        <h2><span class="n">02</span>Enterprise viewpoint</h2>
+
+        <h3>2.1 Objectives</h3>
+        <ol>
+          <li>Help a creator define a monetizable creation and progress through a coherent tool journey.</li>
+          <li>Monetize RAIN itself via transparent subscription tiers with a 30-day trial.</li>
+          <li>Keep AI productive and bounded: structured assets, not autonomous business decisions.</li>
+          <li>Grow through referrals and checklist nurture without dark patterns (unsubscribe, clear Terms).</li>
+          <li>Operate with an as-built stack that is inspectable: Auth, Postgres RLS, Stripe webhooks, signed APIs.</li>
+        </ol>
+
+        <h3>2.2 Constraints and principles</h3>
+        <table>
+          <thead>
+            <tr><th>Principle</th><th>Implication</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Billing is source of truth</td><td>Profile tier/status follows Stripe events, not UI optimism</td></tr>
+            <tr><td>AI proposes, app disposes</td><td>Model outputs become assets only after API validation and persist rules</td></tr>
+            <tr><td>Least privilege data access</td><td>User data via RLS; service role only for webhooks, track, admin ops</td></tr>
+            <tr><td>Journey over toolbox chaos</td><td>Tools are ordered; next-best-action guides progress</td></tr>
+            <tr><td>Honest commercial surface</td><td>Trial end charge, auto-renew, referral rules stated in product and Terms</td></tr>
+          </tbody>
+        </table>
+
+        <h3>2.3 Stakeholders and roles</h3>
+        <table>
+          <thead>
+            <tr><th>Role</th><th>Cares about</th><th>Does</th><th>Does not</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Creator (subscriber)</td>
+              <td>Speed to a priced offer and buyers</td>
+              <td>Runs tools, manages billing, refers peers</td>
+              <td>Does not administer platform infra</td>
+            </tr>
+            <tr>
+              <td>Prospect (checklist lead)</td>
+              <td>Whether RAIN is worth a trial</td>
+              <td>Submits checkup; receives nurture</td>
+              <td>Does not access dashboard tools until signup</td>
+            </tr>
+            <tr>
+              <td>Operator (RAIN)</td>
+              <td>Conversion, reliability, abuse</td>
+              <td>Reads Counter/admin; configures Stripe/Resend</td>
+              <td>Does not silently invent testimonials or hide pricing</td>
+            </tr>
+            <tr>
+              <td>Architecture critic / investor</td>
+              <td>Boundaries, durability, AI honesty</td>
+              <td>Reads this doc set</td>
+              <td>Does not need production secrets</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>2.4 What the system does NOT do (today)</h3>
+        <ul>
+          <li>Does not process payments between the creator and their end customers.</li>
+          <li>Does not claim the model “knows” live market truth without enrichment sources.</li>
+          <li>Does not grant tier access from a prompt response.</li>
+          <li>Does not replace legal counsel, tax advice, or securities advice for the creator’s business.</li>
+        </ul>
+      </section>
+
+      <section id="information">
+        <h2><span class="n">03</span>Information viewpoint (conceptual)</h2>
+        <p>Core nouns and relationships. Field-level schemas are in Implementable; join keys in Logical.</p>
+        <div class="diagram"><pre>
+┌──────────┐  owns   ┌────────────┐  produces  ┌──────────────────┐
+│ Profile  │────────►│ Creation   │───────────►│ Generated asset  │
+└────┬─────┘         └────────────┘            └──────────────────┘
+     │                      │
+     │ has                  │ referenced by
+     ▼                      ▼
+┌──────────┐         ┌────────────┐
+│ Tier /   │         │ Progress   │
+│ Sub status│        │ milestone  │
+└──────────┘         └────────────┘
+
+Profile ──refers──► Profile (referred_by)
+Profile ──earns───► Referral reward  (on first paid invoice)
+Prospect ─────────► Email lead ──► Nurture emails
+Session ──────────► Analytics event
+        </pre></div>
+
+        <h3>3.1 Conceptual entities</h3>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Identity & commercial</h3>
+            <ul>
+              <li>Profile (user)</li>
+              <li>Subscription status / trial window</li>
+              <li>Tier entitlement</li>
+              <li>Referral code and rewards</li>
+              <li>Billing event (audit)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Product work</h3>
+            <ul>
+              <li>Creation</li>
+              <li>Generated asset (typed)</li>
+              <li>Progress milestone</li>
+              <li>Journey position (derived)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Growth surfaces</h3>
+            <ul>
+              <li>Email lead</li>
+              <li>Nurture enrollment</li>
+              <li>Unsubscribe state</li>
+              <li>Analytics event</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>External facts</h3>
+            <ul>
+              <li>Stripe customer / subscription</li>
+              <li>Apollo person / company (ephemeral to request unless saved in asset)</li>
+              <li>Resend message ids</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="computational">
+        <h2><span class="n">04</span>Computational viewpoint (story level)</h2>
+
+        <h3>4.1 Primary value flow</h3>
+        <div class="diagram"><pre>
+Creator signs up → Profile created
+        → Selects plan → Stripe Checkout (trial)
+        → Webhook syncs tier
+        → Creates Creation
+        → Runs Tool (auth + tier gate)
+        → Reasoning layer returns JSON
+        → Asset persisted
+        → Journey advances / next-best-action updates
+        </pre></div>
+
+        <h3>4.2 Supporting flows</h3>
+        <table>
+          <thead>
+            <tr><th>Flow</th><th>Trigger</th><th>Conceptual result</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Lead nurture</td><td>Checklist submit</td><td>Lead enrolled; five timed emails; can unsubscribe</td></tr>
+            <tr><td>Referral credit</td><td>Referee first paid invoice</td><td>Referrer Stripe balance credit; reward row</td></tr>
+            <tr><td>Portal manage</td><td>Billing page</td><td>Stripe Customer Portal; webhook keeps profile honest</td></tr>
+            <tr><td>Counter</td><td>Page/tool/UI events</td><td>First-party event store for operator insight</td></tr>
+          </tbody>
+        </table>
+
+        <h3>4.3 Computational objects (conceptual services)</h3>
+        <table>
+          <thead>
+            <tr><th>Object</th><th>Responsibility</th><th>Does not</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Identity service</td><td>Sessions, profile bootstrap</td><td>Does not price plans</td></tr>
+            <tr><td>Entitlement service</td><td>Map Stripe → tier; gate tools</td><td>Does not invent trial state client-side as truth</td></tr>
+            <tr><td>Tool orchestration</td><td>Resolve creation, call reasoning, persist asset</td><td>Does not bypass tier checks for Growth/Pro tools</td></tr>
+            <tr><td>Enrichment</td><td>Apollo lookups for ICP / competitors</td><td>Does not replace pricing or legal judgment</td></tr>
+            <tr><td>Commercial ledger</td><td>Webhook ingest, billing_events, referrals</td><td>Does not run Grok</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="narrative">
+        <h2><span class="n">05</span>Narrative framing</h2>
+        <p>Three modes of using the platform, analogous to configure / operate / govern in industrial systems:</p>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Configure</h3>
+            <p>Sign up, choose tier, create the Creation, set referral attribution. Establishes identity and commercial context.</p>
+          </div>
+          <div class="card">
+            <h3>Operate</h3>
+            <p>Run journey tools, generate assets, pull leads, track milestones. Day-to-day creator work.</p>
+          </div>
+          <div class="card">
+            <h3>Govern</h3>
+            <p>Billing portal, cancel/upgrade, unsubscribe from nurture, Terms/Privacy, operator Counter views. Control and accountability.</p>
+          </div>
+          <div class="card">
+            <h3>Critical semantics</h3>
+            <p>Trial users are entitled at Pro during trial; after trial, paid tier and <code>invoice.payment_succeeded</code> drive commercial reality including referrals.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="nongoals">
+        <h2><span class="n">06</span>Open decisions (parked)</h2>
+        <ul>
+          <li>Multi-creation advanced workspace UX vs single-creation focus for early GTM.</li>
+          <li>Deeper CRM sync beyond Apollo fetch (out of current scope).</li>
+          <li>Team seats / org accounts (not in current profile model).</li>
+        </ul>
+        <div class="note">For identifiers, API inventory, and sequences, continue to <a href="/architecture/rain_logical.html">Logical Architecture</a>.</div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="inner">
+      <span>Reliable AI Network, LLC · Conceptual · RM-ODP</span>
+      <a href="/architecture">Back to hub</a>
+    </div>
+  </footer>
+</body>
+</html>

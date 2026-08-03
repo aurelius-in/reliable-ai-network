@@ -7,6 +7,7 @@ import {
 } from "@/prompts/strategy-tools";
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { StrategyToolId } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 300;
 
@@ -91,5 +92,6 @@ export async function POST(request: Request) {
     console.error("Failed to persist strategy asset:", assetError);
   }
 
+  trackToolRun("strategy", {}, { userId: user.id, path: "/api/strategy" });
   return NextResponse.json({ assetId: asset?.id ?? null, tool, result });
 }

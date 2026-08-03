@@ -6,6 +6,7 @@ import {
   personaToApolloSearch,
 } from "@/lib/apollo-icp";
 import type { BuyerPersona } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 60;
 
@@ -65,6 +66,7 @@ export async function POST(request: Request) {
       : audienceTextToApolloSearch(audienceText);
     const leads = await apolloPeopleSearch(query);
 
+    trackToolRun("buyers", {}, { userId: user.id, path: "/api/buyers" });
     return NextResponse.json({
       personaName: persona?.name ?? audienceText,
       query: {

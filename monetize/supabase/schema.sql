@@ -12,6 +12,8 @@ create table if not exists public.profiles (
   current_tier text check (current_tier in ('starter', 'growth', 'pro')),
   trial_ends_at timestamptz,
   subscription_status text, -- trialing | active | past_due | canceled | incomplete | unpaid
+  referral_code text,
+  referred_by uuid references public.profiles (id) on delete set null,
   created_at timestamptz not null default now()
 );
 
@@ -137,11 +139,12 @@ language plpgsql
 security definer set search_path = public
 as $$
 begin
-  insert into public.profiles (id, email, name)
+  insert into public.profiles (id, email, name, referral_code)
   values (
     new.id,
     new.email,
-    coalesce(new.raw_user_meta_data ->> 'name', split_part(new.email, '@', 1))
+    coalesce(new.raw_user_meta_data ->> 'name', split_part(new.email, '@', 1)),
+    upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 8))
   )
   on conflict (id) do nothing;
   return new;
@@ -158,6 +161,9 @@ create index if not exists creations_user_id_idx on public.creations (user_id);
 create index if not exists generated_assets_user_id_idx on public.generated_assets (user_id);
 create index if not exists generated_assets_creation_id_idx on public.generated_assets (creation_id);
 create index if not exists billing_events_user_id_idx on public.billing_events (user_id);
+create unique index if not exists profiles_referral_code_uidx
+  on public.profiles (referral_code)
+  where referral_code is not null;
 create index if not exists progress_logs_user_id_idx on public.progress_logs (user_id);
 
 -- ============================================================

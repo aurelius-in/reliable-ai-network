@@ -14,13 +14,15 @@ import {
   choiceFromCreation,
   type ProductChoice,
 } from "@/components/ui";
+import { OutputCaveat } from "@/components/OutputCaveat";
 import {
   OUTREACH_CHANNEL_OPTIONS,
   TARGET_BUYER_OPTIONS,
   TONE_OPTIONS,
 } from "@/lib/examples";
 import { ApolloLeadsPanel } from "@/components/ApolloLeadsPanel";
-import type { Creation, SalesKit } from "@/types";
+import { defaultTargetBuyerFromBuyers } from "@/lib/tool-defaults";
+import type { BuyerProfilesResult, Creation, SalesKit } from "@/types";
 
 function kitToMarkdown(kit: SalesKit): string {
   const lines = ["# My direct sales kit", "", kit.strategy_note, "", "## Openers"];
@@ -51,6 +53,32 @@ function kitToMarkdown(kit: SalesKit): string {
   return lines.join("\n");
 }
 
+function csvEscape(value: string): string {
+  if (/[",\n]/.test(value)) return `"${value.replace(/"/g, '""')}"`;
+  return value;
+}
+
+function kitToCsv(kit: SalesKit): string {
+  const rows = [["type", "label", "message"]];
+  for (const o of kit.opener_messages) {
+    rows.push(["opener", o.label, o.message]);
+  }
+  for (const f of kit.follow_up_sequence) {
+    rows.push([
+      "follow_up",
+      `Touch ${f.touch} (${f.wait})`,
+      f.message,
+    ]);
+  }
+  for (const o of kit.objection_scripts) {
+    rows.push(["objection", o.objection, o.response]);
+  }
+  for (const step of kit.call_agenda) {
+    rows.push(["call_agenda", step.step, step.say_this]);
+  }
+  return rows.map((r) => r.map(csvEscape).join(",")).join("\n");
+}
+
 /**
  * Tab — Direct Sales Tools (Pro).
  * Personalized cold outreach openers, a follow-up sequence,
@@ -59,17 +87,21 @@ function kitToMarkdown(kit: SalesKit): string {
 export function SalesTab({
   creations,
   initialKit,
+  initialBuyers = null,
 }: {
   creations: Creation[];
   initialKit: SalesKit | null;
+  initialBuyers?: BuyerProfilesResult | null;
 }) {
   const first = creations[0];
   const [choice, setChoice] = useState<ProductChoice | null>(
     first ? choiceFromCreation(first) : null
   );
-  const [channel, setChannel] = useState("Instagram or X DMs");
-  const [tone, setTone] = useState("friendly and fun");
-  const [targetBuyer, setTargetBuyer] = useState("individual consumers");
+  const [channel, setChannel] = useState("cold email");
+  const [tone, setTone] = useState("direct and executive");
+  const [targetBuyer, setTargetBuyer] = useState(() =>
+    defaultTargetBuyerFromBuyers(initialBuyers)
+  );
   const [kit, setKit] = useState<SalesKit | null>(initialKit);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -198,20 +230,41 @@ function SalesResult({
 
   return (
     <div className="fade-up space-y-5">
+      <OutputCaveat tool="sales" />
       <div className="card-glow p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
             🤝 How to play it
           </h3>
-          <DownloadButton
-            filename="my-sales-kit.md"
-            content={kitToMarkdown(kit)}
-            label="Download kit"
-          />
+          <div className="flex flex-wrap gap-2">
+            <DownloadButton
+              filename="my-sales-kit.md"
+              content={kitToMarkdown(kit)}
+              label="Download kit"
+            />
+            <DownloadButton
+              filename="sales-openers.csv"
+              content={kitToCsv(kit)}
+              label="Export CSV"
+            />
+          </div>
         </div>
         <p className="mt-2 text-sm leading-relaxed text-slate-200">
           {kit.strategy_note}
         </p>
+        {kit.opener_messages[0] && (
+          <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+            <p className="text-[11px] font-black uppercase tracking-widest text-emerald-400">
+              First-dollar ask
+            </p>
+            <p className="mt-2 text-sm text-slate-200">
+              {kit.opener_messages[0].message}
+            </p>
+            <div className="mt-3">
+              <CopyButton text={kit.opener_messages[0].message} label="Copy ask" />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="card p-6">

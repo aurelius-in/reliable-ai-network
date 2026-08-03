@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { isComplimentaryStatus } from "@/lib/access-codes";
+import { maybeCreditReferralReward } from "@/lib/referral-rewards";
 import { getStripe, getTierForPriceId } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -67,17 +69,25 @@ export async function POST(request: Request) {
           (await userIdFromCustomer(admin, subscription.customer));
 
         if (userId) {
-          if (event.type === "customer.subscription.deleted") {
-            await admin
-              .from("profiles")
-              .update({
-                current_tier: null,
-                subscription_status: "canceled",
-                trial_ends_at: null,
-              })
-              .eq("id", userId);
-          } else {
-            await syncSubscriptionToProfile(admin, userId, subscription);
+          // Don't wipe complimentary access on Stripe cancel events.
+          const { data: existing } = await admin
+            .from("profiles")
+            .select("subscription_status")
+            .eq("id", userId)
+            .maybeSingle();
+          if (!isComplimentaryStatus(existing?.subscription_status)) {
+            if (event.type === "customer.subscription.deleted") {
+              await admin
+                .from("profiles")
+                .update({
+                  current_tier: null,
+                  subscription_status: "canceled",
+                  trial_ends_at: null,
+                })
+                .eq("id", userId);
+            } else {
+              await syncSubscriptionToProfile(admin, userId, subscription);
+            }
           }
         }
 
@@ -97,13 +107,31 @@ export async function POST(request: Request) {
         const userId = await userIdFromCustomer(admin, invoice.customer);
 
         if (userId && event.type === "invoice.payment_failed") {
-          await admin
+          const { data: existing } = await admin
             .from("profiles")
-            .update({ subscription_status: "past_due" })
-            .eq("id", userId);
+            .select("subscription_status")
+            .eq("id", userId)
+            .maybeSingle();
+          if (!isComplimentaryStatus(existing?.subscription_status)) {
+            await admin
+              .from("profiles")
+              .update({ subscription_status: "past_due" })
+              .eq("id", userId);
+          }
         }
-        // On success the paired customer.subscription.updated event syncs
-        // full state; we only need the audit log here.
+
+        if (
+          userId &&
+          event.type === "invoice.payment_succeeded" &&
+          (invoice.amount_paid ?? 0) > 0
+        ) {
+          await maybeCreditReferralReward(
+            admin,
+            userId,
+            invoice.id,
+            invoice.amount_paid ?? 0
+          );
+        }
 
         await logBillingEvent(admin, {
           userId,

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Make it RAIN — AI Extensibility</title>
+  <link rel="stylesheet" href="/architecture/assets/arch.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="/architecture">Make it <span>RAIN</span> · Arch</a>
+      <nav class="nav-mini" aria-label="Documents">
+        <a href="/architecture">Hub</a>
+        <a href="/architecture/rain_conceptual.html">Conceptual</a>
+        <a href="/architecture/rain_logical.html">Logical</a>
+        <a href="/architecture/rain_implementable.html">Implementable</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="inner">
+      <p class="eyebrow">RM-ODP · AI strategy / extensibility</p>
+      <h1>AI extensibility model</h1>
+      <p>Where intelligence sits, what it may touch, and how new tools extend the platform without moving authority into the model.</p>
+      <div class="meta">
+        <span class="pill">Last updated: 2026-07-31</span>
+        <span class="pill">Audience: Investors · AI architects</span>
+      </div>
+      <p style="margin-top:16px;font-size:13px;color:var(--text-dim)">
+        Related:
+        <a href="/architecture/rain_logical.html">Logical</a> ·
+        <a href="/architecture/rain_implementable.html">Implementable</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <aside class="toc">
+      <h2>On this page</h2>
+      <ol>
+        <li><a href="#thesis">Thesis</a></li>
+        <li><a href="#layers">Layers</a></li>
+        <li><a href="#pipeline">Tool pipeline</a></li>
+        <li><a href="#catalog">Tool catalog</a></li>
+        <li><a href="#apollo">Enrichment</a></li>
+        <li><a href="#prompts">Prompt ownership</a></li>
+        <li><a href="#nongoals">Non-goals</a></li>
+        <li><a href="#extend">How to extend</a></li>
+      </ol>
+    </aside>
+
+    <main class="content">
+      <section id="thesis">
+        <h2><span class="n">01</span>Thesis</h2>
+        <div class="lede">
+          <p><strong>AI is the reasoning layer, not the authority.</strong> Make it RAIN uses Grok to produce structured monetization artifacts under application-owned prompts and tier gates. Humans (creators) accept, edit, or discard outputs. Stripe and Supabase remain the systems of record for money and identity.</p>
+        </div>
+        <ul>
+          <li>Prefer JSON contracts over chat transcripts as product state.</li>
+          <li>Keep entitlement, pricing of RAIN itself, and referral math out of prompts.</li>
+          <li>Use external data (Apollo) when facts matter more than generation.</li>
+        </ul>
+      </section>
+
+      <section id="layers">
+        <h2><span class="n">02</span>Layered model</h2>
+        <div class="diagram"><pre>
+┌──────────────────────────────────────────────────────────┐
+│  Presentation — Dashboard tools, copy, journey UI        │
+└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  Application policy — auth, requireTier, resolveCreation │
+│  journey completion, referral rules, nurture rules       │
+└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  Reasoning — grokChatJSON + prompts/*                    │
+│  (structured suggestions for the creator’s business)     │
+└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  Enrichment — Apollo people / company                    │
+└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  Systems of record — Supabase Postgres, Stripe           │
+└──────────────────────────────────────────────────────────┘
+        </pre></div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>What AI does</h3>
+            <ul>
+              <li>Draft ICPs, pricing options, funnels, plans, content, strategy packs</li>
+              <li>Summarize “what’s working” from creator-entered metrics</li>
+              <li>Return parseable JSON for UI rendering and storage</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>What AI does not</h3>
+            <ul>
+              <li>Charge cards or change <code>current_tier</code></li>
+              <li>Write arbitrary SQL or weaken RLS</li>
+              <li>Send email or Apollo sequences autonomously</li>
+              <li>Act as legal/tax/securities advice</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="pipeline">
+        <h2><span class="n">03</span>Canonical tool pipeline</h2>
+        <div class="diagram"><pre>
+1. Authenticate session
+2. requireTier(required)     // Growth / Pro tools
+3. resolveCreation(...)      // owned creation or example context
+4. Build messages from prompts/{tool}.ts
+5. grokChatJSON&lt;T&gt;({ model, response_format: json_object })
+6. Validate / shape for UI
+7. INSERT generated_assets
+8. trackToolRun(...)
+9. Return payload
+        </pre></div>
+        <p>Implementation anchors: <code>lib/grok.ts</code>, <code>lib/tool-request.ts</code>, route handlers under <code>app/api/*</code>. Long-running routes set <code>maxDuration = 300</code>.</p>
+      </section>
+
+      <section id="catalog">
+        <h2><span class="n">04</span>Journey tool catalog</h2>
+        <table>
+          <thead>
+            <tr><th>#</th><th>Tool</th><th>Phase</th><th>Tier</th><th>Intelligence</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Idea Analyzer</td><td>plan</td><td>Starter</td><td>Grok</td></tr>
+            <tr><td>2</td><td>Find Your Buyers</td><td>plan</td><td>Starter</td><td>Grok + Apollo leads</td></tr>
+            <tr><td>3</td><td>Pricing Builder</td><td>plan</td><td>Starter</td><td>Grok</td></tr>
+            <tr><td>4</td><td>Quick-Start Library</td><td>plan</td><td>Starter</td><td>Curated content (no Grok)</td></tr>
+            <tr><td>5</td><td>Funnel Architect</td><td>execute</td><td>Growth</td><td>Grok</td></tr>
+            <tr><td>6</td><td>Get Eyes on Your Offer</td><td>execute</td><td>Growth</td><td>Grok</td></tr>
+            <tr><td>7</td><td>30-Day Launch Plan</td><td>execute</td><td>Growth</td><td>Grok</td></tr>
+            <tr><td>8</td><td>Content Generator</td><td>execute</td><td>Growth</td><td>Grok</td></tr>
+            <tr><td>9</td><td>Progress Tracker</td><td>measure</td><td>Growth</td><td>Structured milestones</td></tr>
+            <tr><td>10</td><td>Strategy Tools</td><td>measure</td><td>Pro</td><td>Grok + Apollo enrich</td></tr>
+            <tr><td>11</td><td>Direct Sales Tools</td><td>measure</td><td>Pro</td><td>Grok</td></tr>
+            <tr><td>12</td><td>What’s Working</td><td>measure</td><td>Pro</td><td>Grok on logged metrics</td></tr>
+            <tr><td>13</td><td>Ways to Get Paid</td><td>scale</td><td>Pro</td><td>Grok</td></tr>
+            <tr><td>14</td><td>Done-For-You</td><td>scale</td><td>Pro</td><td>Request capture (no Grok)</td></tr>
+            <tr><td>15</td><td>Premium Library</td><td>scale</td><td>Pro</td><td>Curated content</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="apollo">
+        <h2><span class="n">05</span>Enrichment vs generation</h2>
+        <table>
+          <thead>
+            <tr><th>Need</th><th>Mechanism</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Buyer personas, messaging angles</td><td>Grok</td><td>Creative structure from creation context</td></tr>
+            <tr><td>Named people matching ICP</td><td>Apollo search</td><td>External directory facts</td></tr>
+            <tr><td>Competitor firmographics</td><td>Apollo company enrich</td><td>Reduce hallucinated company stats</td></tr>
+            <tr><td>RAIN subscription price</td><td>Stripe + <code>lib/tiers.ts</code></td><td>Never model-authored</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="prompts">
+        <h2><span class="n">06</span>Prompt ownership</h2>
+        <ul>
+          <li>Each Grok-backed tool has a module under <code>prompts/</code> (system + user assembly).</li>
+          <li>Default model: <code>GROK_MODEL</code> or <code>grok-4.5</code> via <code>lib/grok.ts</code>.</li>
+          <li>Response format forced to JSON object for schema-shaped UI.</li>
+          <li><strong>Policy:</strong> commercial rules (trial length, referral percent, tier ranks) live in TypeScript, not in prompt text as authority.</li>
+        </ul>
+        <div class="note">Prompts may describe the creator’s domain. They must not be the store of entitlement truth.</div>
+      </section>
+
+      <section id="nongoals">
+        <h2><span class="n">07</span>Non-goals</h2>
+        <ul>
+          <li>Training or fine-tuning a proprietary foundation model in v1.</li>
+          <li>Agentic loops that spend money or email prospects without explicit UI actions.</li>
+          <li>Replacing Stripe Customer Portal with model-mediated cancellation.</li>
+          <li>Unstructured “chat with your business” as the primary UX (journey tools remain primary).</li>
+          <li>Claiming deterministic market truth from generation alone.</li>
+        </ul>
+      </section>
+
+      <section id="extend">
+        <h2><span class="n">08</span>Extensibility recipe</h2>
+        <p>To add a sixteenth tool without breaking the architecture:</p>
+        <ol>
+          <li>Add journey metadata in <code>lib/journey.ts</code> (phase, tier, completion rule).</li>
+          <li>Add prompt module if reasoning is required.</li>
+          <li>Add <code>app/api/{tool}/route.ts</code> following the canonical pipeline.</li>
+          <li>Enforce <code>requireTier</code> consistent with journey floor.</li>
+          <li>Persist a new <code>generated_assets.type</code> (or milestone) and wire UI.</li>
+          <li>Emit <code>trackToolRun</code>; document the route in Logical API map.</li>
+        </ol>
+        <h3>Future-friendly seams</h3>
+        <ul>
+          <li>Swap model provider behind <code>grokChatJSON</code> without changing tool routes.</li>
+          <li>Add retrieval over a creator’s prior assets before prompting.</li>
+          <li>Optional tool-calling / MCP bridges for ops, still behind policy layer.</li>
+        </ul>
+        <div class="note">Authority reminder for critics: if a proposed feature lets the model change billing or RLS, it is rejected by this architecture.</div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="inner">
+      <span>Reliable AI Network, LLC · AI Extensibility · RM-ODP</span>
+      <a href="/architecture">Back to hub</a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -22,6 +22,8 @@ import {
   type ProductChoice,
 } from "@/components/ui";
 import { RainBullet } from "@/components/RainBullet";
+import { OutputCaveat } from "@/components/OutputCaveat";
+import { TermHint } from "@/components/TermHint";
 import { GOAL_OPTIONS } from "@/lib/examples";
 import { buildLeadDm } from "@/lib/apollo-icp";
 import type { BuyerPersona, BuyerProfilesResult, Creation } from "@/types";
@@ -101,7 +103,7 @@ export function BuyersTab({
   const [choice, setChoice] = useState<ProductChoice | null>(
     first ? choiceFromCreation(first) : null
   );
-  const [goal, setGoal] = useState("steady side income");
+  const [goal, setGoal] = useState("first paying customers");
   const [result, setResult] = useState<BuyerProfilesResult | null>(initialResult);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -143,10 +145,11 @@ export function BuyersTab({
             Find the people who&apos;ll actually pay you
           </h2>
           <p className="helper-text">
-            Most creators guess who their buyers are, and guess wrong. This
-            builds 2-3 crystal-clear buyer profiles: who they are, where they
-            hang out online, and the exact words that make them buy. Then pull
-            real matching leads to message.
+            Draft 2–3{" "}
+            <TermHint id="persona">buyer personas</TermHint> from your product
+            description: who may pay, where they hang out, and{" "}
+            <TermHint id="positioning">positioning</TermHint> language to test.
+            Tap dotted words for plain English. Still verify before you pitch.
           </p>
         </div>
 
@@ -176,7 +179,7 @@ export function BuyersTab({
         <ErrorText message={error} />
       </div>
 
-      {loading && <FunLoading headline="Profiling your perfect buyers…" />}
+      {loading && <FunLoading headline="Drafting buyer profiles…" />}
 
       {!loading && result && (
         <BuyersResult
@@ -189,7 +192,7 @@ export function BuyersTab({
         <TeachingEmptyState
           emoji="🎯"
           title="Your buyer profiles appear here"
-          body="Pick a product, tap Find my buyers, and meet the 2-3 kinds of people most likely to pay you, with the exact places to find them online."
+          body="Pick a product, tap Find my buyers, and draft 2–3 buyer profiles to test — including where to look for them online."
         />
       )}
     </div>
@@ -205,6 +208,7 @@ function BuyersResult({
 }) {
   return (
     <div className="fade-up space-y-5">
+      <OutputCaveat tool="buyers" />
       <div className="card-glow p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
@@ -335,6 +339,9 @@ function PersonaCard({
       </div>
 
       <div className="mt-3 space-y-2">
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+          <TermHint id="objection">Objections</TermHint> you&apos;ll hear
+        </p>
         {persona.objections.map((obj, oi) => (
           <div key={oi} className="rounded-lg bg-night-800 p-3 text-xs">
             <p className="italic text-slate-400">&ldquo;{obj.objection}&rdquo;</p>
@@ -347,7 +354,7 @@ function PersonaCard({
 
       <div className="mt-4 rounded-xl border border-rain/40 bg-rain/10 p-3.5">
         <p className="text-[10px] font-black uppercase tracking-widest text-pink">
-          Your one-liner for them
+          <TermHint id="positioning">Positioning</TermHint> one-liner
         </p>
         <p className="mt-1 text-sm font-bold leading-snug text-white">
           {persona.positioning_line}

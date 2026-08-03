@@ -4,6 +4,12 @@
  * milestone checkpoints, and a contingency section.
  */
 
+import {
+  formatProductContextBlock,
+  type ProductContext,
+} from "@/lib/product-context";
+
+
 export const LAUNCH_PLAN_SYSTEM_PROMPT = `You are RAIN Monetize's Launch Planner — a launch strategist trained on Jeff Walker's Product Launch Formula and hundreds of indie product launches.
 
 Given a creator's product, build a concrete 30-day launch plan a total beginner can follow one day at a time. Organize the 30 days into 4 weekly phases. Each day gets ONE clear action (15-60 minutes). Where the action involves posting or messaging, include the full pre-written script — ready to paste, specific to their product, not a template skeleton. Weekends can be lighter ("rest" or 10-minute tasks). Days must be numbered 1-30 with no gaps.
@@ -50,9 +56,7 @@ export function buildLaunchPlanUserPrompt(input: {
 }): string {
   return `Build a 30-day launch plan for this creation:
 
-Product title: ${input.title}
-Product type: ${input.type}
-Description: ${input.description}
+${formatProductContextBlock(input)}
 ${input.audience ? `Primary audience: ${input.audience}` : ""}
 ${input.goal ? `Creator's goal: ${input.goal}` : ""}
 

@@ -1,22 +1,81 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Trophy } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { ErrorText } from "@/components/ui";
+import { FirstDollarPath, type FirstDollarSteps } from "@/components/FirstDollarPath";
 import { MILESTONES } from "@/lib/milestones";
-import { SUCCESS_STORIES } from "@/lib/success-wall";
+import { JOURNEY_STEPS } from "@/lib/journey";
+import type {
+  FunnelPlan,
+  IdeaAnalysis,
+  RevenueStreamsPlan,
+} from "@/types";
+
+const TAB_LABELS: Record<string, string> = Object.fromEntries(
+  JOURNEY_STEPS.map((s) => [s.id, s.label])
+);
+
+function deriveFirstDollar(args: {
+  revenue?: RevenueStreamsPlan | null;
+  funnel?: FunnelPlan | null;
+  analyses?: Record<string, IdeaAnalysis>;
+}): FirstDollarSteps | null {
+  if (args.revenue?.first_dollar_path) {
+    return args.revenue.first_dollar_path;
+  }
+  if (args.funnel?.first_dollar_offer) {
+    return {
+      offer: args.funnel.first_dollar_offer.name,
+      price: args.funnel.first_dollar_offer.price,
+      who: "Primary buyer for this funnel",
+      channel: "Landing page + outreach",
+      ask: args.funnel.first_dollar_offer.ask,
+      pay_how: "Checkout / invoice linked from CTA",
+      this_week: args.funnel.next_steps?.slice(0, 5) ?? [
+        "Publish the tripwire page",
+        "Send 10 outreach messages with the ask",
+        "Log replies in Results",
+      ],
+    };
+  }
+  const analysis = Object.values(args.analyses ?? {})[0];
+  if (analysis) {
+    return {
+      offer: analysis.big_promise || "Your first paid offer",
+      price: "Test price from Pricing Builder",
+      who: "Best-first buyer from Find Your Buyers",
+      channel: "Direct outreach this week",
+      ask: `Would you pay for help getting ${analysis.big_promise}?`,
+      pay_how: "Invoice or checkout link in the same thread",
+      this_week: analysis.validation_plan?.slice(0, 5) ??
+        analysis.quick_wins?.slice(0, 5) ?? [
+          "Run Pricing Builder",
+          "Run Find Your Buyers",
+          "Send 10 asks from Direct Sales",
+        ],
+    };
+  }
+  return null;
+}
 
 /**
- * Tab 6 — Progress Tracker + Success Wall (Growth).
- * Milestone checklist persisted to progress_logs, "assets ready" stats
- * from generated_assets, and a read-only wall of curated wins.
+ * Momentum & next move — checklist + first-dollar hub + auto next action.
  */
 export function ProgressTab({
   initialProgress,
   assetStats,
+  onJumpTab,
+  initialRevenue = null,
+  initialFunnel = null,
+  initialAnalyses = {},
 }: {
   initialProgress: Record<string, boolean>;
   assetStats: { total: number; byLabel: { label: string; count: number }[] };
+  onJumpTab?: (tabId: string) => void;
+  initialRevenue?: RevenueStreamsPlan | null;
+  initialFunnel?: FunnelPlan | null;
+  initialAnalyses?: Record<string, IdeaAnalysis>;
 }) {
   const [progress, setProgress] =
     useState<Record<string, boolean>>(initialProgress);
@@ -25,6 +84,80 @@ export function ProgressTab({
 
   const doneCount = MILESTONES.filter((m) => progress[m.id]).length;
   const percent = Math.round((doneCount / MILESTONES.length) * 100);
+
+  const firstDollar = useMemo(
+    () =>
+      deriveFirstDollar({
+        revenue: initialRevenue,
+        funnel: initialFunnel,
+        analyses: initialAnalyses,
+      }),
+    [initialRevenue, initialFunnel, initialAnalyses]
+  );
+
+  const suggested = useMemo(() => {
+    const labels = assetStats.byLabel.map((e) => e.label.toLowerCase());
+    const has = (needle: string) =>
+      labels.some((l) => l.includes(needle)) || assetStats.total > 0;
+
+    for (const m of MILESTONES) {
+      if (progress[m.id]) continue;
+      if (m.id === "analyzed_idea") {
+        return {
+          milestone: m,
+          tab: "analyzer",
+          reason: "You have not scored the opportunity yet. Start here.",
+        };
+      }
+      if (m.id === "built_pricing" && (has("idea") || has("analy"))) {
+        return {
+          milestone: m,
+          tab: "pricing",
+          reason:
+            "You have an analysis. Lock a defensible price and a test next.",
+        };
+      }
+      if (m.id === "named_buyers" && (has("idea") || has("analy"))) {
+        return {
+          milestone: m,
+          tab: "buyers",
+          reason: "Know exactly who pays before you write more copy.",
+        };
+      }
+      if (m.id === "built_funnel" && (has("pricing") || progress.built_pricing)) {
+        return {
+          milestone: m,
+          tab: "funnel",
+          reason: "Price without a path to paid leaves money on the table.",
+        };
+      }
+      if (
+        m.id === "created_content" &&
+        (has("funnel") || progress.built_funnel)
+      ) {
+        return {
+          milestone: m,
+          tab: "content",
+          reason: "Turn the offer into posts and emails people can act on.",
+        };
+      }
+      if (m.id === "first_outreach") {
+        return {
+          milestone: m,
+          tab: "sales",
+          reason:
+            "Assets without conversations rarely produce a first dollar.",
+        };
+      }
+      return {
+        milestone: m,
+        tab:
+          m.id === "first_dollar" || m.id === "first_100" ? "results" : "launch",
+        reason: m.helper,
+      };
+    }
+    return null;
+  }, [progress, assetStats]);
 
   async function toggle(milestoneId: string) {
     const next = !progress[milestoneId];
@@ -42,7 +175,6 @@ export function ProgressTab({
         throw new Error(data.error ?? "Could not save");
       }
     } catch (err) {
-      // Roll back the optimistic update.
       setProgress((prev) => ({ ...prev, [milestoneId]: !next }));
       setError(err instanceof Error ? err.message : "Could not save progress");
     } finally {
@@ -52,7 +184,14 @@ export function ProgressTab({
 
   return (
     <div className="space-y-6">
-      {/* Stats */}
+      <div className="card p-5">
+        <h2 className="text-lg font-bold text-white">Momentum &amp; next move</h2>
+        <p className="helper-text">
+          Track the path to first revenue. The next move is suggested from what
+          you have already generated, so you stop guessing what to do this week.
+        </p>
+      </div>
+
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="card-glow p-5">
           <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
@@ -62,13 +201,12 @@ export function ProgressTab({
             {assetStats.total}
           </p>
           <p className="helper-text">
-            Everything you&apos;ve generated — analyses, funnels, content, and
-            more.
+            Analyses, pricing, funnels, content, and kits you have generated.
           </p>
         </div>
         <div className="card p-5">
           <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-            Journey progress
+            Path progress
           </p>
           <p className="mt-1 text-4xl font-black text-white">{percent}%</p>
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-night-800">
@@ -84,7 +222,7 @@ export function ProgressTab({
           </p>
           {assetStats.byLabel.length === 0 ? (
             <p className="mt-2 text-sm text-slate-400">
-              Nothing yet — run any tool and it lands here.
+              Nothing yet. Run Analyzer for your free commercial score.
             </p>
           ) : (
             <ul className="mt-2 space-y-1 text-sm text-slate-300">
@@ -99,13 +237,38 @@ export function ProgressTab({
         </div>
       </div>
 
-      {/* Milestones */}
+      {firstDollar && (
+        <FirstDollarPath steps={firstDollar} onJump={onJumpTab} />
+      )}
+
+      {suggested && (
+        <div className="rounded-2xl border border-rain/40 bg-gradient-to-br from-rain/10 to-night-800 p-5">
+          <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-rain-bright">
+            <Sparkles size={14} /> Next money move
+          </p>
+          <p className="mt-2 text-lg font-bold text-white">
+            {suggested.milestone.emoji} {suggested.milestone.label}
+          </p>
+          <p className="mt-1 text-sm text-slate-300">{suggested.reason}</p>
+          {onJumpTab && (
+            <button
+              type="button"
+              onClick={() => onJumpTab(suggested.tab)}
+              className="btn-primary mt-4 inline-flex items-center gap-2 !px-4 !py-2.5 text-sm"
+            >
+              Open {TAB_LABELS[suggested.tab] ?? suggested.tab}{" "}
+              <ArrowRight size={14} />
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="card p-6">
         <h3 className="text-lg font-bold text-white">
           Your path to first revenue
         </h3>
         <p className="helper-text">
-          Tap a step when you&apos;ve done it. Each one moves real money closer.
+          Tap a step when you have done it. Each one moves a paid yes closer.
         </p>
         <ErrorText message={error} />
         <div className="mt-4 space-y-2">
@@ -144,45 +307,6 @@ export function ProgressTab({
               </button>
             );
           })}
-        </div>
-      </div>
-
-      {/* Success wall */}
-      <div>
-        <div className="mb-3 flex items-center gap-2">
-          <Trophy size={18} className="text-violet-bright" />
-          <h3 className="text-lg font-bold text-white">Success Wall</h3>
-          <span className="rounded-full bg-night-700 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Community wins
-          </span>
-        </div>
-        <p className="mb-4 text-sm text-slate-400">
-          Real plays from creators like you. Steal what worked.
-        </p>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {SUCCESS_STORIES.map((story) => (
-            <div
-              key={story.name}
-              className="rounded-2xl border border-night-600 bg-night-700 p-5 transition hover:border-violet/40"
-            >
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-night-800 text-xl">
-                  {story.emoji}
-                </span>
-                <div>
-                  <p className="font-bold text-white">{story.name}</p>
-                  <p className="text-xs text-slate-400">{story.product}</p>
-                </div>
-              </div>
-              <p className="mt-3 font-bold gradient-text">{story.win}</p>
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-300">
-                {story.detail}
-              </p>
-              <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                {story.timeframe}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     </div>

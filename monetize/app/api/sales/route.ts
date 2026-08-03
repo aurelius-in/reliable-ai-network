@@ -7,6 +7,7 @@ import {
 } from "@/prompts/sales-kit";
 import { resolveCreation, requireTier } from "@/lib/tool-request";
 import type { SalesKit } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 300;
 
@@ -86,5 +87,6 @@ export async function POST(request: Request) {
     console.error("Failed to persist sales kit:", assetError);
   }
 
+  trackToolRun("sales", {}, { userId: user.id, path: "/api/sales" });
   return NextResponse.json({ assetId: asset?.id ?? null, kit });
 }

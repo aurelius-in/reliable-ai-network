@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { withProfileRepair } from "@/lib/supabase/ensure-profile";
 import { MILESTONES } from "@/lib/milestones";
+import { trackToolRun } from "@/lib/track-server";
 
 /** Toggles a milestone in the Progress Tracker (Growth). */
 export async function POST(request: Request) {
@@ -47,5 +48,6 @@ export async function POST(request: Request) {
     );
   }
 
+  trackToolRun("progress", {}, { userId: user.id, path: "/api/progress" });
   return NextResponse.json({ milestone, completed });
 }

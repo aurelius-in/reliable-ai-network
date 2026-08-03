@@ -42,7 +42,6 @@ import { PremiumTab } from "@/components/tabs/PremiumTab";
 import { JourneyPie } from "@/components/JourneyPie";
 import { NextBestActionCard } from "@/components/NextBestAction";
 import { LockedPreview } from "@/components/ui";
-import { BrandSplash } from "@/components/BrandSplash";
 import { hasTierAccess, type TierName } from "@/lib/tiers";
 import {
   adjacentStep,
@@ -54,6 +53,7 @@ import {
   markStepVisited,
   type JourneyTabId,
 } from "@/lib/journey";
+import { trackToolView, trackUiClick } from "@/lib/track";
 import type {
   BuyerProfilesResult,
   ContentBundle,
@@ -114,113 +114,113 @@ const LOCKED_COPY: Record<
   pricing: { toolName: "", tagline: "", previews: [] },
   library: { toolName: "", tagline: "", previews: [] },
   traffic: {
-    toolName: "Get Eyes on Your Offer",
+    toolName: "Demand Channels",
     tagline:
-      "The 5-7 best places to promote YOUR product — scored by effort vs. payoff, with a ready-to-paste post for each and a weekly plan that fits your life.",
+      "Ranked acquisition channels for your product, with effort vs. payoff, sample outreach, and a weekly execution plan sized to your capacity.",
     previews: [
-      "Channels ranked by effort vs. results, visually",
-      "A ready-to-publish post for every channel",
-      "A weekly traffic plan sized to your free hours",
-      "Respects your style — camera-shy friendly",
+      "Channels scored by effort vs. expected signal",
+      "Draft posts or messages per channel",
+      "Weekly plan matched to available hours",
+      "Fits founder-led or lean team motions",
     ],
   },
   launch: {
     toolName: "30-Day Launch Plan",
     tagline:
-      "A day-by-day calendar from zero to launched: one clear action per day, posts and emails pre-written, and checkpoints so you always know you're on track.",
+      "Day-by-day launch calendar: one concrete action per day, draft assets inline, and checkpoints to know if the motion is working.",
     previews: [
-      "30 days, one doable action per day",
-      "Pre-written posts, emails & DMs inline",
-      "Milestones like '50 signups by day 10'",
-      "A 'results are weak — do this' backup plan",
+      "30 days with one primary action each day",
+      "Draft posts, emails, and outreach inline",
+      "Milestone targets you can measure",
+      "Contingency path if early metrics are weak",
     ],
   },
   sales: {
-    toolName: "Direct Sales Tools",
+    toolName: "Direct Sales System",
     tagline:
-      "Word-for-word cold DMs, emails, and follow-ups personalized to your product — plus objection answers and a simple call plan. Selling without the sleaze.",
+      "Cold email, LinkedIn, and follow-up sequences tailored to your offer, plus objection handling and a short discovery-call agenda.",
     previews: [
-      "3 opener messages with different angles",
-      "A 3-5 touch follow-up sequence that isn't pushy",
-      "Scripts for 'too expensive' and 'let me think'",
-      "A 15-minute call agenda anyone can run",
+      "Three opener angles for your ICP",
+      "Multi-touch follow-up that stays professional",
+      "Responses for price and timing objections",
+      "15-minute discovery agenda",
     ],
   },
   results: {
-    toolName: "What's Working",
+    toolName: "Performance Review",
     tagline:
-      "Log four simple numbers a week and let AI find your bottleneck: what's working, what's leaking money, and exactly what to test next week.",
+      "Log weekly funnel numbers and get a clear bottleneck diagnosis: where you are leaking, and what to test next.",
     previews: [
-      "One-tap weekly logging — visitors, signups, sales, $",
-      "A clean trend chart of your growth",
-      "AI pinpoints the stage losing you money",
-      "2-3 concrete tests to run next week",
+      "Weekly log: traffic, signups, closes, revenue",
+      "Trend view of the funnel",
+      "Bottleneck call with rationale",
+      "Two to three tests for the next week",
     ],
   },
   revenue: {
-    toolName: "Multiple Ways to Get Paid",
+    toolName: "Revenue Model Design",
     tagline:
-      "Subscriptions? One-time? Freemium? Services? See every revenue model that fits your product, compared side by side — with a clear 'build this first' verdict.",
+      "Compare subscription, usage, hybrid, and services models for your product with tradeoffs and a recommended first build.",
     previews: [
-      "3-5 revenue models matched to your product",
-      "Honest pros, cons & effort for each",
-      "Realistic math like '$9/mo × 100 = $900/mo'",
-      "A prioritized 'build this first' pick",
+      "Models matched to your buyer and delivery cost",
+      "Pros, cons, and implementation effort",
+      "Order-of-magnitude unit economics",
+      "Clear 'build this first' recommendation",
     ],
   },
   funnel: {
     toolName: "Funnel Architect",
     tagline:
-      "A cheap first offer, your core product, and a premium upsell — designed and written for you, with a visual map of how buyers flow through.",
+      "Entry offer, core product, and expansion path with messaging for each stage and a map of how buyers should move through.",
     previews: [
-      "Tripwire → core offer → profit maximizer, fully written",
-      "A visual funnel diagram you can follow step by step",
-      "Sales headline, pitch, and bullets for every stage",
-      "Conversion tips a funnel pro would charge for",
+      "Entry → core → expansion, fully drafted",
+      "Stage map you can operationalize",
+      "Headline, pitch, and proof points per stage",
+      "Conversion notes grounded in B2B motions",
     ],
   },
   content: {
-    toolName: "Ad & Content Generator",
+    toolName: "Campaign & Content Studio",
     tagline:
-      "Turn one idea into a whole launch: social posts, ads, a marketplace listing, and an email sequence — in one tap.",
+      "Turn one positioning into LinkedIn/X drafts, ad variants, listing copy, and a short email sequence.",
     previews: [
-      "LinkedIn + X posts with scroll-stopping hooks",
-      "3 ad variations testing different angles",
-      "A ready-to-paste Gumroad / App Store listing",
-      "A 3-email sequence that closes sales",
+      "LinkedIn and X drafts with clear hooks",
+      "Ad variants testing distinct angles",
+      "Marketplace or site listing copy",
+      "Three-email sequence for conversion",
     ],
   },
   progress: {
-    toolName: "Progress Tracker + Success Wall",
+    toolName: "Execution Tracker",
     tagline:
-      "See exactly where you are on the road to first revenue — and what creators like you did to get there.",
+      "Track monetization milestones and illustrative plays you can adapt to your motion.",
     previews: [
-      "A milestone checklist from first idea to first $100",
-      "Live count of every asset you've generated",
-      "A wall of real community wins to steal ideas from",
-      "Progress bar that makes momentum visible",
+      "Milestones from first offer to first revenue",
+      "Count of assets generated in-workspace",
+      "Illustrative plays (not claimed customer results)",
+      "Progress against the commercialization path",
     ],
   },
   strategy: {
     toolName: "Advanced Strategy Tools",
     tagline:
-      "The analysis a strategy consultant would bill thousands for: competitors, pricing, a 90-day plan, and experiments to run.",
+      "Competitor structure, pricing experiments, 90-day plan, and test backlog grounded in your product description.",
     previews: [
-      "Competitor scan with your unfair edge",
-      "Pricing optimization with concrete experiments",
-      "A custom 30/60/90-day monetization roadmap",
-      "A/B test ideas ranked easiest-first",
+      "Competitor map with edges to validate",
+      "Pricing experiments with success criteria",
+      "30/60/90 monetization roadmap",
+      "Tests ranked by speed of learning",
     ],
   },
   dfy: {
     toolName: "Done-For-You",
     tagline:
-      "Once a month, our team crafts one custom high-converting asset for your product — you just tap what you want.",
+      "Once a month, request one custom commercial asset. Queued delivery, not instant generation.",
     previews: [
-      "Offer pages, ad sets, email sequences & more",
-      "Built by AI + human review, tailored to your product",
-      "Simple queue so you always know the status",
-      "One custom asset included every month",
+      "Offer pages, ad sets, sequences, and more",
+      "Brief → queued request (human delivery)",
+      "Visible queue status",
+      "One custom asset request per month",
     ],
   },
   premium: {
@@ -265,16 +265,18 @@ export function DashboardTabs({
   const [tab, setTab] = useState<TabId>("analyzer");
   // Mobile bottom-sheet journey picker (opened from the bottom tab bar).
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [splashKey, setSplashKey] = useState("boot");
   const [visited, setVisited] = useState<Set<JourneyTabId>>(() => new Set());
 
   useEffect(() => {
     setVisited(loadVisitedSteps());
+    const step = JOURNEY_STEPS.find((s) => s.id === "analyzer");
+    trackToolView("analyzer", step?.label);
   }, []);
 
   function selectTab(next: TabId) {
     if (next !== tab) {
-      setSplashKey(`${next}-${Date.now()}`);
+      const step = JOURNEY_STEPS.find((s) => s.id === next);
+      trackToolView(next, step?.label);
     }
     setTab(next);
     setVisited(markStepVisited(next));
@@ -294,9 +296,6 @@ export function DashboardTabs({
         setSheetOpen(false);
         setTab((current) => {
           const next = current === "progress" ? "analyzer" : current;
-          if (next !== current) {
-            setSplashKey(`${next}-${Date.now()}`);
-          }
           return next;
         });
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -353,14 +352,19 @@ export function DashboardTabs({
   const activeUnlocked = isUnlocked(activeDef.tier);
   const prevStep = adjacentStep(tab, -1);
   const nextStep = adjacentStep(tab, 1);
-  // Pulse the card when the user is off-path; hide while they work the suggested slice.
-  const showNbaBanner = tab !== nextAction.step.id || pieComplete;
+  // Catch-up strip only when unfinished work isn’t the linear “Next step”
+  // (avoids two CTAs pointing at the same slice).
+  const showNbaBanner =
+    pieComplete ||
+    (tab !== nextAction.step.id && nextAction.step.id !== nextStep?.id);
 
   function goNextBest() {
     if (nextAction.locked) {
+      trackUiClick("nba_upgrade", { tool: nextAction.step.id });
       window.location.href = "/billing";
       return;
     }
+    trackUiClick("nba_continue", { tool: nextAction.step.id });
     selectTab(nextAction.step.id);
   }
 
@@ -381,29 +385,18 @@ export function DashboardTabs({
 
   return (
     <div>
-      <BrandSplash triggerKey={splashKey} />
-
-      {/* Story header: next action + pie path */}
+      {/* Commercialization path */}
       <div className="space-y-4">
-        {showNbaBanner && (
-          <NextBestActionCard
-            action={nextAction}
-            completion={completion}
-            onGo={goNextBest}
-            pieComplete={pieComplete}
-          />
-        )}
-
         {/* Desktop / tablet pie */}
         <div className="hidden md:block">
           <div className="card-glow overflow-hidden p-5 lg:p-6">
             <div className="flex flex-col items-center gap-2 text-center">
               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-                Your monetization pie
+                Commercialization path
               </p>
               <p className="max-w-md text-sm text-slate-300">
-                Complete each slice in order. When the pie is full, you&apos;ve
-                built the path to revenue — then you get to eat.
+                Work each stage in order. When the path is complete, you have a
+                documented go-to-market system you can run and revise.
               </p>
             </div>
             <div className="mt-4 flex justify-center">{pieBlock(false)}</div>
@@ -429,6 +422,58 @@ export function DashboardTabs({
         </button>
       </div>
 
+      {/* Primary: linear next step (the path) */}
+      <div className="mt-5 flex items-stretch gap-2 sm:gap-3">
+        <button
+          type="button"
+          disabled={!prevStep}
+          onClick={() => {
+            if (!prevStep) return;
+            trackUiClick("path_back", { tool: prevStep.id });
+            selectTab(prevStep.id);
+          }}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-night-600 bg-night-700 px-3.5 py-3 text-sm font-semibold text-slate-300 transition enabled:hover:border-rain/50 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <ArrowLeft size={16} />
+          <span className="hidden sm:inline">Back</span>
+        </button>
+        <button
+          type="button"
+          disabled={!nextStep}
+          onClick={() => {
+            if (!nextStep) return;
+            trackUiClick("path_next", { tool: nextStep.id });
+            selectTab(nextStep.id);
+          }}
+          className="group relative flex min-w-0 flex-1 items-center justify-between gap-3 overflow-hidden rounded-xl bg-gradient-to-r from-aqua via-violet to-rain px-4 py-3 text-left text-white shadow-lg shadow-aqua/20 transition enabled:hover:brightness-110 enabled:active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none sm:px-5"
+        >
+          <span className="min-w-0">
+            <span className="block text-[10px] font-black uppercase tracking-[0.16em] text-white/75">
+              Next step
+            </span>
+            <span className="mt-0.5 block truncate text-sm font-bold sm:text-base">
+              {nextStep ? nextStep.label : "End of the path"}
+            </span>
+          </span>
+          <ArrowRight
+            size={18}
+            className="shrink-0 transition group-enabled:group-hover:translate-x-0.5"
+          />
+        </button>
+      </div>
+
+      {/* Secondary: unfinished slices (not the main “next”) */}
+      {showNbaBanner && (
+        <div className="mt-3">
+          <NextBestActionCard
+            action={nextAction}
+            completion={completion}
+            onGo={goNextBest}
+            pieComplete={pieComplete}
+          />
+        </div>
+      )}
+
       {/* Mobile journey sheet */}
       {sheetOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
@@ -450,7 +495,7 @@ export function DashboardTabs({
               </button>
             </div>
             <p className="mt-1 text-sm text-slate-400">
-              Tap a slice to jump. Follow the pulse for the next best move.
+              Tap a slice to jump. Use Next step to stay in order.
             </p>
             <div className="mt-4 flex justify-center">{pieBlock(true)}</div>
             <div className="mt-5 space-y-1.5">
@@ -497,36 +542,11 @@ export function DashboardTabs({
         </div>
       )}
 
-      {/* Linear path controls */}
-      <div className="mt-5 flex items-center justify-between gap-3">
-        <button
-          type="button"
-          disabled={!prevStep}
-          onClick={() => prevStep && selectTab(prevStep.id)}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-night-600 bg-night-700 px-3.5 py-2.5 text-sm font-semibold text-slate-300 transition enabled:hover:border-rain/50 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <ArrowLeft size={16} />
-          <span className="hidden sm:inline">Back</span>
-        </button>
-        <p className="text-center text-xs font-bold uppercase tracking-widest text-slate-500">
-          Stay on the path
-        </p>
-        <button
-          type="button"
-          disabled={!nextStep}
-          onClick={() => nextStep && selectTab(nextStep.id)}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-night-600 bg-night-700 px-3.5 py-2.5 text-sm font-semibold text-slate-300 transition enabled:hover:border-aqua/50 enabled:hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <span className="hidden sm:inline">Next</span>
-          <ArrowRight size={16} />
-        </button>
-      </div>
-
       <div className="mt-5 fade-up">
         {!activeUnlocked ? (
           <LockedPreview
             tier={activeDef.tier === "pro" ? "Pro" : "Growth"}
-            price={activeDef.tier === "pro" ? "$100/mo" : "$50/mo"}
+            price={activeDef.tier === "pro" ? "$149/mo" : "$79/mo"}
             toolName={LOCKED_COPY[tab].toolName}
             tagline={LOCKED_COPY[tab].tagline}
             previews={LOCKED_COPY[tab].previews}
@@ -537,6 +557,7 @@ export function DashboardTabs({
               <AnalyzerTab
                 creations={data.creations}
                 initialAnalyses={data.initialAnalyses}
+                onJumpTab={(id) => selectTab(id as TabId)}
               />
             )}
             {tab === "pricing" && (
@@ -551,17 +572,28 @@ export function DashboardTabs({
                 initialResult={data.initialBuyers}
               />
             )}
-            {tab === "library" && <LibraryTab />}
+            {tab === "library" && (
+              <LibraryTab
+                creations={data.creations}
+                initialAnalyses={data.initialAnalyses}
+                initialBuyers={data.initialBuyers}
+                initialPricings={data.initialPricings}
+              />
+            )}
             {tab === "funnel" && (
               <FunnelTab
                 creations={data.creations}
                 initialFunnel={data.initialFunnel}
+                initialBuyers={data.initialBuyers}
+                onJumpTab={(id) => selectTab(id as TabId)}
               />
             )}
             {tab === "traffic" && (
               <TrafficTab
                 creations={data.creations}
                 initialPlan={data.initialTraffic}
+                initialBuyers={data.initialBuyers}
+                onJumpTab={(id) => selectTab(id as TabId)}
               />
             )}
             {tab === "launch" && (
@@ -574,12 +606,18 @@ export function DashboardTabs({
               <ContentTab
                 creations={data.creations}
                 initialBundle={data.initialBundle}
+                initialAnalyses={data.initialAnalyses}
+                initialBuyers={data.initialBuyers}
               />
             )}
             {tab === "progress" && (
               <ProgressTab
                 initialProgress={data.initialProgress}
                 assetStats={data.assetStats}
+                onJumpTab={(id) => selectTab(id as TabId)}
+                initialRevenue={data.initialRevenue}
+                initialFunnel={data.initialFunnel}
+                initialAnalyses={data.initialAnalyses}
               />
             )}
             {tab === "strategy" && (
@@ -592,6 +630,7 @@ export function DashboardTabs({
               <SalesTab
                 creations={data.creations}
                 initialKit={data.initialSalesKit}
+                initialBuyers={data.initialBuyers}
               />
             )}
             {tab === "results" && (
@@ -599,16 +638,32 @@ export function DashboardTabs({
                 creations={data.creations}
                 initialEntries={data.metricsEntries}
                 initialAnalysis={data.initialMetricsAnalysis}
+                onJumpTab={(id) => selectTab(id as TabId)}
               />
             )}
             {tab === "revenue" && (
               <RevenueTab
                 creations={data.creations}
                 initialPlan={data.initialRevenue}
+                onJumpTab={(id) => selectTab(id as TabId)}
               />
             )}
-            {tab === "dfy" && <DfyTab initialRequests={data.dfyRequests} />}
-            {tab === "premium" && <PremiumTab />}
+            {tab === "dfy" && (
+              <DfyTab
+                initialRequests={data.dfyRequests}
+                creations={data.creations}
+                initialBuyers={data.initialBuyers}
+                initialPricings={data.initialPricings}
+              />
+            )}
+            {tab === "premium" && (
+              <PremiumTab
+                creations={data.creations}
+                initialAnalyses={data.initialAnalyses}
+                initialBuyers={data.initialBuyers}
+                initialPricings={data.initialPricings}
+              />
+            )}
           </>
         )}
       </div>

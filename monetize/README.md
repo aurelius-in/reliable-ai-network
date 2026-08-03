@@ -28,18 +28,20 @@ npm run dev
 4. In **Authentication → URL Configuration**, set the Site URL to your app URL (e.g. `https://MakeItRainApp.com`) and add these to **Redirect URLs**:
    - `https://MakeItRainApp.com/auth/confirm`
    - `https://MakeItRainApp.com/auth/callback`
+   - `https://MakeItRainApp.com/reset-password`
    - `https://www.MakeItRainApp.com/auth/confirm`
    - `https://www.MakeItRainApp.com/auth/callback`
-   - Local: `http://localhost:3000/auth/confirm` and `http://localhost:3000/auth/callback`
-   Email confirmation lands on `/auth/confirm` (token_hash). Do not leave Site URL as localhost in production.
+   - `https://www.MakeItRainApp.com/reset-password`
+   - Local: `http://localhost:3000/auth/confirm`, `http://localhost:3000/auth/callback`, and `http://localhost:3000/reset-password`
+   Email confirmation and password recovery land on `/auth/confirm` (token_hash), then recovery continues to `/reset-password`. Do not leave Site URL as localhost in production.
    - Optional: disable "Confirm email" under Authentication → Providers → Email while testing, so signups log in immediately.
 
 ## 2. Stripe setup
 
 1. In the [Stripe Dashboard](https://dashboard.stripe.com) (test mode first), create one product per tier, each with a **monthly recurring price**:
-   - Starter — $20/mo → copy price ID into `STRIPE_PRICE_STARTER`
-   - Growth — $50/mo → `STRIPE_PRICE_GROWTH`
-   - Pro — $100/mo → `STRIPE_PRICE_PRO`
+   - Starter — $29/mo → copy price ID into `STRIPE_PRICE_STARTER`
+   - Growth — $79/mo → `STRIPE_PRICE_GROWTH`
+   - Pro — $149/mo → `STRIPE_PRICE_PRO`
 2. Copy your **secret key** into `STRIPE_SECRET_KEY` and publishable key into `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
 3. Create a webhook endpoint pointing at `https://<your-app-domain>/api/stripe/webhook` with these events:
    - `checkout.session.completed`
@@ -69,17 +71,22 @@ Create an API key at [console.x.ai](https://console.x.ai) → `GROK_API_KEY`. Op
 3. Deploy, then point your Stripe webhook endpoint and Supabase redirect URLs at the deployed domain.
 4. Verify the money path in Stripe test mode: sign up → onboarding analysis → start trial checkout (card `4242 4242 4242 4242`) → webhook sets `current_tier=pro`, `subscription_status=trialing`, `trial_ends_at` → `/billing` shows the trial banner → cancel via the portal. Then switch to live keys.
 
+## Architecture
+
+Full system diagram, evidence pipeline, shared reports, and **detailed reference for all 15 tools**:
+
+→ [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)
+
 ## Project structure
 
 ```
-app/                 Pages (/, /signup, /login, /pricing, /onboarding, /dashboard, /billing)
-app/api/analyze      Idea Analyzer (Grok, structured JSON)
-app/api/pricing      Pricing & Packaging Builder (Grok)
-app/api/stripe/*     checkout | portal | webhook
-components/          UI components (nav, tabs, forms, result renderers)
-lib/                 Supabase clients, Stripe helpers, Grok client, tiers, templates
-prompts/             Prompt library (idea-analyzer, pricing-recommendations, offer-generator)
-supabase/schema.sql  Full database schema with RLS + signup trigger
+app/                 Pages (/, /signup, /login, /pricing, /onboarding, /dashboard, /billing, /r/[token])
+app/api/*            Tool routes (analyze, pricing, buyers, funnel, …) + Stripe + reports
+components/tabs/     One UI module per journey tool
+lib/                 Product context, journey, tiers, Apollo, scrape, fill-template, reports
+prompts/             Grok system/user prompts per AI tool
+docs/ARCHITECTURE.md System + 15-tool reference (keep in sync with RAIN/docs)
+supabase/*.sql       Schema + expert/website/shared_reports migrations
 types/               Shared TypeScript types
 ```
 
@@ -87,4 +94,4 @@ types/               Shared TypeScript types
 
 - Missing env vars never crash the build — all external clients are lazily initialized at request time.
 - The Stripe webhook is the source of truth for `current_tier`, `subscription_status`, and `trial_ends_at`; it writes via the service-role client and logs every event to `billing_events` (idempotent on `stripe_event_id`).
-- Growth/Pro tool tabs render as locked upsell cards linking to `/pricing`; their tooling ships in a later sprint.
+- Growth/Pro tools gate behind tier checks; locked tabs show upsell cards linking to `/pricing`.

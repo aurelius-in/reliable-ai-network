@@ -10,6 +10,40 @@ import type { Profile } from "@/types";
 export function TrialBanner({ profile }: { profile: Profile | null }) {
   const status = profile?.subscription_status;
 
+  if (status === "reviewer" || status === "retention") {
+    const days = trialDaysLeft(profile?.trial_ends_at);
+    const endDate = profile?.trial_ends_at
+      ? new Date(profile.trial_ends_at).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : null;
+    const label =
+      status === "retention" ? "Complimentary Pro" : "Reviewer access";
+    return (
+      <div className="fade-up rounded-2xl border border-violet/30 bg-gradient-to-r from-violet/10 via-night-700 to-aqua/10 px-5 py-4">
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm font-semibold text-white">
+          <RainBullet size={15} />
+          {label} — full {tierLabel(profile?.current_tier)} toolkit
+          {endDate ? (
+            <>
+              {" "}
+              through{" "}
+              <span className="text-aqua">{endDate}</span>
+              {days != null && (
+                <span className="text-xs font-normal text-slate-400">
+                  ({days} day{days === 1 ? "" : "s"} left)
+                </span>
+              )}
+            </>
+          ) : null}
+          . No active card charges.
+        </p>
+      </div>
+    );
+  }
+
   if (status === "trialing" && profile?.trial_ends_at) {
     const days = trialDaysLeft(profile.trial_ends_at) ?? 0;
     const endDate = new Date(profile.trial_ends_at).toLocaleDateString("en-US", {
@@ -48,7 +82,7 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
             <Zap size={18} className="text-aqua" />
             {status === "canceled"
               ? "Your subscription ended. Rejoin to keep making it rain."
-              : "Your account isn't active yet — activate your 30-day Pro trial."}
+              : "Your account isn't active yet — pick a plan and start your 30-day free trial."}
           </p>
           <Link
             href="/billing"

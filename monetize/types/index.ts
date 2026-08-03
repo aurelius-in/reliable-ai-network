@@ -6,7 +6,39 @@ export interface Profile {
   current_tier: "starter" | "growth" | "pro" | null;
   trial_ends_at: string | null;
   subscription_status: string | null;
+  referral_code: string | null;
+  referred_by: string | null;
   created_at: string;
+}
+
+export interface EvidenceDoc {
+  name: string;
+  mime: string;
+  text_excerpt: string;
+  uploaded_at: string;
+}
+
+export interface GithubContext {
+  fetched_at: string;
+  full_name: string;
+  description: string | null;
+  default_branch: string | null;
+  stars: number;
+  language: string | null;
+  topics: string[];
+  readme_excerpt: string;
+  homepage: string | null;
+}
+
+export interface WebsiteContext {
+  fetched_at: string;
+  url: string;
+  final_url: string;
+  title: string | null;
+  meta_description: string | null;
+  og_title: string | null;
+  text_excerpt: string;
+  char_count: number;
 }
 
 export interface Creation {
@@ -15,6 +47,15 @@ export interface Creation {
   title: string;
   description: string;
   type: string;
+  stage?: string | null;
+  traction?: string | null;
+  current_price?: string | null;
+  competitors_notes?: string | null;
+  evidence_docs?: EvidenceDoc[] | null;
+  github_repo_url?: string | null;
+  github_context?: GithubContext | null;
+  product_url?: string | null;
+  website_context?: WebsiteContext | null;
   created_at: string;
 }
 
@@ -39,6 +80,12 @@ export interface ProgressLog {
 /* Starter tools                                                       */
 /* ------------------------------------------------------------------ */
 
+export interface AnalysisCitation {
+  claim: string;
+  source: string;
+  grade: "observed" | "founder_reported" | "assumed";
+}
+
 export interface IdeaAnalysis {
   score: number;
   score_reasoning: string;
@@ -50,6 +97,21 @@ export interface IdeaAnalysis {
   }[];
   quick_wins: string[];
   big_promise: string;
+  /** Memo-grade fields (optional for older saved assets). */
+  confidence?: string;
+  assumptions?: string[];
+  kill_criteria?: string[];
+  validation_plan?: string[];
+  /** Evidence-graded claims for audit-style reading. */
+  citations?: AnalysisCitation[];
+  /** Optional Apollo firmographics attached after analysis. */
+  competitor_enrichment?: {
+    name: string;
+    domain: string | null;
+    industry: string | null;
+    employeeCount: number | null;
+    websiteUrl: string | null;
+  }[];
 }
 
 export interface PricingRecommendation {
@@ -70,6 +132,10 @@ export interface PricingRecommendation {
     bullets: string[];
     cta: string;
   };
+  /** Economics fields (optional for older saved assets). */
+  willingness_to_pay_logic?: string;
+  packaging_tradeoffs?: string[];
+  pricing_experiment?: string;
 }
 
 /** Stored as generated_assets.content with type "buyer_profiles". */
@@ -113,6 +179,12 @@ export interface FunnelPlan {
   strategy_summary: string;
   stages: FunnelStage[];
   next_steps: string[];
+  motion?: "plg" | "outbound" | "hybrid";
+  first_dollar_offer?: {
+    name: string;
+    price: string;
+    ask: string;
+  };
 }
 
 export interface ContentBundle {
@@ -131,6 +203,13 @@ export interface ContentBundle {
     tags: string[];
   };
   email_sequence: { subject: string; preview_text: string; body: string }[];
+  /** Mon–Fri publish order with ready copy (optional for older assets). */
+  this_week_publish?: {
+    day: string;
+    channel: string;
+    asset: string;
+    copy_paste: string;
+  }[];
 }
 
 /** Stored as generated_assets.content with type "traffic_plan". */
@@ -150,6 +229,14 @@ export interface TrafficPlan {
   channels: TrafficChannel[];
   weekly_plan: { day: string; action: string; channel: string; minutes: number }[];
   golden_rule: string;
+  /** Mon–Fri sprint with copy-paste actions (optional for older assets). */
+  this_week_sprint?: {
+    day: string;
+    action: string;
+    channel: string;
+    copy_paste: string;
+    success_metric: string;
+  }[];
 }
 
 /** Stored as generated_assets.content with type "launch_plan". */
@@ -297,6 +384,21 @@ export interface RevenueStreamsPlan {
   streams: RevenueStream[];
   build_first: { model: string; reasoning: string; first_step: string };
   stack_later: string;
+  unit_economics?: {
+    assumed_price_usd: number;
+    assumed_customers_90d: number;
+    projected_90d_revenue_usd: number;
+    notes: string;
+  };
+  first_dollar_path?: {
+    offer: string;
+    price: string;
+    who: string;
+    channel: string;
+    ask: string;
+    pay_how: string;
+    this_week: string[];
+  };
 }
 
 /** Stored as generated_assets.content with type "dfy_request". */

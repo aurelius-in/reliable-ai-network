@@ -4,17 +4,17 @@ import { createClient } from "@/lib/supabase/server";
 
 /**
  * Email confirmation / recovery landing page.
- * Supabase templates often link here with ?token_hash=...&type=email
- * (see Authentication → Email Templates). Without this route, users get a 404
- * even when the account is marked confirmed.
+ * Supabase templates often link here with ?token_hash=...&type=email|recovery
+ * (see Authentication → Email Templates). Recovery continues to /reset-password.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const nextRaw = searchParams.get("next") ?? "/onboarding";
+  const defaultNext = type === "recovery" ? "/reset-password" : "/onboarding";
+  const nextRaw = searchParams.get("next") ?? defaultNext;
   const next =
-    nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/onboarding";
+    nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : defaultNext;
 
   const supabase = await createClient();
 

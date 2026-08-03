@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Loader2, Megaphone } from "lucide-react";
 import {
   ChipGroup,
@@ -14,11 +14,31 @@ import {
   choiceFromCreation,
   type ProductChoice,
 } from "@/components/ui";
+import { OutputCaveat } from "@/components/OutputCaveat";
 import { AUDIENCE_OPTIONS, TONE_OPTIONS } from "@/lib/examples";
-import type { ContentBundle, Creation } from "@/types";
+import { defaultAudienceFromBuyers } from "@/lib/tool-defaults";
+import type {
+  BuyerProfilesResult,
+  ContentBundle,
+  Creation,
+  IdeaAnalysis,
+} from "@/types";
 
 function bundleToMarkdown(bundle: ContentBundle): string {
   const lines: string[] = ["# Launch Content Bundle", ""];
+  if (bundle.this_week_publish?.length) {
+    lines.push("## This-week publish order", "");
+    for (const d of bundle.this_week_publish) {
+      lines.push(
+        `### ${d.day} — ${d.channel}`,
+        "",
+        d.asset,
+        "",
+        d.copy_paste,
+        ""
+      );
+    }
+  }
   lines.push("## LinkedIn posts", "");
   bundle.linkedin_posts?.forEach((post, i) => {
     lines.push(
@@ -72,24 +92,41 @@ function bundleToMarkdown(bundle: ContentBundle): string {
 /**
  * Tab 5 — Ad & Content Generator (Growth).
  * One idea → LinkedIn/X posts, ad variations, a marketplace listing,
- * and an email sequence — all copy-paste ready.
+ * emails, and a Mon–Fri publish sprint.
  */
 export function ContentTab({
   creations,
   initialBundle,
+  initialAnalyses = {},
+  initialBuyers = null,
 }: {
   creations: Creation[];
   initialBundle: ContentBundle | null;
+  initialAnalyses?: Record<string, IdeaAnalysis>;
+  initialBuyers?: BuyerProfilesResult | null;
 }) {
   const first = creations[0];
   const [choice, setChoice] = useState<ProductChoice | null>(
     first ? choiceFromCreation(first) : null
   );
-  const [tone, setTone] = useState("friendly and fun");
-  const [audience, setAudience] = useState("creators");
+  const [tone, setTone] = useState("direct and executive");
+  const [audience, setAudience] = useState(() =>
+    defaultAudienceFromBuyers(initialBuyers)
+  );
   const [bundle, setBundle] = useState<ContentBundle | null>(initialBundle);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const seed = useMemo(() => {
+    const analysis = choice?.creationId
+      ? initialAnalyses[choice.creationId]
+      : undefined;
+    const persona = initialBuyers?.personas?.[0];
+    return {
+      bigPromise: analysis?.big_promise,
+      positioningLine: persona?.positioning_line,
+    };
+  }, [choice, initialAnalyses, initialBuyers]);
 
   async function generate() {
     if (!choice) return;
@@ -109,6 +146,8 @@ export function ContentTab({
               }),
           tone,
           audience,
+          bigPromise: seed.bigPromise,
+          positioningLine: seed.positioningLine,
         }),
       });
       const data = await res.json();
@@ -130,7 +169,8 @@ export function ContentTab({
           </h2>
           <p className="helper-text">
             Tap a product, pick a vibe, and get LinkedIn posts, X posts, ad
-            copy, a marketplace listing, and emails — all written for you.
+            copy, a marketplace listing, emails, and a Mon–Fri publish order —
+            seeded from your Analyzer promise and Buyers positioning when available.
           </p>
         </div>
 
@@ -176,7 +216,7 @@ export function ContentTab({
         <TeachingEmptyState
           emoji="📣"
           title="Your content bundle appears here"
-          body="Everything you need to launch loud: social posts, ads, a store listing, and emails. Copy any piece with one tap."
+          body="Everything you need to launch loud: a this-week publish sprint, social posts, ads, a store listing, and emails. Copy any piece with one tap."
         />
       )}
     </div>
@@ -184,8 +224,10 @@ export function ContentTab({
 }
 
 function ContentResult({ bundle }: { bundle: ContentBundle }) {
+  const sprint = bundle.this_week_publish ?? [];
   return (
     <div className="fade-up space-y-6">
+      <OutputCaveat tool="content" />
       <div className="flex justify-end">
         <DownloadButton
           filename="content-bundle.md"
@@ -194,10 +236,39 @@ function ContentResult({ bundle }: { bundle: ContentBundle }) {
         />
       </div>
 
-      {/* LinkedIn */}
+      {sprint.length > 0 && (
+        <section className="rounded-2xl border border-aqua/30 bg-aqua/5 p-5">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-aqua">
+            This-week publish order
+          </h3>
+          <p className="mt-1 text-xs text-slate-400">
+            Five days. Ship one asset per day. No blank calendar.
+          </p>
+          <div className="mt-4 space-y-3">
+            {sprint.map((day, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-night-600 bg-night-800/80 p-4"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-bold text-white">
+                    {day.day} · {day.channel}
+                  </p>
+                  <CopyButton text={day.copy_paste} label="Copy" />
+                </div>
+                <p className="mt-1 text-xs text-slate-400">{day.asset}</p>
+                <p className="mt-2 whitespace-pre-wrap text-sm text-slate-200">
+                  {day.copy_paste}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="card p-6">
         <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-          💼 LinkedIn posts
+          LinkedIn posts
         </h3>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {bundle.linkedin_posts?.map((post, i) => {
@@ -220,10 +291,9 @@ function ContentResult({ bundle }: { bundle: ContentBundle }) {
         </div>
       </section>
 
-      {/* X posts */}
       <section className="card p-6">
         <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-          🐦 X posts
+          X posts
         </h3>
         <div className="mt-4 space-y-3">
           {bundle.x_posts?.map((post, i) => (
@@ -240,10 +310,9 @@ function ContentResult({ bundle }: { bundle: ContentBundle }) {
         </div>
       </section>
 
-      {/* Ads */}
       <section className="card p-6">
         <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-          📢 Ad variations
+          Ad variations
         </h3>
         <p className="helper-text">
           Three different angles — test them and keep the winner.
@@ -272,12 +341,11 @@ function ContentResult({ bundle }: { bundle: ContentBundle }) {
         </div>
       </section>
 
-      {/* Marketplace listing */}
       {bundle.marketplace_listing && (
         <section className="card p-6">
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-              🛍️ {bundle.marketplace_listing.platform} listing
+              {bundle.marketplace_listing.platform} listing
             </h3>
             <CopyButton
               text={`${bundle.marketplace_listing.title}\n\n${bundle.marketplace_listing.description}`}
@@ -303,10 +371,9 @@ function ContentResult({ bundle }: { bundle: ContentBundle }) {
         </section>
       )}
 
-      {/* Emails */}
       <section className="card p-6">
         <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-          ✉️ Email sequence
+          Email sequence
         </h3>
         <p className="helper-text">
           Send one every 2 days after someone signs up or buys.

@@ -4,6 +4,7 @@ import { withProfileRepair } from "@/lib/supabase/ensure-profile";
 import { requireTier } from "@/lib/tool-request";
 import { DFY_ASSET_OPTIONS, DFY_ASSET_TYPE } from "@/lib/dfy";
 import type { DfyRequestContent } from "@/types";
+import { trackToolRun } from "@/lib/track-server";
 
 /**
  * Done-For-You request flow (Pro): submits one custom asset request.
@@ -30,6 +31,7 @@ export async function POST(request: Request) {
     goal?: string;
     tone?: string;
     notes?: string;
+    creationId?: string | null;
   };
   try {
     body = await request.json();
@@ -82,11 +84,11 @@ export async function POST(request: Request) {
       .from("generated_assets")
       .insert({
         user_id: user.id,
-        creation_id: null,
+        creation_id: body.creationId?.trim() || null,
         type: DFY_ASSET_TYPE,
         content,
       })
-      .select("id, created_at")
+      .select("id, created_at, creation_id")
       .single()
   );
 
@@ -98,11 +100,12 @@ export async function POST(request: Request) {
     );
   }
 
+  trackToolRun("dfy", {}, { userId: user.id, path: "/api/dfy" });
   return NextResponse.json({
     request: {
       id: asset.id,
       user_id: user.id,
-      creation_id: null,
+      creation_id: asset.creation_id ?? null,
       type: DFY_ASSET_TYPE,
       content,
       created_at: asset.created_at,

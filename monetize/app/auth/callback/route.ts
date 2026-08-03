@@ -8,9 +8,11 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const nextRaw = searchParams.get("next") ?? "/onboarding";
+  const defaultNext =
+    type === "recovery" ? "/reset-password" : "/onboarding";
+  const nextRaw = searchParams.get("next") ?? defaultNext;
   const next =
-    nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/onboarding";
+    nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : defaultNext;
 
   const supabase = await createClient();
 

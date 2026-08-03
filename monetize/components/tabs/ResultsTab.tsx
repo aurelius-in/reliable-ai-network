@@ -4,11 +4,56 @@ import { useState } from "react";
 import { FlaskConical, Loader2, Minus, Plus, Sparkles, TrendingUp } from "lucide-react";
 import {
   ChipGroup,
+  DownloadButton,
   ErrorText,
   FunLoading,
+  ProductPicker,
   TeachingEmptyState,
+  choiceFromCreation,
+  type ProductChoice,
 } from "@/components/ui";
+import { OutputCaveat } from "@/components/OutputCaveat";
 import type { Creation, MetricsAnalysis, MetricsEntry } from "@/types";
+
+function analysisToMarkdown(
+  analysis: MetricsAnalysis,
+  entries: MetricsEntry[]
+): string {
+  const lines = [
+    "# What's working — metrics analysis",
+    "",
+    "## Logged weeks",
+    "",
+    ...entries.map(
+      (e) =>
+        `- ${e.week_label}: visitors ${e.visitors}, signups ${e.signups}, sales ${e.sales}, revenue $${e.revenue}`
+    ),
+    "",
+    "## What's working",
+    "",
+    ...analysis.whats_working.map(
+      (w) => `- **${w.finding}** — ${w.evidence}`
+    ),
+    "",
+    "## Bottleneck",
+    "",
+    `**${analysis.bottleneck.stage}**`,
+    "",
+    analysis.bottleneck.diagnosis,
+    "",
+    analysis.bottleneck.why_it_matters,
+    "",
+    "## Next tests",
+    "",
+    ...analysis.next_tests.map(
+      (t) =>
+        `- **${t.name}** (${t.difficulty}): ${t.action} — Expect: ${t.expected_result}`
+    ),
+    "",
+    `> ${analysis.encouragement}`,
+  ];
+  return lines.join("\n");
+}
 
 const DEMO_ENTRIES: MetricsEntry[] = [
   { week_label: "Week 1", visitors: 120, signups: 9, sales: 1, revenue: 29, logged_at: "", demo: true },
@@ -169,11 +214,17 @@ export function ResultsTab({
   creations,
   initialEntries,
   initialAnalysis,
+  onJumpTab,
 }: {
   creations: Creation[];
   initialEntries: MetricsEntry[];
   initialAnalysis: MetricsAnalysis | null;
+  onJumpTab?: (tabId: string) => void;
 }) {
+  const first = creations[0];
+  const [choice, setChoice] = useState<ProductChoice | null>(
+    first ? choiceFromCreation(first) : null
+  );
   const [entries, setEntries] = useState<MetricsEntry[]>(initialEntries);
   const [visitors, setVisitors] = useState(0);
   const [signups, setSignups] = useState(0);
@@ -221,7 +272,6 @@ export function ResultsTab({
   async function analyze() {
     setAnalyzing(true);
     setError(null);
-    const product = creations[0];
     try {
       const res = await fetch("/api/results", {
         method: "POST",
@@ -230,13 +280,15 @@ export function ResultsTab({
           action: "analyze",
           // Demo entries only exist client-side, so send them along.
           ...(isDemo ? { entries } : {}),
-          ...(product
-            ? {
-                title: product.title,
-                description: product.description,
-                type: product.type,
-              }
-            : {}),
+          ...(choice?.creationId
+            ? { creationId: choice.creationId }
+            : choice
+              ? {
+                  title: choice.title,
+                  description: choice.description,
+                  type: choice.type,
+                }
+              : {}),
         }),
       });
       const data = await res.json();
@@ -263,6 +315,14 @@ export function ResultsTab({
             done beats perfect.
           </p>
         </div>
+
+        {creations.length > 0 && (
+          <ProductPicker
+            creations={creations}
+            value={choice}
+            onChange={setChoice}
+          />
+        )}
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Stepper emoji="👀" label="Visitors" value={visitors} onChange={setVisitors} step={10} />
@@ -356,7 +416,13 @@ export function ResultsTab({
 
       {analyzing && <FunLoading headline="Reading your numbers like a pro…" />}
 
-      {!analyzing && analysis && <AnalysisResultView analysis={analysis} />}
+      {!analyzing && analysis && (
+        <AnalysisResultView
+          analysis={analysis}
+          entries={entries}
+          onJumpTab={onJumpTab}
+        />
+      )}
 
       {entries.length === 0 && (
         <TeachingEmptyState
@@ -369,9 +435,35 @@ export function ResultsTab({
   );
 }
 
-function AnalysisResultView({ analysis }: { analysis: MetricsAnalysis }) {
+function AnalysisResultView({
+  analysis,
+  entries,
+  onJumpTab,
+}: {
+  analysis: MetricsAnalysis;
+  entries: MetricsEntry[];
+  onJumpTab?: (tabId: string) => void;
+}) {
+  const stage = analysis.bottleneck.stage.toLowerCase();
+  const jumpTab =
+    stage.includes("traffic") || stage.includes("visitor") || stage.includes("aware")
+      ? "traffic"
+      : stage.includes("sales") || stage.includes("close") || stage.includes("outreach")
+        ? "sales"
+        : stage.includes("signup") || stage.includes("convert") || stage.includes("funnel")
+          ? "funnel"
+          : "content";
+
   return (
     <div className="fade-up space-y-4">
+      <OutputCaveat tool="results" />
+      <div className="flex justify-end">
+        <DownloadButton
+          filename="metrics-analysis.md"
+          content={analysisToMarkdown(analysis, entries)}
+          label="Download analysis"
+        />
+      </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="card p-6">
           <h4 className="text-sm font-bold uppercase tracking-widest text-emerald-400">
@@ -400,6 +492,15 @@ function AnalysisResultView({ analysis }: { analysis: MetricsAnalysis }) {
           <p className="mt-3 rounded-lg bg-rain/10 p-3 text-sm font-semibold text-pink">
             💰 {analysis.bottleneck.why_it_matters}
           </p>
+          {onJumpTab && (
+            <button
+              type="button"
+              onClick={() => onJumpTab(jumpTab)}
+              className="btn-secondary mt-4 inline-flex items-center gap-2 !px-3 !py-2 text-xs"
+            >
+              Fix in {jumpTab}
+            </button>
+          )}
         </div>
       </div>
 

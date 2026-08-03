@@ -14,8 +14,10 @@ import {
   choiceFromCreation,
   type ProductChoice,
 } from "@/components/ui";
+import { OutputCaveat } from "@/components/OutputCaveat";
 import { COMFORT_OPTIONS, TIME_PER_WEEK_OPTIONS } from "@/lib/examples";
-import type { Creation, TrafficPlan } from "@/types";
+import { defaultComfortFromBuyers } from "@/lib/tool-defaults";
+import type { BuyerProfilesResult, Creation, TrafficPlan } from "@/types";
 
 function Meter({
   value,
@@ -42,7 +44,22 @@ function Meter({
 }
 
 function trafficToMarkdown(plan: TrafficPlan): string {
-  const lines = ["# My traffic plan", "", plan.strategy_summary, ""];
+  const lines = ["# Distribution plan", "", plan.strategy_summary, ""];
+  if (plan.this_week_sprint?.length) {
+    lines.push("## This-week sprint", "");
+    for (const d of plan.this_week_sprint) {
+      lines.push(
+        `### ${d.day} — ${d.channel}`,
+        "",
+        d.action,
+        "",
+        d.copy_paste,
+        "",
+        `Success: ${d.success_metric}`,
+        ""
+      );
+    }
+  }
   for (const ch of plan.channels) {
     lines.push(
       `## ${ch.emoji} ${ch.name}`,
@@ -76,17 +93,21 @@ function trafficToMarkdown(plan: TrafficPlan): string {
 export function TrafficTab({
   creations,
   initialPlan,
+  initialBuyers = null,
+  onJumpTab,
 }: {
   creations: Creation[];
   initialPlan: TrafficPlan | null;
+  initialBuyers?: BuyerProfilesResult | null;
+  onJumpTab?: (tabId: string) => void;
 }) {
   const first = creations[0];
   const [choice, setChoice] = useState<ProductChoice | null>(
     first ? choiceFromCreation(first) : null
   );
   const [timePerWeek, setTimePerWeek] = useState("5-7 hours a week");
-  const [comfort, setComfort] = useState(
-    "loves writing posts and threads"
+  const [comfort, setComfort] = useState(() =>
+    defaultComfortFromBuyers(initialBuyers)
   );
   const [plan, setPlan] = useState<TrafficPlan | null>(initialPlan);
   const [loading, setLoading] = useState(false);
@@ -127,12 +148,11 @@ export function TrafficTab({
       <div className="card space-y-5 p-5">
         <div>
           <h2 className="text-lg font-bold text-white">
-            Get eyes on your offer
+            Distribution without a big ad budget
           </h2>
           <p className="helper-text">
-            A great product nobody sees makes $0. This picks the best places
-            to show up for YOUR product — with a ready-to-paste post for each
-            one and a weekly plan that fits your life.
+            Get a Mon–Fri sprint with copy-paste posts, plus ranked channels
+            and a weekly plan sized to your time.
           </p>
         </div>
 
@@ -169,36 +189,48 @@ export function TrafficTab({
           ) : (
             <Megaphone size={16} />
           )}
-          {plan ? "Rebuild my traffic plan" : "Build my traffic plan"}
+          {plan ? "Rebuild distribution plan" : "Build this-week sprint"}
         </button>
         <ErrorText message={error} />
       </div>
 
       {loading && <FunLoading headline="Scouting where your buyers scroll…" />}
 
-      {!loading && plan && <TrafficResult plan={plan} />}
+      {!loading && plan && (
+        <TrafficResult plan={plan} onJumpTab={onJumpTab} />
+      )}
 
       {!loading && !plan && (
         <TeachingEmptyState
           emoji="📣"
           title="Your traffic plan appears here"
-          body="Pick a product, tell us your time and style, and get 5-7 channels ranked by payoff — each with a post you can publish today."
+          body="Pick a product, tell us your time and style, and get a this-week sprint plus channels ranked by payoff — each with a post you can publish today."
         />
       )}
     </div>
   );
 }
 
-function TrafficResult({ plan }: { plan: TrafficPlan }) {
+function TrafficResult({
+  plan,
+  onJumpTab,
+}: {
+  plan: TrafficPlan;
+  onJumpTab?: (tabId: string) => void;
+}) {
+  const sprint = plan.this_week_sprint ?? [];
+  const mondayCopy = sprint[0]?.copy_paste ?? plan.channels[0]?.post_template ?? "";
+
   return (
     <div className="fade-up space-y-5">
+      <OutputCaveat tool="traffic" />
       <div className="card-glow p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-            📣 Your traffic strategy
+            Distribution strategy
           </h3>
           <DownloadButton
-            filename="my-traffic-plan.md"
+            filename="distribution-plan.md"
             content={trafficToMarkdown(plan)}
             label="Download plan"
           />
@@ -206,7 +238,65 @@ function TrafficResult({ plan }: { plan: TrafficPlan }) {
         <p className="mt-2 text-sm leading-relaxed text-slate-200">
           {plan.strategy_summary}
         </p>
+        {onJumpTab && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => onJumpTab("sales")}
+              className="rounded-lg border border-night-600 px-3 py-2 text-xs font-semibold text-slate-200 hover:border-aqua/40"
+            >
+              Pair with sales kit
+            </button>
+            <button
+              type="button"
+              onClick={() => onJumpTab("content")}
+              className="rounded-lg border border-night-600 px-3 py-2 text-xs font-semibold text-slate-200 hover:border-aqua/40"
+            >
+              Expand into content pack
+            </button>
+          </div>
+        )}
       </div>
+
+      {sprint.length > 0 && (
+        <div className="rounded-2xl border border-aqua/30 bg-aqua/5 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-widest text-aqua">
+                This-week distribution sprint
+              </h4>
+              <p className="mt-1 text-xs text-slate-400">
+                Five days. Copy-paste actions. Built for no big ad budget.
+              </p>
+            </div>
+            {mondayCopy && (
+              <CopyButton text={mondayCopy} label="Copy Monday post" />
+            )}
+          </div>
+          <div className="mt-4 space-y-3">
+            {sprint.map((day, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-night-600 bg-night-800/80 p-4"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-bold text-white">
+                    {day.day} · {day.channel}
+                  </p>
+                  <CopyButton text={day.copy_paste} label="Copy" />
+                </div>
+                <p className="mt-1 text-sm text-slate-300">{day.action}</p>
+                <p className="mt-2 whitespace-pre-wrap text-sm text-slate-200">
+                  {day.copy_paste}
+                </p>
+                <p className="mt-2 text-xs text-aqua">
+                  Done when: {day.success_metric}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         {plan.channels.map((channel, i) => (

@@ -3,11 +3,21 @@
  * chat completions endpoint at https://api.x.ai/v1.
  */
 
+import { RIGOR_SYSTEM_ADDENDUM } from "@/prompts/rigor";
+
 const GROK_BASE_URL = "https://api.x.ai/v1";
 
 interface GrokMessage {
   role: "system" | "user" | "assistant";
   content: string;
+}
+
+function withRigor(messages: GrokMessage[]): GrokMessage[] {
+  return messages.map((m) =>
+    m.role === "system"
+      ? { ...m, content: `${m.content}\n\n${RIGOR_SYSTEM_ADDENDUM}` }
+      : m
+  );
 }
 
 export async function grokChatJSON<T>(messages: GrokMessage[]): Promise<T> {
@@ -26,7 +36,7 @@ export async function grokChatJSON<T>(messages: GrokMessage[]): Promise<T> {
     },
     body: JSON.stringify({
       model,
-      messages,
+      messages: withRigor(messages),
       temperature: 0.6,
       response_format: { type: "json_object" },
     }),

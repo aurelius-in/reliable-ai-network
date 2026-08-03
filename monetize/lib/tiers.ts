@@ -5,7 +5,11 @@ export interface TierInfo {
   name: string;
   price: number;
   tagline: string;
+  /** Short value + when-to-pick line shown above the price */
+  summary: string;
   features: string[];
+  /** Standout upgrade value shown after the checklist (Growth / Pro) */
+  starValue?: string;
   highlight?: boolean;
 }
 
@@ -13,45 +17,55 @@ export const TIERS: TierInfo[] = [
   {
     id: "starter",
     name: "Starter",
-    price: 20,
+    price: 29,
     tagline: "Quick wins & the basics — 4 tools",
+    summary:
+      "Know the offer. Best when you're still validating idea, buyers, and price.",
     features: [
-      "Idea Analyzer with monetization score",
-      "Find Your Buyers — ideal customer profiles",
-      "Pricing & Packaging Builder",
-      "Quick-Start template library",
+      "Money score + best revenue paths",
+      "Buyer profiles + Apollo people-search matches",
+      "Price & packaging recommendations to test",
+      "Starter play templates to begin this week",
       "Unlimited re-runs on your creations",
     ],
   },
   {
     id: "growth",
     name: "Growth",
-    price: 50,
+    price: 79,
     tagline: "Funnels, traffic & launch — 9 tools",
+    summary:
+      "Ship the go-to-market. Best when you're ready to launch and get eyes on it.",
     features: [
       "Everything in Starter (4 tools), plus:",
-      "Funnel Architect (tripwire → core → upsell)",
-      "Get Eyes on Your Offer — traffic engine",
-      "30-Day Launch Plan with daily scripts",
-      "Ad & Content Generator",
-      "Progress Tracker + community wall",
+      "Funnel written: first offer → core → upsell",
+      "Where to promote + posts ready to publish",
+      "30-day launch calendar with daily scripts",
+      "Ads, posts, listing & email sequence",
+      "Progress milestones + example plays",
     ],
+    starValue:
+      "The real upgrade: turn clarity into a launch people can buy.",
   },
   {
     id: "pro",
     name: "Pro",
-    price: 100,
+    price: 149,
     tagline: "The full monetization OS — all 15 tools",
+    summary:
+      "Close, measure, and scale. Best when you need pipeline and leverage.",
     highlight: true,
     features: [
       "Everything in Growth (9 tools), plus:",
-      "Advanced strategy tools & roadmaps",
-      "Direct Sales Tools — outreach & scripts",
-      "What's Working — results dashboard + AI optimizer",
-      "Multiple Ways to Get Paid — revenue planner",
-      "Done-for-you monthly custom asset",
-      "Priority support + premium swipe files",
+      "Competitor scan, pricing tests & 90-day plan",
+      "Cold DMs, follow-ups & objection scripts",
+      "Weekly results + what to fix next",
+      "Extra revenue models ranked for you",
+      "One custom asset request per month (queued)",
+      "Premium swipe files + priority support",
     ],
+    starValue:
+      "The real upgrade: sell, optimize, and scale what Growth only launches.",
   },
 ];
 

@@ -13,6 +13,8 @@ import {
   choiceFromCreation,
   type ProductChoice,
 } from "@/components/ui";
+import { FirstDollarPath } from "@/components/FirstDollarPath";
+import { OutputCaveat } from "@/components/OutputCaveat";
 import { GOAL_OPTIONS } from "@/lib/examples";
 import type { Creation, RevenueStreamsPlan } from "@/types";
 
@@ -32,7 +34,34 @@ const EFFORT_META: Record<string, { label: string; className: string }> = {
 };
 
 function revenueToMarkdown(plan: RevenueStreamsPlan): string {
-  const lines = ["# Multiple ways to get paid", "", plan.strategy_summary, ""];
+  const lines = ["# Revenue model map", "", plan.strategy_summary, ""];
+  if (plan.unit_economics) {
+    const u = plan.unit_economics;
+    lines.push(
+      "## Unit economics (assumptions)",
+      "",
+      `- Assumed price: $${u.assumed_price_usd}`,
+      `- Assumed customers in 90 days: ${u.assumed_customers_90d}`,
+      `- Projected 90-day revenue: $${u.projected_90d_revenue_usd}`,
+      `- Notes: ${u.notes}`,
+      ""
+    );
+  }
+  if (plan.first_dollar_path) {
+    const f = plan.first_dollar_path;
+    lines.push(
+      "## First-dollar path",
+      "",
+      `- Offer: ${f.offer} (${f.price})`,
+      `- Who: ${f.who}`,
+      `- Channel: ${f.channel}`,
+      `- Ask: ${f.ask}`,
+      `- Pay how: ${f.pay_how}`,
+      "",
+      ...f.this_week.map((s, i) => `${i + 1}. ${s}`),
+      ""
+    );
+  }
   for (const s of plan.streams) {
     lines.push(
       `## ${s.emoji} ${s.model}`,
@@ -69,15 +98,17 @@ function revenueToMarkdown(plan: RevenueStreamsPlan): string {
 export function RevenueTab({
   creations,
   initialPlan,
+  onJumpTab,
 }: {
   creations: Creation[];
   initialPlan: RevenueStreamsPlan | null;
+  onJumpTab?: (tabId: string) => void;
 }) {
   const first = creations[0];
   const [choice, setChoice] = useState<ProductChoice | null>(
     first ? choiceFromCreation(first) : null
   );
-  const [goal, setGoal] = useState("steady side income");
+  const [goal, setGoal] = useState("first paying customers");
   const [plan, setPlan] = useState<RevenueStreamsPlan | null>(initialPlan);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,12 +147,12 @@ export function RevenueTab({
       <div className="card space-y-5 p-5">
         <div>
           <h2 className="text-lg font-bold text-white">
-            One product, multiple paychecks
+            Revenue model map
           </h2>
           <p className="helper-text">
-            Subscriptions, one-time sales, freemium, services, licensing…
-            most products can earn 3+ ways. See which ones fit yours — and
-            which to build first.
+            Subscriptions, one-time, freemium, services, licensing. See which
+            models fit your product and which to build first for a first dollar
+            path.
           </p>
         </div>
 
@@ -152,31 +183,41 @@ export function RevenueTab({
 
       {loading && <FunLoading headline="Finding every way this can pay you…" />}
 
-      {!loading && plan && <RevenueResult plan={plan} />}
+      {!loading && plan && (
+        <RevenueResult plan={plan} onJumpTab={onJumpTab} />
+      )}
 
       {!loading && !plan && (
         <TeachingEmptyState
           emoji="💸"
           title="Your revenue streams appear here"
-          body="Pick a product and get 3-5 ways it can make money — compared side by side, with a clear 'build this first' verdict."
+          body="Pick a product and get 3-5 ways it can make money — compared side by side, with unit economics and a first-dollar path."
         />
       )}
     </div>
   );
 }
 
-function RevenueResult({ plan }: { plan: RevenueStreamsPlan }) {
+function RevenueResult({
+  plan,
+  onJumpTab,
+}: {
+  plan: RevenueStreamsPlan;
+  onJumpTab?: (tabId: string) => void;
+}) {
   const firstPick = plan.build_first.model;
+  const u = plan.unit_economics;
 
   return (
     <div className="fade-up space-y-5">
+      <OutputCaveat tool="revenue" />
       <div className="card-glow p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h3 className="text-sm font-bold uppercase tracking-widest text-rain-bright">
-            💸 Your money map
+            Revenue model map
           </h3>
           <DownloadButton
-            filename="my-revenue-streams.md"
+            filename="revenue-model-map.md"
             content={revenueToMarkdown(plan)}
             label="Download plan"
           />
@@ -185,6 +226,48 @@ function RevenueResult({ plan }: { plan: RevenueStreamsPlan }) {
           {plan.strategy_summary}
         </p>
       </div>
+
+      {plan.first_dollar_path && (
+        <FirstDollarPath
+          steps={plan.first_dollar_path}
+          onJump={onJumpTab}
+        />
+      )}
+
+      {u && (
+        <div className="card p-5">
+          <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">
+            Unit economics (labeled assumptions)
+          </h4>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-slate-500">
+                Assumed price
+              </p>
+              <p className="text-xl font-black text-white">
+                ${u.assumed_price_usd.toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-slate-500">
+                Customers / 90d
+              </p>
+              <p className="text-xl font-black text-white">
+                {u.assumed_customers_90d}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-slate-500">
+                Projected 90d revenue
+              </p>
+              <p className="text-xl font-black gradient-text">
+                ${u.projected_90d_revenue_usd.toLocaleString()}
+              </p>
+            </div>
+          </div>
+          <p className="mt-3 text-sm text-slate-300">{u.notes}</p>
+        </div>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {plan.streams.map((stream, i) => {

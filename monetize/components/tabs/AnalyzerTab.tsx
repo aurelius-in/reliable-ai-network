@@ -4,13 +4,19 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lightbulb, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import { AnalysisResult } from "@/components/AnalysisResult";
+import { EditEvidencePanel } from "@/components/EditEvidencePanel";
+import { EvidenceChecklist } from "@/components/EvidenceChecklist";
+import { FirstDollarPath } from "@/components/FirstDollarPath";
+import { MonetizationBriefExport } from "@/components/MonetizationBriefExport";
 import {
   DescribeProductForm,
   ErrorText,
   FieldLabel,
   FunLoading,
 } from "@/components/ui";
+import { TermHint } from "@/components/TermHint";
 import { EXAMPLE_CREATIONS } from "@/lib/examples";
+import { loadEvidenceAnswers } from "@/lib/evidence-quality";
 import type { Creation, IdeaAnalysis } from "@/types";
 
 /**
@@ -21,9 +27,11 @@ import type { Creation, IdeaAnalysis } from "@/types";
 export function AnalyzerTab({
   creations,
   initialAnalyses,
+  onJumpTab,
 }: {
   creations: Creation[];
   initialAnalyses: Record<string, IdeaAnalysis>;
+  onJumpTab?: (tabId: string) => void;
 }) {
   const router = useRouter();
   const [localCreations, setLocalCreations] = useState<Creation[]>(creations);
@@ -52,7 +60,10 @@ export function AnalyzerTab({
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ creationId }),
+        body: JSON.stringify({
+          creationId,
+          evidenceChecklist: loadEvidenceAnswers(),
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Analysis failed");
@@ -78,6 +89,7 @@ export function AnalyzerTab({
           title: example.title,
           description: example.description,
           type: example.type,
+          evidenceChecklist: loadEvidenceAnswers(),
         }),
       });
       const data = await res.json();
@@ -106,18 +118,27 @@ export function AnalyzerTab({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-bold text-white">
-              What could your idea earn?
+              Commercial opportunity brief
             </h2>
             <p className="helper-text">
-              Get a money score out of 10, your best revenue paths, and quick
-              wins for this week — in about 15 seconds.
+              Directional assessment of{" "}
+              <TermHint id="monetization">monetization</TermHint> paths,
+              risks, and next{" "}
+              <TermHint id="validation_plan">validation</TermHint> steps
+              from your <TermHint id="product_brief">product brief</TermHint>.
+              Treat scores as hypotheses until buyers confirm them. Tap dotted
+              words anytime for a plain-English meaning.
             </p>
           </div>
         </div>
 
         <div className="mt-5">
-          <FieldLabel helper="Describe your own product to get real answers — or tap an example (they're just demos).">
-            Your product
+          <EvidenceChecklist compact />
+        </div>
+
+        <div className="mt-5">
+          <FieldLabel helper="Add your product brief, or run a B2B demo product.">
+            Product under analysis
           </FieldLabel>
           <button
             type="button"
@@ -128,7 +149,7 @@ export function AnalyzerTab({
                 : "border-rain/50 bg-night-800 text-white hover:border-rain"
             }`}
           >
-            Describe your own
+            Add product brief
           </button>
 
           {describing && (
@@ -196,14 +217,12 @@ export function AnalyzerTab({
               </div>
 
               <div className="flex items-center gap-2">
-                {analysis && (
-                  <button
-                    onClick={() => setOpenId(isOpen ? null : creation.id)}
-                    className="min-h-[44px] rounded-lg border border-night-600 px-3.5 py-2 text-sm font-semibold text-slate-200 transition hover:border-rain/50 active:scale-[0.96] md:min-h-0"
-                  >
-                    {isOpen ? "Hide" : "View"}
-                  </button>
-                )}
+                <button
+                  onClick={() => setOpenId(isOpen ? null : creation.id)}
+                  className="min-h-[44px] rounded-lg border border-night-600 px-3.5 py-2 text-sm font-semibold text-slate-200 transition hover:border-rain/50 active:scale-[0.96] md:min-h-0"
+                >
+                  {isOpen ? "Hide" : analysis ? "View" : "Evidence"}
+                </button>
                 <button
                   onClick={() => runAnalysis(creation.id)}
                   disabled={isRunning}
@@ -221,9 +240,59 @@ export function AnalyzerTab({
               </div>
             </div>
 
-            {isOpen && analysis && (
-              <div className="border-t border-night-600 bg-night-800/50 p-5">
-                <AnalysisResult analysis={analysis} />
+            {isOpen && (
+              <div className="space-y-4 border-t border-night-600 bg-night-800/50 p-5">
+                <EditEvidencePanel
+                  creation={creation}
+                  onUpdated={(next) => {
+                    setLocalCreations((prev) =>
+                      prev.map((c) => (c.id === next.id ? next : c))
+                    );
+                    router.refresh();
+                  }}
+                />
+                {analysis && (
+                  <>
+                    <MonetizationBriefExport
+                      product={{
+                        title: creation.title,
+                        description: creation.description,
+                        type: creation.type,
+                        stage: creation.stage,
+                        traction: creation.traction,
+                        current_price: creation.current_price,
+                        competitors_notes: creation.competitors_notes,
+                        evidence_docs: creation.evidence_docs,
+                        github_repo_url: creation.github_repo_url,
+                        github_context: creation.github_context,
+                        product_url: creation.product_url,
+                        website_context: creation.website_context,
+                      }}
+                      analysis={analysis}
+                    />
+                    <FirstDollarPath
+                      steps={{
+                        offer:
+                          analysis.recommended_paths?.[0]?.name ??
+                          "Smallest paid offer from your top path",
+                        price: creation.current_price?.trim() || "Set in Pricing",
+                        who: "Your best-fit buyer (run Find Your Buyers next)",
+                        channel:
+                          "Outbound + where that buyer already pays attention",
+                        ask: analysis.big_promise,
+                        pay_how:
+                          "Stripe Checkout, invoice, or store listing linked from the ask",
+                        this_week: (
+                          analysis.validation_plan?.length
+                            ? analysis.validation_plan
+                            : analysis.quick_wins ?? []
+                        ).slice(0, 5),
+                      }}
+                      onJump={onJumpTab}
+                    />
+                    <AnalysisResult analysis={analysis} />
+                  </>
+                )}
               </div>
             )}
           </div>
