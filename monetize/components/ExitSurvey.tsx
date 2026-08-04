@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { readHomeAbFromDocument } from "@/lib/home-ab";
 import { trackUiClick } from "@/lib/track";
 
 const OPTIONS: { id: string; label: string }[] = [
@@ -54,7 +55,12 @@ export function ExitSurvey({
     }
     const t = window.setTimeout(() => {
       setOpen(true);
-      trackUiClick("exit_survey_shown", { source: "timer", path });
+      const homeAb = readHomeAbFromDocument();
+      trackUiClick("exit_survey_shown", {
+        source: "timer",
+        path,
+        ...(homeAb ? { home_ab: homeAb } : {}),
+      });
     }, 25000);
     return () => window.clearTimeout(t);
   }, [openProp]);
@@ -62,6 +68,7 @@ export function ExitSurvey({
   async function submit() {
     if (!reason) return;
     setSending(true);
+    const homeAb = readHomeAbFromDocument();
     try {
       await fetch("/api/exit-survey", {
         method: "POST",
@@ -70,10 +77,15 @@ export function ExitSurvey({
           reason,
           detail: reason === "other" ? detail : undefined,
           path: window.location.pathname,
-          variant: source,
+          source,
+          home_ab: homeAb ?? undefined,
         }),
       });
-      trackUiClick("exit_survey_submit", { reason });
+      trackUiClick("exit_survey_submit", {
+        reason,
+        source,
+        ...(homeAb ? { home_ab: homeAb } : {}),
+      });
       try {
         sessionStorage.setItem(DISMISS_KEY, "1");
       } catch {

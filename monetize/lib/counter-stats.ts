@@ -3,6 +3,7 @@
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { HOME_VARIANTS, type HomeVariant } from "@/lib/home-ab";
 import { JOURNEY_STEPS } from "@/lib/journey";
 
 export type CounterRange = "today" | "7d" | "month" | "all";
@@ -84,6 +85,33 @@ export type ClickRow = {
   count: number;
 };
 
+export type HomeAbRow = {
+  variant: HomeVariant;
+  label: string;
+  views: number;
+  sessions: number;
+  primaryClicks: number;
+  secondaryClicks: number;
+  signups: number;
+  sessionToSignupPct: number | null;
+};
+
+export type ExitSurveyRow = {
+  reason: string;
+  label: string;
+  count: number;
+  byHomeAb: { a: number; b: number; c: number; unknown: number };
+};
+
+export type ExitSurveyActivity = {
+  shown: number;
+  submitted: number;
+  dismissed: number;
+  reasons: ExitSurveyRow[];
+  /** Submitted responses with a reason (from exit_survey events). */
+  total: number;
+};
+
 export type Insight = {
   severity: "critical" | "warn" | "info";
   title: string;
@@ -140,11 +168,25 @@ export type CounterStats = {
   sources: { source: string; sessions: number }[];
   tools: ToolUsageRow[];
   clicks: ClickRow[];
+  /** Homepage A/B/C for the selected window. */
+  homeAb: HomeAbRow[];
+  /** “What stopped you from continuing?” survey activity. */
+  exitSurvey: ExitSurveyActivity;
   insights: Insight[];
   /** One-line headline for the selected window. */
   headline: string;
   trackingReady: boolean;
   trackingError?: string;
+};
+
+const EXIT_REASON_LABELS: Record<string, string> = {
+  unclear_outcome: "Did not understand what I would receive",
+  unsure_why_signup: "Unsure why asked to sign up",
+  distrust_link: "Did not trust the access link",
+  no_product_info: "Did not want to provide product info",
+  wanted_sample: "Expected a sample first",
+  not_ready_time: "Not ready to spend the time",
+  other: "Other",
 };
 
 const FAQ_CLICK_TARGETS = new Set([
@@ -235,7 +277,150 @@ const TRIAL_CTA_TARGETS = new Set([
   "nav_start_trial",
   "footer_cta_signup",
   "activate_trial_click",
+  "first_win_cta_signup",
+  "pie_cta_signup",
+  "faq_cta_signup",
 ]);
+
+function isTrialCtaTarget(target: string): boolean {
+  return (
+    TRIAL_CTA_TARGETS.has(target) || /^hero_cta_primary_[abc]$/.test(target)
+  );
+}
+
+function isHomeVariant(v: unknown): v is HomeVariant {
+  return v === "a" || v === "b" || v === "c";
+}
+
+function buildHomeAb(rows: EventRow[]): HomeAbRow[] {
+  const stats: Record<
+    HomeVariant,
+    {
+      views: number;
+      sessions: Set<string>;
+      primaryClicks: number;
+      secondaryClicks: number;
+      signups: number;
+    }
+  > = {
+    a: {
+      views: 0,
+      sessions: new Set(),
+      primaryClicks: 0,
+      secondaryClicks: 0,
+      signups: 0,
+    },
+    b: {
+      views: 0,
+      sessions: new Set(),
+      primaryClicks: 0,
+      secondaryClicks: 0,
+      signups: 0,
+    },
+    c: {
+      views: 0,
+      sessions: new Set(),
+      primaryClicks: 0,
+      secondaryClicks: 0,
+      signups: 0,
+    },
+  };
+
+  for (const row of rows) {
+    const props = row.props ?? {};
+    if (row.name === "home_ab_view" && isHomeVariant(props.variant)) {
+      const v = props.variant;
+      stats[v].views += 1;
+      if (row.session_id) stats[v].sessions.add(row.session_id);
+    } else if (row.name === "signup_success" && isHomeVariant(props.home_ab)) {
+      stats[props.home_ab].signups += 1;
+    } else if (row.name === "ui_click" && typeof props.target === "string") {
+      const m = /^hero_cta_(primary|secondary)_([abc])$/.exec(props.target);
+      if (m && isHomeVariant(m[2])) {
+        if (m[1] === "primary") stats[m[2]].primaryClicks += 1;
+        else stats[m[2]].secondaryClicks += 1;
+      }
+    }
+  }
+
+  return (Object.keys(HOME_VARIANTS) as HomeVariant[]).map((variant) => {
+    const s = stats[variant];
+    const sessions = s.sessions.size;
+    return {
+      variant,
+      label: HOME_VARIANTS[variant].label,
+      views: s.views,
+      sessions,
+      primaryClicks: s.primaryClicks,
+      secondaryClicks: s.secondaryClicks,
+      signups: s.signups,
+      sessionToSignupPct: pct(s.signups, sessions),
+    };
+  });
+}
+
+function buildExitSurvey(rows: EventRow[]): ExitSurveyActivity {
+  let shown = 0;
+  let submitted = 0;
+  let dismissed = 0;
+  const map = new Map<
+    string,
+    { count: number; byHomeAb: ExitSurveyRow["byHomeAb"] }
+  >();
+
+  for (const r of rows) {
+    if (r.name === "ui_click") {
+      const target = propString(r.props, "target");
+      if (target === "exit_survey_shown") shown += 1;
+      else if (target === "exit_survey_submit") submitted += 1;
+      else if (target === "exit_survey_dismiss") dismissed += 1;
+      continue;
+    }
+    if (r.name !== "exit_survey") continue;
+    const reason = propString(r.props, "reason") ?? "other";
+    const cur = map.get(reason) ?? {
+      count: 0,
+      byHomeAb: { a: 0, b: 0, c: 0, unknown: 0 },
+    };
+    cur.count += 1;
+    const homeAb = r.props?.home_ab;
+    if (isHomeVariant(homeAb)) cur.byHomeAb[homeAb] += 1;
+    else cur.byHomeAb.unknown += 1;
+    map.set(reason, cur);
+  }
+
+  // Fallback: reason breakdown from client ui_click if server event missing.
+  if (map.size === 0) {
+    for (const r of rows) {
+      if (r.name !== "ui_click") continue;
+      if (propString(r.props, "target") !== "exit_survey_submit") continue;
+      const reason = propString(r.props, "reason") ?? "other";
+      const cur = map.get(reason) ?? {
+        count: 0,
+        byHomeAb: { a: 0, b: 0, c: 0, unknown: 0 },
+      };
+      cur.count += 1;
+      const homeAb = r.props?.home_ab;
+      if (isHomeVariant(homeAb)) cur.byHomeAb[homeAb] += 1;
+      else cur.byHomeAb.unknown += 1;
+      map.set(reason, cur);
+    }
+  }
+
+  const reasons = [...map.entries()]
+    .map(([reason, v]) => ({
+      reason,
+      label: EXIT_REASON_LABELS[reason] ?? reason,
+      count: v.count,
+      byHomeAb: v.byHomeAb,
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  const total = reasons.reduce((n, row) => n + row.count, 0);
+  if (submitted === 0 && total > 0) submitted = total;
+
+  return { shown, submitted, dismissed, reasons, total };
+}
 
 function buildFunnel(rows: EventRow[]): FunnelStep[] {
   // Strict sequential path so continue% always means "of the previous step".
@@ -257,7 +442,7 @@ function buildFunnel(rows: EventRow[]): FunnelStep[] {
       hint: "Trial CTA click, or visited Pricing / Checklist / Signup",
       pred: (r) =>
         (r.name === "ui_click" &&
-          TRIAL_CTA_TARGETS.has(String(propString(r.props, "target") ?? ""))) ||
+          isTrialCtaTarget(String(propString(r.props, "target") ?? ""))) ||
         (r.name === "page_view" &&
           ["/pricing", "/signup", "/checklist"].includes(pathBase(r.path))),
     },
@@ -413,6 +598,8 @@ function buildInsights(args: {
   bouncedHome: number;
   pages: { path: string; views: number; sessions: number }[];
   clarity: ClaritySignals;
+  homeAb: HomeAbRow[];
+  exitSurvey: ExitSurveyActivity;
 }): Insight[] {
   const {
     rangeLabel,
@@ -424,7 +611,10 @@ function buildInsights(args: {
     bouncedHome,
     pages,
     clarity,
+    homeAb,
+    exitSurvey,
   } = args;
+  const exitSurveyTotal = exitSurvey.total;
   const byKey = Object.fromEntries(funnel.map((f) => [f.key, f]));
   const tips: Insight[] = [];
 
@@ -580,6 +770,44 @@ function buildInsights(args: {
       title: `Idea Analyzer curiosity without commitment (${analyzer.runRatePct}% run rate)`,
       detail: `${analyzer.views} views → ${analyzer.runs} runs. First tool friction trains people that the product is “look, don’t use.”`,
     });
+  }
+
+  if (exitSurveyTotal >= 3 && exitSurvey.reasons[0]) {
+    const top = exitSurvey.reasons[0];
+    const share = pct(top.count, exitSurveyTotal);
+    tips.push({
+      severity: (share ?? 0) >= 40 ? "warn" : "info",
+      title: `Exit survey top reason: ${top.label} (${top.count}/${exitSurveyTotal})`,
+      detail: `From “What stopped you from continuing?” · shown ${exitSurvey.shown}, dismissed ${exitSurvey.dismissed}.`,
+    });
+  } else if (exitSurvey.shown >= 5 && exitSurvey.submitted === 0) {
+    tips.push({
+      severity: "info",
+      title: `Exit survey shown ${exitSurvey.shown}× with 0 submits`,
+      detail:
+        "People see “What stopped you from continuing?” then leave without answering. Optional — not a funnel leak by itself.",
+    });
+  }
+
+  const rankedAb = [...homeAb]
+    .filter((v) => v.sessions >= 20)
+    .sort(
+      (a, b) => (b.sessionToSignupPct ?? -1) - (a.sessionToSignupPct ?? -1)
+    );
+  if (rankedAb.length >= 2) {
+    const best = rankedAb[0];
+    const worst = rankedAb[rankedAb.length - 1];
+    if (
+      best.sessionToSignupPct != null &&
+      worst.sessionToSignupPct != null &&
+      best.sessionToSignupPct - worst.sessionToSignupPct >= 3
+    ) {
+      tips.push({
+        severity: "info",
+        title: `Homepage ${best.variant.toUpperCase()} leads session→signup (${best.sessionToSignupPct}% vs ${worst.variant.toUpperCase()} ${worst.sessionToSignupPct}%)`,
+        detail: `${best.label} vs ${worst.label}. Kill the lagging variant after ~300 sessions each.`,
+      });
+    }
   }
 
   if (tips.length === 0) {
@@ -818,9 +1046,7 @@ export async function loadCounterStats(
       rows,
       (r) =>
         (r.name === "ui_click" &&
-          TRIAL_CTA_TARGETS.has(
-            String(propString(r.props, "target") ?? "")
-          )) ||
+          isTrialCtaTarget(String(propString(r.props, "target") ?? ""))) ||
         (r.name === "page_view" &&
           ["/pricing", "/signup", "/checklist", "/checkout", "/login"].includes(
             pathBase(r.path)
@@ -836,6 +1062,16 @@ export async function loadCounterStats(
     const tools = trackingReady ? buildToolUsage(rows) : [];
     const clicks = trackingReady ? buildClicks(rows) : [];
     const funnel = trackingReady ? buildFunnel(rows) : [];
+    const homeAb = trackingReady ? buildHomeAb(rows) : [];
+    const exitSurveyBuilt = trackingReady
+      ? buildExitSurvey(rows)
+      : {
+          shown: 0,
+          submitted: 0,
+          dismissed: 0,
+          reasons: [] as ExitSurveyRow[],
+          total: 0,
+        };
     const sessions = uniqueSessions(rows);
     const label = rangeLabel(range);
     const byKey = Object.fromEntries(funnel.map((f) => [f.key, f]));
@@ -883,6 +1119,8 @@ export async function loadCounterStats(
           bouncedHome,
           pages,
           clarity,
+          homeAb,
+          exitSurvey: exitSurveyBuilt,
         })
       : [
           {
@@ -929,6 +1167,8 @@ export async function loadCounterStats(
       sources,
       tools,
       clicks,
+      homeAb,
+      exitSurvey: exitSurveyBuilt,
       insights,
       headline,
       trackingReady,

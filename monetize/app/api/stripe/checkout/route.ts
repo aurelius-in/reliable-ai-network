@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
+import type Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
 import { applyReferralCode, ensureReferralCode } from "@/lib/referral-server";
 import { getStripe, getPriceIdForTier, getAppUrl, type Tier } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ensureProfile } from "@/lib/supabase/ensure-profile";
+import {
+  getUpsellStripePriceId,
+  resolveCheckoutUpsells,
+} from "@/lib/checkout-upsells";
 
 /**
  * Creates a subscription Checkout Session in embedded mode.
+ * Optional GoDaddy-style Layer-2 add-ons via `upsells: string[]`.
  * Returns clientSecret for mounting Checkout on /checkout.
  */
 export async function POST(request: Request) {
@@ -21,6 +27,7 @@ export async function POST(request: Request) {
 
   let tier: Tier = "pro";
   let referralCode: string | null = null;
+  let upsellIds: string[] = [];
   try {
     const body = await request.json();
     if (body?.tier === "starter" || body?.tier === "growth" || body?.tier === "pro") {
@@ -29,9 +36,14 @@ export async function POST(request: Request) {
     if (typeof body?.referralCode === "string") {
       referralCode = body.referralCode;
     }
+    if (Array.isArray(body?.upsells)) {
+      upsellIds = body.upsells.filter((x: unknown) => typeof x === "string");
+    }
   } catch {
     // Empty body → default to Pro trial.
   }
+
+  const upsells = resolveCheckoutUpsells(upsellIds);
 
   try {
     const stripe = getStripe();
@@ -88,25 +100,61 @@ export async function POST(request: Request) {
       status === "reviewer" ||
       status === "retention";
 
+    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
+      { price: getPriceIdForTier(tier), quantity: 1 },
+    ];
+
+    for (const upsell of upsells) {
+      const priceId = getUpsellStripePriceId(upsell);
+      if (priceId) {
+        line_items.push({ price: priceId, quantity: 1 });
+      } else {
+        line_items.push({
+          price_data: {
+            currency: "usd",
+            unit_amount: upsell.priceMonthly * 100,
+            recurring: { interval: "month" },
+            product_data: {
+              name: upsell.name,
+              description: upsell.need.slice(0, 200),
+              metadata: {
+                rain_upsell_id: upsell.id,
+                rain_layer: "execution",
+              },
+            },
+          },
+          quantity: 1,
+        });
+      }
+    }
+
+    const upsellMeta = upsells.map((u) => u.id).join(",");
+
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded_page",
       mode: "subscription",
       customer: customerId,
       client_reference_id: user.id,
       payment_method_collection: "always",
-      line_items: [{ price: getPriceIdForTier(tier), quantity: 1 }],
+      line_items,
       subscription_data: {
         ...(isNewSubscriber ? { trial_period_days: 30 } : {}),
         metadata: {
           supabase_user_id: user.id,
+          tier,
+          ...(upsellMeta ? { checkout_upsells: upsellMeta } : {}),
           ...(profile?.referred_by
             ? { referred_by: profile.referred_by }
             : {}),
         },
       },
+      metadata: {
+        supabase_user_id: user.id,
+        tier,
+        ...(upsellMeta ? { checkout_upsells: upsellMeta } : {}),
+      },
       allow_promotion_codes: true,
       return_url: `${appUrl}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
-      // Embedded Checkout allows colors/name/font — not logo/icon (those are Dashboard-only).
       branding_settings: {
         display_name: "Make it RAIN",
         background_color: "#070a12",

@@ -96,18 +96,6 @@ export function HomeFaq() {
           </details>
         ))}
       </div>
-      <div className="mt-5 text-center sm:mt-6">
-        <a
-          href="/signup"
-          onClick={() => trackUiClick("faq_cta_signup")}
-          className="text-sm font-semibold text-aqua hover:text-aqua-bright"
-        >
-          <CopySwap
-            mobile="Get my playbook free →"
-            desktop="Ready? Get my tailored playbook free →"
-          />
-        </a>
-      </div>
     </section>
   );
 }

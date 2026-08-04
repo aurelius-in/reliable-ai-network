@@ -20,7 +20,7 @@ export const TIERS: TierInfo[] = [
     price: 29,
     tagline: "Quick wins & the basics — 4 tools",
     summary:
-      "Know the offer. Best when you're still validating idea, buyers, and price.",
+      "Advisory basics: validate idea, buyers, and price before you spend on execution.",
     features: [
       "Money score + best revenue paths",
       "Buyer profiles + Apollo people-search matches",
@@ -35,7 +35,7 @@ export const TIERS: TierInfo[] = [
     price: 79,
     tagline: "Funnels, traffic & launch — 9 tools",
     summary:
-      "Ship the go-to-market. Best when you're ready to launch and get eyes on it.",
+      "Keep the go-to-market plan current: funnel, channels, launch, and content drafts you can run.",
     features: [
       "Everything in Starter (4 tools), plus:",
       "Funnel written: first offer → core → upsell",
@@ -45,15 +45,15 @@ export const TIERS: TierInfo[] = [
       "Progress milestones + example plays",
     ],
     starValue:
-      "The real upgrade: turn clarity into a launch people can buy.",
+      "The real upgrade: a current plan and drafts — you still run the outreach.",
   },
   {
     id: "pro",
     name: "Pro",
     price: 149,
-    tagline: "The full monetization OS — all 15 tools",
+    tagline: "Full advisory OS — all 15 tools",
     summary:
-      "Close, measure, and scale. Best when you need pipeline and leverage.",
+      "Decide, measure, and hand off: full toolset plus optional specialist execution briefs.",
     highlight: true,
     features: [
       "Everything in Growth (9 tools), plus:",
@@ -61,11 +61,11 @@ export const TIERS: TierInfo[] = [
       "Cold DMs, follow-ups & objection scripts",
       "Weekly results + what to fix next",
       "Extra revenue models ranked for you",
-      "One custom asset request per month (queued)",
+      "One optional execution handoff per month",
       "Premium swipe files + priority support",
     ],
     starValue:
-      "The real upgrade: sell, optimize, and scale what Growth only launches.",
+      "The real upgrade: deeper guidance + optional Layer-2 handoff — subscription stays useful alone.",
   },
 ];
 

@@ -1,4 +1,10 @@
-/** Homepage A/B/C variants — only 2–3 intentional diffs each. */
+/** Homepage A/B/C variants — only 2–3 intentional diffs each.
+ *
+ * A = playbook control
+ * B = agency price anchor (strategy clarified — not “we sell for you”)
+ * C = decision / advisory layer (service-ladder messaging)
+ * See docs/service-ladder.md
+ */
 
 export type HomeVariant = "a" | "b" | "c";
 
@@ -26,7 +32,6 @@ export type HomeVariantCopy = {
 export const HOME_BODY_LINES = {
   mobile: ["Paste a URL or describe what you built.", "You keep the code."],
   desktop: [
-    "Who may pay. What to charge. What to do this week.",
     "Start free. Paste a URL or describe what you own.",
     "Not an app builder. You keep the code.",
   ],
@@ -46,7 +51,7 @@ export const HOME_VARIANTS: Record<HomeVariant, HomeVariantCopy> = {
       "Who may pay. What to charge. What to do this week.",
     ],
     primaryMobile: "Get my playbook free",
-    primaryDesktop: "Get my tailored playbook free",
+    primaryDesktop: "Get my tailored playbook",
     primaryHref: "/signup",
     secondaryLabelMobile: "See a sample",
     secondaryLabelDesktop: "See a sample first",
@@ -58,39 +63,45 @@ export const HOME_VARIANTS: Record<HomeVariant, HomeVariantCopy> = {
     id: "b",
     label: "Agency mirror",
     supportLinesMobile: [
-      "An agency's first month.",
+      "An agency's first month of strategy.",
       "In your first week.",
       "$149, not $5,000.",
     ],
     supportLinesDesktop: [
-      "An agency's first month. In your first week.",
+      "An agency's first month of strategy. In your first week.",
       "$149, not $5,000.",
+      "Plans and briefs you run — not us selling for you.",
     ],
-    primaryMobile: "Start my agency week",
-    primaryDesktop: "Start my agency week free",
+    primaryMobile: "Start my strategy week",
+    primaryDesktop: "Start my strategy week free",
     primaryHref: "/signup",
     secondaryLabelMobile: "See the $10k menu",
     secondaryLabelDesktop: "See the $10k menu",
     secondaryHref: "#tenk-menu",
-    trustLineMobile: "Start free. No card.",
-    trustLineDesktop: "Start free. No card required.",
+    trustLineMobile: "Advisory layer. Start free.",
+    trustLineDesktop: "Commercialization advisory. Start free. No card.",
   },
   c: {
     id: "c",
-    label: "Sample first",
-    supportLinesMobile: ["See a sample first.", "Then get yours free."],
-    supportLinesDesktop: [
-      "See a sample of what you get.",
-      "Then get your tailored playbook free.",
+    label: "Decision layer",
+    supportLinesMobile: [
+      "Better commercialization decisions.",
+      "Keep the plan current.",
+      "Know what to do next.",
     ],
-    primaryMobile: "See a sample",
-    primaryDesktop: "See a sample first",
-    primaryHref: "/sample",
-    secondaryLabelMobile: "Then start free",
-    secondaryLabelDesktop: "Then get my playbook free",
-    secondaryHref: "/signup",
-    trustLineMobile: "Sample needs no signup.",
-    trustLineDesktop: "The sample needs no signup.",
+    supportLinesDesktop: [
+      "Make better commercialization decisions.",
+      "Keep the plan current. Know what to do next.",
+    ],
+    primaryMobile: "Start deciding free",
+    primaryDesktop: "Start my decision layer free",
+    primaryHref: "/signup",
+    secondaryLabelMobile: "See a sample",
+    secondaryLabelDesktop: "See a sample first",
+    secondaryHref: "/sample",
+    trustLineMobile: "You decide. You (or specialists) execute.",
+    trustLineDesktop:
+      "Advisory for founders who already built something. You keep the code.",
   },
 };
 
@@ -100,6 +111,22 @@ export function normalizeHomeVariant(
   const v = (raw ?? "").trim().toLowerCase();
   if (v === "a" || v === "b" || v === "c") return v;
   return null;
+}
+
+/** Read assigned homepage variant from the browser cookie (client only). */
+export function readHomeAbFromDocument(): HomeVariant | null {
+  if (typeof document === "undefined") return null;
+  try {
+    const match = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith(`${HOME_AB_COOKIE}=`));
+    const raw = match
+      ? decodeURIComponent(match.split("=")[1] ?? "")
+      : null;
+    return normalizeHomeVariant(raw);
+  } catch {
+    return null;
+  }
 }
 
 export function pickHomeVariant(seed?: string): HomeVariant {

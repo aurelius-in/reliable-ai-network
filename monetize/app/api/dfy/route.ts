@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          "You've used this month's Done-For-You request. Your allowance resets on the 1st.",
+          "You've used this month's execution handoff. Your allowance resets on the 1st.",
       },
       { status: 429 }
     );

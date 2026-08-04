@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { isComplimentaryStatus } from "@/lib/access-codes";
+import { resolveCheckoutUpsells } from "@/lib/checkout-upsells";
+import { notifyCheckoutUpsells } from "@/lib/notify-checkout-upsells";
 import { maybeCreditReferralReward } from "@/lib/referral-rewards";
-import { getStripe, getTierForPriceId } from "@/lib/stripe";
+import { getStripe, getTierForPriceId, type Tier } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const maxDuration = 60;
@@ -49,6 +51,33 @@ export async function POST(request: Request) {
           const subscription =
             await getStripe().subscriptions.retrieve(subscriptionId);
           await syncSubscriptionToProfile(admin, userId, subscription);
+
+          const upsellRaw =
+            session.metadata?.checkout_upsells ||
+            subscription.metadata?.checkout_upsells ||
+            "";
+          const upsells = resolveCheckoutUpsells(
+            upsellRaw.split(",").map((s) => s.trim()).filter(Boolean)
+          );
+          if (upsells.length) {
+            const { data: profile } = await admin
+              .from("profiles")
+              .select("email")
+              .eq("id", userId)
+              .maybeSingle();
+            const tier =
+              subscription.metadata?.tier ||
+              session.metadata?.tier ||
+              "unknown";
+            // Await: fire-and-forget promises can be dropped when the
+            // serverless function freezes after the response is sent.
+            await notifyCheckoutUpsells({
+              email: profile?.email ?? "unknown",
+              userId,
+              tier,
+              upsells,
+            });
+          }
         }
 
         await logBillingEvent(admin, {
@@ -160,13 +189,22 @@ export async function POST(request: Request) {
 
 type AdminClient = ReturnType<typeof createAdminClient>;
 
+function tierFromSubscription(subscription: Stripe.Subscription): Tier | null {
+  for (const item of subscription.items.data) {
+    const tier = getTierForPriceId(item.price?.id);
+    if (tier) return tier;
+  }
+  const meta = subscription.metadata?.tier;
+  if (meta === "starter" || meta === "growth" || meta === "pro") return meta;
+  return null;
+}
+
 async function syncSubscriptionToProfile(
   admin: AdminClient,
   userId: string,
   subscription: Stripe.Subscription
 ) {
-  const priceId = subscription.items.data[0]?.price?.id;
-  const tier = getTierForPriceId(priceId);
+  const tier = tierFromSubscription(subscription);
 
   await admin
     .from("profiles")

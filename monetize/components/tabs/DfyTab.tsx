@@ -137,10 +137,13 @@ export function DfyTab({
             <Gift size={20} />
           </span>
           <div>
-            <p className="font-bold text-white">Monthly custom asset request</p>
+            <p className="font-bold text-white">
+              Optional execution handoff (Layer 2)
+            </p>
             <p className="text-xs text-slate-400">
-              Submit one brief per month. It enters a queue and is delivered when
-              ready — not an instant auto-generate. Included with Pro.
+              Your subscription is the strategy layer. Request one specialist
+              deliverable per month from an execution brief — optional, not
+              required. Queued craft, not instant auto-generate.
             </p>
           </div>
         </div>
@@ -172,11 +175,12 @@ export function DfyTab({
         <div className="card space-y-5 p-5">
           <div>
             <h2 className="text-lg font-bold text-white">
-              What should we make for you?
+              What should a specialist execute?
             </h2>
             <p className="helper-text">
-              Download an instant creative brief now. Submit the monthly request
-              when you want the polished asset crafted for you.
+              Download an instant execution brief from your product context.
+              Submit the monthly request only when you want humans to produce
+              the asset — you can keep running Layer 1 yourself forever.
             </p>
           </div>
 
@@ -187,9 +191,9 @@ export function DfyTab({
           />
 
           <div className="rounded-xl border border-aqua/25 bg-aqua/5 p-4">
-            <p className="text-sm font-bold text-white">Instant creative brief</p>
+            <p className="text-sm font-bold text-white">Instant execution brief</p>
             <p className="mt-1 text-xs text-slate-400">
-              Available immediately. Does not use your monthly request.
+              Available immediately. Does not use your monthly handoff slot.
             </p>
             <div className="mt-3">
               <DownloadButton

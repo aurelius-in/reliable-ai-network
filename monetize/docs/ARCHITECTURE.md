@@ -3,7 +3,8 @@
 **Product:** Make it RAIN (RAIN Monetize)  
 **Live:** https://makeitrainapp.com  
 **Code:** `reliable-ai-network/monetize` (this repo)  
-**Notes / RAIN-wide index:** `RAIN/docs/make-it-rain-architecture.md`
+**Notes / RAIN-wide index:** `RAIN/docs/make-it-rain-architecture.md`  
+**Service ladder:** [`service-ladder.md`](./service-ladder.md) — subscription = Layer 1 strategy/admin; optional DFY = Layer 2 execution. Homepage A/B/C: `lib/home-ab.ts`.
 
 This document is the technical source of truth for how the app is built and what each of the **15 journey tools** does, consumes, and produces.
 

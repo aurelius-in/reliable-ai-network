@@ -6,28 +6,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { track } from "@/lib/track";
-import {
-  HOME_AB_COOKIE,
-  normalizeHomeVariant,
-} from "@/lib/home-ab";
+import { readHomeAbFromDocument } from "@/lib/home-ab";
 import {
   REFERRAL_STORAGE_KEY,
   normalizeReferralCode,
 } from "@/lib/referrals";
 
 function readHomeAbVariant(): string | undefined {
-  if (typeof document === "undefined") return undefined;
-  try {
-    const match = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(`${HOME_AB_COOKIE}=`));
-    const raw = match
-      ? decodeURIComponent(match.split("=")[1] ?? "")
-      : null;
-    return normalizeHomeVariant(raw) ?? undefined;
-  } catch {
-    return undefined;
-  }
+  return readHomeAbFromDocument() ?? undefined;
 }
 
 export function AuthForm({

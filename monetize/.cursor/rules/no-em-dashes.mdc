@@ -1,0 +1,10 @@
+---
+description: Never use em dashes; they read as AI-generated writing
+alwaysApply: true
+---
+
+# No em dashes
+
+Never use the em dash character (`—`) in any output: chat replies, docs, marketing copy, UI strings, comments, commit messages, or code you write.
+
+People associate em dashes with AI writing. Prefer commas, periods, colons, parentheses, or hyphens instead. Do not use en dashes as clause separators either.

@@ -213,7 +213,7 @@ export default async function HomePage() {
             />
           </p>
           <p className="mt-2.5 text-xs text-slate-400 sm:mt-3">
-            You keep your product, code, and data. No repo required to start.
+            No repo required to start.
           </p>
           <div className="mt-4 flex flex-col items-stretch gap-2.5 sm:mt-5 sm:flex-row sm:items-center">
             <TrackedLink

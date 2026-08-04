@@ -216,6 +216,138 @@ export function CounterDashboard({
         </div>
       </section>
 
+      <section className="overflow-hidden rounded-2xl border border-night-600 bg-night-800">
+        <div className="border-b border-night-600 px-4 py-3">
+          <p className="text-sm font-semibold text-slate-300">
+            What stopped you from continuing? ({stats.rangeLabel.toLowerCase()})
+          </p>
+          <p className="mt-0.5 text-xs text-slate-500">
+            Exit / trust survey activity on invite, signup, and sample
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-3 border-b border-night-600 p-4">
+          <StatCard
+            label="Shown"
+            value={stats.exitSurvey.shown}
+            hint="Survey panel opened"
+          />
+          <StatCard
+            label="Submitted"
+            value={stats.exitSurvey.submitted}
+            hint="Sent a reason"
+            highlight={stats.exitSurvey.submitted > 0}
+          />
+          <StatCard
+            label="Dismissed"
+            value={stats.exitSurvey.dismissed}
+            hint="Closed without sending"
+          />
+        </div>
+        {stats.exitSurvey.total === 0 ? (
+          <p className="px-4 py-6 text-center text-sm text-slate-500">
+            {stats.exitSurvey.shown === 0
+              ? "No survey activity in this window."
+              : "Survey was shown, but no reasons submitted yet."}
+          </p>
+        ) : (
+          <ul className="divide-y divide-night-600">
+            {stats.exitSurvey.reasons.map((row) => (
+              <li
+                key={row.reason}
+                className="flex items-center justify-between gap-3 px-4 py-3"
+              >
+                <p className="text-sm font-medium text-white">{row.label}</p>
+                <p className="shrink-0 text-lg font-black tabular-nums text-white">
+                  {row.count}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="overflow-hidden rounded-2xl border border-night-600 bg-night-800">
+        <div className="border-b border-night-600 px-4 py-3">
+          <p className="text-sm font-semibold text-slate-300">
+            Homepage A / B / C ({stats.rangeLabel.toLowerCase()})
+          </p>
+          <p className="mt-0.5 text-xs text-slate-500">
+            Views and CTAs from assigned hero variants. Signups attributed via{" "}
+            <code className="text-slate-400">home_ab</code> cookie.{" "}
+            <Link
+              href={`/admin/ab?key=${encodeURIComponent(adminKey)}&days=${
+                stats.range === "today"
+                  ? 1
+                  : stats.range === "7d"
+                    ? 7
+                    : stats.range === "month"
+                      ? 30
+                      : 90
+              }`}
+              className="font-semibold text-aqua hover:text-aqua-bright"
+            >
+              Full A/B page
+            </Link>
+          </p>
+        </div>
+        {stats.homeAb.every((v) => v.views === 0 && v.signups === 0) ? (
+          <p className="px-4 py-8 text-center text-sm text-slate-500">
+            No homepage variant events in this window yet.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-night-600 text-xs uppercase tracking-wide text-slate-500">
+                  <th className="px-4 py-2.5">Variant</th>
+                  <th className="px-4 py-2.5">Views</th>
+                  <th className="px-4 py-2.5">Sessions</th>
+                  <th className="px-4 py-2.5">Primary</th>
+                  <th className="px-4 py-2.5">Secondary</th>
+                  <th className="px-4 py-2.5">Signups</th>
+                  <th className="px-4 py-2.5">Sess → signup</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stats.homeAb.map((v) => (
+                  <tr
+                    key={v.variant}
+                    className="border-b border-night-700/60 last:border-0"
+                  >
+                    <td className="px-4 py-2.5 font-semibold text-white">
+                      {v.variant.toUpperCase()}{" "}
+                      <span className="font-normal text-slate-500">
+                        {v.label}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5 tabular-nums text-slate-200">
+                      {v.views}
+                    </td>
+                    <td className="px-4 py-2.5 tabular-nums text-slate-200">
+                      {v.sessions}
+                    </td>
+                    <td className="px-4 py-2.5 tabular-nums text-slate-200">
+                      {v.primaryClicks}
+                    </td>
+                    <td className="px-4 py-2.5 tabular-nums text-slate-200">
+                      {v.secondaryClicks}
+                    </td>
+                    <td className="px-4 py-2.5 tabular-nums font-semibold text-aqua-bright">
+                      {v.signups}
+                    </td>
+                    <td className="px-4 py-2.5 tabular-nums text-slate-200">
+                      {v.sessionToSignupPct === null
+                        ? "—"
+                        : `${v.sessionToSignupPct}%`}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
       <section className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5">
         <h2 className="text-sm font-bold text-amber-200">
           What&apos;s scaring people off

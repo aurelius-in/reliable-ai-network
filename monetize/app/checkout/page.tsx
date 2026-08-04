@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Logo } from "@/components/Logo";
-import { EmbeddedCheckoutForm } from "@/components/EmbeddedCheckoutForm";
+import { CheckoutWithUpsells } from "@/components/CheckoutWithUpsells";
 import { SiteFooter } from "@/components/SiteFooter";
 import { createClient } from "@/lib/supabase/server";
 import { TIERS } from "@/lib/tiers";
@@ -58,12 +58,15 @@ export default async function CheckoutPage({
           </h1>
           <p className="mt-1.5 text-sm text-slate-400">
             {tierInfo
-              ? `30-day free trial of ${tierInfo.name}. Your card is saved now and charged $${tierInfo.price}/mo when the trial ends unless you cancel first. Then it renews monthly until you cancel.`
-              : "30-day free trial. Your card is saved now and charged when the trial ends unless you cancel first. Then it renews monthly until you cancel."}
+              ? `30-day free trial of ${tierInfo.name}. Optionally add funnel services below (AI answering, content, leads, outreach). Card saved now — plan and any add-ons bill after the trial unless you cancel.`
+              : "30-day free trial. Card saved now. Charged when the trial ends unless you cancel."}
           </p>
         </div>
 
-        <EmbeddedCheckoutForm tier={tier} />
+        <CheckoutWithUpsells
+          tier={tier}
+          planPrice={tierInfo?.price ?? 149}
+        />
 
         <p className="mt-4 text-center text-xs leading-relaxed text-slate-500">
           Payments are processed by Stripe. Cancel anytime from Billing before

@@ -19,9 +19,11 @@ export function buildDfyInstantBrief(input: {
     DFY_ASSET_OPTIONS[0];
 
   return [
-    `# Done-For-You creative brief`,
+    `# Execution brief (Layer 2 handoff)`,
     ``,
-    `**Asset:** ${option.label}`,
+    `_Strategy and decisions live in Make it RAIN. This brief is for optional specialist execution — it does not replace your subscription tools._`,
+    ``,
+    `**Service:** ${option.label}`,
     `**Product:** ${input.productTitle}`,
     `**Audience:** ${input.audience}`,
     `**Goal:** ${input.goal}`,
@@ -75,7 +77,7 @@ export function buildDfyInstantBrief(input: {
       : ``,
     `---`,
     ``,
-    `_This brief is available immediately. The polished asset is crafted from this brief and typically delivered within 5 business days after you submit the monthly Pro request._`,
+    `_This execution brief is available immediately. Optional specialist delivery typically lands within 5 business days after you submit the monthly Pro request. Your subscription stays useful if you never request handoff._`,
   ]
     .filter(Boolean)
     .join("\n");
