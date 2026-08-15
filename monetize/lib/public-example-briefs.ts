@@ -2,6 +2,9 @@
  * Anonymized live Founder Briefs safe to share publicly.
  * Same production-quality Founder Briefs as private client delivery;
  * founder + company names scrubbed to ████████ on the /r/ pages.
+ *
+ * Homepage merchandises Standard Founder Brief vs Pro Review.
+ * Example C remains public at its /r/ URL; it is just not on the homepage.
  */
 
 export type PublicExampleBrief = {
@@ -31,10 +34,18 @@ export const PUBLIC_EXAMPLE_BRIEFS: PublicExampleBrief[] = [
   },
 ];
 
+export const STANDARD_FOUNDER_BRIEF_SAMPLE = PUBLIC_EXAMPLE_BRIEFS.find(
+  (brief) => brief.id === "A"
+) as PublicExampleBrief;
+
+/** Hosted redacted sample. Do not treat page count as a product promise. */
+export const PRO_REVIEW_SAMPLE_HREF =
+  "/reports/make-it-rain-pro-review-redacted.pdf";
+
 /** Short “how / why” for homepage, DMs, newsletters. */
 export const PUBLIC_EXAMPLES_WHY = {
-  headline: "See a real brief (names redacted)",
-  how: "These are the same First Customer Path briefs we deliver privately: Analyzer + Buyer Stress Test + Full Brief, run on live product URLs. Watch an original offer get attacked, then rewritten. Only founder and company names are covered.",
-  why: "A plan you can get free. Proof is the transformation: original offer → Stress Test objection → rewritten offer.",
-  cta: "Open an example, then run yours free.",
+  headline: "See what free gives you. See how much deeper Pro goes.",
+  how: "Start with a focused First Customer Path. When the product needs deeper analysis, a Make it RAIN Pro Review goes further into the buyer, evidence, risks, product decisions, and validation plan.",
+  why: "The free brief is already a hard commercial starting point. Pro is more rigor when the decision needs it, not a weaker free tier.",
+  cta: "Open a sample, then run yours free.",
 };

@@ -195,15 +195,11 @@ export default async function HomePage() {
           </p>
           <ul className="mt-3 grid gap-2 text-left text-sm text-slate-300 sm:grid-cols-2">
             <li className="rounded-xl border border-white/10 bg-night-800/70 px-3 py-2.5">
-              <span className="font-semibold text-white">Sample brief</span>
+              <span className="font-semibold text-white">Real outputs</span>
               <span className="mt-0.5 block text-xs text-slate-400">
-                Illustrative format, plus live examples with names redacted.{" "}
-                <Link href="/sample" className="text-aqua hover:text-aqua-bright">
-                  Open sample
-                </Link>
-                {" · "}
+                Compare the free Founder Brief with a redacted Pro Review.{" "}
                 <Link href="/#examples" className="text-aqua hover:text-aqua-bright">
-                  Real examples
+                  See the comparison
                 </Link>
               </span>
             </li>

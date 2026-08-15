@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { track } from "@/lib/track";
+import { track, trackUiClick } from "@/lib/track";
 import {
   REFERRAL_STORAGE_KEY,
   normalizeReferralCode,
@@ -13,6 +13,8 @@ interface CheckoutButtonProps {
   className?: string;
   /** When the visitor isn't signed in yet, send them to signup instead. */
   authenticated: boolean;
+  /** Extra ui_click target, e.g. homepage Pro sample CTA. */
+  trackTarget?: string;
 }
 
 export function CheckoutButton({
@@ -20,10 +22,14 @@ export function CheckoutButton({
   label,
   className,
   authenticated,
+  trackTarget,
 }: CheckoutButtonProps) {
   const router = useRouter();
 
   function handleClick() {
+    if (trackTarget) {
+      trackUiClick(trackTarget, { tier, authenticated });
+    }
     track("checkout_click", { tier, authenticated });
     if (!authenticated) {
       track("checkout_redirect_signup", { tier });

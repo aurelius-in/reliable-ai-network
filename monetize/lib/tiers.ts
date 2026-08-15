@@ -61,6 +61,7 @@ export const TIERS: TierInfo[] = [
     highlight: true,
     features: [
       "Everything in Growth, plus:",
+      "Pro Review: deeper buyer, evidence, risk, and validation analysis",
       "Results: contacts, replies, revenue → next fix",
       "Competitor scan, pricing tests, and 90-day plan",
       "Extra revenue models ranked for you",
