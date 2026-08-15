@@ -80,6 +80,21 @@ export function buildMonetizationBriefMd(input: {
     if (analysis.confidence) {
       lines.push(`**Confidence:** ${analysis.confidence}`, "");
     }
+    if (analysis.commercial_answer) {
+      const ca = analysis.commercial_answer;
+      lines.push(
+        "### Hard commercial answer",
+        "",
+        `- **Primary buyer:** ${ca.primary_buyer}`,
+        `- **Valuable pain:** ${ca.valuable_pain}`,
+        `- **Smallest paid offer:** ${ca.smallest_paid_offer}`,
+        `- **Wedge clarity:** ${ca.wedge_clarity}`,
+        `- **Honesty note:** ${ca.honesty_note}`,
+        `- **Why this path:** ${ca.why_this_path}`,
+        `- **What would disprove it:** ${ca.what_would_disprove}`,
+        ""
+      );
+    }
     lines.push("### Big promise", "", `> ${analysis.big_promise}`, "");
     if (analysis.assumptions?.length) {
       lines.push("### Assumptions", "", bullets(analysis.assumptions), "");

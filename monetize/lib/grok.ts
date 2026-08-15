@@ -20,6 +20,28 @@ function withRigor(messages: GrokMessage[]): GrokMessage[] {
   );
 }
 
+/** Brand rule: never ship em/en dashes in model output. */
+export function stripEmDashes<T>(value: T): T {
+  if (typeof value === "string") {
+    return value
+      .replace(/\u2014/g, " - ")
+      .replace(/\u2013/g, "-")
+      .replace(/ {2,}/g, " ")
+      .trim() as T;
+  }
+  if (Array.isArray(value)) {
+    return value.map((v) => stripEmDashes(v)) as T;
+  }
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      out[k] = stripEmDashes(v);
+    }
+    return out as T;
+  }
+  return value;
+}
+
 export async function grokChatJSON<T>(messages: GrokMessage[]): Promise<T> {
   const apiKey = process.env.GROK_API_KEY;
   if (!apiKey) {
@@ -53,14 +75,17 @@ export async function grokChatJSON<T>(messages: GrokMessage[]): Promise<T> {
     throw new Error("Grok API returned an empty response");
   }
 
+  let parsed: T;
   try {
-    return JSON.parse(content) as T;
+    parsed = JSON.parse(content) as T;
   } catch {
     // Some models wrap JSON in code fences despite json_object mode.
     const match = content.match(/\{[\s\S]*\}/);
     if (match) {
-      return JSON.parse(match[0]) as T;
+      parsed = JSON.parse(match[0]) as T;
+    } else {
+      throw new Error("Grok API response was not valid JSON");
     }
-    throw new Error("Grok API response was not valid JSON");
   }
+  return stripEmDashes(parsed);
 }

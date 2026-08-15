@@ -10,12 +10,12 @@ import { GUARANTEE } from "@/lib/guarantee";
 export const metadata = {
   title: "Pricing",
   description:
-    "Make it RAIN plans for monetizing software and AI products you already own. Starter, Growth, and Pro. 30-day free trial. Not an app builder.",
+    "Starter: find who may pay. Growth: reach them. Pro: learn what closes. Free First Customer Path. 30-day trial. Not an app builder.",
   alternates: { canonical: "/pricing" },
   openGraph: {
     title: "Pricing | Make it RAIN",
     description:
-      "Plans to commercialize what you built: buyers, pricing, launch, and sales. Free 30-day trial.",
+      "Progress, not tool counts. Find who may pay, reach them, learn what closes. Free 30-day trial.",
   },
 };
 
@@ -43,22 +43,22 @@ export default async function PricingPage() {
 
         <div className="mt-12 text-center">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-aqua">
-            Monetize what you already built
+            After you see the brief
           </p>
           <h1 className="mt-3 text-4xl font-black text-white">
-            Simple pricing. <span className="gradient-text">Serious upside.</span>
+            Progress, not tool counts.
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-slate-300">
             {user ? (
               <>
-                Pick the plan that fits how you sell. Change or cancel anytime
-                from your billing page.
+                Pick the plan that matches the job in front of you. Change or
+                cancel anytime from your billing page.
               </>
             ) : (
               <>
-                Guided commercialization for software and AI founders. You keep
-                your product and code. Each plan includes a free 30-day trial.
-                Cancel anytime before day 30.
+                Run First Customer Path free. Then pick Starter, Growth, or Pro
+                based on what the brief found. 30-day trial. Cancel before day
+                30. You keep the product and the code.
               </>
             )}
           </p>
@@ -66,29 +66,29 @@ export default async function PricingPage() {
 
         <section className="mx-auto mt-10 max-w-3xl rounded-2xl border border-white/10 bg-night-800/80 px-5 py-6 text-left sm:px-8">
           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
-            What you get vs what agencies sell
+            What you are buying
           </p>
           <h2 className="mt-2 text-xl font-black text-white sm:text-2xl">
-            Agency-class outputs. Subscription money.
+            A clearer path from shipped to someone might pay
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-300">
-            Typical GTM / monetization retainers run{" "}
-            <span className="font-semibold text-white">$5,000–$15,000+</span>{" "}
-            for buyer research, pricing, and a launch plan. Make it RAIN stacks
-            the same job into one system you run yourself.
+            Another unpaid month, another feature, a ChatGPT plan, a cheap
+            pack of leads, or ads on a guess. Those are the real alternatives.
+            Make it RAIN finds who may pay, stress-tests the offer, and names
+            the next conversation.
           </p>
           <ul className="rain-list mt-4 space-y-2 text-sm text-slate-200">
-            <li>Tailored customer playbook: who may pay, what to charge, this week</li>
-            <li>Commercial score with confidence + evidence grades</li>
-            <li>Shareable brief across 15 monetization tools</li>
-            <li>Kill criteria so you know when to stop</li>
-            <li>Copy-ready posts, DMs, and funnel stages</li>
+            <li>Starter: find who may pay and get the offer ready</li>
+            <li>Growth: reach them and run the work</li>
+            <li>Pro: learn what closes and keep improving the next move</li>
+            <li>Tool counts sit underneath. They do not carry the sale.</li>
           </ul>
           <p className="mt-4 text-sm font-semibold text-white">
             {GUARANTEE.hook}
           </p>
+          <p className="mt-1 text-xs text-slate-500">{GUARANTEE.hookSecondary}</p>
           <p className="mt-1 text-sm text-slate-400">
-            Free playbook to start. Plans from{" "}
+            Free {GUARANTEE.baitName} to start. Plans from{" "}
             <span className="font-semibold text-white">$29/mo</span> after trial.
             No card required to begin.{" "}
             <Link

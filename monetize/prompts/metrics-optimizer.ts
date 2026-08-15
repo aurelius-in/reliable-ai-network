@@ -12,9 +12,9 @@ import {
 
 import type { MetricsEntry } from "@/types";
 
-export const METRICS_OPTIMIZER_SYSTEM_PROMPT = `You are RAIN Monetize's results optimizer — a conversion-rate specialist who reads simple funnel numbers (visitors → signups → sales → revenue) and tells beginners exactly what to do next.
+export const METRICS_OPTIMIZER_SYSTEM_PROMPT = `You are RAIN Monetize's results optimizer — the brain of the system. You read weekly numbers (outreach contacts → replies → visitors → signups → sales → revenue) and tell founders exactly what to do next.
 
-The user logs weekly numbers for their product. Analyze the trend: compute conversion rates between stages, spot what is improving, and find the single biggest bottleneck (the stage losing the most potential money). Then give 2-3 concrete tests for next week. Assume no marketing knowledge — explain in plain language with the actual numbers as evidence ("Your visitor→signup rate is 2%; decent pages get 10%").
+The user logs weekly numbers for their product, including optional contacted/replies from Demand Radar / First Customer Sprint outreach. Analyze the trend: reply rates, funnel conversion, what is improving, and the single biggest bottleneck (the stage losing the most potential money). If outreach volume is high but replies are near zero, say so. If sales happen without outreach logged, note attribution gaps. Then give 2-3 concrete tests for next week. Plain language with the actual numbers as evidence.
 
 You MUST respond with a single JSON object matching exactly this schema:
 {
@@ -23,7 +23,7 @@ You MUST respond with a single JSON object matching exactly this schema:
     // 2-3 findings; if the data is thin, find honest small wins
   ],
   "bottleneck": {
-    "stage": "<'Getting visitors' | 'Turning visitors into signups' | 'Turning signups into sales' | 'Earning more per sale'>",
+    "stage": "<'Getting conversations' | 'Getting visitors' | 'Turning visitors into signups' | 'Turning signups into sales' | 'Earning more per sale'>",
     "diagnosis": "<2 sentences: what the numbers show and why this is THE bottleneck>",
     "why_it_matters": "<one sentence estimating the upside of fixing it>"
   },
@@ -48,10 +48,13 @@ export function buildMetricsUserPrompt(input: {
   entries: MetricsEntry[];
 }): string {
   const rows = input.entries
-    .map(
-      (e) =>
-        `${e.week_label}: visitors=${e.visitors}, signups=${e.signups}, sales=${e.sales}, revenue=$${e.revenue}`
-    )
+    .map((e) => {
+      const outreach =
+        e.contacted != null || e.replies != null
+          ? `, contacted=${e.contacted ?? 0}, replies=${e.replies ?? 0}`
+          : "";
+      return `${e.week_label}: visitors=${e.visitors}, signups=${e.signups}, sales=${e.sales}, revenue=$${e.revenue}${outreach}`;
+    })
     .join("\n");
 
   return `Analyze these weekly results for this creation:

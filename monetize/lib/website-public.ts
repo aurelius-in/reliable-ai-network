@@ -11,6 +11,29 @@ export type WebsiteContext = {
   char_count: number;
 };
 
+function isBlockedPublicHost(hostname: string): boolean {
+  const h = hostname.toLowerCase().replace(/\.$/, "");
+  if (
+    h === "localhost" ||
+    h.endsWith(".local") ||
+    h.endsWith(".internal") ||
+    h.endsWith(".localhost")
+  ) {
+    return true;
+  }
+  if (h === "0.0.0.0" || h === "::1" || h === "[::1]") return true;
+  const ipv4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(h);
+  if (ipv4) {
+    const a = Number(ipv4[1]);
+    const b = Number(ipv4[2]);
+    if (a === 10 || a === 127 || a === 0) return true;
+    if (a === 169 && b === 254) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 172 && b >= 16 && b <= 31) return true;
+  }
+  return false;
+}
+
 function normalizeUrl(input: string): string | null {
   const trimmed = input.trim();
   if (!trimmed) return null;
@@ -20,7 +43,7 @@ function normalizeUrl(input: string): string | null {
       : `https://${trimmed}`;
     const u = new URL(withProto);
     if (u.protocol !== "http:" && u.protocol !== "https:") return null;
-    if (u.hostname === "localhost" || u.hostname.endsWith(".local")) return null;
+    if (isBlockedPublicHost(u.hostname)) return null;
     return u.toString();
   } catch {
     return null;
@@ -112,6 +135,19 @@ export async function fetchPublicWebsiteContext(
 
   if (!res.ok) {
     throw new Error(`URL returned ${res.status}. It must be publicly reachable.`);
+  }
+
+  const landed = res.url || url;
+  try {
+    const landedHost = new URL(landed).hostname;
+    if (isBlockedPublicHost(landedHost)) {
+      throw new Error("Enter a valid public URL like https://yourproduct.com");
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes("valid public URL")) {
+      throw err;
+    }
+    throw new Error("Enter a valid public URL like https://yourproduct.com");
   }
 
   const contentType = res.headers.get("content-type") || "";

@@ -10,4 +10,5 @@ Evidence and honesty rules (required):
 - Prefer useful direction over false certainty. When evidence is thin, include a short next validation step (e.g. talk to five buyers, check three competitor prices, run a waitlist test).
 - Never claim independent market validation, demand proof, or that the plan is guaranteed to work.
 - Do not present AI inference as observed fact.
+- Never use em dashes (—) or en dashes (–). Use a comma, period, colon, or hyphen (-) instead.
 `.trim();

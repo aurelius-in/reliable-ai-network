@@ -136,13 +136,13 @@ const LOCKED_COPY: Record<
     ],
   },
   sales: {
-    toolName: "Direct Sales System",
+    toolName: "DM Writer",
     tagline:
-      "Cold email, LinkedIn, and follow-up sequences tailored to your offer, plus objection handling and a short discovery-call agenda.",
+      "Openers, follow-ups, and objection replies personalized to your product and each recipient type — short, human, one ask.",
     previews: [
-      "Three opener angles for your ICP",
-      "Multi-touch follow-up that stays professional",
-      "Responses for price and timing objections",
+      "Openers customized to product + recipient",
+      "Multi-touch follow-ups that stay peer-tone",
+      "Replies for price and timing objections",
       "15-minute discovery agenda",
     ],
   },
@@ -180,14 +180,14 @@ const LOCKED_COPY: Record<
     ],
   },
   content: {
-    toolName: "Campaign & Content Studio",
+    toolName: "Post, Newsletter & Ad Poster",
     tagline:
-      "Turn one positioning into LinkedIn/X drafts, ad variants, listing copy, and a short email sequence.",
+      "Network-native posts and emails personalized to your product, plus ad posters sized for LinkedIn, Meta, X, YouTube, TikTok, Reddit, Google Ads, and more.",
     previews: [
-      "LinkedIn and X drafts with clear hooks",
-      "Ad variants testing distinct angles",
-      "Marketplace or site listing copy",
-      "Three-email sequence for conversion",
+      "Pick the networks you already use (organic + paid)",
+      "Posts and captions tailored per network",
+      "Ad posters for Feed, Stories, Shorts, Display",
+      "Newsletter sequence that feels 1:1",
     ],
   },
   progress: {
@@ -305,12 +305,23 @@ export function DashboardTabs({
     return () => window.removeEventListener(MOBILE_NAV_EVENT, onNav);
   }, []);
 
-  // Deep link from other pages, e.g. /dashboard?view=tools from Billing.
+  // Deep link from other pages, e.g. /dashboard?view=tools or ?tab=buyers.
   useEffect(() => {
-    const view = new URLSearchParams(window.location.search).get("view");
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get("view");
+    const tabParam = params.get("tab");
     if (view === "tools") setSheetOpen(true);
     else if (view === "progress") setTab("progress");
-    if (view) window.history.replaceState(null, "", "/dashboard");
+    const allowedTabs: TabId[] = [
+      "buyers",
+      "analyzer",
+      "pricing",
+      "progress",
+    ];
+    if (tabParam && (allowedTabs as string[]).includes(tabParam)) {
+      setTab(tabParam as TabId);
+    }
+    if (view || tabParam) window.history.replaceState(null, "", "/dashboard");
   }, []);
 
   // Keep the bottom bar's active state in sync.
@@ -570,6 +581,7 @@ export function DashboardTabs({
               <BuyersTab
                 creations={data.creations}
                 initialResult={data.initialBuyers}
+                initialAnalyses={data.initialAnalyses}
               />
             )}
             {tab === "library" && (

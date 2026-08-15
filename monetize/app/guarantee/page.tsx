@@ -21,7 +21,7 @@ export default function GuaranteePage() {
           trackTarget="guarantee_cta_signup"
           className="text-sm font-semibold text-aqua hover:text-aqua-bright"
         >
-          Start free
+          {GUARANTEE.cta}
         </TrackedLink>
       </header>
 
@@ -32,50 +32,95 @@ export default function GuaranteePage() {
         <h1 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">
           {GUARANTEE.hook}
         </h1>
+        <p className="mt-3 text-base font-semibold text-slate-200">
+          {GUARANTEE.hookSecondary}
+        </p>
         <p className="mt-4 text-sm text-slate-400">
-          Short on the homepage. Specific here: what you get, how 2× is
-          measured, and what “money back” means.
+          Short on the homepage. Specific here: two tracks ($0 / early path
+          vs already earning), what “good faith” means, and what money back
+          covers.
         </p>
 
         <section className="mt-8 rounded-2xl border border-rain/40 bg-gradient-to-br from-rain/15 to-night-800 px-5 py-6">
           <h2 className="text-lg font-bold text-white">In plain English</h2>
           <p className="mt-2 text-sm text-slate-300">
-            You get a <strong className="text-white">tailored customer playbook</strong>{" "}
-            for the product you already built (not a generic template). Over{" "}
-            {GUARANTEE.windowDays} days we aim to at least{" "}
-            <strong className="text-white">double</strong> that product’s
-            revenue versus your prior {GUARANTEE.baselineDays}-day baseline. If
-            you run the path in good faith and miss, we refund Make it RAIN
-            subscription fees you paid in the window.
+            You get a{" "}
+            <strong className="text-white">{GUARANTEE.baitName}</strong> for
+            the product you already built: hard commercial answer, who is worth
+            talking to this week (warm network first, public signals when
+            useful), conversation prep you approve, and a Results log. Not 10
+            guaranteed buyers. Not a generic template.
+          </p>
+          <p className="mt-3 text-sm text-slate-300">
+            Over {GUARANTEE.windowDays} days, if you run the path in good faith
+            and still do not leave with a clearer ranked set of conversations
+            worth having plus messages worth sending, we refund Make it RAIN
+            subscription fees you paid in the window. If you already had
+            product revenue, you can claim under the 2× track instead.
           </p>
           <TrackedLink
             href="/signup"
             trackTarget="guarantee_body_signup"
             className="btn-primary mt-5 inline-flex !px-6 !py-3"
           >
-            Start free
+            {GUARANTEE.cta}
           </TrackedLink>
         </section>
 
         <section className="mt-10 space-y-3 text-sm leading-relaxed text-slate-400">
           <h2 className="text-lg font-bold text-white">
-            1. Tailored customer playbook
+            1. {GUARANTEE.baitName} (the path)
           </h2>
           <p className="text-slate-300">
             Built from your product URL and/or description (optional GitHub /
-            docs). Customized to your offer and stage — plain language, serious
-            commercial detail. It includes at minimum:
+            docs). Includes at minimum:
           </p>
           <ul className="rain-list mt-2 space-y-2 text-slate-300">
-            <li>Commercial brief with evidence grades</li>
-            <li>Who may pay (buyer direction)</li>
-            <li>What to charge (pricing direction)</li>
-            <li>What to do this week</li>
+            <li>
+              Hard commercial answer: primary buyer, valuable pain, smallest
+              paid offer, honesty if the wedge is unclear
+            </li>
+            <li>
+              Who to approach next (warm contacts you name, plus public signals
+              when they help)
+            </li>
+            <li>Conversation prep + approve-before-send outreach</li>
+            <li>Evidence grades + kill criteria</li>
+            <li>Results log for replies, objections, paid or lost</li>
           </ul>
         </section>
 
         <section className="mt-10 space-y-3 text-sm leading-relaxed text-slate-400">
-          <h2 className="text-lg font-bold text-white">2. Baseline revenue</h2>
+          <h2 className="text-lg font-bold text-white">
+            2. Track A — $0 / early (path to a paid yes)
+          </h2>
+          <ul className="list-disc space-y-2 pl-5 text-slate-300">
+            <li>
+              For products with little or no recent product revenue (including
+              $0 baseline).
+            </li>
+            <li>
+              Success = after a good-faith path, you have a clearer ranked list
+              of people/conversations worth having this week and outreach
+              messages worth sending (your judgment + the plan artifacts in
+              product).
+            </li>
+            <li>
+              If you complete good faith and still reasonably conclude the plan
+              did not give you that clarity, you qualify for money back on fees
+              paid in the window.
+            </li>
+            <li>
+              Getting from $0 to any real paid product customer also clears this
+              track.
+            </li>
+          </ul>
+        </section>
+
+        <section className="mt-10 space-y-3 text-sm leading-relaxed text-slate-400">
+          <h2 className="text-lg font-bold text-white">
+            3. Track B — already earning (2× revenue)
+          </h2>
           <ul className="list-disc space-y-2 pl-5 text-slate-300">
             <li>
               Baseline = money your product received in the{" "}
@@ -84,6 +129,10 @@ export default function GuaranteePage() {
             </li>
             <li>Provide a simple export or screenshots if you claim.</li>
             <li>
+              Success = product revenue in the {GUARANTEE.windowDays}-day window
+              is at least <strong className="text-white">2×</strong> baseline.
+            </li>
+            <li>
               Pure friends-and-family gifts may be excluded if they are not real
               product sales.
             </li>
@@ -91,36 +140,24 @@ export default function GuaranteePage() {
         </section>
 
         <section className="mt-10 space-y-3 text-sm leading-relaxed text-slate-400">
-          <h2 className="text-lg font-bold text-white">3. What “2×” means</h2>
-          <ul className="list-disc space-y-2 pl-5 text-slate-300">
-            <li>
-              Success = product revenue in the {GUARANTEE.windowDays}-day window
-              is at least <strong className="text-white">2×</strong> baseline.
-            </li>
-            <li>
-              If baseline is <strong className="text-white">$0</strong>, 2× is
-              $0 mathematically. For a $0 baseline, after a good-faith path, if
-              you still have <strong className="text-white">$0</strong> product
-              revenue at day {GUARANTEE.windowDays}, you qualify for money back
-              on fees paid in the window (see below). Getting from $0 to any
-              paid customer also counts as clearing the spirit of the offer for
-              that track.
-            </li>
-          </ul>
-        </section>
-
-        <section className="mt-10 space-y-3 text-sm leading-relaxed text-slate-400">
           <h2 className="text-lg font-bold text-white">
-            4. Good-faith path (required)
+            4. Good-faith path (required for either track)
           </h2>
           <ul className="list-disc space-y-2 pl-5 text-slate-300">
-            <li>Account in good standing.</li>
-            <li>Generate the tailored customer playbook for your product.</li>
+            <li>Account in good standing on a paid plan (or trial that converts).</li>
+            <li>
+              Generate the {GUARANTEE.baitName} / hard commercial answer for your
+              product.
+            </li>
             <li>Keep a real paid offer live someone could buy.</li>
+            <li>
+              Log at least {GUARANTEE.minConversationsLogged} real outreach
+              conversations in Results (who, what you said, reply or no reply).
+            </li>
             <li>
               Send at least {GUARANTEE.minOutreaches} outreach messages to real
               prospects during the window (or an agreed equivalent we confirm in
-              writing).
+              writing). Warm network counts.
             </li>
             <li>
               Window starts when you mark path-start in-product or, if we agree
@@ -133,14 +170,14 @@ export default function GuaranteePage() {
           <h2 className="text-lg font-bold text-white">5. Money back</h2>
           <ul className="list-disc space-y-2 pl-5 text-slate-300">
             <li>
-              Refund = Make it RAIN <strong className="text-white">subscription
-              fees you paid</strong> during the guarantee window (Starter /
-              Growth / Pro).
+              Refund = Make it RAIN{" "}
+              <strong className="text-white">subscription fees you paid</strong>{" "}
+              during the guarantee window (Starter / Growth / Pro).
             </li>
             <li>
               If you paid <strong className="text-white">$0</strong> (free
               account only, never converted), there is no subscription to
-              refund.
+              refund. The free {GUARANTEE.baitName} still stands as the bait.
             </li>
             <li>Not a cash prize above fees paid. Not ad spend. Not CAC.</li>
             <li>One claim per person / product / year.</li>
@@ -150,7 +187,7 @@ export default function GuaranteePage() {
         <section className="mt-10 space-y-3 text-sm leading-relaxed text-slate-400">
           <h2 className="text-lg font-bold text-white">6. What this is not</h2>
           <ul className="list-disc space-y-2 pl-5 text-slate-300">
-            <li>Not a promise of ongoing profit or valuation.</li>
+            <li>Not a promise of 10 buyers or ongoing profit.</li>
             <li>Not for fake products, empty outreach, or gamed baselines.</li>
             <li>
               We may decline abuse or change terms for new signups; your claim
@@ -169,9 +206,10 @@ export default function GuaranteePage() {
             >
               support@makeitrainapp.com
             </a>{" "}
-            with subject “Guarantee claim,” account email, baseline proof,
-            day-{GUARANTEE.windowDays} revenue proof, and outreach evidence. We
-            respond within several business days.
+            with subject “Guarantee claim,” account email, which track (A or B),
+            Results outreach log, and for Track B baseline + day-
+            {GUARANTEE.windowDays} revenue proof. We respond within several
+            business days.
           </p>
           <p className="text-xs text-slate-500">
             Also see{" "}

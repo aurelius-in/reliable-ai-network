@@ -6,7 +6,7 @@ import { ReviewsPanel } from "@/components/ReviewsPanel";
 export const metadata = {
   title: "Reviews — Make it RAIN",
   description:
-    "Read and leave reviews of Make it RAIN — monetization for software and AI founders.",
+    "Read and leave reviews of Make it RAIN: monetization for software and AI founders.",
 };
 
 export default function ReviewsPage() {

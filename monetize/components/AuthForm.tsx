@@ -11,6 +11,39 @@ import {
   REFERRAL_STORAGE_KEY,
   normalizeReferralCode,
 } from "@/lib/referrals";
+import {
+  ACCESS_CODE_STORAGE_KEY,
+  normalizeAccessCode,
+} from "@/lib/access-codes";
+
+/** Redeem invite code while session exists (same browser as invite page). */
+async function redeemStoredAccessCodeIfAny(): Promise<void> {
+  let stored: string | null = null;
+  try {
+    stored = normalizeAccessCode(
+      localStorage.getItem(ACCESS_CODE_STORAGE_KEY)
+    );
+  } catch {
+    return;
+  }
+  if (!stored) return;
+  try {
+    const res = await fetch("/api/access-code/redeem", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: stored }),
+    });
+    if (res.ok || res.status === 400 || res.status === 409) {
+      try {
+        localStorage.removeItem(ACCESS_CODE_STORAGE_KEY);
+      } catch {
+        /* ignore */
+      }
+    }
+  } catch {
+    /* AutoRedeem / confirm path can retry */
+  }
+}
 
 function readHomeAbVariant(): string | undefined {
   return readHomeAbFromDocument() ?? undefined;
@@ -67,6 +100,15 @@ export function AuthForm({
           }
         }
 
+        const origin =
+          process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
+        const inviteParam =
+          searchParams.get("invite")?.trim() ||
+          (variant === "reviewer" ? "reviewer" : "");
+        const nextAfterConfirm = inviteParam
+          ? `/onboarding?invite=${encodeURIComponent(inviteParam)}`
+          : "/onboarding";
+
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -75,9 +117,11 @@ export function AuthForm({
               name,
               ...(company.trim() ? { company: company.trim() } : {}),
               ...(referralCode ? { referral_code: referralCode } : {}),
-              ...(variant === "reviewer" ? { signup_variant: "reviewer" } : {}),
+              ...(variant === "reviewer" || inviteParam
+                ? { signup_variant: "reviewer" }
+                : {}),
             },
-            emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin}/auth/confirm?next=/onboarding`,
+            emailRedirectTo: `${origin}/auth/confirm?next=${encodeURIComponent(nextAfterConfirm)}`,
           },
         });
         if (error) throw error;
@@ -112,10 +156,12 @@ export function AuthForm({
         }
 
         if (data.session) {
-          router.push("/onboarding");
+          await redeemStoredAccessCodeIfAny();
+          router.push(nextAfterConfirm);
           router.refresh();
         } else {
           // Email confirmation is enabled on the Supabase project.
+          // Server redeem runs on /auth/confirm via signup_variant + ?invite=.
           track("signup_needs_confirmation");
           setConfirmationSent(true);
           setLoading(false);
@@ -128,7 +174,14 @@ export function AuthForm({
         });
         if (error) throw error;
         track("login_success");
-        router.push(searchParams.get("next") ?? "/dashboard");
+        await redeemStoredAccessCodeIfAny();
+        const invite = searchParams.get("invite")?.trim();
+        const next =
+          searchParams.get("next") ??
+          (invite
+            ? `/dashboard?invite=${encodeURIComponent(invite)}`
+            : "/dashboard");
+        router.push(next);
         router.refresh();
       }
     } catch (err) {
@@ -146,12 +199,29 @@ export function AuthForm({
       <div className="fade-up card-glow p-8 text-center">
         <h2 className="text-xl font-bold text-white">Check your email</h2>
         <p className="mt-2 text-sm text-slate-300">
-          We sent a confirmation link to <span className="text-white">{email}</span>.
-          Click it to activate your account and start making it rain.
+          We sent a confirmation link to{" "}
+          <span className="text-white">{email}</span>. Click it to activate your
+          account
+          {variant === "reviewer"
+            ? " and unlock complimentary reviewer access"
+            : ", then lock your hard commercial answer (Step 1)"}
+          .
+        </p>
+        <p className="mt-3 text-xs text-slate-500">
+          After confirm you land on onboarding. One successful run beats
+          browsing the dashboard.
         </p>
       </div>
     );
   }
+
+  const inviteQs = searchParams.get("invite");
+  const loginHref = inviteQs
+    ? `/login?invite=${encodeURIComponent(inviteQs)}`
+    : "/login";
+  const signupHref = inviteQs
+    ? `/signup?invite=${encodeURIComponent(inviteQs)}`
+    : "/signup";
 
   const inputClass = "input-dark";
 
@@ -259,14 +329,20 @@ export function AuthForm({
         {mode === "signup" ? (
           <>
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-rain-bright hover:underline">
+            <Link
+              href={loginHref}
+              className="font-semibold text-rain-bright hover:underline"
+            >
               Sign in
             </Link>
           </>
         ) : (
           <>
             New here?{" "}
-            <Link href="/signup" className="font-semibold text-rain-bright hover:underline">
+            <Link
+              href={signupHref}
+              className="font-semibold text-rain-bright hover:underline"
+            >
               Create an account
             </Link>
           </>

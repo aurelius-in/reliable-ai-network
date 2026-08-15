@@ -58,7 +58,7 @@ Optional Layer-2 content production is a **pull** when DIY becomes the bottlenec
 ### D–E. Packaging & messaging
 
 - Pricing page + tiers copy state Layer 1 vs optional Layer 2.  
-- Homepage **C** tests decision-layer headline; **B** keeps agency price anchor with strategy clarification; **A** control playbook.
+- Homepage **A** tests first-paying-customer + demand discovery; **B** agency price anchor; **C** decision layer. Buyers tab includes live demand scan (HN/Reddit). See RAIN `assets/market-intelligence/`.
 
 ---
 

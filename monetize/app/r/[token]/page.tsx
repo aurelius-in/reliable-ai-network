@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!report) return { title: "Brief not found · Make it RAIN" };
   const product = report.payload.product?.title || "Monetization Brief";
   return {
-    title: `${product} · Monetization Brief`,
-    description: `Commercial monetization brief for ${product}`,
+    title: `${product}: Monetization Brief`,
+    description: `First Customer Path brief for ${product}`,
     robots: { index: false, follow: false },
   };
 }
@@ -45,18 +45,22 @@ export default async function SharedReportPage({ params }: Props) {
   const report = await loadReport(token);
   if (!report) notFound();
 
+  const generating = report.payload?.status === "generating";
+
   return (
     <div className="report-shell min-h-screen bg-[#f4f2ee] text-stone-900">
+      {generating ? (
+        <meta httpEquiv="refresh" content="8" />
+      ) : null}
       <div className="no-print sticky top-0 z-10 border-b border-stone-200/80 bg-[#f4f2ee]/95 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 px-6 py-3 sm:px-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
-            Shared brief
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 px-5 py-2.5 sm:px-8">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+            {generating ? "Generating brief…" : "First Customer Path"}
           </p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               className="rounded border border-stone-300 bg-white px-3 py-1.5 text-xs font-semibold text-stone-800 hover:bg-stone-50"
-              // print via client script below
               id="report-print-btn"
             >
               Print / PDF
@@ -86,6 +90,7 @@ export default async function SharedReportPage({ params }: Props) {
           .no-print { display: none !important; }
           .report-shell { background: white !important; }
           .report-doc { padding-top: 0 !important; }
+          table { break-inside: avoid; }
         }
       `}</style>
     </div>

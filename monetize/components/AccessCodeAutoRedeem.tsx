@@ -9,8 +9,8 @@ import {
 import { track } from "@/lib/track";
 
 /**
- * Silent redeem for invite links (?access=CODE). No public “enter a code”
- * UI — only runs when a code was captured from the URL.
+ * Silent redeem for invite links. Prefer server redeem on auth confirm;
+ * this catches same-browser session paths and retries after transient fails.
  */
 export function AccessCodeAutoRedeem() {
   const router = useRouter();
@@ -38,17 +38,23 @@ export function AccessCodeAutoRedeem() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code: stored }),
         });
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
+
+        // Only drop the code on definitive outcomes. Keep it on 401/404/5xx
+        // so a later visit (after session/profile exists) can still redeem.
+        const definitiveFail = res.status === 400 || res.status === 409;
         if (!res.ok) {
-          // Invalid / already paid — drop the stored code so we don't retry.
-          try {
-            localStorage.removeItem(ACCESS_CODE_STORAGE_KEY);
-          } catch {
-            /* ignore */
+          if (definitiveFail) {
+            try {
+              localStorage.removeItem(ACCESS_CODE_STORAGE_KEY);
+            } catch {
+              /* ignore */
+            }
           }
           track("access_code_redeem_error");
           return;
         }
+
         try {
           localStorage.removeItem(ACCESS_CODE_STORAGE_KEY);
         } catch {

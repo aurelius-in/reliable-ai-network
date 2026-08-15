@@ -37,7 +37,7 @@ export const SUCCESS_STORIES: SuccessStory[] = [
     emoji: "🗂️",
     win: "$860 launch weekend on Gumroad",
     detail:
-      "Generated her whole listing and a 5-email launch sequence with the Content Generator. The value-stack listing tripled her conversion rate.",
+      "Generated her whole listing and a 5-email launch sequence with Newsletter Writer. The value-stack listing tripled her conversion rate.",
     timeframe: "Launch weekend",
   },
   {

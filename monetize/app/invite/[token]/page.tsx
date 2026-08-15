@@ -35,7 +35,10 @@ export default async function InvitePage({ params }: Props) {
   } = await supabase.auth.getUser();
 
   const signupHref = `/signup?invite=${encodeURIComponent(invite.token)}`;
-  const primaryHref = user ? "/dashboard?invite=1" : signupHref;
+  // Preserve real invite token (not invite=1) so AccessCodeCapture can redeem.
+  const primaryHref = user
+    ? `/dashboard?invite=${encodeURIComponent(invite.token)}`
+    : signupHref;
   const primaryLabel = user
     ? "Continue to reviewer dashboard"
     : "Open reviewer access";
@@ -73,15 +76,24 @@ export default async function InvitePage({ params }: Props) {
           </h2>
           <ul className="rain-list mt-4 space-y-2.5 text-sm text-slate-200">
             <li>
-              A directional commercial readiness score with confidence (not fake
-              precision)
+              A hard commercial answer: primary buyer, valuable pain, smallest
+              paid offer, and honesty when the wedge is still unclear
             </li>
             <li>
-              Evidence labeled observed, founder-reported, or assumed
+              Demand Radar: public conversations for pain or purchase intent
+              (approve outreach before sending)
             </li>
-            <li>Ranked revenue paths and a smallest paid offer</li>
-            <li>Buyer, pricing, and this-week next tests</li>
-            <li>A shareable monetization brief (download or private link)</li>
+            <li>
+              Evidence labeled observed, founder-reported, or assumed, plus why
+              a path looks strong and what would disprove it
+            </li>
+            <li>
+              Kill criteria, First Customer Sprint framing, and a shareable
+              brief
+            </li>
+            <li>
+              Directional score kept inside the brief (not the acquisition hook)
+            </li>
           </ul>
           <p className="mt-4 text-sm text-slate-400">
             Complimentary Pro reviewer access for {invite.grant.durationDays}{" "}
@@ -94,9 +106,10 @@ export default async function InvitePage({ params }: Props) {
             What Oliver is asking you to assess
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-300">
-            Does the system help founders make evidence-based decisions, or does
-            any part produce polished output without enough rigor behind it?
-            Positive, negative, and neutral feedback are all welcome.
+            Does it force a hard commercial answer grounded in evidence — or
+            polished plans that stay too broad? Would you trust it to say “wedge
+            still unclear”? Positive, negative, and neutral feedback are all
+            welcome.
           </p>
           <ol className="mt-4 list-decimal space-y-1.5 pl-5 text-sm text-slate-300">
             <li>Is the promised outcome clear before you commit time?</li>

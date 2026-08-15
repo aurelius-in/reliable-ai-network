@@ -245,7 +245,7 @@ function TrafficResult({
               onClick={() => onJumpTab("sales")}
               className="rounded-lg border border-night-600 px-3 py-2 text-xs font-semibold text-slate-200 hover:border-aqua/40"
             >
-              Pair with sales kit
+              Pair with DM Writer
             </button>
             <button
               type="button"

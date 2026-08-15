@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Handshake, Loader2, MessageCircle, PhoneCall } from "lucide-react";
+import { Loader2, MessageCircle, PhoneCall } from "lucide-react";
 import {
   ChipGroup,
   CopyButton,
@@ -21,11 +21,12 @@ import {
   TONE_OPTIONS,
 } from "@/lib/examples";
 import { ApolloLeadsPanel } from "@/components/ApolloLeadsPanel";
+import { PipelineBoardPanel } from "@/components/PipelineBoard";
 import { defaultTargetBuyerFromBuyers } from "@/lib/tool-defaults";
 import type { BuyerProfilesResult, Creation, SalesKit } from "@/types";
 
 function kitToMarkdown(kit: SalesKit): string {
-  const lines = ["# My direct sales kit", "", kit.strategy_note, "", "## Openers"];
+  const lines = ["# DM Writer drafts", "", kit.strategy_note, "", "## Openers"];
   for (const o of kit.opener_messages) {
     lines.push("", `### ${o.label}`, "", o.message);
   }
@@ -80,7 +81,7 @@ function kitToCsv(kit: SalesKit): string {
 }
 
 /**
- * Tab — Direct Sales Tools (Pro).
+ * Tab — DM Writer (Growth).
  * Personalized cold outreach openers, a follow-up sequence,
  * objection-handling scripts, and a simple call agenda.
  */
@@ -139,15 +140,30 @@ export function SalesTab({
 
   return (
     <div className="space-y-5">
+      <div className="rounded-2xl border border-rain/40 bg-gradient-to-br from-rain/15 via-night-800 to-night-800 p-5 sm:p-6">
+        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-rain-bright">
+          DM Writer
+        </p>
+        <h2 className="mt-1.5 text-xl font-black text-white sm:text-2xl">
+          DMs personalized to your product and each recipient
+        </h2>
+        <p className="mt-2 text-sm text-slate-300">
+          Openers and follow-ups customized so they only make sense for{" "}
+          <span className="font-semibold text-white">this</span> product and{" "}
+          <span className="font-semibold text-white">that</span> recipient type —
+          short, human, one ask. Not script-farm spam.
+        </p>
+      </div>
+
       <div className="card space-y-5 p-5">
         <div>
           <h2 className="text-lg font-bold text-white">
-            Sell it yourself — without feeling salesy
+            Write DMs people actually reply to
           </h2>
           <p className="helper-text">
-            Sometimes the fastest money is just messaging people. Get
-            word-for-word openers, follow-ups, and answers to &ldquo;let me
-            think about it,&rdquo; then pull real people to message.
+            Pick channel, tone, and who you are messaging. Get word-for-word
+            openers, follow-ups, and objection replies — then pull real people
+            to message.
           </p>
         </div>
 
@@ -189,9 +205,9 @@ export function SalesTab({
           {loading ? (
             <Loader2 size={16} className="animate-spin" />
           ) : (
-            <Handshake size={16} />
+            <MessageCircle size={16} />
           )}
-          {kit ? "Rewrite my sales kit" : "Write my sales kit"}
+          {kit ? "Rewrite my DMs" : "Write personalized DMs"}
         </button>
         <ErrorText message={error} />
       </div>
@@ -213,6 +229,8 @@ export function SalesTab({
           body="Pick a product, choose your channel and tone, and get copy-paste openers, follow-ups, objection answers, and a simple call plan."
         />
       )}
+
+      <PipelineBoardPanel />
     </div>
   );
 }

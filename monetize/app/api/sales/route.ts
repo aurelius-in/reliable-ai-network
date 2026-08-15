@@ -11,7 +11,7 @@ import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 300;
 
-/** Direct Sales Tools (Pro): outreach openers, follow-ups, objections, call agenda. */
+/** DM Writer (Growth): personalized openers, follow-ups, objections, call agenda. */
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const tier = await requireTier(supabase, user.id, "pro");
+  const tier = await requireTier(supabase, user.id, "growth");
   if ("error" in tier) {
     return NextResponse.json({ error: tier.error }, { status: tier.status });
   }
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       },
     ]);
   } catch (err) {
-    console.error("Direct Sales Tools failed:", err);
+    console.error("DM Writer failed:", err);
     return NextResponse.json(
       { error: "Sales kit generation failed. Please try again in a moment." },
       { status: 502 }

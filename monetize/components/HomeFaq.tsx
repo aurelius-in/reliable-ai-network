@@ -13,33 +13,73 @@ const FAQS: {
   {
     id: "faq_what_it_is",
     q: "What is Make it RAIN?",
-    a: "A guided monetization system for people who built something real. Find who pays, what to charge, attention without a big ad budget, and a path to a paid yes across 15+ tools that share one product brief and evidence trail.",
+    a: "A path from I built it toward someone might actually pay. For technical founders who already shipped. Free First Customer Path: who may pay, Buyer Stress Test, next conversation. Not an app builder. Not another GTM plan.",
     aMobile:
-      "Monetization system for people who built something real. Who pays, price, attention, path to paid. 15+ tools, one brief.",
+      "Shipped, still not paid. Who may pay, stress-test, next conversation. Not another plan.",
+  },
+  {
+    id: "faq_free_gtm",
+    q: "Why not use a free GTM skill in Claude/Cursor?",
+    qMobile: "Why not a free GTM skill?",
+    a: "Plans and living briefs are getting free. Make it RAIN is for surviving hard buyers, picking who deserves the next hour, and learning what a reply should change. See live examples with names redacted at /#examples. Guarantee: /guarantee.",
+    aMobile:
+      "Plans are free. MIR stress-tests buyers and names the next conversation. /#examples · /guarantee",
+  },
+  {
+    id: "faq_cheap_operator",
+    q: "Why not a $25 AI that runs ads and outreach for me?",
+    qMobile: "Why not a $25 AI that runs the marketing?",
+    a: "Some tools will build a site and turn on campaigns before anyone has tested who would pay. Automating marketing before you know what deserves automation can automate waste. Make it RAIN stress-tests the buyer, names the next conversation, and learns from what happened. You approve before anything sends.",
+    aMobile:
+      "Running ads on a guess can automate waste. MIR stress-tests the buyer first. You approve before send.",
+  },
+  {
+    id: "faq_daily_scanner",
+    q: "Why not a daily market scanner?",
+    qMobile: "Why not a daily market scanner?",
+    a: "Morning signals are getting cheap. The gap is which conversation deserves your next hour, whether the problem is already paid, and what to do after the reply.",
+    aMobile:
+      "Signals are cheap. The job is which conversation deserves your next hour, and what to do after they reply.",
+  },
+  {
+    id: "faq_quiz_funnel",
+    q: "Is this an AI quiz funnel or lead magnet builder?",
+    qMobile: "Is this a quiz funnel?",
+    a: "No. Those tools personalize a report for a coach's leads. Make it RAIN runs First Customer Path on a product you already shipped: who may pay, whether the offer survives a hard buyer, and the next conversation worth your hour. You are the customer. Your buyers are not filling out our quiz.",
+    aMobile:
+      "No. Quiz funnels serve coaches. MIR runs who-may-pay + Stress Test on your shipped product.",
+  },
+  {
+    id: "faq_lead_pack",
+    q: "Why not buy a cheap pack of scored leads and drafted replies?",
+    qMobile: "Why not a cheap pack of leads?",
+    a: "A lead pack can tell you someone might reply. It does not tell you whether this buyer will pay for this offer, or what a reply should change about who you sell to and what you charge. Run First Customer Path on your URL first. Then buy leads if the offer survives.",
+    aMobile:
+      "Leads without a surviving offer waste the week. Stress-test first, then buy leads if you still want them.",
   },
   {
     id: "faq_free_score",
-    q: "What do I get if I sign up free right now?",
+    q: "What do I get free right now?",
     qMobile: "What do I get free right now?",
-    a: "Your tailored customer playbook as a shareable brief: likely buyers, revenue paths, kill criteria, a this-week plan, and claims labeled observed, founder-reported, or assumed. Paste a product URL (and optionally GitHub or a short doc) for a sharper brief. No card required. Download it or send a private link to a cofounder or advisor.",
+    a: "Paste a product URL on the homepage. You see a commercial result before you create an account. Save the product for the full First Customer Path: one buyer, one paid offer, a price to test, Buyer Stress Test, the next conversation worth your hour, and what is still a guess. No card.",
     aMobile:
-      "Your playbook as a shareable brief: buyers, paths, kill criteria, this-week plan. URL/docs optional. No card.",
+      "URL in, result first. Save for First Customer Path. No card.",
   },
   {
     id: "faq_first_dollar",
     q: "Will this help me get paying customers?",
     qMobile: "Help getting paying customers?",
-    a: "That is the point: buyers, price, offer, scripts, and a path aimed at a paid yes — whether you are opening a new motion or tightening one that already exists. Guarantee details at /guarantee.",
+    a: "That is the point: lock who may pay, stress-test the offer, talk to the next person, and learn from replies. Personas alone are not enough. Guarantee: clearer ranked conversations in 60 days, or money back on fees paid. Details at /guarantee. We do not promise a sale we do not control.",
     aMobile:
-      "Buyers, price, offer, scripts, path to paid. New motion or tighter one. /guarantee",
+      "Hard answer + next conversations + prep. Clearer talks or money back. /guarantee",
   },
   {
     id: "faq_guarantee",
     q: "What is the guarantee?",
     qMobile: "Guarantee?",
-    a: "Tailored customer playbook + 2× revenue in 60 days — or your money back (subscription fees paid in the window). Baseline, effort path, and $0-baseline rules are at /guarantee.",
+    a: "Clearer ranked conversations in 60 days, or money back on subscription fees paid in the window. Run the path in good faith (logged conversations, not an unused login). Already earning? 2× revenue track also available. Full rules at /guarantee.",
     aMobile:
-      "Tailored playbook + 2× in 60 days — or money back. Terms: /guarantee",
+      "Clearer ranked conversations in 60 days, or money back. Terms: /guarantee",
   },
   {
     id: "faq_no_ads",

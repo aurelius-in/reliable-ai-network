@@ -78,7 +78,7 @@ export function FirstDollarPath({
             onClick={() => onJump("sales")}
             className="inline-flex items-center gap-1.5 rounded-lg border border-night-600 px-3 py-2 text-xs font-semibold text-slate-200 hover:border-aqua/40"
           >
-            Open sales kit <ArrowRight size={12} />
+            Open DM Writer <ArrowRight size={12} />
           </button>
           <button
             type="button"

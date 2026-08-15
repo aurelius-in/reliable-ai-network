@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { CheckCircle2, FlaskConical, ShieldAlert, Target, TrendingUp } from "lucide-react";
 import { CopyButton } from "@/components/ui";
+import { FirstRunSuccess } from "@/components/FirstRunSuccess";
 import { OutputCaveat } from "@/components/OutputCaveat";
 import { ExplainableText, TermHint } from "@/components/TermHint";
 import type { IdeaAnalysis } from "@/types";
+
+import { toFounderFacingScore } from "@/lib/founder-facing-score";
 
 const LEVEL_COLORS: Record<string, string> = {
   low: "text-emerald-400",
@@ -23,30 +26,154 @@ const CONFIDENCE_COLORS: Record<string, string> = {
   high: "text-emerald-400",
 };
 
-/** Honest score display — no fake decimal theater. */
+/** Founder-facing readiness display (5-10 band). */
 function displayScore(analysis: IdeaAnalysis): string {
-  const raw = Math.max(1, Math.min(10, Number(analysis.score) || 1));
+  const facing = toFounderFacingScore(analysis.score);
+  const raw = facing.display;
   if (Number.isInteger(raw)) return String(raw);
   return raw.toFixed(1);
 }
 
-export function AnalysisResult({ analysis }: { analysis: IdeaAnalysis }) {
+export function AnalysisResult({
+  analysis,
+  showFirstRunBanner = true,
+}: {
+  analysis: IdeaAnalysis;
+  /** Hide when FirstRunSuccess is already shown above (onboarding). */
+  showFirstRunBanner?: boolean;
+}) {
   const score = displayScore(analysis);
   const confidence = (analysis.confidence || "").toLowerCase();
 
   return (
     <div className="fade-up space-y-6">
+      {showFirstRunBanner && analysis.commercial_answer && (
+        <FirstRunSuccess analysis={analysis} source="analyzer" compact />
+      )}
+
       <OutputCaveat tool="analyzer" />
+
+      <div className="rounded-xl border border-aqua/25 bg-aqua/5 px-4 py-3 text-sm leading-relaxed text-slate-200">
+        <p className="font-semibold text-aqua-bright">
+          Buyers are not validated demand
+        </p>
+        <p className="mt-1 text-slate-300">
+          A plausible buyer list is stage one. Lock the hard commercial answer,
+          then find who may pay and take one revenue move. Evidence grades separate
+          observed need from assumed hypotheses.
+        </p>
+      </div>
+
+      {analysis.commercial_answer && (
+        <div className="rounded-2xl border border-rain/35 bg-gradient-to-br from-rain/10 to-night-700 p-6">
+          <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-rain-bright">
+            <Target size={16} />{" "}
+            <TermHint id="commercial_answer">Hard commercial answer</TermHint>
+          </h3>
+          <p className="helper-text">
+            One buyer, one valuable pain, one smallest paid offer, and what
+            would disprove it. Prefer an honest “wedge unclear” over a polished
+            maybe.
+          </p>
+          <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div>
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Primary buyer
+              </dt>
+              <dd className="mt-1 text-sm text-white">
+                <ExplainableText text={analysis.commercial_answer.primary_buyer} />
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Wedge clarity
+              </dt>
+              <dd className="mt-1 text-sm font-semibold capitalize text-aqua-bright">
+                {analysis.commercial_answer.wedge_clarity}
+              </dd>
+            </div>
+            <div className="sm:col-span-2">
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Valuable pain
+              </dt>
+              <dd className="mt-1 text-sm text-slate-200">
+                <ExplainableText text={analysis.commercial_answer.valuable_pain} />
+              </dd>
+            </div>
+            <div className="sm:col-span-2">
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Smallest paid offer
+              </dt>
+              <dd className="mt-1 text-sm text-slate-200">
+                <ExplainableText
+                  text={analysis.commercial_answer.smallest_paid_offer}
+                />
+              </dd>
+            </div>
+            <div className="sm:col-span-2 rounded-xl border border-night-600 bg-night-800/60 p-3">
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-amber-300/90">
+                Honesty note
+              </dt>
+              <dd className="mt-1 text-sm text-slate-200">
+                <ExplainableText text={analysis.commercial_answer.honesty_note} />
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Why this path
+              </dt>
+              <dd className="mt-1 text-sm text-slate-200">
+                <ExplainableText text={analysis.commercial_answer.why_this_path} />
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                What would disprove it
+              </dt>
+              <dd className="mt-1 text-sm text-slate-200">
+                <ExplainableText
+                  text={analysis.commercial_answer.what_would_disprove}
+                />
+              </dd>
+            </div>
+          </dl>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <CopyButton
+              text={[
+                `Primary buyer: ${analysis.commercial_answer.primary_buyer}`,
+                `Valuable pain: ${analysis.commercial_answer.valuable_pain}`,
+                `Smallest paid offer: ${analysis.commercial_answer.smallest_paid_offer}`,
+                `Wedge: ${analysis.commercial_answer.wedge_clarity}`,
+                `Honesty: ${analysis.commercial_answer.honesty_note}`,
+                `Why: ${analysis.commercial_answer.why_this_path}`,
+                `Disprove: ${analysis.commercial_answer.what_would_disprove}`,
+              ].join("\n")}
+              label="Copy hard answer"
+            />
+            {!showFirstRunBanner && (
+              <Link
+                href="/dashboard?tab=buyers"
+                className="text-sm font-semibold text-aqua hover:text-aqua-bright"
+              >
+                Next: warm list + conversations →
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="glow-card card-glow p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="text-lg font-bold text-white">
               <TermHint id="commercial_score">Commercial score</TermHint>
+              <span className="ml-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                secondary
+              </span>
             </h3>
             <p className="mt-1 text-xs text-slate-500">
-              Directional estimate from your brief and evidence, not a market
-              audit. Tap dotted words for plain English.{" "}
+              Directional estimate only. The hard commercial answer above
+              matters more.{" "}
               <Link
                 href="/methodology"
                 className="font-semibold text-aqua hover:text-aqua-bright"
@@ -207,6 +334,10 @@ export function AnalysisResult({ analysis }: { analysis: IdeaAnalysis }) {
           <h3 className="text-sm font-bold uppercase tracking-widest text-aqua">
             <TermHint id="validation_plan">Validation plan</TermHint>
           </h3>
+          <p className="helper-text">
+            These steps move claims from hypothesis toward observable demand —
+            not more polished language about who might buy.
+          </p>
           <ol className="mt-3 list-decimal space-y-2.5 pl-5 text-sm text-slate-200">
             {analysis.validation_plan.map((step, i) => (
               <li key={i}>

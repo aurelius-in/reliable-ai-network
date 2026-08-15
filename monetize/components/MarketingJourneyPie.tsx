@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * Marketing homepage pie: all 15 tools as slices, labels along each
- * slice's outer edge (tangent to the rim).
+ * Marketing homepage pie: depth after First Customer Path
+ * (research, writers, pipeline, site, results).
  */
 
 import { useState } from "react";
@@ -70,7 +70,7 @@ export function MarketingJourneyPie() {
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         className="mx-auto h-auto w-full max-w-[420px] overflow-visible"
         role="img"
-        aria-label="Make it RAIN monetization pie with 15 tools"
+        aria-label="Make it RAIN First Customer Path and the jobs that close"
       >
         <defs>
           <linearGradient id="home-pie-plan" x1="0%" y1="0%" x2="100%" y2="100%">

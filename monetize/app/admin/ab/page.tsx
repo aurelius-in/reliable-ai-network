@@ -1,7 +1,7 @@
 import { Logo } from "@/components/Logo";
 import { assertAdminSecret } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { HOME_VARIANTS, type HomeVariant } from "@/lib/home-ab";
+import { HOME_VARIANT_ORDER, HOME_VARIANTS, isHomeVariant, type HomeVariant } from "@/lib/home-ab";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Homepage A/B — Make it RAIN" };
@@ -41,7 +41,7 @@ function emptyStats(): Record<HomeVariant, VariantStats> {
 }
 
 function isVariant(v: unknown): v is HomeVariant {
-  return v === "a" || v === "b" || v === "c";
+  return isHomeVariant(v);
 }
 
 async function loadAbStats(days: number) {
@@ -57,11 +57,9 @@ async function loadAbStats(days: number) {
   if (error) return { error: error.message };
 
   const stats = emptyStats();
-  const seenSessions: Record<HomeVariant, Set<string>> = {
-    a: new Set(),
-    b: new Set(),
-    c: new Set(),
-  };
+  const seenSessions = Object.fromEntries(
+    HOME_VARIANT_ORDER.map((v) => [v, new Set<string>()])
+  ) as Record<HomeVariant, Set<string>>;
 
   for (const row of (data ?? []) as EventRow[]) {
     const props = row.props ?? {};
@@ -72,7 +70,7 @@ async function loadAbStats(days: number) {
     } else if (row.name === "signup_success" && isVariant(props.home_ab)) {
       stats[props.home_ab].signups += 1;
     } else if (row.name === "ui_click" && typeof props.target === "string") {
-      const m = /^hero_cta_(primary|secondary)_([abc])$/.exec(props.target);
+      const m = /^hero_cta_(primary|secondary)_([abcd])$/.exec(props.target);
       if (m && isVariant(m[2])) {
         if (m[1] === "primary") stats[m[2]].primaryClicks += 1;
         else stats[m[2]].secondaryClicks += 1;
@@ -186,8 +184,15 @@ export default async function AdminAbPage({
       <p className="mt-4 text-xs text-slate-500">
         Kill rule of thumb: after ≥300 sessions per variant, retire the worst
         session→signup variant and introduce a new one with 2–3 intentional
-        diffs. Force a variant with <code>/?v=a|b|c</code> (applies client-side
-        after load).
+        diffs. Force a variant with{" "}
+        <code className="text-slate-300">/?v=a</code>,{" "}
+        <code className="text-slate-300">/?v=b</code>,{" "}
+        <code className="text-slate-300">/?v=c</code>, or{" "}
+        <code className="text-slate-300">/?v=d</code>. Locks that hero, then
+        strips <code className="text-slate-300">?v=</code> from the URL (cookie
+        keeps attribution). Add{" "}
+        <code className="text-slate-300">&amp;preview=1</code> to show the
+        variant badge.
       </p>
     </Shell>
   );

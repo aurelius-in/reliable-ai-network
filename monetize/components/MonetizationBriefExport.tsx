@@ -1,30 +1,44 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Link2, Loader2, Mail } from "lucide-react";
+import { Check, FileText, Link2, Loader2, Mail } from "lucide-react";
+import { FullReportModal } from "@/components/FullReportModal";
 import { DownloadButton, ErrorText } from "@/components/ui";
 import { TermHint } from "@/components/TermHint";
+import { assembleFullBriefPayload } from "@/lib/build-full-brief";
 import { buildMonetizationBriefMd } from "@/lib/monetization-brief";
+import type { FounderBriefExtras } from "@/lib/founder-brief-extras";
 import type { ProductContext } from "@/lib/product-context";
-import type { IdeaAnalysis, PricingRecommendation } from "@/types";
+import type { SharedReportPayload } from "@/lib/shared-report";
+import type {
+  BuyerStressTestResult,
+  IdeaAnalysis,
+  PricingRecommendation,
+} from "@/types";
 
 export function MonetizationBriefExport({
   product,
   analysis,
   pricing,
+  stress_test,
 }: {
   product: ProductContext;
   analysis?: IdeaAnalysis | null;
   pricing?: PricingRecommendation | null;
+  stress_test?: BuyerStressTestResult | null;
 }) {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [emailTo, setEmailTo] = useState("");
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [payload, setPayload] = useState<SharedReportPayload | null>(null);
+  const [extras, setExtras] = useState<FounderBriefExtras | null>(null);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [emailed, setEmailed] = useState(false);
 
-  if (!analysis && !pricing) return null;
+  if (!analysis && !pricing && !stress_test) return null;
 
   const slug = product.title
     .toLowerCase()
@@ -32,25 +46,83 @@ export function MonetizationBriefExport({
     .replace(/^-|-$/g, "")
     .slice(0, 48);
   const content = buildMonetizationBriefMd({ product, analysis, pricing });
+  const title = `Monetization Brief: ${product.title}`;
 
-  async function createShare(withEmail: boolean) {
-    setLoading(true);
+  async function ensureFullPayload() {
+    if (payload && extras) return payload;
+    setModalLoading(true);
     setError(null);
-    setEmailed(false);
     try {
-      const res = await fetch("/api/reports/share", {
+      const res = await fetch("/api/reports/full-brief", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           product,
           analysis,
           pricing,
+          stress_test,
+          extras,
+          enrich: true,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Could not build full report");
+      setPayload(data.payload);
+      if (data.extras) setExtras(data.extras);
+      return data.payload as SharedReportPayload;
+    } catch (err) {
+      const fallback = assembleFullBriefPayload({
+        product,
+        analysis,
+        pricing,
+        stress_test,
+        extras,
+      });
+      setPayload(fallback);
+      setError(
+        err instanceof Error
+          ? `${err.message} Showing core brief.`
+          : "Showing core brief."
+      );
+      return fallback;
+    } finally {
+      setModalLoading(false);
+    }
+  }
+
+  async function openFullReport() {
+    setModalOpen(true);
+    await ensureFullPayload();
+  }
+
+  async function createShare(withEmail: boolean) {
+    setLoading(true);
+    setError(null);
+    setEmailed(false);
+    try {
+      const ready = await ensureFullPayload();
+      const res = await fetch("/api/reports/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          product: ready.product,
+          analysis: ready.analysis,
+          pricing: ready.pricing,
+          stress_test: ready.stress_test,
+          extras: ready.extras,
+          product_blurb: ready.product_blurb,
+          cover_note: ready.cover_note,
           ...(withEmail && emailTo.trim() ? { emailTo: emailTo.trim() } : {}),
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Could not create share link");
-      setShareUrl(data.shareUrl);
+      setShareUrl(
+        String(data.shareUrl || "").replace(
+          /MakeItRainApp\.com/i,
+          "makeitrainapp.com"
+        )
+      );
       setEmailed(Boolean(data.emailed));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -75,17 +147,28 @@ export function MonetizationBriefExport({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-white">
-            <TermHint id="monetization_brief">Monetization Brief</TermHint>
+            <TermHint id="monetization_brief">Full Monetization Brief</TermHint>
           </p>
           <p className="text-xs text-slate-400">
-            Professional memo: download, share a private link, or email it.
+            Comprehensive report: open in-app, Print/PDF, or share a private
+            link.
           </p>
         </div>
-        <DownloadButton
-          filename={`${slug || "product"}-monetization-brief.md`}
-          content={content}
-          label="Download .md"
-        />
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => void openFullReport()}
+            className="btn-primary inline-flex items-center gap-2 !px-3 !py-2 text-xs"
+          >
+            <FileText size={14} />
+            Open full report
+          </button>
+          <DownloadButton
+            filename={`${slug || "product"}-monetization-brief.md`}
+            content={content}
+            label="Download .md"
+          />
+        </div>
       </div>
 
       <div className="flex flex-wrap items-end gap-2">
@@ -142,6 +225,20 @@ export function MonetizationBriefExport({
         </div>
       )}
       <ErrorText message={error} />
+
+      <FullReportModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        payload={payload}
+        title={title}
+        shareUrl={shareUrl}
+        loading={modalLoading}
+        error={error}
+        onShare={() => void createShare(false)}
+        sharing={loading}
+        copied={copied}
+        onCopyLink={() => void copyLink()}
+      />
     </div>
   );
 }

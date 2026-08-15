@@ -1,0 +1,33 @@
+---
+description: Locked brand slogan, promise, mechanism, and CTA. Do not rewrite.
+alwaysApply: true
+---
+
+# Brand lock (do not rewrite)
+
+The theme song and slogan are set. Do not paraphrase, A/B, or "improve" them.
+
+## Chorus (verbatim)
+
+You built something real. Now it's time to get paid. Make it RAIN.
+
+## Underneath, in this order
+
+1. **Product promise:** Find who may pay, what to charge, and what to do next.
+2. **Mechanism:** Buyer Stress Test.
+3. **CTA:** Run it on my product, free.
+
+## Hierarchy on brand surfaces
+
+You built something real. Now it's time to get paid. Make it RAIN.
+
+Find who may pay, stress-test the offer, and figure out the next conversation worth having.
+
+Brand surfaces: homepage hero, OG/social, VSL open/close, splash, bios, decks, theme-adjacent copy. Source of truth in the RAIN repo: `marketing/brand-lock.md`.
+
+## Allowed vs forbidden
+
+- Cold DMs may skip the chorus and diagnose first. If the slogan appears, use it verbatim.
+- Hook tests may change comments, examples, or proof. Never a new chorus.
+- Do not replace it with "You built it. Still not paid?", "Don't automate a guess.", or a giant logo with no chorus.
+- Do not drop "Make it RAIN" from the chorus. That is the payoff.

@@ -5,13 +5,18 @@ import {
   newShareToken,
   type SharedReportPayload,
 } from "@/lib/shared-report";
-import type { IdeaAnalysis, PricingRecommendation } from "@/types";
+import type {
+  BuyerStressTestResult,
+  IdeaAnalysis,
+  PricingRecommendation,
+} from "@/types";
 import type { ProductContext } from "@/lib/product-context";
+import type { FounderBriefExtras } from "@/lib/founder-brief-extras";
 import { sendEmail } from "@/lib/email";
 
 /**
  * Create a shareable Monetization Brief snapshot.
- * Body: { product, analysis?, pricing?, emailTo? }
+ * Body: { product, analysis?, pricing?, stress_test?, tool_memo?, extras?, product_blurb?, cover_note?, emailTo? }
  */
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -27,6 +32,11 @@ export async function POST(request: Request) {
     product?: ProductContext;
     analysis?: IdeaAnalysis | null;
     pricing?: PricingRecommendation | null;
+    stress_test?: BuyerStressTestResult | null;
+    tool_memo?: import("@/lib/shared-report").ToolMemo | null;
+    cover_note?: string | null;
+    extras?: FounderBriefExtras | null;
+    product_blurb?: string | null;
     emailTo?: string;
   };
   try {
@@ -41,9 +51,17 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
-  if (!body.analysis && !body.pricing) {
+  if (
+    !body.analysis &&
+    !body.pricing &&
+    !body.stress_test &&
+    !body.tool_memo
+  ) {
     return NextResponse.json(
-      { error: "Run Analyzer or Pricing before sharing a brief" },
+      {
+        error:
+          "Run Analyzer, Pricing, Buyer Stress Test, or another tool brief before sharing",
+      },
       { status: 400 }
     );
   }
@@ -52,9 +70,14 @@ export async function POST(request: Request) {
     product: body.product,
     analysis: body.analysis,
     pricing: body.pricing,
+    stress_test: body.stress_test,
+    tool_memo: body.tool_memo,
+    cover_note: body.cover_note,
+    extras: body.extras,
+    product_blurb: body.product_blurb,
   });
   const token = newShareToken();
-  const title = `Monetization Brief — ${body.product.title}`;
+  const title = `Monetization Brief: ${body.product.title}`;
 
   const { data, error } = await supabase
     .from("shared_reports")

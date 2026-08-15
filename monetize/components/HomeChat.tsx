@@ -7,8 +7,8 @@ import { track } from "@/lib/track";
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
 const STARTERS = [
+  "How do I find my first paying customer?",
   "What do I get free?",
-  "How does the guarantee work?",
   "Is this an app builder?",
 ];
 

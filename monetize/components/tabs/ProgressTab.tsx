@@ -52,7 +52,7 @@ function deriveFirstDollar(args: {
         analysis.quick_wins?.slice(0, 5) ?? [
           "Run Pricing Builder",
           "Run Find Your Buyers",
-          "Send 10 asks from Direct Sales",
+          "Send 10 asks from DM Writer",
         ],
     };
   }
@@ -106,7 +106,8 @@ export function ProgressTab({
         return {
           milestone: m,
           tab: "analyzer",
-          reason: "You have not scored the opportunity yet. Start here.",
+          reason:
+            "You have not locked a hard commercial answer yet. Start with Analyzer.",
         };
       }
       if (m.id === "built_pricing" && (has("idea") || has("analy"))) {
@@ -121,7 +122,8 @@ export function ProgressTab({
         return {
           milestone: m,
           tab: "buyers",
-          reason: "Know exactly who pays before you write more copy.",
+          reason:
+            "Run Demand Radar for ranked signals before inventing more copy.",
         };
       }
       if (m.id === "built_funnel" && (has("pricing") || progress.built_pricing)) {
@@ -146,7 +148,7 @@ export function ProgressTab({
           milestone: m,
           tab: "sales",
           reason:
-            "Assets without conversations rarely produce a first dollar.",
+            "Start a First Customer Sprint: act on the strongest Demand Radar signals.",
         };
       }
       return {
@@ -187,8 +189,8 @@ export function ProgressTab({
       <div className="card p-5">
         <h2 className="text-lg font-bold text-white">Momentum &amp; next move</h2>
         <p className="helper-text">
-          Track the path to first revenue. The next move is suggested from what
-          you have already generated, so you stop guessing what to do this week.
+          First-customer path: hard answer → Demand Radar → sprint → Results.
+          Next move is suggested from what you already generated.
         </p>
       </div>
 
@@ -222,7 +224,8 @@ export function ProgressTab({
           </p>
           {assetStats.byLabel.length === 0 ? (
             <p className="mt-2 text-sm text-slate-400">
-              Nothing yet. Run Analyzer for your free commercial score.
+              Nothing yet. Run Analyzer for your hard commercial answer, then
+              run Demand Radar.
             </p>
           ) : (
             <ul className="mt-2 space-y-1 text-sm text-slate-300">

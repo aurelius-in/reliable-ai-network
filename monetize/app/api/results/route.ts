@@ -47,6 +47,8 @@ export async function POST(request: Request) {
     signups?: unknown;
     sales?: unknown;
     revenue?: unknown;
+    contacted?: unknown;
+    replies?: unknown;
     entries?: MetricsEntry[];
     title?: string;
     description?: string;
@@ -63,9 +65,17 @@ export async function POST(request: Request) {
     const signups = toCount(body.signups);
     const sales = toCount(body.sales);
     const revenue = toCount(body.revenue);
+    const contacted = toCount(body.contacted ?? 0);
+    const replies = toCount(body.replies ?? 0);
     if (visitors === null || signups === null || sales === null || revenue === null) {
       return NextResponse.json(
         { error: "visitors, signups, sales and revenue must be numbers ≥ 0" },
+        { status: 400 }
+      );
+    }
+    if (contacted === null || replies === null) {
+      return NextResponse.json(
+        { error: "contacted and replies must be numbers ≥ 0" },
         { status: 400 }
       );
     }
@@ -78,6 +88,8 @@ export async function POST(request: Request) {
       signups,
       sales,
       revenue,
+      contacted,
+      replies,
       logged_at: new Date().toISOString(),
     };
 

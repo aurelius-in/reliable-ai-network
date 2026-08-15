@@ -14,6 +14,10 @@ import {
   type ProductChoice,
 } from "@/components/ui";
 import { OutputCaveat } from "@/components/OutputCaveat";
+import { FullBriefControls } from "@/components/FullBriefControls";
+import { ToolMemoExecutiveBrief } from "@/components/ExecutiveBrief";
+import { creationToProductContext } from "@/lib/build-full-brief";
+import { strategyToMemo } from "@/lib/tool-memo";
 import type {
   AbTestPlan,
   CompetitorAnalysis,
@@ -107,6 +111,21 @@ export function StrategyTab({
 
   const activeMeta = STRATEGY_TOOLS.find((t) => t.id === tool)!;
   const activeResult = results[tool];
+  const selectedCreation = choice?.creationId
+    ? creations.find((c) => c.id === choice.creationId)
+    : null;
+  const strategyMemo = activeResult
+    ? strategyToMemo(tool, activeResult)
+    : null;
+  const productCtx = selectedCreation
+    ? creationToProductContext(selectedCreation)
+    : choice
+      ? {
+          title: choice.title,
+          description: choice.description,
+          type: choice.type,
+        }
+      : null;
 
   async function run() {
     if (!choice) return;
@@ -183,21 +202,40 @@ export function StrategyTab({
 
       {loading && <FunLoading headline={`Running the ${activeMeta.label}…`} />}
 
-      {!loading && activeResult && <OutputCaveat tool={`strategy_${tool}`} />}
-
-      {!loading && tool === "competitors" && results.competitors && (
-        <CompetitorsResult result={results.competitors} />
-      )}
-      {!loading &&
-        tool === "pricing_optimization" &&
-        results.pricing_optimization && (
-          <PricingOptResult result={results.pricing_optimization} />
-        )}
-      {!loading && tool === "roadmap" && results.roadmap && (
-        <RoadmapResult result={results.roadmap} />
-      )}
-      {!loading && tool === "ab_tests" && results.ab_tests && (
-        <AbTestsResult result={results.ab_tests} />
+      {!loading && activeResult && strategyMemo && productCtx && (
+        <FullBriefControls
+          bundle={{
+            product: productCtx,
+            tool_memo: strategyMemo,
+            cover_note: `${activeMeta.label} for ${productCtx.title}.`,
+          }}
+          executive={<ToolMemoExecutiveBrief memo={strategyMemo} />}
+        >
+          <OutputCaveat tool={`strategy_${tool}`} />
+          <details
+            open
+            className="rounded-xl border border-night-600 bg-night-800/50 open:border-aqua/30"
+          >
+            <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-white">
+              Full {activeMeta.label} detail
+            </summary>
+            <div className="border-t border-night-600 px-1 pb-2 pt-1">
+              {tool === "competitors" && results.competitors && (
+                <CompetitorsResult result={results.competitors} />
+              )}
+              {tool === "pricing_optimization" &&
+                results.pricing_optimization && (
+                  <PricingOptResult result={results.pricing_optimization} />
+                )}
+              {tool === "roadmap" && results.roadmap && (
+                <RoadmapResult result={results.roadmap} />
+              )}
+              {tool === "ab_tests" && results.ab_tests && (
+                <AbTestsResult result={results.ab_tests} />
+              )}
+            </div>
+          </details>
+        </FullBriefControls>
       )}
 
       {!loading && !activeResult && (

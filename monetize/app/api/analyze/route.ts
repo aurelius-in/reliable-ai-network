@@ -50,6 +50,7 @@ export async function POST(request: Request) {
     current_price?: string;
     competitors_notes?: string;
     github_repo_url?: string;
+    product_url?: string;
     evidenceChecklist?: EvidenceAnswers;
   };
   try {
@@ -93,6 +94,7 @@ export async function POST(request: Request) {
       current_price: body.current_price?.trim() || null,
       competitors_notes: body.competitors_notes?.trim() || null,
       github_repo_url: body.github_repo_url?.trim() || null,
+      product_url: body.product_url?.trim() || null,
     };
     const { data, error } = await withProfileRepair(user, () =>
       supabase
@@ -146,6 +148,27 @@ export async function POST(request: Request) {
     };
   }
 
+  // Persist intake answers for founder review (/admin/products).
+  const evidenceChecklist = body.evidenceChecklist ?? null;
+  const contentToStore = {
+    ...analysis,
+    ...(evidenceChecklist
+      ? { evidence_checklist: evidenceChecklist }
+      : {}),
+    intake_snapshot: {
+      title: creation.title,
+      description: creation.description,
+      type: creation.type,
+      stage: creation.stage ?? null,
+      traction: creation.traction ?? null,
+      current_price: creation.current_price ?? null,
+      competitors_notes: creation.competitors_notes ?? null,
+      product_url: creation.product_url ?? null,
+      github_repo_url: creation.github_repo_url ?? null,
+      captured_at: new Date().toISOString(),
+    },
+  };
+
   const { data: asset, error: assetError } = await withProfileRepair(user, () =>
     supabase
       .from("generated_assets")
@@ -153,7 +176,7 @@ export async function POST(request: Request) {
         user_id: user.id,
         creation_id: creation.id,
         type: "idea_analysis",
-        content: analysis,
+        content: contentToStore,
       })
       .select("id, created_at")
       .single()

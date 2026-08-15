@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "app/api/admin/founder-brief/route.ts": {
+      "maxDuration": 300
+    },
+    "app/api/reports/full-brief/route.ts": {
+      "maxDuration": 120
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { maybeRedeemReviewerOnAuth } from "@/lib/redeem-reviewer-on-auth";
 
 /**
  * Email confirmation / recovery landing page.
@@ -18,10 +19,24 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient();
 
+  async function afterAuth() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user && type !== "recovery") {
+      try {
+        await maybeRedeemReviewerOnAuth(user, next);
+      } catch (err) {
+        console.error("Reviewer redeem on confirm failed:", err);
+      }
+    }
+    return NextResponse.redirect(new URL(next, request.url));
+  }
+
   if (token_hash && type) {
     const { error } = await supabase.auth.verifyOtp({ type, token_hash });
     if (!error) {
-      return NextResponse.redirect(new URL(next, request.url));
+      return afterAuth();
     }
   }
 
@@ -30,7 +45,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(new URL(next, request.url));
+      return afterAuth();
     }
   }
 

@@ -86,6 +86,24 @@ export interface AnalysisCitation {
   grade: "observed" | "founder_reported" | "assumed";
 }
 
+/** Forced “hard commercial answer” — Manoj Lamba keep-pay framing. */
+export interface CommercialAnswer {
+  /** Named role/title, not a vague segment. */
+  primary_buyer: string;
+  /** Pain valuable enough to pay for, specific to this product. */
+  valuable_pain: string;
+  /** Smallest offer that could become a paid yes / pilot. */
+  smallest_paid_offer: string;
+  /** Honest wedge clarity for this product given evidence. */
+  wedge_clarity: "clear" | "narrowing" | "unclear";
+  /** If unclear/narrowing: say so plainly. If clear: one-line why. */
+  honesty_note: string;
+  /** Why this buyer/offer path looks strong given evidence. */
+  why_this_path: string;
+  /** What observable signal would disprove this path. */
+  what_would_disprove: string;
+}
+
 export interface IdeaAnalysis {
   score: number;
   score_reasoning: string;
@@ -102,6 +120,8 @@ export interface IdeaAnalysis {
   assumptions?: string[];
   kill_criteria?: string[];
   validation_plan?: string[];
+  /** One buyer, valuable pain, smallest paid offer, push/stop evidence. */
+  commercial_answer?: CommercialAnswer;
   /** Evidence-graded claims for audit-style reading. */
   citations?: AnalysisCitation[];
   /** Optional Apollo firmographics attached after analysis. */
@@ -190,11 +210,23 @@ export interface FunnelPlan {
 export interface ContentBundle {
   linkedin_posts: { hook: string; body: string; hashtags: string[] }[];
   x_posts: string[];
+  /** Network-tailored posts for selected social/ad networks (optional). */
+  network_posts?: {
+    network: string;
+    network_id?: string;
+    mode: "organic" | "paid";
+    format: string;
+    hook: string;
+    body: string;
+    hashtags?: string[];
+    cta?: string;
+  }[];
   ad_variations: {
     angle: string;
     headline: string;
     primary_text: string;
     cta: string;
+    network?: string;
   }[];
   marketplace_listing: {
     platform: string;
@@ -210,6 +242,25 @@ export interface ContentBundle {
     asset: string;
     copy_paste: string;
   }[];
+}
+
+/** Stored as generated_assets.content with type "ad_poster". */
+export interface AdPosterResult {
+  network_id: string;
+  network_label: string;
+  placement_id: string;
+  placement_label: string;
+  aspect_ratio: string;
+  paid: boolean;
+  paid_products: string[];
+  headline: string;
+  subhead: string;
+  cta: string;
+  overlay_text: string;
+  primary_text: string;
+  visual_prompt: string;
+  image_url: string | null;
+  image_error?: string | null;
 }
 
 /** Stored as generated_assets.content with type "traffic_plan". */
@@ -343,6 +394,87 @@ export interface SalesKit {
   golden_rule: string;
 }
 
+/** Stored as generated_assets.content with type "pipeline_board". */
+export type PipelineStage =
+  | "identified"
+  | "drafted"
+  | "sent"
+  | "replied"
+  | "meeting"
+  | "won"
+  | "lost";
+
+export interface PipelineContact {
+  id: string;
+  name: string;
+  channel: string;
+  company?: string;
+  stage: PipelineStage;
+  notes?: string;
+  draft?: string;
+  /** Draft review state for outcome memory */
+  draft_status?: "pending" | "approved" | "rejected" | "sent";
+  /** What happened after a reply / meeting / loss */
+  outcome_note?: string;
+  outcome_at?: string;
+  next_action?: string;
+  last_touch_at?: string;
+  creation_id?: string | null;
+}
+
+export interface PipelineBoard {
+  contacts: PipelineContact[];
+  updated_at: string;
+}
+
+/** Stored as generated_assets.content with type "site_optimize". */
+export interface SiteOptimizeResult {
+  url: string;
+  summary: string;
+  score_out_of_10: number;
+  fixes: {
+    priority: number;
+    area: string;
+    problem: string;
+    fix: string;
+    rewrite?: string;
+  }[];
+  hero_rewrite: {
+    headline: string;
+    subhead: string;
+    cta: string;
+  };
+}
+
+/** Stored as generated_assets.content with type "buyer_stress_test". */
+export interface BuyerStressTestResult {
+  verdict: "survives" | "fragile" | "dies";
+  verdict_line: string;
+  survival_score: number;
+  rounds: {
+    buyer_name: string;
+    buyer_type: string;
+    opening_pushback: string;
+    founder_best_reply: string;
+    buyer_follow_up: string;
+    outcome: "won_interest" | "stalled" | "killed";
+    lesson: string;
+  }[];
+  fatal_objections: string[];
+  offer_rewrite: {
+    smallest_paid_offer: string;
+    who_may_pay: string;
+    one_line_pitch: string;
+  };
+  dm_opener_after_test: string;
+  do_not_message_until: string[];
+  evidence_gaps: {
+    claim: string;
+    grade: string;
+    risk: string;
+  }[];
+}
+
 /** Stored as generated_assets.content with type "metrics_log". */
 export interface MetricsEntry {
   week_label: string;
@@ -350,6 +482,10 @@ export interface MetricsEntry {
   signups: number;
   sales: number;
   revenue: number;
+  /** Outreach contacts attempted this week (Demand Radar / sprint). */
+  contacted?: number;
+  /** Replies received this week. */
+  replies?: number;
   logged_at: string;
   demo?: boolean;
 }

@@ -77,6 +77,30 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     blurb:
       "Clear “stop or pivot” signals — for example, ten honest chats and zero interest. They protect your time and cash when the app was built fast and you can’t afford a long sunk-cost trap. Set them before you get emotionally attached to the build.",
   },
+  commercial_answer: {
+    term: "Hard commercial answer",
+    aliases: [
+      "hard commercial answer",
+      "commercial answer",
+      "commercial wedge",
+    ],
+    autoLink: true,
+    blurb:
+      "The forced outcome of the playbook: one primary buyer, one pain valuable enough to pay for, one smallest paid offer, and evidence for whether to push or stop — including an honest “wedge still unclear” when positioning is still too broad. More valuable than a polished maybe.",
+  },
+  demand_discovery: {
+    term: "Daily Market Research",
+    aliases: [
+      "demand discovery",
+      "demand radar",
+      "daily market research",
+      "live demand",
+      "demand scan",
+    ],
+    autoLink: true,
+    blurb:
+      "One run that searches 25+ public communities for buyer conversations (pain, purchase intent, competitor frustration), ranks why each signal matters, and drafts outreach you approve. Not a guarantee someone buys.",
+  },
   big_promise: {
     term: "Big promise",
     aliases: ["big promise", "grand slam offer"],

@@ -3,11 +3,12 @@ import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TrackedLink } from "@/components/TrackedLink";
+import { GUARANTEE } from "@/lib/guarantee";
 
 export const metadata: Metadata = {
-  title: "How the commercial score works",
+  title: "How the First Customer Path works",
   description:
-    "Make it RAIN methodology: directional scores, confidence, evidence grades (observed, founder-reported, assumed), and what the system does not claim.",
+    "Make it RAIN methodology: find who may pay, warm network + Demand Radar, evidence grades, next revenue move, and what the system does not claim.",
   alternates: { canonical: "/methodology" },
 };
 
@@ -21,7 +22,7 @@ export default function MethodologyPage() {
           trackTarget="methodology_cta_signup"
           className="text-sm font-semibold text-aqua hover:text-aqua-bright"
         >
-          Start free
+          {GUARANTEE.cta}
         </TrackedLink>
       </header>
 
@@ -30,16 +31,51 @@ export default function MethodologyPage() {
           Methodology
         </p>
         <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">
-          How the commercial score works
+          How the {GUARANTEE.baitName} works
         </h1>
         <p className="mt-4 text-base leading-relaxed text-slate-300">
-          Make it RAIN produces a commercialization brief for a product you
-          already built. The score is a compass, not a crystal ball. This page
-          explains what it is, what it is not, and how evidence is labeled.
+          Make it RAIN helps you move a product you already built toward better
+          customer conversations and a paid yes. Analysis alone is free
+          elsewhere. The useful path is: hard commercial answer → who to talk
+          to (warm network first, Demand Radar when useful) → prep → Results
+          learns. The score is a secondary compass, not the product.
         </p>
 
         <section className="mt-10">
-          <h2 className="text-xl font-bold text-white">What the score is</h2>
+          <h2 className="text-xl font-bold text-white">The conversation path</h2>
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-slate-300">
+            <li>
+              <strong className="text-white">Hard commercial answer</strong> —
+              one primary buyer, valuable pain, smallest paid offer, honesty if
+              the wedge is unclear, and what would disprove it
+            </li>
+            <li>
+              <strong className="text-white">Warm network</strong> — people you
+              already know who might fit the buyer. First customers usually come
+              from here, not from a tool alone
+            </li>
+            <li>
+              <strong className="text-white">Daily Market Research</strong> —
+              one run across 25+ public communities for pain or purchase
+              intent; why each signal matters; draft outreach you approve. Not
+              a promise of guaranteed buyers
+            </li>
+            <li>
+              <strong className="text-white">{GUARANTEE.baitName}</strong> —
+              ~10 ranked conversations + prep. Controllable deliverable: who to
+              talk to and what to say. Not a guaranteed sale
+            </li>
+            <li>
+              <strong className="text-white">Results learns</strong> — log
+              contacts, replies, objections, revenue; recommendations update
+            </li>
+          </ol>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="text-xl font-bold text-white">
+            What the score is (secondary)
+          </h2>
           <ul className="rain-list mt-3 space-y-2 text-sm text-slate-300">
             <li>
               A directional estimate of commercial readiness based on the
@@ -49,125 +85,51 @@ export default function MethodologyPage() {
               Paired with a confidence level that rises when more public
               evidence is available
             </li>
-            <li>
-              Meant to surface gaps, ranked paths, kill criteria, and a
-              this-week test
-            </li>
-          </ul>
-        </section>
-
-        <section className="mt-10">
-          <h2 className="text-xl font-bold text-white">What it is not</h2>
-          <ul className="rain-list mt-3 space-y-2 text-sm text-slate-300">
-            <li>Not a guarantee of revenue or valuation</li>
-            <li>Not an independent market or financial audit</li>
-            <li>Not fake precision (no pretending a 67.4 means science)</li>
-            <li>Not a substitute for talking to real buyers</li>
+            <li>Never the reason to signup. Never the homepage hero</li>
           </ul>
         </section>
 
         <section className="mt-10">
           <h2 className="text-xl font-bold text-white">Evidence grades</h2>
-          <p className="mt-2 text-sm text-slate-400">
-            Claims in the brief are labeled so you can see rigor vs polish.
-          </p>
-          <dl className="mt-4 space-y-4 text-sm">
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
-              <dt className="font-bold text-emerald-200">Observed</dt>
-              <dd className="mt-1 text-slate-300">
-                Grounded in public URL scrape, GitHub README, uploaded docs, or
-                firmographic enrichment for named competitors.
-              </dd>
-            </div>
-            <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 px-4 py-3">
-              <dt className="font-bold text-sky-200">Founder-reported</dt>
-              <dd className="mt-1 text-slate-300">
-                Taken from what you entered (description, traction, checklist
-                answers). Treated as your report, not independently verified.
-              </dd>
-            </div>
-            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
-              <dt className="font-bold text-amber-100">Assumed</dt>
-              <dd className="mt-1 text-slate-300">
-                Model inference without direct evidence. These are hypotheses to
-                test, not facts.
-              </dd>
-            </div>
-          </dl>
-        </section>
-
-        <section className="mt-10">
-          <h2 className="text-xl font-bold text-white">How confidence moves</h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-300">
-            More specific product context, a public product URL, traction
-            detail, and named competitors generally increase confidence. Thin
-            briefs and vague claims keep confidence lower on purpose.
+          <p className="mt-2 text-sm text-slate-300">
+            Claims are labeled observed, founder-reported, or assumed. That is
+            how we build trust without fake certainty or invented testimonials.
           </p>
         </section>
 
         <section className="mt-10">
-          <h2 className="text-xl font-bold text-white">
-            What you should do with the output
-          </h2>
+          <h2 className="text-xl font-bold text-white">What we do not claim</h2>
           <ul className="rain-list mt-3 space-y-2 text-sm text-slate-300">
-            <li>Treat ranked paths as options to pressure-test</li>
-            <li>Run the this-week actions or rewrite them to fit your calendar</li>
-            <li>Use kill criteria so you do not polish forever</li>
-            <li>Share the brief with a cofounder; argue with the assumptions</li>
+            <li>AI that closes deals for you</li>
+            <li>Guaranteed buyers from Reddit or any channel</li>
+            <li>Continuous multi-platform buyer monitoring (yet)</li>
+            <li>That personas alone equal validated demand</li>
           </ul>
         </section>
 
-        <section className="mt-10 rounded-2xl border border-white/10 bg-night-800/80 px-5 py-5">
-          <h2 className="text-base font-bold text-white">Who stands behind it</h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-300">
-            Built by{" "}
-            <a
-              href="https://reliableainetwork.com/"
-              className="font-semibold text-aqua hover:text-aqua-bright"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Reliable AI Network
-            </a>{" "}
-            (production AI / SaaS) with{" "}
-            <a
-              href="https://innovativemarketingb2b.com/"
-              className="font-semibold text-aqua hover:text-aqua-bright"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Innovative Marketing Solutions
-            </a>{" "}
-            (B2B revenue operators). You keep ownership of your product and
-            code.
+        <section className="mt-10">
+          <h2 className="text-xl font-bold text-white">Guarantee</h2>
+          <p className="mt-2 text-sm text-slate-300">
+            {GUARANTEE.hook}. {GUARANTEE.hookSecondary}. Full terms on{" "}
+            <Link href="/guarantee" className="text-aqua hover:text-aqua-bright">
+              /guarantee
+            </Link>
+            .
           </p>
         </section>
 
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <TrackedLink
-            href="/sample"
-            trackTarget="methodology_sample"
-            className="btn-primary inline-flex items-center justify-center !px-6 !py-3"
-          >
-            See a sample brief
-          </TrackedLink>
+        <section className="mt-10 rounded-2xl border border-rain/40 bg-rain/10 px-5 py-6">
+          <p className="text-sm text-slate-300">
+            Ready for the free {GUARANTEE.baitName}?
+          </p>
           <TrackedLink
             href="/signup"
-            trackTarget="methodology_signup"
-            className="inline-flex items-center justify-center rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold text-white hover:border-aqua/50"
+            trackTarget="methodology_body_signup"
+            className="btn-primary mt-4 inline-flex !px-6 !py-3"
           >
-            Get your playbook free
+            {GUARANTEE.cta}
           </TrackedLink>
-        </div>
-        <p className="mt-4 text-center text-xs text-slate-500 sm:text-left">
-          <Link href="/" className="underline hover:text-slate-400">
-            Homepage
-          </Link>
-          {" · "}
-          <Link href="/privacy" className="underline hover:text-slate-400">
-            Privacy
-          </Link>
-        </p>
+        </section>
       </main>
 
       <SiteFooter />

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { BadgeDollarSign, Loader2 } from "lucide-react";
-import { MonetizationBriefExport } from "@/components/MonetizationBriefExport";
 import { PricingResult } from "@/components/PricingResult";
+import { FullBriefControls } from "@/components/FullBriefControls";
+import { PricingExecutiveBrief } from "@/components/ExecutiveBrief";
+import { creationToProductContext } from "@/lib/build-full-brief";
 import {
   ErrorText,
   FunLoading,
@@ -124,26 +126,28 @@ export function PricingTab({
       {loading && <FunLoading headline="Building your pricing…" />}
 
       {!loading && pricing && choice && (
-        <>
-          <MonetizationBriefExport
-            product={{
-              title: choice.title,
-              description: choice.description,
-              type: choice.type,
-              stage: selectedCreation?.stage,
-              traction: selectedCreation?.traction,
-              current_price: selectedCreation?.current_price,
-              competitors_notes: selectedCreation?.competitors_notes,
-              evidence_docs: selectedCreation?.evidence_docs,
-              github_repo_url: selectedCreation?.github_repo_url,
-              github_context: selectedCreation?.github_context,
-              product_url: selectedCreation?.product_url,
-              website_context: selectedCreation?.website_context,
-            }}
-            pricing={pricing}
-          />
-          <PricingResult pricing={pricing} />
-        </>
+        <FullBriefControls
+          bundle={{
+            product: selectedCreation
+              ? creationToProductContext(selectedCreation)
+              : {
+                  title: choice.title,
+                  description: choice.description,
+                  type: choice.type,
+                },
+            pricing,
+          }}
+          executive={<PricingExecutiveBrief pricing={pricing} />}
+        >
+          <details className="rounded-xl border border-night-600 bg-night-800/50 open:border-aqua/30">
+            <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-white">
+              Full pricing detail
+            </summary>
+            <div className="border-t border-night-600 px-1 pb-2 pt-1">
+              <PricingResult pricing={pricing} />
+            </div>
+          </details>
+        </FullBriefControls>
       )}
 
       {!loading && !pricing && (

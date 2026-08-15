@@ -214,7 +214,7 @@ click and pay nothing."
 - [ ] Link tripwire → core offer with one upsell email
 
 ## Day 4 — Make the content
-- [ ] Generate 5 posts + 3 ad variations with the Content Generator
+- [ ] Generate 5 posts + 3 ad variations with Post Writer
 - [ ] Schedule them across the week
 
 ## Day 5 — Warm audience

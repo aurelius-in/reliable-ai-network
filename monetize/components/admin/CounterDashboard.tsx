@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminOpsNav } from "@/components/admin/AdminOpsNav";
 import {
   COUNTER_RANGES,
   type CounterRange,
@@ -55,6 +56,15 @@ export function CounterDashboard({
 
   return (
     <div className="w-full max-w-4xl space-y-6">
+      {/* Private Counter: no nav. Shareable Activity: ops strip only (never Counter). */}
+      {shareSafe && (
+        <AdminOpsNav
+          adminKey={adminKey}
+          current="activity"
+          range={stats.range}
+        />
+      )}
+
       <div className="text-center">
         <h1 className="text-2xl font-black text-white">{title}</h1>
         <p className="mt-1 text-sm text-slate-400">

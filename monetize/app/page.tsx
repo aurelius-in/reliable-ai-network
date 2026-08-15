@@ -11,6 +11,7 @@ import { HomeFaq } from "@/components/HomeFaq";
 import { HomeDepth } from "@/components/HomeDepth";
 import { HomeHero } from "@/components/HomeHero";
 import { HomeChat } from "@/components/HomeChat";
+import { PublicExampleBriefs } from "@/components/PublicExampleBriefs";
 import { CopySwap } from "@/components/CopySwap";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
@@ -21,23 +22,23 @@ const SITE = (
 ).replace(/\/$/, "");
 
 const TITLE =
-  "Make it RAIN | Tailored customer playbook for the product you already built";
+  "You built something real. Now it's time to get paid. Make it RAIN.";
 const DESCRIPTION =
-  "A tailored customer playbook for the product you built: who may pay, what to charge, and what to do this week. Free to start. Shareable brief with evidence grades.";
+  "Find who may pay, stress-test the offer, and figure out the next conversation worth having. Paste your URL. See a commercial result before you create an account.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESCRIPTION,
   keywords: [
+    "first paying customer",
+    "who may pay",
+    "find buyers for SaaS",
     "software monetization",
     "SaaS go-to-market",
     "monetize my app",
     "pricing for indie hackers",
-    "AI product launch",
-    "find buyers for SaaS",
     "first dollar SaaS",
     "shareable monetization brief",
-    "SaaS commercial score",
   ],
   alternates: { canonical: SITE },
   openGraph: {
@@ -59,33 +60,33 @@ const TENK_MENU = [
   { item: "Buyer research + named leads", via: "agency", price: "$3k+/mo" },
   { item: "Pricing strategy", via: "consultant", price: "$200–$500/hr" },
   { item: "Launch + funnel plan", via: "performance agency", price: "$7k–$20k/mo" },
-  { item: "Outreach + content copy", via: "marketing agency", price: "$3k–$25k/mo" },
+  { item: "Personalized posts, newsletters & DMs", via: "marketing agency", price: "$3k–$25k/mo" },
 ];
 
 const HOW_STEPS = [
   {
     n: "1",
-    title: "Get your playbook free",
-    body: "Paste a URL or describe your product. Get your playbook with evidence grades, kill criteria, and a shareable link.",
-    bodyMobile: "URL or brief → playbook, evidence grades, shareable link.",
+    title: "Paste the product you already shipped",
+    body: "URL in. Four commercial findings before an account. Save to run the full First Customer Path.",
+    bodyMobile: "Paste your URL. Result first. Then save for the full path.",
   },
   {
     n: "2",
-    title: "Lock buyer, price, offer",
-    body: "Who pays, what to charge, and the smallest offer worth selling.",
-    bodyMobile: "Who pays, what to charge, smallest paid offer.",
+    title: "Buyer Stress Test",
+    body: "The mechanism: does this offer survive a hard buyer before you spend another week promoting it. Unique to Make it RAIN.",
+    bodyMobile: "Does the offer survive a hard buyer. Unique.",
   },
   {
     n: "3",
-    title: "Run this week",
-    body: "Copy-ready posts, DMs, funnel stages, and a sprint sized for no ad budget.",
-    bodyMobile: "Posts, DMs, funnel, sprint. No ad budget needed.",
+    title: "The next conversation worth your hour",
+    body: "Warm network first. Public conversations when they help. Why this person, why now, why they might trust you.",
+    bodyMobile: "Warm first. Public signals when they help. Why now.",
   },
   {
     n: "4",
-    title: "Measure and tighten",
-    body: "See what’s leaking, what to test next, and whether to push, pivot, or stop.",
-    bodyMobile: "Find the leak. Push, pivot, or stop.",
+    title: "What the reply changes",
+    body: "Stop forgetting who replied, why they objected, and what that tells you to change about buyer, price, or next move.",
+    bodyMobile: "A reply should change who you sell to, or what you do next.",
   },
 ];
 
@@ -137,7 +138,7 @@ export default async function HomePage() {
             trackTarget="nav_start_trial"
             className="btn-primary whitespace-nowrap !px-3 !py-2 text-sm sm:!px-4"
           >
-            Start free
+            {GUARANTEE.cta}
           </TrackedLink>
         </nav>
       </header>
@@ -149,14 +150,13 @@ export default async function HomePage() {
         />
 
         <p className="fade-up text-[11px] font-bold uppercase tracking-[0.16em] text-aqua sm:text-xs sm:tracking-[0.18em]">
-          You built something real
+          For people who already shipped
         </p>
-        <h1 className="fade-up mt-3 text-4xl font-black leading-[1.05] tracking-tight text-white sm:mt-4 sm:text-6xl">
-          <span className="gradient-text gradient-text-live">Make it RAIN</span>
-        </h1>
         <Suspense fallback={null}>
           <HomeHero />
         </Suspense>
+
+        <PublicExampleBriefs />
 
         <section
           id="guarantee"
@@ -176,6 +176,9 @@ export default async function HomePage() {
                 desktop={GUARANTEE.hook}
               />
             </p>
+            <p className="text-center text-xs text-slate-500 sm:text-sm">
+              {GUARANTEE.hookSecondary}
+            </p>
             <span
               aria-hidden
               className="h-px w-16 bg-gradient-to-r from-transparent via-aqua/60 to-transparent transition group-hover:via-aqua sm:w-24"
@@ -184,55 +187,109 @@ export default async function HomePage() {
         </section>
 
         <section
+          id="trust"
+          className="fade-up mt-6 w-full max-w-2xl text-left sm:mt-8"
+        >
+          <p className="text-center text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
+            Trust while we earn customers
+          </p>
+          <ul className="mt-3 grid gap-2 text-left text-sm text-slate-300 sm:grid-cols-2">
+            <li className="rounded-xl border border-white/10 bg-night-800/70 px-3 py-2.5">
+              <span className="font-semibold text-white">Sample brief</span>
+              <span className="mt-0.5 block text-xs text-slate-400">
+                Illustrative format, plus live examples with names redacted.{" "}
+                <Link href="/sample" className="text-aqua hover:text-aqua-bright">
+                  Open sample
+                </Link>
+                {" · "}
+                <Link href="/#examples" className="text-aqua hover:text-aqua-bright">
+                  Real examples
+                </Link>
+              </span>
+            </li>
+            <li className="rounded-xl border border-white/10 bg-night-800/70 px-3 py-2.5">
+              <span className="font-semibold text-white">Not your own AI hype</span>
+              <span className="mt-0.5 block text-xs text-slate-400">
+                Observed vs assumed. Protection from believing a generated plan.
+              </span>
+            </li>
+            <li className="rounded-xl border border-white/10 bg-night-800/70 px-3 py-2.5">
+              <span className="font-semibold text-white">Methodology</span>
+              <span className="mt-0.5 block text-xs text-slate-400">
+                How we decide.{" "}
+                <Link
+                  href="/methodology"
+                  className="text-aqua hover:text-aqua-bright"
+                >
+                  Read it
+                </Link>
+              </span>
+            </li>
+            <li className="rounded-xl border border-white/10 bg-night-800/70 px-3 py-2.5">
+              <span className="font-semibold text-white">No fake logos</span>
+              <span className="mt-0.5 block text-xs text-slate-400">
+                We do not invent testimonials. Process proof first.
+              </span>
+            </li>
+          </ul>
+        </section>
+
+        <section
           id="first-win"
           className="fade-up mt-8 w-full max-w-2xl scroll-mt-24 rounded-2xl border border-rain/40 bg-gradient-to-br from-rain/15 via-night-800/95 to-night-800 px-4 py-5 text-left sm:mt-10 sm:px-6 sm:py-7"
         >
           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-rain-bright">
-            Start here. Free.
+            Free · {GUARANTEE.baitName}
           </p>
           <h2 className="mt-1.5 text-xl font-black text-white sm:mt-2 sm:text-3xl">
-            Your tailored customer playbook
+            Find who may pay, what to charge, and what to do next
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-300">
-            <CopySwap
-              mobile="Free account. URL or short description. Built around your product:"
-              desktop="Create a free account. Paste a product URL or describe what you own. Optionally add public GitHub or a short doc. The playbook is built for your product:"
-            />
+            Paste a URL. See a commercial result before you create an account.
+            Then save for a {GUARANTEE.baitName} another firm would charge
+            hundreds for:
           </p>
           <ul className="rain-list mt-2.5 space-y-2 text-sm text-slate-200 sm:mt-3">
-            <li>Commercial score with confidence</li>
-            <li>Evidence grades: observed vs assumed</li>
-            <li>Revenue paths ranked for your product</li>
-            <li>Kill criteria + this-week plan</li>
-            <li>Shareable brief (download or link)</li>
+            <li>One buyer who may actually pay</li>
+            <li>One paid offer and a price to test</li>
+            <li>
+              Buyer Stress Test{" "}
+              <span className="text-slate-500">
+                (does it survive a hard buyer before another week of promotion)
+              </span>
+            </li>
+            <li>The next conversation worth your hour</li>
+            <li>What to say (drafts you approve)</li>
           </ul>
-          <p className="mt-2.5 text-sm text-slate-300 sm:mt-3">
-            <CopySwap
-              mobile="Then: buyers, pricing, funnel, launch, sales. Card only on a paid plan trial."
-              desktop="Then unlock buyers, pricing, funnel, traffic, launch, and sales. Card only when you pick a plan for the 30-day trial."
-            />
+          <p className="mt-3 text-sm text-slate-300">
+            <span className="font-semibold text-white">Why free?</span> If this
+            is free, the paid path should feel obvious. You get the brief. We
+            learn what the market actually does.
           </p>
-          <p className="mt-2.5 text-xs text-slate-400 sm:mt-3">
-            No repo required to start.
+          <p className="mt-2 text-xs text-slate-400">
+            No card. No guaranteed-sale nonsense. {GUARANTEE.hook}
           </p>
           <div className="mt-4 flex flex-col items-stretch gap-2.5 sm:mt-5 sm:flex-row sm:items-center">
             <TrackedLink
-              href="/signup"
+              href="#home-product-url"
               trackTarget="first_win_cta_signup"
               className="btn-primary glow-card inline-flex w-full items-center justify-center gap-2 !px-6 !py-3.5 text-base sm:w-auto sm:!py-4 sm:text-lg"
             >
-              <CopySwap
-                mobile="Get my playbook free"
-                desktop="Get my tailored playbook"
-              />{" "}
-              <ArrowRight size={20} />
+              Run it on my product, free <ArrowRight size={20} />
             </TrackedLink>
             <TrackedLink
               href="/sample"
               trackTarget="first_win_cta_sample"
               className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:border-aqua/50 hover:bg-aqua/10 sm:px-6"
             >
-              See a sample first
+              See a sample
+            </TrackedLink>
+            <TrackedLink
+              href="/#examples"
+              trackTarget="first_win_cta_examples"
+              className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:border-aqua/50 hover:bg-aqua/10 sm:px-6"
+            >
+              Real examples
             </TrackedLink>
           </div>
         </section>
@@ -242,11 +299,7 @@ export default async function HomePage() {
             How it works
           </p>
           <h2 className="mt-1.5 text-center text-lg font-bold text-white sm:mt-2 sm:text-2xl">
-            <CopySwap
-              mobile="Product → next money move"
-              desktop="From shipped product to the next money move"
-              block
-            />
+            Desire, then the mechanism
           </h2>
           <ol className="mt-3 grid gap-2 sm:mt-4 sm:grid-cols-2">
             {HOW_STEPS.map((step) => (
@@ -268,40 +321,54 @@ export default async function HomePage() {
           </ol>
         </section>
 
-        <section className="mt-8 w-full sm:mt-10">
-          <div className="mb-4 text-center sm:mb-5">
-            <h2 className="text-xl font-black text-white sm:text-3xl">
-              15 tools for every money problem
+        <details className="group mt-8 w-full max-w-2xl scroll-mt-24 text-left sm:mt-10">
+          <summary className="cursor-pointer list-none rounded-xl border border-white/10 bg-night-800/70 px-3.5 py-3 text-center marker:content-none group-open:border-aqua/30 sm:px-4 sm:py-3.5 [&::-webkit-details-marker]:hidden">
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
+              Optional depth
+            </p>
+            <h2 className="mt-1.5 flex items-center justify-center gap-2 text-lg font-bold text-white sm:text-2xl">
+              First Customer Path, then the jobs that close
+              <span className="text-aqua transition group-open:rotate-45">+</span>
             </h2>
-            <p className="mx-auto mt-1.5 max-w-xl text-sm text-slate-400 sm:mt-2">
+            <p className="mx-auto mt-1.5 max-w-xl text-sm text-slate-400">
               <CopySwap
-                mobile="Tap a slice. Buyers, price, attention, launch, sales."
-                desktop="Hover a slice. Buyers, price, attention, launch, sales, results — one system, not a pile of disconnected chats."
+                mobile="Open for research, writers, launch, DMs."
+                desktop="Open for depth after the path: research, writers, pipeline, site, results."
               />
             </p>
+          </summary>
+          <div className="mt-4">
+            <MarketingJourneyPie />
+            <div className="mt-5 text-center sm:mt-6">
+              <TrackedLink
+                href="/signup"
+                trackTarget="pie_cta_signup"
+                className="btn-primary inline-flex items-center justify-center gap-2 !px-6 !py-3 text-base"
+              >
+                {GUARANTEE.cta} <ArrowRight size={18} />
+              </TrackedLink>
+            </div>
           </div>
-          <MarketingJourneyPie />
-          <div className="mt-5 text-center sm:mt-6">
-            <TrackedLink
-              href="/signup"
-              trackTarget="pie_cta_signup"
-              className="btn-primary inline-flex items-center justify-center gap-2 !px-6 !py-3 text-base"
-            >
-              Open the system free <ArrowRight size={18} />
-            </TrackedLink>
-          </div>
-        </section>
+        </details>
 
-        <section
+        <HomeDepth />
+
+        <details
           id="tenk-menu"
-          className="fade-up mt-8 w-full max-w-2xl scroll-mt-24 sm:mt-10"
+          className="group fade-up mt-8 w-full max-w-2xl scroll-mt-24 text-left sm:mt-10"
         >
-          <p className="text-center text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
-            The $10k menu
-          </p>
-          <h2 className="mt-1.5 text-center text-lg font-bold text-white sm:mt-2 sm:text-2xl">
-            What this work costs à la carte
-          </h2>
+          <summary className="cursor-pointer list-none rounded-xl border border-white/10 bg-night-800/70 px-3.5 py-3 text-center marker:content-none group-open:border-aqua/30 sm:px-4 sm:py-3.5 [&::-webkit-details-marker]:hidden">
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
+              Optional later proof
+            </p>
+            <h2 className="mt-1.5 text-lg font-bold text-white sm:text-2xl">
+              What this work costs à la carte
+              <span className="ml-2 text-aqua transition group-open:rotate-45">+</span>
+            </h2>
+            <p className="mx-auto mt-1.5 max-w-lg text-xs text-slate-400 sm:text-sm">
+              Hiring it out is not the first comparison. Another unpaid month is.
+            </p>
+          </summary>
           <ul className="mt-4 divide-y divide-white/5 rounded-2xl border border-white/10 bg-night-800/70 sm:mt-5">
             {TENK_MENU.map((row) => (
               <li
@@ -319,21 +386,18 @@ export default async function HomePage() {
                 </span>
               </li>
             ))}
-            <li className="flex items-baseline justify-between gap-3 px-4 py-3 sm:py-3.5">
-              <span className="text-sm font-bold text-white">
-                Make it RAIN · all of it
-              </span>
-              <span className="shrink-0 text-sm font-black text-aqua-bright">
-                from $29/mo
+            <li className="flex flex-col gap-1 px-4 py-3 sm:py-3.5">
+              <span className="text-sm font-bold text-white">Make it RAIN</span>
+              <span className="text-sm text-slate-300">
+                Serious commercial work. Free First Customer Path. Plans from
+                $29/mo after you see the brief.
               </span>
             </li>
           </ul>
           <p className="mt-2 text-center text-[11px] text-slate-500">
             Typical published 2025–26 U.S. market rates.
           </p>
-        </section>
-
-        <HomeDepth />
+        </details>
 
         <HomeFaq />
 
@@ -343,12 +407,8 @@ export default async function HomePage() {
             trackTarget="footer_cta_signup"
             className="btn-primary glow-card inline-flex items-center justify-center gap-2 !px-6 !py-3.5 text-base sm:!px-8 sm:!py-4 sm:text-lg"
           >
-            <CopySwap
-              mobile="Get my playbook free"
-              desktop="Get my tailored playbook"
-            />{" "}
-            <ArrowRight size={20} />
-          </TrackedLink>
+              {GUARANTEE.ctaLong} <ArrowRight size={20} />
+            </TrackedLink>
           <TrackedLink
             href="/pricing"
             trackTarget="footer_cta_pricing"
@@ -358,10 +418,7 @@ export default async function HomePage() {
           </TrackedLink>
         </div>
         <p className="mt-2.5 max-w-md text-center text-xs text-slate-500 sm:mt-3">
-          <CopySwap
-            mobile="Free first. No card."
-            desktop="Free first. No card. Cancel anytime. Your product stays yours."
-          />{" "}
+          Free. No card.{" "}
           <Link
             href="/sample"
             className="font-semibold text-slate-400 underline hover:text-aqua"

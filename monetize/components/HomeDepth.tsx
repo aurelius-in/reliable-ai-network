@@ -41,10 +41,18 @@ const PAINS = [
 
 const PROMISES = [
   {
-    title: "Know who will pay (and where they hang out)",
-    titleMobile: "Know who will pay",
-    body: "Ideal-buyer profiles, objections, positioning lines, and live people-search matches you can message, not a vague \"target market.\"",
-    bodyMobile: "Buyer profiles, objections, and live people matches to message.",
+    title: "Get to a hard commercial answer",
+    titleMobile: "A hard commercial answer",
+    body: "One primary buyer, one pain valuable enough to pay for, one smallest paid offer, and evidence for whether to push harder or stop — including an honest “wedge still unclear” when the first pilot buyer is not clear yet.",
+    bodyMobile:
+      "One buyer, valuable pain, smallest paid offer, push/stop evidence. Honest when the wedge is unclear.",
+  },
+  {
+    title: "Who to talk to next, then name who pays",
+    titleMobile: "Who to talk to next",
+    body: "Rank conversations worth having this week (network warmth first; public signals when useful), draft outreach you approve, then treat buyer personas as hypotheses until conversations happen.",
+    bodyMobile:
+      "Next conversations + approve-before-send prep. Personas are hypotheses.",
   },
   {
     title: "Set a price you can defend and test",
@@ -55,20 +63,21 @@ const PROMISES = [
   {
     title: "Get a clear path to paid for YOUR product",
     titleMobile: "A clear path to paid",
-    body: "Smallest paid offer, funnel stages, sales openers, follow-ups, and a day-by-day plan aimed at a paid yes, not more polish.",
-    bodyMobile: "Smallest paid offer, funnel, sales openers, and a weekly plan.",
+    body: "Smallest paid offer, funnel stages, then Post Writer, Newsletter Writer, and DM Writer — drafts personalized to your product and each recipient, plus a day-by-day plan aimed at a paid yes.",
+    bodyMobile: "Offer, funnel, then personalized posts, newsletters, and DMs.",
   },
   {
     title: "Get attention without a big ad budget",
     titleMobile: "Attention without a big ad budget",
-    body: "Channel picks sized to your time, copy-ready posts and outreach, and a this-week sprint you can actually run.",
-    bodyMobile: "Channels, copy-ready posts, and a this-week sprint.",
+    body: "Channel picks sized to your time, Post Writer and Newsletter Writer drafts customized to your product, and a this-week sprint you can actually run.",
+    bodyMobile: "Channels, personalized posts and newsletters, this-week sprint.",
   },
   {
     title: "A brief you can send, not another ChatGPT tab",
     titleMobile: "A brief you can send",
-    body: "Download or share a private link with cofounders and advisors. Claims are labeled observed, founder-reported, or assumed so the memo reads like a serious commercial note.",
-    bodyMobile: "Download or private link. Claims labeled evidence vs assumption.",
+    body: "Download or share a private link with cofounders and advisors. Claims are labeled observed, founder-reported, or assumed so the memo reads like a serious commercial note. See why a path looks strong — and what would disprove it.",
+    bodyMobile:
+      "Shareable brief. Evidence grades. Why strong — and what would disprove it.",
   },
   {
     title: "Know whether to push harder or stop",
@@ -77,10 +86,10 @@ const PROMISES = [
     bodyMobile: "Confidence readout, kill criteria, validation plan.",
   },
   {
-    title: "One system instead of 40 random tabs",
-    titleMobile: "One system, not 40 tabs",
-    body: "15+ monetization tools that share your product brief, URL/GitHub evidence, and outputs so every next step builds on the last.",
-    bodyMobile: "15+ tools sharing one brief and evidence trail.",
+    title: "One shared brief across the tools",
+    titleMobile: "One brief across the tools",
+    body: "The tools matter because they share your product brief, URL/GitHub evidence, and outputs — so every next step builds on the last hard answer, not another random ChatGPT tab.",
+    bodyMobile: "Tools share one brief and evidence trail — not random chats.",
   },
 ];
 
@@ -155,7 +164,7 @@ export function HomeDepth() {
               trackTarget="pains_cta_signup"
               className="text-sm font-semibold text-aqua hover:text-aqua-bright"
             >
-              Break the stall. Get my playbook free →
+              Break the stall. Find who may pay →
             </TrackedLink>
           </div>
         </DepthPanel>
@@ -167,8 +176,8 @@ export function HomeDepth() {
         >
           <p className="mb-2.5 text-sm text-slate-400 sm:mb-3">
             <CopySwap
-              mobile="15+ tools. One product brief and evidence trail."
-              desktop="15+ monetization tools that share one product brief and evidence trail, so you stop bouncing between random ChatGPT chats, Notion docs, and guesswork."
+              mobile="Hard commercial answer. One brief. Shared tools."
+              desktop="Get to a hard commercial answer — then use shared tools on one product brief and evidence trail, so you stop bouncing between random ChatGPT chats, Notion docs, and guesswork."
             />
           </p>
           <ul className="space-y-2.5 sm:space-y-3">
@@ -208,7 +217,7 @@ export function HomeDepth() {
           <p className="mt-2.5 text-sm text-slate-400 sm:mt-3">
             <CopySwap
               mobile="Then run it on your real product."
-              desktop="Then get the free playbook for your real product."
+              desktop="Then get the hard commercial answer for your real product."
             />{" "}
             <TrackedLink
               href="/signup"
@@ -222,8 +231,8 @@ export function HomeDepth() {
 
         <DepthPanel
           id="checklist"
-          title="Prefer email first? Free checkup"
-          titleMobile="Email checkup"
+          title="No URL yet? Optional 10 questions"
+          titleMobile="Optional 10 questions"
         >
           <ChecklistCapture compact />
         </DepthPanel>
@@ -253,9 +262,8 @@ export function HomeDepth() {
               agency engagement.
             </p>
             <p className="mt-2.5 text-sm font-medium text-slate-200 sm:mt-3">
-              Unique mechanism: one product brief and evidence trail across 15
-              monetization tools, with assumptions labeled, so you stop paying
-              for disconnected decks and chat dumps.
+              Unique mechanism: Buyer Stress Test. Does this offer survive a
+              hard buyer before you spend another week promoting it.
             </p>
           </div>
           <p className="mt-2.5 clear-both flex flex-wrap gap-x-4 gap-y-2 text-sm sm:mt-3">

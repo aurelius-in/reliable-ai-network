@@ -15,6 +15,7 @@ import {
   type ProductChoice,
 } from "@/components/ui";
 import { FirstDollarPath } from "@/components/FirstDollarPath";
+import { SiteOptimizePanel } from "@/components/SiteOptimizePanel";
 import { OutputCaveat } from "@/components/OutputCaveat";
 import { TermHint } from "@/components/TermHint";
 import { AUDIENCE_OPTIONS, PRICE_BAND_OPTIONS } from "@/lib/examples";
@@ -241,6 +242,8 @@ export function FunnelTab({
           body="Pick a product, tap Build my funnel, and get a visual 3-step money path with ready-to-paste copy for every stage."
         />
       )}
+
+      <SiteOptimizePanel creations={creations} />
     </div>
   );
 }

@@ -6,8 +6,14 @@ import { Lightbulb, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import { AnalysisResult } from "@/components/AnalysisResult";
 import { EditEvidencePanel } from "@/components/EditEvidencePanel";
 import { EvidenceChecklist } from "@/components/EvidenceChecklist";
+import { AnalyzerExecutiveBrief } from "@/components/ExecutiveBrief";
 import { FirstDollarPath } from "@/components/FirstDollarPath";
+import { FullBriefControls } from "@/components/FullBriefControls";
 import { MonetizationBriefExport } from "@/components/MonetizationBriefExport";
+import { creationToProductContext } from "@/lib/build-full-brief";
+import {
+  toFounderFacingScore,
+} from "@/lib/founder-facing-score";
 import {
   DescribeProductForm,
   ErrorText,
@@ -17,6 +23,7 @@ import {
 import { TermHint } from "@/components/TermHint";
 import { EXAMPLE_CREATIONS } from "@/lib/examples";
 import { loadEvidenceAnswers } from "@/lib/evidence-quality";
+import { track, trackToolRun } from "@/lib/track";
 import type { Creation, IdeaAnalysis } from "@/types";
 
 /**
@@ -42,7 +49,9 @@ export function AnalyzerTab({
   );
   const [runningId, setRunningId] = useState<string | null>(null);
   const [exampleRunning, setExampleRunning] = useState<string | null>(null);
-  const [describing, setDescribing] = useState(false);
+  // Activation: open the brief form when there is nothing to analyze yet
+  // (funnel leak: tab opens without a run).
+  const [describing, setDescribing] = useState(creations.length === 0);
   const [error, setError] = useState<string | null>(null);
 
   function handleSaved(creation: Creation) {
@@ -69,6 +78,10 @@ export function AnalyzerTab({
       if (!res.ok) throw new Error(data.error ?? "Analysis failed");
       setAnalyses((prev) => ({ ...prev, [creationId]: data.analysis }));
       setOpenId(creationId);
+      trackToolRun("analyzer", { source: "dashboard" });
+      if (data.analysis?.commercial_answer) {
+        track("first_run_hard_answer", { source: "dashboard" });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -105,6 +118,10 @@ export function AnalyzerTab({
       setLocalCreations((prev) => [newCreation, ...prev]);
       setAnalyses((prev) => ({ ...prev, [data.creationId]: data.analysis }));
       setOpenId(data.creationId);
+      trackToolRun("analyzer", { source: "example" });
+      if (data.analysis?.commercial_answer) {
+        track("first_run_hard_answer", { source: "example" });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -118,16 +135,15 @@ export function AnalyzerTab({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-bold text-white">
-              Commercial opportunity brief
+              Hard commercial answer
             </h2>
             <p className="helper-text">
-              Directional assessment of{" "}
-              <TermHint id="monetization">monetization</TermHint> paths,
-              risks, and next{" "}
-              <TermHint id="validation_plan">validation</TermHint> steps
+              Lock one primary buyer, valuable pain, and smallest paid offer
               from your <TermHint id="product_brief">product brief</TermHint>.
-              Treat scores as hypotheses until buyers confirm them. Tap dotted
-              words anytime for a plain-English meaning.
+              Plus ranked <TermHint id="monetization">monetization</TermHint>{" "}
+              paths, kill criteria, and a{" "}
+              <TermHint id="validation_plan">validation</TermHint> plan.
+              Evidence grades beat polish. Tap dotted words for plain English.
             </p>
           </div>
         </div>
@@ -137,8 +153,8 @@ export function AnalyzerTab({
         </div>
 
         <div className="mt-5">
-          <FieldLabel helper="Add your product brief, or run a B2B demo product.">
-            Product under analysis
+          <FieldLabel helper="Paste a URL or short description. Or try a demo product first.">
+            Step 1 — your product
           </FieldLabel>
           <button
             type="button"
@@ -149,7 +165,7 @@ export function AnalyzerTab({
                 : "border-rain/50 bg-night-800 text-white hover:border-rain"
             }`}
           >
-            Add product brief
+            {describing ? "Hide product form" : "Add product (URL or description)"}
           </button>
 
           {describing && (
@@ -200,7 +216,7 @@ export function AnalyzerTab({
             <div className="flex flex-wrap items-center gap-3 p-4">
               {analysis ? (
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-night-800 text-lg font-black gradient-text ring-2 ring-rain/40">
-                  {Math.round(analysis.score)}
+                  {Math.round(toFounderFacingScore(analysis.score).display)}
                 </span>
               ) : (
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-night-800 text-slate-500 ring-2 ring-night-600">
@@ -253,44 +269,55 @@ export function AnalyzerTab({
                 />
                 {analysis && (
                   <>
-                    <MonetizationBriefExport
-                      product={{
-                        title: creation.title,
-                        description: creation.description,
-                        type: creation.type,
-                        stage: creation.stage,
-                        traction: creation.traction,
-                        current_price: creation.current_price,
-                        competitors_notes: creation.competitors_notes,
-                        evidence_docs: creation.evidence_docs,
-                        github_repo_url: creation.github_repo_url,
-                        github_context: creation.github_context,
-                        product_url: creation.product_url,
-                        website_context: creation.website_context,
+                    <FullBriefControls
+                      bundle={{
+                        product: creationToProductContext(creation),
+                        analysis,
                       }}
-                      analysis={analysis}
-                    />
-                    <FirstDollarPath
-                      steps={{
-                        offer:
-                          analysis.recommended_paths?.[0]?.name ??
-                          "Smallest paid offer from your top path",
-                        price: creation.current_price?.trim() || "Set in Pricing",
-                        who: "Your best-fit buyer (run Find Your Buyers next)",
-                        channel:
-                          "Outbound + where that buyer already pays attention",
-                        ask: analysis.big_promise,
-                        pay_how:
-                          "Stripe Checkout, invoice, or store listing linked from the ask",
-                        this_week: (
-                          analysis.validation_plan?.length
-                            ? analysis.validation_plan
-                            : analysis.quick_wins ?? []
-                        ).slice(0, 5),
-                      }}
-                      onJump={onJumpTab}
-                    />
-                    <AnalysisResult analysis={analysis} />
+                      executive={
+                        <AnalyzerExecutiveBrief analysis={analysis} />
+                      }
+                    >
+                      <MonetizationBriefExport
+                        product={creationToProductContext(creation)}
+                        analysis={analysis}
+                      />
+                      <FirstDollarPath
+                        steps={{
+                          offer:
+                            analysis.recommended_paths?.[0]?.name ??
+                            "Smallest paid offer from your top path",
+                          price:
+                            creation.current_price?.trim() || "Set in Pricing",
+                          who: "Your best-fit buyer (run Find Your Buyers next)",
+                          channel:
+                            "Outbound + where that buyer already pays attention",
+                          ask: analysis.big_promise,
+                          pay_how:
+                            "Stripe Checkout, invoice, or store listing linked from the ask",
+                          this_week: (
+                            analysis.validation_plan?.length
+                              ? analysis.validation_plan
+                              : analysis.quick_wins ?? []
+                          ).slice(0, 5),
+                        }}
+                        onJump={onJumpTab}
+                      />
+                      <details className="rounded-xl border border-night-600 bg-night-900/40 open:bg-night-900/60">
+                        <summary className="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-white marker:content-none [&::-webkit-details-marker]:hidden">
+                          Full analysis in dashboard
+                          <span className="ml-2 text-xs font-normal text-slate-500">
+                            (paths, evidence grades, kill criteria)
+                          </span>
+                        </summary>
+                        <div className="border-t border-night-600 px-4 py-4">
+                          <AnalysisResult
+                            analysis={analysis}
+                            showFirstRunBanner={false}
+                          />
+                        </div>
+                      </details>
+                    </FullBriefControls>
                   </>
                 )}
               </div>

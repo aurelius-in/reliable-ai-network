@@ -13,6 +13,9 @@ import {
   type ProductChoice,
 } from "@/components/ui";
 import { OutputCaveat } from "@/components/OutputCaveat";
+import { NextRevenueMoveSmart } from "@/components/NextRevenueMoveSmart";
+import { BuyerProofPackPanel } from "@/components/BuyerProofPackPanel";
+import { PipelineBoardPanel } from "@/components/PipelineBoard";
 import type { Creation, MetricsAnalysis, MetricsEntry } from "@/types";
 
 function analysisToMarkdown(
@@ -24,10 +27,13 @@ function analysisToMarkdown(
     "",
     "## Logged weeks",
     "",
-    ...entries.map(
-      (e) =>
-        `- ${e.week_label}: visitors ${e.visitors}, signups ${e.signups}, sales ${e.sales}, revenue $${e.revenue}`
-    ),
+    ...entries.map((e) => {
+      const outreach =
+        e.contacted != null || e.replies != null
+          ? `, contacted ${e.contacted ?? 0}, replies ${e.replies ?? 0}`
+          : "";
+      return `- ${e.week_label}: visitors ${e.visitors}, signups ${e.signups}, sales ${e.sales}, revenue $${e.revenue}${outreach}`;
+    }),
     "",
     "## What's working",
     "",
@@ -230,6 +236,8 @@ export function ResultsTab({
   const [signups, setSignups] = useState(0);
   const [sales, setSales] = useState(0);
   const [revenue, setRevenue] = useState(0);
+  const [contacted, setContacted] = useState(0);
+  const [replies, setReplies] = useState(0);
   const [metric, setMetric] = useState<string>("revenue");
   const [analysis, setAnalysis] = useState<MetricsAnalysis | null>(initialAnalysis);
   const [logging, setLogging] = useState(false);
@@ -252,6 +260,8 @@ export function ResultsTab({
           signups,
           sales,
           revenue,
+          contacted,
+          replies,
         }),
       });
       const data = await res.json();
@@ -262,6 +272,8 @@ export function ResultsTab({
       setSignups(0);
       setSales(0);
       setRevenue(0);
+      setContacted(0);
+      setReplies(0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -303,16 +315,22 @@ export function ResultsTab({
 
   return (
     <div className="space-y-5">
+      <NextRevenueMoveSmart analysis={analysis} />
+
+      <BuyerProofPackPanel creationId={choice?.creationId} />
+
+      <PipelineBoardPanel />
+
       {/* Quick entry */}
       <div className="card space-y-5 p-5">
         <div>
           <h2 className="text-lg font-bold text-white">
-            What&apos;s working? Let the numbers talk
+            Results — learn from what buyers did
           </h2>
           <p className="helper-text">
-            Once a week, jot down four numbers. We&apos;ll chart your trend
-            and tell you exactly what to fix next. Rough guesses are fine —
-            done beats perfect.
+            Once a week, log outreach and funnel numbers. Results is the brain:
+            if Demand Radar contacts get replies and LinkedIn does not, the next
+            recommendation should follow the evidence. Rough guesses are fine.
           </p>
         </div>
 
@@ -324,7 +342,21 @@ export function ResultsTab({
           />
         )}
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Stepper
+            emoji="📤"
+            label="Contacted"
+            value={contacted}
+            onChange={setContacted}
+            step={1}
+          />
+          <Stepper
+            emoji="💬"
+            label="Replies"
+            value={replies}
+            onChange={setReplies}
+            step={1}
+          />
           <Stepper emoji="👀" label="Visitors" value={visitors} onChange={setVisitors} step={10} />
           <Stepper emoji="📝" label="Signups" value={signups} onChange={setSignups} step={5} />
           <Stepper emoji="🛒" label="Sales" value={sales} onChange={setSales} step={1} />
@@ -428,7 +460,7 @@ export function ResultsTab({
         <TeachingEmptyState
           emoji="📈"
           title="Your results dashboard appears here"
-          body="Log this week's visitors, signups, sales, and revenue — or tap the demo data button — and the AI will spot your bottleneck and hand you next week's fixes."
+          body="Log contacted, replies, visitors, signups, sales, and revenue — or tap demo data — and Results spots the bottleneck and next week's fixes."
         />
       )}
     </div>

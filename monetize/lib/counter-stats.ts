@@ -3,7 +3,7 @@
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { HOME_VARIANTS, type HomeVariant } from "@/lib/home-ab";
+import { HOME_VARIANT_ORDER, HOME_VARIANTS, isHomeVariant, type HomeVariant } from "@/lib/home-ab";
 import { JOURNEY_STEPS } from "@/lib/journey";
 
 export type CounterRange = "today" | "7d" | "month" | "all";
@@ -100,7 +100,7 @@ export type ExitSurveyRow = {
   reason: string;
   label: string;
   count: number;
-  byHomeAb: { a: number; b: number; c: number; unknown: number };
+  byHomeAb: Record<HomeVariant, number> & { unknown: number };
 };
 
 export type ExitSurveyActivity = {
@@ -284,47 +284,31 @@ const TRIAL_CTA_TARGETS = new Set([
 
 function isTrialCtaTarget(target: string): boolean {
   return (
-    TRIAL_CTA_TARGETS.has(target) || /^hero_cta_primary_[abc]$/.test(target)
+    TRIAL_CTA_TARGETS.has(target) || /^hero_cta_primary_[abcd]$/.test(target)
   );
 }
 
-function isHomeVariant(v: unknown): v is HomeVariant {
-  return v === "a" || v === "b" || v === "c";
+function emptyHomeAbBucket() {
+  return {
+    views: 0,
+    sessions: new Set<string>(),
+    primaryClicks: 0,
+    secondaryClicks: 0,
+    signups: 0,
+  };
+}
+
+function emptyExitByHomeAb(): ExitSurveyRow["byHomeAb"] {
+  return {
+    ...Object.fromEntries(HOME_VARIANT_ORDER.map((v) => [v, 0])),
+    unknown: 0,
+  } as ExitSurveyRow["byHomeAb"];
 }
 
 function buildHomeAb(rows: EventRow[]): HomeAbRow[] {
-  const stats: Record<
-    HomeVariant,
-    {
-      views: number;
-      sessions: Set<string>;
-      primaryClicks: number;
-      secondaryClicks: number;
-      signups: number;
-    }
-  > = {
-    a: {
-      views: 0,
-      sessions: new Set(),
-      primaryClicks: 0,
-      secondaryClicks: 0,
-      signups: 0,
-    },
-    b: {
-      views: 0,
-      sessions: new Set(),
-      primaryClicks: 0,
-      secondaryClicks: 0,
-      signups: 0,
-    },
-    c: {
-      views: 0,
-      sessions: new Set(),
-      primaryClicks: 0,
-      secondaryClicks: 0,
-      signups: 0,
-    },
-  };
+  const stats = Object.fromEntries(
+    HOME_VARIANT_ORDER.map((v) => [v, emptyHomeAbBucket()])
+  ) as Record<HomeVariant, ReturnType<typeof emptyHomeAbBucket>>;
 
   for (const row of rows) {
     const props = row.props ?? {};
@@ -335,7 +319,7 @@ function buildHomeAb(rows: EventRow[]): HomeAbRow[] {
     } else if (row.name === "signup_success" && isHomeVariant(props.home_ab)) {
       stats[props.home_ab].signups += 1;
     } else if (row.name === "ui_click" && typeof props.target === "string") {
-      const m = /^hero_cta_(primary|secondary)_([abc])$/.exec(props.target);
+      const m = /^hero_cta_(primary|secondary)_([abcd])$/.exec(props.target);
       if (m && isHomeVariant(m[2])) {
         if (m[1] === "primary") stats[m[2]].primaryClicks += 1;
         else stats[m[2]].secondaryClicks += 1;
@@ -380,7 +364,7 @@ function buildExitSurvey(rows: EventRow[]): ExitSurveyActivity {
     const reason = propString(r.props, "reason") ?? "other";
     const cur = map.get(reason) ?? {
       count: 0,
-      byHomeAb: { a: 0, b: 0, c: 0, unknown: 0 },
+      byHomeAb: emptyExitByHomeAb(),
     };
     cur.count += 1;
     const homeAb = r.props?.home_ab;
@@ -397,7 +381,7 @@ function buildExitSurvey(rows: EventRow[]): ExitSurveyActivity {
       const reason = propString(r.props, "reason") ?? "other";
       const cur = map.get(reason) ?? {
         count: 0,
-        byHomeAb: { a: 0, b: 0, c: 0, unknown: 0 },
+        byHomeAb: emptyExitByHomeAb(),
       };
       cur.count += 1;
       const homeAb = r.props?.home_ab;

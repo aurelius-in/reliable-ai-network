@@ -11,7 +11,7 @@ import { trackToolRun } from "@/lib/track-server";
 
 export const maxDuration = 300;
 
-/** Ad & Content Generator (Growth): one idea → a full asset bundle. */
+/** Post Writer + Newsletter Writer (Growth): personalized posts + email sequence. */
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -36,6 +36,7 @@ export async function POST(request: Request) {
     audience?: string;
     bigPromise?: string;
     positioningLine?: string;
+    networks?: string[];
   };
   try {
     body = await request.json();
@@ -51,6 +52,10 @@ export async function POST(request: Request) {
     );
   }
 
+  const networks = Array.isArray(body.networks)
+    ? body.networks.filter((n): n is string => typeof n === "string").slice(0, 6)
+    : undefined;
+
   let bundle: ContentBundle;
   try {
     bundle = await grokChatJSON<ContentBundle>([
@@ -63,11 +68,12 @@ export async function POST(request: Request) {
           audience: body.audience,
           bigPromise: body.bigPromise,
           positioningLine: body.positioningLine,
+          networks,
         }),
       },
     ]);
   } catch (err) {
-    console.error("Content Generator failed:", err);
+    console.error("Post/Newsletter Writer failed:", err);
     return NextResponse.json(
       { error: "Content generation failed. Please try again in a moment." },
       { status: 502 }

@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Make it RAIN — monetization tools for software creators";
+export const alt =
+  "You built something real. Now it's time to get paid. Make it RAIN.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -33,29 +34,52 @@ export default function OpenGraphImage() {
         >
           Make it RAIN
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <div
             style={{
               display: "flex",
-              fontSize: 64,
+              fontSize: 52,
               fontWeight: 800,
-              lineHeight: 1.1,
-              maxWidth: 900,
+              lineHeight: 1.15,
+              maxWidth: 1000,
             }}
           >
-            Turn what you shipped into revenue
+            You built something real.
           </div>
           <div
             style={{
               display: "flex",
-              fontSize: 28,
-              color: "#94a3b8",
-              maxWidth: 820,
-              lineHeight: 1.35,
+              fontSize: 52,
+              fontWeight: 800,
+              lineHeight: 1.15,
+              maxWidth: 1000,
             }}
           >
-            Guided monetization for indie developers and AI builders. 15 tools.
-            Free 30-day trial.
+            Now it's time to get paid.
+          </div>
+          <div
+            style={{
+              display: "flex",
+              fontSize: 52,
+              fontWeight: 800,
+              lineHeight: 1.15,
+              color: "#00e5ff",
+            }}
+          >
+            Make it RAIN.
+          </div>
+          <div
+            style={{
+              display: "flex",
+              fontSize: 26,
+              color: "#94a3b8",
+              maxWidth: 900,
+              lineHeight: 1.35,
+              marginTop: 12,
+            }}
+          >
+            Find who may pay, stress-test the offer, and figure out the next
+            conversation worth having.
           </div>
         </div>
         <div

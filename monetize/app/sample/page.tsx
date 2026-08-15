@@ -8,9 +8,9 @@ import { SAMPLE_BRIEF } from "@/lib/sample-brief";
 import { DEFAULT_REVIEWER_INVITE_PATH } from "@/lib/invite-tokens";
 
 export const metadata: Metadata = {
-  title: "Sample monetization brief | Make it RAIN",
+  title: "Sample first-customer brief | Make it RAIN",
   description:
-    "Illustrative commercialization brief showing score, evidence grades, buyers, pricing logic, kill criteria, and this-week actions. Labeled sample, not a live audit.",
+    "Illustrative brief: hard commercial answer, evidence grades, demand path, pricing logic, kill criteria, and this-week actions. Labeled sample, not a live audit.",
   alternates: { canonical: "/sample" },
 };
 
@@ -43,9 +43,21 @@ export default function SampleBriefPage() {
           commercialization brief, including how evidence grades appear.
         </p>
 
+        <p className="mt-4 rounded-xl border border-aqua/25 bg-aqua/5 px-4 py-3 text-sm text-slate-300">
+          Want live runs on real product URLs (founder and company names
+          redacted)?{" "}
+          <Link
+            href="/#examples"
+            className="font-semibold text-aqua hover:text-aqua-bright"
+          >
+            Open real examples on the homepage
+          </Link>
+          . Those show Analyzer + Buyer Stress Test output you can forward.
+        </p>
+
         <article className="mt-6 rounded-2xl border border-white/10 bg-night-800/90 px-5 py-7 sm:px-8">
           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
-            Sample Monetization Brief
+            Sample first-customer brief
           </p>
           <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl">
             {s.productTitle}
@@ -57,13 +69,49 @@ export default function SampleBriefPage() {
             {s.description}
           </p>
 
+          <h2 className="mt-8 text-lg font-bold text-white">
+            Hard commercial answer
+          </h2>
+          <dl className="mt-3 space-y-2 text-sm text-slate-300">
+            <div>
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Primary buyer
+              </dt>
+              <dd className="text-white">{s.commercialAnswer.primaryBuyer}</dd>
+            </div>
+            <div>
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Valuable pain
+              </dt>
+              <dd>{s.commercialAnswer.valuablePain}</dd>
+            </div>
+            <div>
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Smallest paid offer
+              </dt>
+              <dd>{s.commercialAnswer.smallestPaidOffer}</dd>
+            </div>
+            <div>
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-amber-300/90">
+                Honesty ({s.commercialAnswer.wedgeClarity})
+              </dt>
+              <dd>{s.commercialAnswer.honestyNote}</dd>
+            </div>
+            <div>
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                What would disprove it
+              </dt>
+              <dd>{s.commercialAnswer.whatWouldDisprove}</dd>
+            </div>
+          </dl>
+
           <div className="mt-8 grid gap-4 sm:grid-cols-[auto_1fr] sm:items-end">
-            <div className="rounded-2xl border border-rain/40 bg-rain/10 px-6 py-5 text-center">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
-                Directional score
+            <div className="rounded-2xl border border-white/10 bg-night-900/60 px-6 py-5 text-center">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                Score (secondary)
               </p>
-              <p className="mt-1 text-5xl font-black text-white">{s.score}</p>
-              <p className="mt-1 text-sm font-semibold text-aqua">
+              <p className="mt-1 text-4xl font-black text-white">{s.score}</p>
+              <p className="mt-1 text-sm font-semibold text-slate-400">
                 Confidence: {s.confidence}
               </p>
             </div>
@@ -131,7 +179,7 @@ export default function SampleBriefPage() {
             trackTarget="sample_get_yours"
             className="btn-primary inline-flex items-center justify-center !px-6 !py-3.5"
           >
-            Get a brief for your product
+            Get my hard commercial answer
           </TrackedLink>
           <TrackedLink
             href={DEFAULT_REVIEWER_INVITE_PATH}
@@ -143,7 +191,7 @@ export default function SampleBriefPage() {
         </div>
         <p className="mt-4 text-center text-xs text-slate-500">
           <Link href="/methodology" className="underline hover:text-slate-400">
-            How scoring works
+            How the path works
           </Link>
           {" · "}
           <Link href="/" className="underline hover:text-slate-400">

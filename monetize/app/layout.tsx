@@ -20,12 +20,12 @@ const SITE_URL = (
 ).replace(/\/$/, "");
 
 const DEFAULT_DESCRIPTION =
-  "Guided monetization and go-to-market for software and AI founders. Find buyers, price, launch, and sell what you already built. Not an app builder. Free 30-day trial.";
+  "Find who may pay, what to charge, and what to do next. Buyer Stress Test. Run it on my product, free.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Make it RAIN | Monetization for software & AI founders",
+    default: "You built something real. Now it's time to get paid. Make it RAIN.",
     template: "%s | Make it RAIN",
   },
   description: DEFAULT_DESCRIPTION,
@@ -51,12 +51,12 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: "Make it RAIN",
-    title: "Make it RAIN | Monetization for software & AI founders",
+    title: "You built something real. Now it's time to get paid. Make it RAIN.",
     description: DEFAULT_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Make it RAIN | Monetization for software & AI founders",
+    title: "You built something real. Now it's time to get paid. Make it RAIN.",
     description: DEFAULT_DESCRIPTION,
   },
   robots: {
