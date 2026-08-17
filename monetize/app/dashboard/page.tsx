@@ -7,6 +7,7 @@ import { ReviewerFeedbackBanner } from "@/components/ReviewerFeedbackBanner";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { ReferralAttributor } from "@/components/ReferralAttributor";
 import { ReferralNudge } from "@/components/ReferralNudge";
+import { ConfirmEmailBanner } from "@/components/ConfirmEmailBanner";
 import { DashboardTabs, type DashboardData } from "@/components/DashboardTabs";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -197,6 +198,7 @@ export default async function DashboardPage() {
 
       <main className="mx-auto max-w-6xl space-y-6 px-4 pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] md:space-y-8 md:py-8">
         <ReferralAttributor />
+        <ConfirmEmailBanner />
         <TrialBanner profile={typedProfile} />
 
         <AccessCodeAutoRedeem />

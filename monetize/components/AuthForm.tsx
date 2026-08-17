@@ -50,6 +50,31 @@ function readHomeAbVariant(): string | undefined {
   return readHomeAbFromDocument() ?? undefined;
 }
 
+function isUnconfirmedLoginError(message: string): boolean {
+  return /not confirmed|confirm your email|email not confirmed/i.test(message);
+}
+
+async function openAccountNow(opts: {
+  email: string;
+  userId?: string;
+  next?: string;
+}): Promise<boolean> {
+  try {
+    const res = await fetch("/api/auth/open-account", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: opts.email,
+        userId: opts.userId,
+        next: opts.next,
+      }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export function AuthForm({
   mode,
   variant = "default",
@@ -170,19 +195,58 @@ export function AuthForm({
           router.push(nextAfterConfirm);
           router.refresh();
         } else {
-          // Email confirmation is enabled on the Supabase project.
-          // Server redeem runs on /auth/confirm via signup_variant + ?invite=.
-          track("signup_needs_confirmation");
-          setConfirmationSent(true);
-          setLoading(false);
+          // Confirm email is optional. Open the account and continue now.
+          track("signup_opened_without_confirm");
+          await openAccountNow({
+            email,
+            userId: data.user?.id,
+            next: nextAfterConfirm,
+          });
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (signInError) {
+            track("signup_open_signin_failed", {
+              message: signInError.message.slice(0, 160),
+            });
+            setConfirmationSent(true);
+            setLoading(false);
+            return;
+          }
+          if (referralCode) {
+            void fetch("/api/referral/apply", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code: referralCode }),
+            }).catch(() => {});
+          }
+          await redeemStoredAccessCodeIfAny();
+          router.push(nextAfterConfirm);
+          router.refresh();
         }
       } else {
         track("login_submit");
-        const { error } = await supabase.auth.signInWithPassword({
+        let { error: loginError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
+        if (loginError && isUnconfirmedLoginError(loginError.message)) {
+          track("login_opened_unconfirmed");
+          const invite = searchParams.get("invite")?.trim();
+          const nextHint =
+            safeInternalNext(searchParams.get("next"), "") ||
+            (invite
+              ? `/dashboard?invite=${encodeURIComponent(invite)}`
+              : "/dashboard");
+          await openAccountNow({ email, next: nextHint });
+          const retry = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          loginError = retry.error;
+        }
+        if (loginError) throw loginError;
         track("login_success");
         await redeemStoredAccessCodeIfAny();
         const invite = searchParams.get("invite")?.trim();
@@ -199,10 +263,7 @@ export function AuthForm({
       track(mode === "signup" ? "signup_error" : "login_error", {
         message: message.slice(0, 160),
       });
-      if (
-        mode === "login" &&
-        /not confirmed|confirm your email|email not confirmed/i.test(message)
-      ) {
+      if (mode === "login" && isUnconfirmedLoginError(message)) {
         setNeedsConfirm(true);
       }
       setError(message);
@@ -247,15 +308,12 @@ export function AuthForm({
   if (confirmationSent) {
     return (
       <div className="fade-up card-glow p-8 text-center">
-        <h2 className="text-xl font-bold text-white">Check your email</h2>
+        <h2 className="text-xl font-bold text-white">You can still get in</h2>
         <p className="mt-2 text-sm text-slate-300">
-          We sent a confirmation link to{" "}
-          <span className="text-white">{email}</span>. Click it to activate your
-          account
-          {variant === "reviewer"
-            ? " and unlock complimentary reviewer access"
-            : ", then paste your product URL for First Customer Path"}
-          .
+          We could not open a session automatically. A confirmation link is on
+          its way to <span className="text-white">{email}</span>. You can click
+          it, or wait a moment and sign in with the same password.
+          Confirmation is optional.
         </p>
         <p className="mt-3 text-xs text-slate-500">
           The link expires. If nothing arrives in a couple of minutes, check
@@ -310,7 +368,7 @@ export function AuthForm({
   const authError = searchParams.get("error");
   const authErrorCopy =
     authError === "auth"
-      ? "That confirmation link expired or already got used. Sign in below, or create the account again to get a new link."
+      ? "That confirmation link expired or already got used. Sign in with your password. You do not need the email link to get in."
       : null;
 
   return (
@@ -408,8 +466,9 @@ export function AuthForm({
       {mode === "login" && needsConfirm ? (
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-3 text-sm text-amber-100">
           <p>
-            Your email is not confirmed yet. Send the link again, then come
-            back to sign in.
+            Your email is not confirmed in our auth provider yet. Try signing
+            in again. If it still fails, send the link, then come back. The
+            product should open without waiting on that email.
           </p>
           {resendNote ? (
             <p className="mt-2 text-aqua-bright">{resendNote}</p>

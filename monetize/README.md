@@ -34,7 +34,7 @@ npm run dev
    - `https://www.MakeItRainApp.com/reset-password`
    - Local: `http://localhost:3000/auth/confirm`, `http://localhost:3000/auth/callback`, and `http://localhost:3000/reset-password`
    Email confirmation and password recovery land on `/auth/confirm` (token_hash), then recovery continues to `/reset-password`. Do not leave Site URL as localhost in production.
-   - Optional: disable "Confirm email" under Authentication → Providers → Email while testing, so signups log in immediately.
+   Production still opens the account immediately if Confirm email is on: `/api/auth/open-account` marks the user confirmed so they can use the product now and click the email later. Do not treat confirmation as a signup gate.
 
 ## 2. Stripe setup
 

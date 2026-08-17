@@ -2,6 +2,7 @@ import { type EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { maybeRedeemReviewerOnAuth } from "@/lib/redeem-reviewer-on-auth";
+import { markInboxVerified } from "@/lib/auth-open-account";
 
 /**
  * Email confirmation / recovery landing page.
@@ -25,6 +26,7 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
     if (user && type !== "recovery") {
       try {
+        await markInboxVerified(user);
         await maybeRedeemReviewerOnAuth(user, next);
       } catch (err) {
         console.error("Reviewer redeem on confirm failed:", err);

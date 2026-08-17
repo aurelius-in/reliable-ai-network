@@ -9,6 +9,7 @@ import { ReferralShareCard } from "@/components/ReferralShareCard";
 import { ReferralAttributor } from "@/components/ReferralAttributor";
 import { AccessCodeAutoRedeem } from "@/components/AccessCodeAutoRedeem";
 import { AccessCodeForm } from "@/components/AccessCodeForm";
+import { ConfirmEmailBanner } from "@/components/ConfirmEmailBanner";
 import { isComplimentaryStatus } from "@/lib/access-codes";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -80,6 +81,7 @@ export default async function BillingPage() {
 
       <main className="mx-auto max-w-3xl space-y-6 px-4 pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] md:py-8">
         <ReferralAttributor />
+        <ConfirmEmailBanner />
         <h1 className="text-2xl font-black text-white">Billing</h1>
 
         {isTrialing && trialEndDate && (

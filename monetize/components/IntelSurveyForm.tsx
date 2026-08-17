@@ -102,9 +102,8 @@ export function IntelSurveyForm({
               {INTEL_ACCESS_CODE}
             </span>
             . We also emailed it to {person.email}. Click continue and it
-            should apply when you are signed in. If sign-in says to confirm
-            your email, use the same address and send the confirmation link
-            again.
+            should apply when you are signed in. Sign in with the password you
+            set. Confirmation can wait.
           </p>
         </div>
         <TrackedLink
@@ -246,8 +245,7 @@ export function IntelSurveyForm({
       </button>
       <p className="text-center text-xs text-slate-500">
         No card. After you send answers, you get a code and a continue button.
-        If sign-in asks you to confirm your email, send the link again from
-        that screen.
+        Sign in with the password you set. Confirmation can wait.
       </p>
     </form>
   );

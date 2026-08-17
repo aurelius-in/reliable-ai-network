@@ -2,6 +2,7 @@ import { Logo } from "@/components/Logo";
 import { OnboardingForm } from "@/components/OnboardingForm";
 import { AccessCodeAutoRedeem } from "@/components/AccessCodeAutoRedeem";
 import { AccessCodeForm } from "@/components/AccessCodeForm";
+import { ConfirmEmailBanner } from "@/components/ConfirmEmailBanner";
 import Link from "next/link";
 
 export const metadata = { title: "Onboarding | Make it RAIN" };
@@ -15,6 +16,7 @@ export default function OnboardingPage() {
         </div>
 
         <div className="fade-up mt-10 space-y-4">
+          <ConfirmEmailBanner />
           <AccessCodeAutoRedeem />
           <details className="rounded-2xl border border-white/10 bg-night-800/60 px-4 py-3">
             <summary className="cursor-pointer text-sm font-semibold text-slate-300">
