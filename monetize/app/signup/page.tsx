@@ -23,7 +23,8 @@ type Props = {
 export default async function SignupPage({ searchParams }: Props) {
   const sp = await searchParams;
   const invite = lookupInviteToken(sp.invite);
-  const isReviewer = Boolean(invite);
+  const isReviewer = invite?.kind === "reviewer";
+  const isIntel = invite?.kind === "intel";
   const pendingUrl = sp.url ? normalizeProductUrl(sp.url) : "";
 
   return (
@@ -32,31 +33,37 @@ export default async function SignupPage({ searchParams }: Props) {
       {pendingUrl ? <PersistProductUrl url={pendingUrl} /> : null}
       <Logo />
       <div className="fade-up mt-8 w-full max-w-md rounded-2xl border border-night-600 bg-night-800 p-8 shadow-2xl shadow-black/40">
-        {isReviewer ? (
+        {isReviewer || isIntel ? (
           <>
             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
-              Complimentary reviewer account
+              {isIntel ? "Founder feedback access" : "Complimentary reviewer account"}
             </p>
             <h1 className="mt-2 text-2xl font-black text-white">
-              Open your reviewer access
+              {isIntel ? "Unlock 60 days of Pro" : "Open your reviewer access"}
             </h1>
             <p className="mt-1.5 mb-5 text-sm text-slate-400">
-              Oliver invited you to examine whether Make it RAIN separates
-              evidence from assumptions. Create your account below. No card. No
-              billing for reviewer access.
+              {isIntel
+                ? "No card. Complete the survey, then sign in with this account. Pro applies when you continue."
+                : "Oliver invited you to examine whether Make it RAIN separates evidence from assumptions. Create your account below. No card. No billing for reviewer access."}
             </p>
             <ul className="rain-list mb-6 space-y-2 text-sm text-slate-300">
               <li>Pro tools for {invite!.grant.durationDays} days</li>
               <li>Sample product path or your own public URL</li>
               <li>Evidence grades visible in the brief</li>
-              <li>Feedback welcome: positive, negative, or neutral</li>
+              <li>
+                {isIntel
+                  ? "Access applies when you continue. No card."
+                  : "Feedback welcome: positive, negative, or neutral"}
+              </li>
             </ul>
             <Suspense>
               <AuthForm
                 mode="signup"
                 variant="reviewer"
-                submitLabel="Create reviewer account"
-                collectCompany
+                submitLabel={
+                  isIntel ? "Continue" : "Create reviewer account"
+                }
+                collectCompany={!isIntel}
               />
             </Suspense>
           </>
@@ -100,7 +107,7 @@ export default async function SignupPage({ searchParams }: Props) {
           </>
         )}
       </div>
-      <ExitSurvey source={isReviewer ? "signup_reviewer" : "signup"} />
+      <ExitSurvey source={isReviewer ? "signup_reviewer" : isIntel ? "signup_intel" : "signup"} />
       <SiteFooter className="mt-10 w-full max-w-md border-0" />
     </div>
   );

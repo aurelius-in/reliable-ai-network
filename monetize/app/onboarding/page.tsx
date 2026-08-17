@@ -1,6 +1,7 @@
 import { Logo } from "@/components/Logo";
 import { OnboardingForm } from "@/components/OnboardingForm";
 import { AccessCodeAutoRedeem } from "@/components/AccessCodeAutoRedeem";
+import { AccessCodeForm } from "@/components/AccessCodeForm";
 import Link from "next/link";
 
 export const metadata = { title: "Onboarding | Make it RAIN" };
@@ -15,6 +16,14 @@ export default function OnboardingPage() {
 
         <div className="fade-up mt-10 space-y-4">
           <AccessCodeAutoRedeem />
+          <details className="rounded-2xl border border-white/10 bg-night-800/60 px-4 py-3">
+            <summary className="cursor-pointer text-sm font-semibold text-slate-300">
+              Have a feedback code?
+            </summary>
+            <div className="mt-3">
+              <AccessCodeForm heading="Apply it here. No card." />
+            </div>
+          </details>
           <div className="rounded-2xl border border-night-600 bg-night-800 p-8 shadow-2xl shadow-black/40">
             <h1 className="text-2xl font-black text-white">
               Paste the product. Get who may pay.

@@ -5,7 +5,7 @@
 
 import { lookupAccessCode, type AccessCodeGrant } from "@/lib/access-codes";
 
-export type InviteKind = "reviewer";
+export type InviteKind = "reviewer" | "intel";
 
 export type InviteGrant = {
   /** Opaque path segment, e.g. /invite/reviewer */
@@ -34,6 +34,12 @@ const INVITES: Record<string, InviteGrant> = {
     accessCode: "RAIN26ADMIN",
     kind: "reviewer",
     label: "Complimentary reviewer invite",
+  },
+  "early-feedback": {
+    token: "early-feedback",
+    accessCode: "RAIN60INTEL",
+    kind: "intel",
+    label: "Early founder feedback access",
   },
 };
 

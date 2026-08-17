@@ -136,7 +136,7 @@ export function OnboardingForm() {
   }
 
   if (loading) {
-        <FunLoading headline="Finding who may pay…" />
+    return <FunLoading headline="Finding who may pay…" />;
   }
 
   return (

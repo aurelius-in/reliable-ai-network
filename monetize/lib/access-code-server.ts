@@ -49,6 +49,27 @@ export async function redeemAccessCode(
       trial_ends_at: profile.trial_ends_at,
     })
   ) {
+    if (grant.extendIfActive) {
+      const currentEnd = profile.trial_ends_at
+        ? new Date(profile.trial_ends_at).getTime()
+        : 0;
+      const offeredEnd = new Date(grantEndsAt(grant.durationDays)).getTime();
+      const endsAt = new Date(Math.max(currentEnd, offeredEnd)).toISOString();
+      if (offeredEnd > currentEnd) {
+        const { error: updateError } = await admin
+          .from("profiles")
+          .update({
+            current_tier: grant.tier,
+            subscription_status: grant.status,
+            trial_ends_at: endsAt,
+          })
+          .eq("id", userId);
+        if (updateError) {
+          return { ok: false, error: updateError.message, status: 500 };
+        }
+        return { ok: true, grant, endsAt };
+      }
+    }
     return {
       ok: true,
       grant,

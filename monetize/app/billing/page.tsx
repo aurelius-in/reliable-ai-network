@@ -8,6 +8,7 @@ import { CheckoutButton } from "@/components/CheckoutButton";
 import { ReferralShareCard } from "@/components/ReferralShareCard";
 import { ReferralAttributor } from "@/components/ReferralAttributor";
 import { AccessCodeAutoRedeem } from "@/components/AccessCodeAutoRedeem";
+import { AccessCodeForm } from "@/components/AccessCodeForm";
 import { isComplimentaryStatus } from "@/lib/access-codes";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -188,7 +189,16 @@ export default async function BillingPage() {
           )}
         </div>
 
-        {!isComp && <AccessCodeAutoRedeem />}
+        <AccessCodeAutoRedeem />
+        {status !== "active" && status !== "past_due" ? (
+          <AccessCodeForm
+            heading={
+              isComp
+                ? "Have a code to extend access?"
+                : "Have a feedback or reviewer code?"
+            }
+          />
+        ) : null}
 
         {referralCode && (
           <ReferralShareCard

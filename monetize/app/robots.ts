@@ -17,6 +17,7 @@ export default function robots(): MetadataRoute.Robots {
           "/billing",
           "/checkout",
           "/architecture",
+          "/intel/",
         ],
       },
     ],

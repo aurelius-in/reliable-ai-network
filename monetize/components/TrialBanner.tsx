@@ -85,7 +85,7 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
               : "Your account isn't active yet — pick a plan and start your 30-day free trial."}
           </p>
           <Link
-            href="/billing"
+            href={status === "canceled" ? "/billing" : "/pricing"}
             onClick={() =>
               track("activate_trial_click", {
                 status: status ?? "none",

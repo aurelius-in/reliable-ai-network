@@ -24,6 +24,8 @@ export type AccessCodeGrant = {
    * Applied only by server flows (e.g. cancel retention offer).
    */
   publicRedeem?: boolean;
+  /** If already on complimentary access, extend the end date instead of no-op. */
+  extendIfActive?: boolean;
 };
 
 const CODES: Record<string, AccessCodeGrant> = {
@@ -36,6 +38,18 @@ const CODES: Record<string, AccessCodeGrant> = {
     description:
       "Three months of Pro for product reviewers — no card required.",
     publicRedeem: true,
+  },
+  /** 60 days of Pro after the early-founder feedback survey. */
+  RAIN60INTEL: {
+    code: "RAIN60INTEL",
+    tier: "pro",
+    status: "reviewer",
+    durationDays: 60,
+    label: "Founder feedback access",
+    description:
+      "Sixty days of Pro for completing the early-founder survey. No card.",
+    publicRedeem: true,
+    extendIfActive: true,
   },
   /** Cancel-retention offer: applied server-side only, not advertised. */
   RAIN60KEEP: {

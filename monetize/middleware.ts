@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { safeInternalNext } from "@/lib/safe-next";
 
 const PROTECTED_PREFIXES = ["/dashboard", "/billing", "/onboarding"];
 
@@ -63,6 +64,18 @@ export async function middleware(request: NextRequest) {
   }
 
   if ((pathname === "/login" || pathname === "/signup") && user) {
+    const intended = safeInternalNext(
+      request.nextUrl.searchParams.get("next"),
+      ""
+    );
+    if (intended) {
+      const dest = new URL(intended, request.url);
+      const invite = request.nextUrl.searchParams.get("invite");
+      if (invite && !dest.searchParams.get("invite")) {
+        dest.searchParams.set("invite", invite);
+      }
+      return NextResponse.redirect(dest);
+    }
     const dashUrl = request.nextUrl.clone();
     dashUrl.pathname = "/dashboard";
     // Preserve invite/access so logged-in reviewers still redeem.

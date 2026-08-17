@@ -15,6 +15,7 @@ import {
   ACCESS_CODE_STORAGE_KEY,
   normalizeAccessCode,
 } from "@/lib/access-codes";
+import { safeInternalNext } from "@/lib/safe-next";
 
 /** Redeem invite code while session exists (same browser as invite page). */
 async function redeemStoredAccessCodeIfAny(): Promise<void> {
@@ -68,25 +69,29 @@ export function AuthForm({
   const [password, setPassword] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendNote, setResendNote] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmationSent, setConfirmationSent] = useState(false);
+  const [needsConfirm, setNeedsConfirm] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
-    if (mode === "signup" && !agreedToTerms) {
-      setError("Please agree to the Terms and Privacy Policy to continue.");
-      setLoading(false);
-      return;
-    }
+    setNeedsConfirm(false);
 
     const supabase = createClient();
 
     try {
       if (mode === "signup") {
         track("signup_submit");
+        if (!agreedToTerms) {
+          setError("Please agree to the Terms and Privacy Policy to continue.");
+          track("signup_terms_blocked");
+          setLoading(false);
+          return;
+        }
         let referralCode: string | null = normalizeReferralCode(
           searchParams.get("ref")
         );
@@ -107,7 +112,7 @@ export function AuthForm({
           (variant === "reviewer" ? "reviewer" : "");
         const nextAfterConfirm = inviteParam
           ? `/onboarding?invite=${encodeURIComponent(inviteParam)}`
-          : "/onboarding";
+          : safeInternalNext(searchParams.get("next"), "/onboarding");
 
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -132,6 +137,11 @@ export function AuthForm({
           variant,
           ...(homeAb ? { home_ab: homeAb } : {}),
         });
+        try {
+          sessionStorage.setItem("rain_signup_progressed", "1");
+        } catch {
+          /* ignore */
+        }
 
         // Fire-and-forget founder alert + counter bump email.
         void fetch("/api/notify-signup", {
@@ -177,7 +187,7 @@ export function AuthForm({
         await redeemStoredAccessCodeIfAny();
         const invite = searchParams.get("invite")?.trim();
         const next =
-          searchParams.get("next") ??
+          safeInternalNext(searchParams.get("next"), "") ||
           (invite
             ? `/dashboard?invite=${encodeURIComponent(invite)}`
             : "/dashboard");
@@ -189,8 +199,48 @@ export function AuthForm({
       track(mode === "signup" ? "signup_error" : "login_error", {
         message: message.slice(0, 160),
       });
+      if (
+        mode === "login" &&
+        /not confirmed|confirm your email|email not confirmed/i.test(message)
+      ) {
+        setNeedsConfirm(true);
+      }
       setError(message);
       setLoading(false);
+    }
+  }
+
+  async function resendConfirmation() {
+    if (!email.trim()) return;
+    setResendLoading(true);
+    setResendNote(null);
+    setError(null);
+    try {
+      const supabase = createClient();
+      const origin =
+        process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
+      const inviteParam =
+        searchParams.get("invite")?.trim() ||
+        (variant === "reviewer" ? "reviewer" : "");
+      const nextAfterConfirm = inviteParam
+        ? `/onboarding?invite=${encodeURIComponent(inviteParam)}`
+        : safeInternalNext(searchParams.get("next"), "/onboarding");
+      const { error: resendError } = await supabase.auth.resend({
+        type: "signup",
+        email: email.trim(),
+        options: {
+          emailRedirectTo: `${origin}/auth/confirm?next=${encodeURIComponent(nextAfterConfirm)}`,
+        },
+      });
+      if (resendError) throw resendError;
+      track("signup_resend_confirmation");
+      setResendNote("Sent another link. Check spam if it is not in the inbox.");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Could not resend the link";
+      setError(message);
+    } finally {
+      setResendLoading(false);
     }
   }
 
@@ -204,29 +254,72 @@ export function AuthForm({
           account
           {variant === "reviewer"
             ? " and unlock complimentary reviewer access"
-            : ", then lock your hard commercial answer (Step 1)"}
+            : ", then paste your product URL for First Customer Path"}
           .
         </p>
         <p className="mt-3 text-xs text-slate-500">
-          After confirm you land on onboarding. One successful run beats
-          browsing the dashboard.
+          The link expires. If nothing arrives in a couple of minutes, check
+          spam, or send it again below.
+        </p>
+        {resendNote ? (
+          <p className="mt-3 text-sm text-aqua-bright">{resendNote}</p>
+        ) : null}
+        {error ? <p className="mt-3 text-sm text-red-400">{error}</p> : null}
+        <button
+          type="button"
+          onClick={() => void resendConfirmation()}
+          disabled={resendLoading}
+          className="btn-primary mt-5 w-full"
+        >
+          {resendLoading && <Loader2 size={16} className="animate-spin" />}
+          Send the link again
+        </button>
+        <p className="mt-4 text-sm text-slate-400">
+          Already confirmed?{" "}
+          <Link
+            href={
+              searchParams.get("next")
+                ? `/login?next=${encodeURIComponent(searchParams.get("next") || "")}`
+                : "/login"
+            }
+            className="font-semibold text-rain-bright hover:underline"
+          >
+            Sign in
+          </Link>
         </p>
       </div>
     );
   }
 
   const inviteQs = searchParams.get("invite");
-  const loginHref = inviteQs
-    ? `/login?invite=${encodeURIComponent(inviteQs)}`
-    : "/login";
-  const signupHref = inviteQs
-    ? `/signup?invite=${encodeURIComponent(inviteQs)}`
-    : "/signup";
+  const nextQs = searchParams.get("next");
+  const loginParams = new URLSearchParams();
+  const signupParams = new URLSearchParams();
+  if (inviteQs) {
+    loginParams.set("invite", inviteQs);
+    signupParams.set("invite", inviteQs);
+  }
+  if (nextQs) {
+    loginParams.set("next", nextQs);
+    signupParams.set("next", nextQs);
+  }
+  const loginHref = loginParams.size ? `/login?${loginParams}` : "/login";
+  const signupHref = signupParams.size ? `/signup?${signupParams}` : "/signup";
 
   const inputClass = "input-dark";
+  const authError = searchParams.get("error");
+  const authErrorCopy =
+    authError === "auth"
+      ? "That confirmation link expired or already got used. Sign in below, or create the account again to get a new link."
+      : null;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {authErrorCopy ? (
+        <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100">
+          {authErrorCopy}
+        </p>
+      ) : null}
       {mode === "signup" && (
         <input
           type="text"
@@ -312,10 +405,30 @@ export function AuthForm({
       )}
 
       {error && <p className="text-sm text-red-400">{error}</p>}
+      {mode === "login" && needsConfirm ? (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-3 text-sm text-amber-100">
+          <p>
+            Your email is not confirmed yet. Send the link again, then come
+            back to sign in.
+          </p>
+          {resendNote ? (
+            <p className="mt-2 text-aqua-bright">{resendNote}</p>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => void resendConfirmation()}
+            disabled={resendLoading || !email.trim()}
+            className="btn-primary mt-3 w-full !py-2.5 text-sm"
+          >
+            {resendLoading && <Loader2 size={16} className="animate-spin" />}
+            Send the confirmation link again
+          </button>
+        </div>
+      ) : null}
 
       <button
         type="submit"
-        disabled={loading || (mode === "signup" && !agreedToTerms)}
+        disabled={loading}
         className="btn-primary w-full"
       >
 

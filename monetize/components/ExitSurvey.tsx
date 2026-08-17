@@ -42,6 +42,7 @@ export function ExitSurvey({
     }
     try {
       if (sessionStorage.getItem(DISMISS_KEY)) return;
+      if (sessionStorage.getItem("rain_signup_progressed")) return;
     } catch {
       /* ignore */
     }
@@ -54,6 +55,11 @@ export function ExitSurvey({
       return;
     }
     const t = window.setTimeout(() => {
+      try {
+        if (sessionStorage.getItem("rain_signup_progressed")) return;
+      } catch {
+        /* ignore */
+      }
       setOpen(true);
       const homeAb = readHomeAbFromDocument();
       trackUiClick("exit_survey_shown", {
@@ -61,7 +67,7 @@ export function ExitSurvey({
         path,
         ...(homeAb ? { home_ab: homeAb } : {}),
       });
-    }, 25000);
+    }, path === "/signup" ? 90000 : 25000);
     return () => window.clearTimeout(t);
   }, [openProp]);
 

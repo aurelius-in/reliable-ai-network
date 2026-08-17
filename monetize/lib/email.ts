@@ -11,6 +11,7 @@ export type SendEmailInput = {
   scheduledAt?: string;
   /** One-click / list unsubscribe URL (marketing mail) */
   listUnsubscribeUrl?: string;
+  replyTo?: string;
 };
 
 export async function sendEmail(
@@ -36,6 +37,9 @@ export async function sendEmail(
   };
   if (input.scheduledAt) {
     body.scheduled_at = input.scheduledAt;
+  }
+  if (input.replyTo) {
+    body.reply_to = input.replyTo;
   }
   if (input.listUnsubscribeUrl) {
     body.headers = {
