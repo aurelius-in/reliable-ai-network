@@ -12,6 +12,7 @@ import { HomeDepth } from "@/components/HomeDepth";
 import { HomeHero } from "@/components/HomeHero";
 import { HomeChat } from "@/components/HomeChat";
 import { PublicExampleBriefs } from "@/components/PublicExampleBriefs";
+import { ProductHuntBadge } from "@/components/ProductHuntBadge";
 import { CopySwap } from "@/components/CopySwap";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
@@ -155,6 +156,8 @@ export default async function HomePage() {
         <Suspense fallback={null}>
           <HomeHero />
         </Suspense>
+
+        <ProductHuntBadge />
 
         <PublicExampleBriefs />
 
