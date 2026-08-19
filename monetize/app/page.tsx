@@ -12,7 +12,6 @@ import { HomeDepth } from "@/components/HomeDepth";
 import { HomeHero } from "@/components/HomeHero";
 import { HomeChat } from "@/components/HomeChat";
 import { PublicExampleBriefs } from "@/components/PublicExampleBriefs";
-import { ProductHuntBadge } from "@/components/ProductHuntBadge";
 import { CopySwap } from "@/components/CopySwap";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
@@ -74,14 +73,14 @@ const HOW_STEPS = [
   {
     n: "2",
     title: "Buyer Stress Test",
-    body: "The mechanism: does this offer survive a hard buyer before you spend another week promoting it. Unique to Make it RAIN.",
-    bodyMobile: "Does the offer survive a hard buyer. Unique.",
+    body: "Would a skeptical buyer actually pay for this? Pressure-test the offer before you burn another week promoting it. Unique to Make it RAIN.",
+    bodyMobile: "Would a skeptical buyer actually pay? Unique.",
   },
   {
     n: "3",
     title: "The next conversation worth your hour",
-    body: "Warm network first. Public conversations when they help. Why this person, why now, why they might trust you.",
-    bodyMobile: "Warm first. Public signals when they help. Why now.",
+    body: "Warm network first. Public conversations when they help. Who is worth talking to, why now, and why they are likely to respond.",
+    bodyMobile: "Warm first. Public signals when they help. Who to talk to, and why now.",
   },
   {
     n: "4",
@@ -157,8 +156,6 @@ export default async function HomePage() {
           <HomeHero />
         </Suspense>
 
-        <ProductHuntBadge />
-
         <PublicExampleBriefs />
 
         <section
@@ -209,7 +206,7 @@ export default async function HomePage() {
             <li className="rounded-xl border border-white/10 bg-night-800/70 px-3 py-2.5">
               <span className="font-semibold text-white">Not your own AI hype</span>
               <span className="mt-0.5 block text-xs text-slate-400">
-                Observed vs assumed. Protection from believing a generated plan.
+                See what's supported vs. still a guess. Protection from believing a generated plan.
               </span>
             </li>
             <li className="rounded-xl border border-white/10 bg-night-800/70 px-3 py-2.5">
@@ -254,7 +251,8 @@ export default async function HomePage() {
             <li>
               Buyer Stress Test{" "}
               <span className="text-slate-500">
-                (does it survive a hard buyer before another week of promotion)
+                (would a skeptical buyer actually pay before you burn another
+                week promoting it)
               </span>
             </li>
             <li>The next conversation worth your hour</li>

@@ -50,9 +50,9 @@ const PROMISES = [
   {
     title: "Who to talk to next, then name who pays",
     titleMobile: "Who to talk to next",
-    body: "Rank conversations worth having this week (network warmth first; public signals when useful), draft outreach you approve, then treat buyer personas as hypotheses until conversations happen.",
+    body: "Rank conversations worth having this week (network warmth first; public signals when useful), draft outreach you approve, then treat who may actually pay as a guess until conversations happen.",
     bodyMobile:
-      "Next conversations + approve-before-send prep. Personas are hypotheses.",
+      "Next conversations + approve-before-send prep. Who may pay stays a guess until you talk.",
   },
   {
     title: "Set a price you can defend and test",
@@ -75,9 +75,9 @@ const PROMISES = [
   {
     title: "A brief you can send, not another ChatGPT tab",
     titleMobile: "A brief you can send",
-    body: "Download or share a private link with cofounders and advisors. Claims are labeled observed, founder-reported, or assumed so the memo reads like a serious commercial note. See why a path looks strong — and what would disprove it.",
+    body: "Download or share a private link with cofounders and advisors. See what is supported by evidence and what is still an assumption, so the memo reads like a serious commercial note. See why a path looks strong, and what would disprove it.",
     bodyMobile:
-      "Shareable brief. Evidence grades. Why strong — and what would disprove it.",
+      "Shareable brief. See what's supported vs. still a guess. Why strong, and what would disprove it.",
   },
   {
     title: "Know whether to push harder or stop",
@@ -262,8 +262,8 @@ export function HomeDepth() {
               agency engagement.
             </p>
             <p className="mt-2.5 text-sm font-medium text-slate-200 sm:mt-3">
-              Unique mechanism: Buyer Stress Test. Does this offer survive a
-              hard buyer before you spend another week promoting it.
+              Buyer Stress Test: would a skeptical buyer actually pay?
+              Pressure-test the offer before you burn another week promoting it.
             </p>
           </div>
           <p className="mt-2.5 clear-both flex flex-wrap gap-x-4 gap-y-2 text-sm sm:mt-3">
