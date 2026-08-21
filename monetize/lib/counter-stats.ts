@@ -572,7 +572,7 @@ function pct(n: number, d: number): number | null {
   return Math.round((n / d) * 100);
 }
 
-function buildInsights(args: {
+export function buildInsights(args: {
   rangeLabel: string;
   funnel: FunnelStep[];
   events: { name: string; count: number }[];
@@ -807,7 +807,7 @@ function buildInsights(args: {
   return tips.sort((a, b) => order[a.severity] - order[b.severity]).slice(0, 8);
 }
 
-function buildHeadline(args: {
+export function buildHeadline(args: {
   rangeLabel: string;
   sessions: number;
   home: number;
