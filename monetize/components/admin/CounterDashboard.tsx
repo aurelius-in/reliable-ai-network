@@ -29,7 +29,7 @@ function shareSafeHeadline(headline: string): string {
 
 export function CounterDashboard({
   stats,
-  adminKey,
+  adminKey = "",
   title,
   subtitle,
   showRecentAccounts,
@@ -37,7 +37,7 @@ export function CounterDashboard({
   bookmarkPath,
 }: {
   stats: CounterStats;
-  adminKey: string;
+  adminKey?: string;
   title: string;
   subtitle: string;
   showRecentAccounts: boolean;
@@ -49,8 +49,12 @@ export function CounterDashboard({
   const shareSafe = !showRecentAccounts;
   const founderDebug = showFounderDebug ?? showRecentAccounts;
   const maxFunnel = Math.max(...stats.funnel.map((f) => f.count), 1);
-  const q = (range: CounterRange) =>
-    `${bookmarkPath}?key=${encodeURIComponent(adminKey)}&range=${range}`;
+  const q = (range: CounterRange) => {
+    const params = new URLSearchParams();
+    if (adminKey) params.set("key", adminKey);
+    params.set("range", range);
+    return `${bookmarkPath}?${params.toString()}`;
+  };
   const headline = shareSafe
     ? shareSafeHeadline(stats.headline)
     : stats.headline;
@@ -299,21 +303,26 @@ export function CounterDashboard({
           </p>
           <p className="mt-0.5 text-xs text-slate-500">
             Views and CTAs from assigned hero variants. Signups attributed via{" "}
-            <code className="text-slate-400">home_ab</code> cookie.{" "}
-            <Link
-              href={`/admin/ab?key=${encodeURIComponent(adminKey)}&days=${
-                stats.range === "today"
-                  ? 1
-                  : stats.range === "7d"
-                    ? 7
-                    : stats.range === "month"
-                      ? 30
-                      : 90
-              }`}
-              className="font-semibold text-aqua hover:text-aqua-bright"
-            >
-              Full A/B page
-            </Link>
+            <code className="text-slate-400">home_ab</code> cookie.
+            {adminKey ? (
+              <>
+                {" "}
+                <Link
+                  href={`/admin/ab?key=${encodeURIComponent(adminKey)}&days=${
+                    stats.range === "today"
+                      ? 1
+                      : stats.range === "7d"
+                        ? 7
+                        : stats.range === "month"
+                          ? 30
+                          : 90
+                  }`}
+                  className="font-semibold text-aqua hover:text-aqua-bright"
+                >
+                  Full A/B page
+                </Link>
+              </>
+            ) : null}
           </p>
         </div>
         {stats.homeAb.every((v) => v.views === 0 && v.signups === 0) ? (
@@ -673,7 +682,9 @@ export function CounterDashboard({
       <p className="text-center text-xs text-slate-500">
         Bookmark{" "}
         <Link href={q(stats.range)} className="text-rain-bright">
-          {bookmarkPath}?key=…&range={stats.range}
+          {adminKey
+            ? `${bookmarkPath}?key=…&range=${stats.range}`
+            : `${bookmarkPath}?range=${stats.range}`}
         </Link>
         .
       </p>
