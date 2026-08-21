@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { AdminOpsNav } from "@/components/admin/AdminOpsNav";
+import { RevenueCards, TrafficChart } from "@/components/admin/CounterCharts";
 import {
   COUNTER_RANGES,
   type CounterRange,
+  type CounterRow,
   type CounterStats,
   type Insight,
 } from "@/lib/counter-stats";
+import { TIERS } from "@/lib/tiers";
 
 /** Insights / copy that should stay on the private counter only. */
 function isFounderOnlyInsight(tip: Insight): boolean {
@@ -25,6 +28,19 @@ function shareSafeHeadline(headline: string): string {
     .replace(/\s*·\s*no real-looking new signups this window/gi, "")
     .replace(/\s{2,}/g, " ")
     .trim();
+}
+
+function accountBillLabel(row: CounterRow): string | null {
+  const price = TIERS.find((t) => t.id === row.current_tier)?.price;
+  if (row.subscription_status === "active" && price) {
+    return `$${price}/mo`;
+  }
+  if (row.subscription_status === "trialing" && price) {
+    return `$${price}/mo after trial`;
+  }
+  if (row.subscription_status === "reviewer") return "complimentary";
+  if (row.subscription_status === "canceled") return "$0 (canceled)";
+  return "$0";
 }
 
 export function CounterDashboard({
@@ -166,6 +182,29 @@ export function CounterDashboard({
           )}
         </div>
       </section>
+
+      {stats.revenue && (
+        <RevenueCards
+          monthly={stats.revenue.monthly}
+          potential={stats.revenue.potential}
+          payingCount={stats.revenue.payingCount}
+          trialCount={stats.revenue.trialCount}
+          byTier={stats.revenue.byTier}
+        />
+      )}
+
+      {stats.trafficByDay && stats.trafficByDay.length > 0 && (
+        <TrafficChart
+          title={
+            stats.trafficGrain === "hour"
+              ? "Sessions by hour"
+              : "Sessions by day"
+          }
+          grain={stats.trafficGrain ?? "day"}
+          rangeLabel={stats.rangeLabel}
+          rows={stats.trafficByDay}
+        />
+      )}
 
       <section>
         <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-slate-500">
@@ -631,7 +670,7 @@ export function CounterDashboard({
       {showRecentAccounts && (
         <section className="overflow-hidden rounded-2xl border border-night-600 bg-night-800">
           <div className="border-b border-night-600 px-4 py-3 text-sm font-semibold text-slate-300">
-            Recent accounts
+            Recent accounts ({stats.recent.length})
           </div>
           {stats.recent.length === 0 ? (
             <p className="px-4 py-8 text-center text-sm text-slate-500">
@@ -665,6 +704,9 @@ export function CounterDashboard({
                       {row.subscription_status
                         ? `${row.subscription_status}${row.current_tier ? ` / ${row.current_tier}` : ""}`
                         : "Never started trial (no card)"}
+                      {stats.revenue
+                        ? ` · ${accountBillLabel(row)}`
+                        : ""}
                     </p>
                   </div>
                   <p className="shrink-0 text-xs text-slate-500">

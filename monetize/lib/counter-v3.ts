@@ -1,16 +1,19 @@
 /**
  * Hardcoded Counter snapshot for /admin/counter/v3.
  * Account statuses are disjoint and must sum to `total`.
- * Paid and trialing each take about half of 89. A handful of reviewers,
- * two canceled, two too new to have started a trial.
+ * Paid and trialing each take about half of the remaining seats after
+ * 8 reviewers, 5 never-started, and 3 canceled.
  */
 
 import { HOME_VARIANT_ORDER, HOME_VARIANTS, type HomeVariant } from "@/lib/home-ab";
 import { JOURNEY_STEPS } from "@/lib/journey";
+import { TIERS } from "@/lib/tiers";
+import { V3_ROSTER } from "@/lib/counter-v3-roster";
 import {
   buildHeadline,
   buildInsights,
   rangeLabel,
+  rangeStartIso,
   type ClickRow,
   type CounterRange,
   type CounterRow,
@@ -20,16 +23,159 @@ import {
   type ToolUsageRow,
 } from "@/lib/counter-stats";
 
-const LIVE_ACCOUNTS = {
-  total: 89,
-  freeNoTrial: 2,
-  trialing: 40,
-  reviewer: 4,
-  active: 41,
-  canceled: 2,
-  likelyTests: 0,
-  earlyCohortFilled: 89,
-} as const;
+function createdAt(daysAgo: number, hour: number, min: number): string {
+  const d = new Date();
+  d.setSeconds(0, 0);
+  if (daysAgo === 0) {
+    const cap = Math.max(0, d.getHours() - 1);
+    d.setHours(Math.min(hour, cap), min, 0, 0);
+  } else {
+    d.setHours(hour, min, 0, 0);
+    d.setDate(d.getDate() - daysAgo);
+  }
+  return d.toISOString();
+}
+
+function trialEndsAt(createdIso: string, status: string | null): string | null {
+  if (status !== "trialing") return null;
+  const d = new Date(createdIso);
+  d.setDate(d.getDate() + 30);
+  return d.toISOString();
+}
+
+function buildAccounts(): CounterRow[] {
+  const rows: CounterRow[] = V3_ROSTER.map((r, i) => {
+    const created_at = createdAt(r.daysAgo, r.hour, r.min);
+    return {
+      id: `c${String(i + 1).padStart(3, "0")}`,
+      name: r.name,
+      email: r.email,
+      subscription_status: r.status,
+      current_tier: r.tier,
+      trial_ends_at: trialEndsAt(created_at, r.status),
+      created_at,
+      likelyTest: false,
+      earlyCohortRank: null,
+    };
+  });
+  const byCreated = [...rows].sort((a, b) =>
+    (a.created_at ?? "").localeCompare(b.created_at ?? "")
+  );
+  byCreated.forEach((row, i) => {
+    row.earlyCohortRank = i + 1;
+  });
+  return rows.sort((a, b) =>
+    (b.created_at ?? "").localeCompare(a.created_at ?? "")
+  );
+}
+
+function tallyAccounts(rows: CounterRow[]) {
+  return {
+    total: rows.length,
+    freeNoTrial: rows.filter((r) => !r.subscription_status).length,
+    trialing: rows.filter((r) => r.subscription_status === "trialing").length,
+    reviewer: rows.filter((r) => r.subscription_status === "reviewer").length,
+    active: rows.filter((r) => r.subscription_status === "active").length,
+    canceled: rows.filter((r) => r.subscription_status === "canceled").length,
+    likelyTests: 0,
+    earlyCohortFilled: Math.min(100, rows.length),
+  };
+}
+
+function revenueFrom(rows: CounterRow[]): NonNullable<CounterStats["revenue"]> {
+  const byTier = TIERS.map((t) => {
+    const paying = rows.filter(
+      (r) => r.subscription_status === "active" && r.current_tier === t.id
+    ).length;
+    const trialing = rows.filter(
+      (r) => r.subscription_status === "trialing" && r.current_tier === t.id
+    ).length;
+    return {
+      tier: t.id,
+      label: t.name,
+      price: t.price,
+      paying,
+      trialing,
+    };
+  });
+  return {
+    monthly: byTier.reduce((n, t) => n + t.paying * t.price, 0),
+    potential: byTier.reduce((n, t) => n + (t.paying + t.trialing) * t.price, 0),
+    payingCount: byTier.reduce((n, t) => n + t.paying, 0),
+    trialCount: byTier.reduce((n, t) => n + t.trialing, 0),
+    byTier,
+  };
+}
+
+function pad2(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+function dayKey(d: Date): string {
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+function dayLabel(d: Date): string {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function hourLabel(h: number): string {
+  const hr = h % 12 || 12;
+  return `${hr}${h < 12 ? "a" : "p"}`;
+}
+
+function trafficFor(
+  range: CounterRange,
+  total: number
+): {
+  grain: "hour" | "day";
+  rows: NonNullable<CounterStats["trafficByDay"]>;
+} {
+  const now = new Date();
+  if (range === "today") {
+    const currentHour = now.getHours();
+    const weights = Array.from({ length: currentHour + 1 }, (_, h) => {
+      if (h < 6) return 0.15;
+      if (h < 9) return 0.7;
+      if (h < 12) return 1.2;
+      if (h < 14) return 0.9;
+      if (h < 18) return 1.25;
+      if (h < 22) return 0.8;
+      return 0.4;
+    });
+    const counts = distribute(total, weights);
+    return {
+      grain: "hour",
+      rows: counts.map((sessions, h) => ({
+        date: `${dayKey(now)}T${pad2(h)}`,
+        label: hourLabel(h),
+        sessions,
+      })),
+    };
+  }
+  const dayCount =
+    range === "7d" ? 7 : range === "month" ? Math.max(1, now.getDate()) : 90;
+  const dates = Array.from({ length: dayCount }, (_, i) => {
+    const d = new Date(now);
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() - (dayCount - 1 - i));
+    return d;
+  });
+  const weights = dates.map((d, i) => {
+    const t = dates.length <= 1 ? 1 : i / (dates.length - 1);
+    const weekend = d.getDay() === 0 || d.getDay() === 6;
+    return (weekend ? 0.72 : 1) * (0.78 + 0.44 * t);
+  });
+  const counts = distribute(total, weights);
+  return {
+    grain: "day",
+    rows: dates.map((d, i) => ({
+      date: dayKey(d),
+      label: dayLabel(d),
+      sessions: counts[i],
+    })),
+  };
+}
 
 const FUNNEL_DEFS: { key: string; label: string; hint: string }[] = [
   {
@@ -149,7 +295,7 @@ const PAGE_WEEK: { path: string; views: number; sessions: number }[] = [
   },
   { path: "/checkout", views: 22, sessions: 16 },
   { path: "/billing", views: 36, sessions: 24 },
-  { path: "/invite/reviewer", views: 12, sessions: 8 },
+  { path: "/invite/reviewer", views: 18, sessions: 12 },
   { path: "/guarantee", views: 27, sessions: 22 },
   { path: "/methodology", views: 24, sessions: 19 },
   { path: "/invite", views: 14, sessions: 9 },
@@ -239,7 +385,7 @@ const WINDOWS: Record<WindowKey, WindowSpec> = {
     dashboard: 164,
     toolRun: 138,
     newInRange: 11,
-    newFreeNoTrialInRange: 1,
+    newFreeNoTrialInRange: 2,
     realLookingNewInRange: 11,
     homeViews: 1544,
     pricingViews: 78,
@@ -260,7 +406,7 @@ const WINDOWS: Record<WindowKey, WindowSpec> = {
     dashboard: 428,
     toolRun: 352,
     newInRange: 31,
-    newFreeNoTrialInRange: 1,
+    newFreeNoTrialInRange: 4,
     realLookingNewInRange: 31,
     homeViews: 4320,
     pricingViews: 210,
@@ -277,11 +423,11 @@ const WINDOWS: Record<WindowKey, WindowSpec> = {
     signupSubmit: 156,
     signupSuccess: 89,
     checkout: 98,
-    checkoutSuccess: 83,
+    checkoutSuccess: 76,
     dashboard: 1240,
     toolRun: 1028,
     newInRange: 89,
-    newFreeNoTrialInRange: 2,
+    newFreeNoTrialInRange: 5,
     realLookingNewInRange: 89,
     homeViews: 12480,
     pricingViews: 620,
@@ -540,67 +686,6 @@ function scaleExit(factor: number, homeAb: HomeAbRow[]) {
   };
 }
 
-type RecentSeed = {
-  id: string;
-  name: string | null;
-  email: string;
-  subscription_status: string | null;
-  current_tier: string | null;
-  trial_ends_at: string | null;
-  created_at: string;
-};
-
-const RECENT_SEEDS: RecentSeed[] = [
-  { id: "c89a1b02", name: "Elena Voss", email: "elena@grayline.app", subscription_status: null, current_tier: null, trial_ends_at: null, created_at: "2026-08-21T16:42:11.000Z" },
-  { id: "c88b3d14", name: "Marcus Hale", email: "marcus.hale@gmail.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-20T09:18:44.000Z", created_at: "2026-08-21T09:18:44.000Z" },
-  { id: "c87e9f20", name: "Priya Raman", email: "priya@stacklane.io", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-19T21:05:03.000Z", created_at: "2026-08-20T21:05:03.000Z" },
-  { id: "c86a44c8", name: "Riya Kapoor", email: "riya@kapoor.studio", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-19T14:27:19.000Z", created_at: "2026-08-20T14:27:19.000Z" },
-  { id: "c85b71de", name: "Jonah Ellis", email: "jonah@ellismail.co", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-18T23:11:08.000Z", created_at: "2026-08-19T23:11:08.000Z" },
-  { id: "c84c09aa", name: "Chris Adelman", email: "chris@adelman.io", subscription_status: "reviewer", current_tier: "pro", trial_ends_at: null, created_at: "2026-08-19T17:40:55.000Z" },
-  { id: "c83d12f1", name: "Devon Burke", email: "devon@burkehq.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-17T19:02:37.000Z", created_at: "2026-08-18T19:02:37.000Z" },
-  { id: "c82e55b3", name: "Hannah Cho", email: "hannah.cho@outlook.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-16T13:16:22.000Z", created_at: "2026-08-17T13:16:22.000Z" },
-  { id: "c81f08c4", name: "Luis Ortega", email: "luis@ortega.dev", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-15T20:48:01.000Z", created_at: "2026-08-16T20:48:01.000Z" },
-  { id: "c80a91d5", name: "Amira Haddad", email: "amira@haddad.co", subscription_status: "trialing", current_tier: "growth", trial_ends_at: "2026-09-15T11:09:46.000Z", created_at: "2026-08-16T11:09:46.000Z" },
-  { id: "c79b22e6", name: "Noah Pell", email: "noah.pell@gmail.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-14T08:33:17.000Z", created_at: "2026-08-15T08:33:17.000Z" },
-  { id: "c78c33f7", name: "Sofia Marin", email: "sofia@marincode.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-13T16:21:09.000Z", created_at: "2026-08-14T16:21:09.000Z" },
-  { id: "c77d44a8", name: "Kenji Mori", email: "kenji@morilabs.jp", subscription_status: "trialing", current_tier: "growth", trial_ends_at: "2026-09-13T10:04:52.000Z", created_at: "2026-08-14T10:04:52.000Z" },
-  { id: "c76e55b9", name: "Jordan Lee", email: "jordan@hey.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-12T22:19:30.000Z", created_at: "2026-08-13T22:19:30.000Z" },
-  { id: "c75f66c0", name: "Grace Whitaker", email: "grace.whitaker@gmail.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-12T14:55:41.000Z", created_at: "2026-08-13T14:55:41.000Z" },
-  { id: "c74a77d1", name: "Cole Winters", email: "cole.winters@gmail.com", subscription_status: "trialing", current_tier: "growth", trial_ends_at: "2026-09-11T19:12:18.000Z", created_at: "2026-08-12T19:12:18.000Z" },
-  { id: "c73b88e2", name: "Tom Hale", email: "tom@northfold.io", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-11T11:40:07.000Z", created_at: "2026-08-12T11:40:07.000Z" },
-  { id: "c72c99f3", name: "Imani Brooks", email: "imani@brooksware.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-10T07:28:59.000Z", created_at: "2026-08-11T07:28:59.000Z" },
-  { id: "c71d00a4", name: "Leila Nasser", email: "leila@nasser.digital", subscription_status: "active", current_tier: "starter", trial_ends_at: null, created_at: "2026-08-10T15:49:20.000Z" },
-  { id: "c70e11b5", name: "Benito Cruz", email: "benito@cruz.build", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-08T11:03:44.000Z", created_at: "2026-08-09T11:03:44.000Z" },
-  { id: "c69f22c6", name: "Asha Patel", email: "asha.patel@gmail.com", subscription_status: "active", current_tier: "pro", trial_ends_at: null, created_at: "2026-08-08T16:37:11.000Z" },
-  { id: "c68a33d7", name: "Felix Grant", email: "felix@grantworks.io", subscription_status: "trialing", current_tier: "growth", trial_ends_at: "2026-09-07T20:14:39.000Z", created_at: "2026-08-08T13:22:05.000Z" },
-  { id: "c67b44e8", name: "Nadia Rahman", email: "nadia@rahman.app", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-06T08:41:52.000Z", created_at: "2026-08-07T09:58:26.000Z" },
-  { id: "c66c55f9", name: "Yuki Tanaka", email: "yuki@tanaka.systems", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-05T17:26:48.000Z", created_at: "2026-08-06T20:14:39.000Z" },
-  { id: "c65d660a", name: "Rosa Diaz", email: "rosa@diazform.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-04T10:51:03.000Z", created_at: "2026-08-05T08:41:52.000Z" },
-  { id: "c64e771b", name: "Peter Holm", email: "peter.holm@hey.com", subscription_status: "active", current_tier: "starter", trial_ends_at: null, created_at: "2026-08-04T14:07:29.000Z" },
-  { id: "c63f882c", name: "Sam Okonkwo", email: "sam@okonkwo.co", subscription_status: "trialing", current_tier: "pro", trial_ends_at: "2026-09-02T13:22:05.000Z", created_at: "2026-08-03T17:26:48.000Z" },
-  { id: "c62a993d", name: "Hana Kim", email: "hana@kimstack.com", subscription_status: "trialing", current_tier: "growth", trial_ends_at: "2026-09-02T10:51:03.000Z", created_at: "2026-08-03T10:51:03.000Z" },
-  { id: "c61b004e", name: "Omar Farouk", email: "omar@farouk.tech", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-09-01T14:07:29.000Z", created_at: "2026-08-02T14:07:29.000Z" },
-  { id: "c60c115f", name: "Ingrid Foss", email: "ingrid@fosslabs.no", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-08-31T19:33:41.000Z", created_at: "2026-08-01T19:33:41.000Z" },
-  { id: "c59d2260", name: "Tyler Brooks", email: "tyler.brooks@gmail.com", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-08-31T08:12:00.000Z", created_at: "2026-08-01T08:12:00.000Z" },
-  { id: "c58e3371", name: "Casey Nguyen", email: "casey@nguyenworks.com", subscription_status: "active", current_tier: "pro", trial_ends_at: null, created_at: "2026-07-30T15:02:11.000Z" },
-  { id: "c57f4482", name: "Ruth Okada", email: "ruth@okada.studio", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-08-28T13:12:55.000Z", created_at: "2026-07-29T13:12:55.000Z" },
-  { id: "c56a5593", name: "Andre Silva", email: "andre@silva.cc", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-08-27T16:29:32.000Z", created_at: "2026-07-28T16:29:32.000Z" },
-  { id: "c55b6604", name: "Lila Jensen", email: "lila.jensen@outlook.com", subscription_status: "active", current_tier: "starter", trial_ends_at: null, created_at: "2026-07-27T08:06:21.000Z" },
-  { id: "c54c7715", name: "Maya Chen", email: "maya.chen@proton.me", subscription_status: "canceled", current_tier: "starter", trial_ends_at: null, created_at: "2026-07-26T18:53:08.000Z" },
-  { id: "c53d8826", name: "Owen Drake", email: "owen.drake@icloud.com", subscription_status: "canceled", current_tier: "starter", trial_ends_at: null, created_at: "2026-07-25T12:37:49.000Z" },
-  { id: "c52e9937", name: "Shift Nook", email: "hello@shiftnook.app", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-08-23T10:14:26.000Z", created_at: "2026-07-24T10:14:26.000Z" },
-  { id: "c51f0048", name: "Sam Ellis", email: "sam@orchardlane.co", subscription_status: "trialing", current_tier: "growth", trial_ends_at: "2026-08-22T15:02:11.000Z", created_at: "2026-07-23T15:02:11.000Z" },
-  { id: "c50a1159", name: "Nina Alvarez", email: "nina@alvarez.codes", subscription_status: "trialing", current_tier: "starter", trial_ends_at: "2026-08-21T23:08:00.000Z", created_at: "2026-07-22T11:08:00.000Z" },
-];
-
-function recentAccounts(): CounterRow[] {
-  return RECENT_SEEDS.map((row, i) => ({
-    ...row,
-    likelyTest: false,
-    earlyCohortRank: 89 - i,
-  }));
-}
-
 function faqOpensFrom(clicks: ClickRow[]): { faqOpens: number; ownershipFaqOpens: number } {
   const targets = new Set([
     "faq_not_app_builder",
@@ -638,12 +723,23 @@ export function loadCounterV3Stats(range: CounterRange = "7d"): CounterStats {
     win.dashboard,
     win.toolRun,
   ]);
+  const recent = buildAccounts();
+  const tally = tallyAccounts(recent);
+  const startIso = rangeStartIso(range);
+  const inRange = recent.filter(
+    (row) => !startIso || (row.created_at && row.created_at >= startIso)
+  );
+  const newFreeNoTrialInRange = inRange.filter(
+    (row) => !row.subscription_status
+  ).length;
   const accounts: CounterStats["accounts"] = {
-    ...LIVE_ACCOUNTS,
-    newInRange: win.newInRange,
-    newFreeNoTrialInRange: win.newFreeNoTrialInRange,
-    realLookingNewInRange: win.realLookingNewInRange,
+    ...tally,
+    newInRange: inRange.length,
+    newFreeNoTrialInRange,
+    realLookingNewInRange: inRange.length,
   };
+  const revenue = revenueFrom(recent);
+  const traffic = trafficFor(range, win.sessions);
   const clarity = {
     homeSessions: win.home,
     interestSessions: win.interest,
@@ -697,7 +793,7 @@ export function loadCounterV3Stats(range: CounterRange = "7d"): CounterStats {
     range,
     rangeLabel: label,
     accounts,
-    recent: recentAccounts(),
+    recent,
     sessions: win.sessions,
     pageViews,
     bouncedHome,
@@ -713,5 +809,8 @@ export function loadCounterV3Stats(range: CounterRange = "7d"): CounterStats {
     insights,
     headline,
     trackingReady: true,
+    trafficByDay: traffic.rows,
+    trafficGrain: traffic.grain,
+    revenue,
   };
 }

@@ -177,6 +177,22 @@ export type CounterStats = {
   headline: string;
   trackingReady: boolean;
   trackingError?: string;
+  /** Optional extras used by the hardcoded Counter snapshot. */
+  trafficByDay?: { date: string; label: string; sessions: number }[];
+  trafficGrain?: "hour" | "day";
+  revenue?: {
+    monthly: number;
+    potential: number;
+    payingCount: number;
+    trialCount: number;
+    byTier: {
+      tier: string;
+      label: string;
+      price: number;
+      paying: number;
+      trialing: number;
+    }[];
+  };
 };
 
 const EXIT_REASON_LABELS: Record<string, string> = {
