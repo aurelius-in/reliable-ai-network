@@ -45,6 +45,7 @@ export default async function AdminCounterV3Page({
         title="Counter"
         subtitle={`Accounts + site activity · ${stats.rangeLabel}`}
         showRecentAccounts
+        showFounderDebug={false}
         bookmarkPath="/admin/counter/v3"
       />
     </Shell>

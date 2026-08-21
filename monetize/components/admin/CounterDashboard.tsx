@@ -33,6 +33,7 @@ export function CounterDashboard({
   title,
   subtitle,
   showRecentAccounts,
+  showFounderDebug,
   bookmarkPath,
 }: {
   stats: CounterStats;
@@ -40,10 +41,13 @@ export function CounterDashboard({
   title: string;
   subtitle: string;
   showRecentAccounts: boolean;
+  /** Founder-only debug cards (likely tests, real-looking new, early cohort). */
+  showFounderDebug?: boolean;
   bookmarkPath: string;
 }) {
-  // Activity Counter is shareable — hide founder-only signals.
+  // Activity Counter is shareable: hide founder-only signals.
   const shareSafe = !showRecentAccounts;
+  const founderDebug = showFounderDebug ?? showRecentAccounts;
   const maxFunnel = Math.max(...stats.funnel.map((f) => f.count), 1);
   const q = (range: CounterRange) =>
     `${bookmarkPath}?key=${encodeURIComponent(adminKey)}&range=${range}`;
@@ -111,15 +115,27 @@ export function CounterDashboard({
             value={stats.accounts.freeNoTrial}
             hint="Signed up, no card / trial"
           />
-          <StatCard label="Trialing" value={stats.accounts.trialing} />
+          <StatCard
+            label="Trialing"
+            value={stats.accounts.trialing}
+            hint="Card on file, trial in progress"
+          />
           <StatCard
             label="Reviewers"
             value={stats.accounts.reviewer}
             hint={shareSafe ? "Complimentary access" : "No-card complimentary"}
           />
-          <StatCard label="Active paid" value={stats.accounts.active} />
-          <StatCard label="Canceled" value={stats.accounts.canceled} />
-          {!shareSafe && (
+          <StatCard
+            label="Active paid"
+            value={stats.accounts.active}
+            hint="Currently billing"
+          />
+          <StatCard
+            label="Canceled"
+            value={stats.accounts.canceled}
+            hint="Ended trial or subscription"
+          />
+          {founderDebug && (
             <StatCard
               label="Likely tests"
               value={stats.accounts.likelyTests}
@@ -130,7 +146,7 @@ export function CounterDashboard({
             label={`New · ${stats.rangeLabel}`}
             value={stats.accounts.newInRange}
           />
-          {!shareSafe && (
+          {founderDebug && (
             <>
               <StatCard
                 label={`Real-looking new · ${stats.rangeLabel}`}
@@ -625,12 +641,12 @@ export function CounterDashboard({
                       <span className="font-normal text-slate-400">
                         · {row.email}
                       </span>
-                      {row.likelyTest && (
+                      {founderDebug && row.likelyTest && (
                         <span className="ml-2 rounded-full bg-slate-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-400">
                           Likely test
                         </span>
                       )}
-                      {row.earlyCohortRank != null && (
+                      {founderDebug && row.earlyCohortRank != null && (
                         <span className="ml-2 rounded-full bg-aqua/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-aqua">
                           Early #{row.earlyCohortRank}
                         </span>
