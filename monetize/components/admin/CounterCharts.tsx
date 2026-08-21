@@ -1,3 +1,30 @@
+function monthTick(iso: string): string {
+  const [year, month] = iso.slice(0, 10).split("-");
+  return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString(
+    "en-US",
+    { month: "short" }
+  );
+}
+
+function tickLabel(
+  row: { date: string; label: string },
+  i: number,
+  rows: { date: string; label: string }[],
+  grain: "hour" | "day"
+): string {
+  if (grain === "hour") {
+    return i === 0 || i === rows.length - 1 || i % 3 === 0 ? row.label : "";
+  }
+  if (rows.length <= 8) return row.label;
+  if (rows.length <= 32) {
+    return i === 0 || i === rows.length - 1 || i % 3 === 0 ? row.label : "";
+  }
+  if (i === 0) return monthTick(row.date);
+  return row.date.slice(0, 7) !== rows[i - 1].date.slice(0, 7)
+    ? monthTick(row.date)
+    : "";
+}
+
 export function TrafficChart({
   title,
   grain,
@@ -10,7 +37,7 @@ export function TrafficChart({
   rows: { date: string; label: string; sessions: number }[];
 }) {
   const max = Math.max(...rows.map((r) => r.sessions), 1);
-  const labelEvery = grain === "hour" ? 3 : rows.length > 40 ? 14 : rows.length > 14 ? 3 : 1;
+  const overlayLabels = grain === "day" && rows.length > 32;
 
   return (
     <section className="rounded-2xl border border-night-600 bg-night-800 p-5">
@@ -24,7 +51,7 @@ export function TrafficChart({
         <div className="flex h-36 items-end gap-px sm:gap-0.5">
           {rows.map((row) => {
             const h = Math.max(
-              row.sessions ? 6 : 0,
+              row.sessions ? 2 : 0,
               Math.round((row.sessions / max) * 100)
             );
             return (
@@ -41,20 +68,39 @@ export function TrafficChart({
             );
           })}
         </div>
-        <div className="mt-1 flex gap-px sm:gap-0.5">
-          {rows.map((row, i) => {
-            const show =
-              i === 0 || i === rows.length - 1 || i % labelEvery === 0;
-            return (
+        {overlayLabels ? (
+          <div className="relative mt-2 h-4">
+            {rows.map((row, i) => {
+              const text = tickLabel(row, i, rows, grain);
+              if (!text) return null;
+              const pct =
+                (i / Math.max(rows.length - 1, 1)) * 100;
+              return (
+                <span
+                  key={row.date}
+                  className="absolute top-0 whitespace-nowrap text-[9px] leading-none text-slate-500"
+                  style={{
+                    left: `${pct}%`,
+                    transform: i === 0 ? undefined : "translateX(-50%)",
+                  }}
+                >
+                  {text}
+                </span>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="mt-1 flex gap-px sm:gap-0.5">
+            {rows.map((row, i) => (
               <p
                 key={row.date}
-                className="min-w-0 flex-1 truncate text-center text-[9px] leading-none text-slate-500"
+                className="min-w-0 flex-1 text-center text-[9px] leading-none text-slate-500"
               >
-                {show ? row.label : ""}
+                {tickLabel(row, i, rows, grain)}
               </p>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

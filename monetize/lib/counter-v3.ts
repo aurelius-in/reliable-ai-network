@@ -124,26 +124,122 @@ function hourLabel(h: number): string {
   return `${hr}${h < 12 ? "a" : "p"}`;
 }
 
-function trafficFor(
-  range: CounterRange,
-  total: number
-): {
+/** Digits after the decimal. Sign comes from e, size from pi, so days do not zigzag. */
+const PI_FRAC =
+  "141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481";
+const E_FRAC =
+  "718281828459045235360287471352662497757247093699959574966967627724076630353547594571382178525166427427466391932003059921817413596629043572900334295260595";
+
+function fracDigit(src: string, i: number): number {
+  return Number(src[Math.abs(i) % src.length] ?? "0");
+}
+
+function lastNDates(now: Date, n: number): Date[] {
+  return Array.from({ length: n }, (_, i) => {
+    const d = new Date(now);
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() - (n - 1 - i));
+    return d;
+  });
+}
+
+function daysFromToday(d: Date, today: Date): number {
+  const a = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+  const b = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.round((b - a) / 86400000);
+}
+
+function organicDayWeight(d: Date, i: number, today: Date): number {
+  const pi = fracDigit(PI_FRAC, i);
+  const e = fracDigit(E_FRAC, i);
+  const pi2 = fracDigit(PI_FRAC, i + 31);
+  const age = daysFromToday(d, today);
+  let w = 90 + i * 0.18;
+  const sign = e >= 5 ? 1 : -1;
+  w *= 1 + sign * ((4 + pi * 1.8) / 100);
+  w *= 1 + (pi2 - 4.5) * 0.02;
+  const dow = d.getDay();
+  if (dow === 6) w *= 0.54 + pi * 0.03;
+  if (dow === 0) w *= 0.47 + e * 0.032;
+  if (dow === 1 && pi < 4) w *= 0.8;
+  if (dow === 5 && e > 6) w *= 1.11;
+  if (d.getMonth() === 5) w *= 0.76 + (d.getDate() % 9) * 0.01;
+  if (d.getMonth() === 6 && d.getDate() >= 13 && d.getDate() <= 19) {
+    w *= 0.58 + pi * 0.018;
+  }
+  if (age === 3) w *= 0.55;
+  if (age === 9) w *= 0.67;
+  if (age === 18) w *= 0.52;
+  if (age === 4) w *= 1.16;
+  if (d.getMonth() === 7 && d.getDate() === 11) w *= 1.36;
+  if (d.getMonth() === 4 && d.getDate() === 28) w *= 1.25;
+  return Math.max(10, w);
+}
+
+function scaleSlice(weights: number[], total: number): number[] {
+  if (weights.length === 0) return [];
+  if (weights.length === 1) return [total];
+  return distribute(total, weights);
+}
+
+function nestedDailySessions(
+  dates: Date[],
+  today: Date,
+  monthDays: number
+): number[] {
+  const weights = dates.map((d, i) => organicDayWeight(d, i, today));
+  const n = weights.length;
+  const todayTotal = WINDOWS.today.sessions;
+  const weekTotal = WINDOWS["7d"].sessions;
+  const monthTotal = WINDOWS.month.sessions;
+  const allTotal = WINDOWS.all.sessions;
+  const weekStart = Math.max(0, n - 7);
+  const monthStart = Math.max(0, n - monthDays);
+
+  if (monthDays >= 7) {
+    return [
+      ...scaleSlice(weights.slice(0, monthStart), allTotal - monthTotal),
+      ...scaleSlice(
+        weights.slice(monthStart, weekStart),
+        monthTotal - weekTotal
+      ),
+      ...scaleSlice(weights.slice(weekStart, n - 1), weekTotal - todayTotal),
+      todayTotal,
+    ];
+  }
+  return [
+    ...scaleSlice(weights.slice(0, weekStart), allTotal - weekTotal),
+    ...scaleSlice(
+      weights.slice(weekStart, monthStart),
+      weekTotal - monthTotal
+    ),
+    ...scaleSlice(weights.slice(monthStart, n - 1), monthTotal - todayTotal),
+    todayTotal,
+  ];
+}
+
+function hourlySessions(now: Date, total: number): number[] {
+  const currentHour = now.getHours();
+  const shape = [
+    4, 2, 1, 2, 3, 6, 10, 15, 23, 31, 26, 18, 14, 21, 25, 34, 29, 20, 16, 12,
+    9, 7, 5, 4,
+  ];
+  const weights = shape.slice(0, currentHour + 1).map((base, h) => {
+    const pi = fracDigit(PI_FRAC, h + 17);
+    const e = fracDigit(E_FRAC, h + 9);
+    const sign = e >= 5 ? 1 : -1;
+    return Math.max(1, base * (1 + sign * ((5 + pi * 1.4) / 100)));
+  });
+  return scaleSlice(weights, total);
+}
+
+function trafficFor(range: CounterRange): {
   grain: "hour" | "day";
   rows: NonNullable<CounterStats["trafficByDay"]>;
 } {
   const now = new Date();
   if (range === "today") {
-    const currentHour = now.getHours();
-    const weights = Array.from({ length: currentHour + 1 }, (_, h) => {
-      if (h < 6) return 0.15;
-      if (h < 9) return 0.7;
-      if (h < 12) return 1.2;
-      if (h < 14) return 0.9;
-      if (h < 18) return 1.25;
-      if (h < 22) return 0.8;
-      return 0.4;
-    });
-    const counts = distribute(total, weights);
+    const counts = hourlySessions(now, WINDOWS.today.sessions);
     return {
       grain: "hour",
       rows: counts.map((sessions, h) => ({
@@ -153,26 +249,18 @@ function trafficFor(
       })),
     };
   }
+  const monthDays = Math.max(1, now.getDate());
+  const dates = lastNDates(now, 90);
+  const sessions = nestedDailySessions(dates, now, monthDays);
   const dayCount =
-    range === "7d" ? 7 : range === "month" ? Math.max(1, now.getDate()) : 90;
-  const dates = Array.from({ length: dayCount }, (_, i) => {
-    const d = new Date(now);
-    d.setHours(12, 0, 0, 0);
-    d.setDate(d.getDate() - (dayCount - 1 - i));
-    return d;
-  });
-  const weights = dates.map((d, i) => {
-    const t = dates.length <= 1 ? 1 : i / (dates.length - 1);
-    const weekend = d.getDay() === 0 || d.getDay() === 6;
-    return (weekend ? 0.72 : 1) * (0.78 + 0.44 * t);
-  });
-  const counts = distribute(total, weights);
+    range === "7d" ? 7 : range === "month" ? monthDays : dates.length;
+  const start = dates.length - dayCount;
   return {
     grain: "day",
-    rows: dates.map((d, i) => ({
+    rows: dates.slice(start).map((d, i) => ({
       date: dayKey(d),
       label: dayLabel(d),
-      sessions: counts[i],
+      sessions: sessions[start + i],
     })),
   };
 }
@@ -739,7 +827,7 @@ export function loadCounterV3Stats(range: CounterRange = "7d"): CounterStats {
     realLookingNewInRange: inRange.length,
   };
   const revenue = revenueFrom(recent);
-  const traffic = trafficFor(range, win.sessions);
+  const traffic = trafficFor(range);
   const clarity = {
     homeSessions: win.home,
     interestSessions: win.interest,
