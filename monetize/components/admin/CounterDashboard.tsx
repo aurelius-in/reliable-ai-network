@@ -48,7 +48,7 @@ export function CounterDashboard({
   stats,
   adminKey = "",
   title,
-  subtitle,
+  subtitle = "",
   showRecentAccounts,
   showFounderDebug,
   bookmarkPath,
@@ -57,12 +57,12 @@ export function CounterDashboard({
   stats: CounterStats;
   adminKey?: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   showRecentAccounts: boolean;
   /** Founder-only debug cards (likely tests, real-looking new, early cohort). */
   showFounderDebug?: boolean;
   bookmarkPath: string;
-  /** Live PT / CT / ET clock instead of a checked timestamp. */
+  /** Live PT / MT / CT / ET clock instead of a checked timestamp. */
   liveClock?: boolean;
 }) {
   // Activity Counter is shareable: hide founder-only signals.
@@ -96,11 +96,10 @@ export function CounterDashboard({
       <div className="text-center">
         <h1 className="text-2xl font-black text-white">{title}</h1>
         <p className="mt-1 text-sm text-slate-400">
-          {subtitle} ·{" "}
           {liveClock ? (
             <CounterLiveClock />
           ) : (
-            `checked ${new Date(stats.checkedAt).toLocaleString()}`
+            `${subtitle} · checked ${new Date(stats.checkedAt).toLocaleString()}`
           )}
         </p>
       </div>

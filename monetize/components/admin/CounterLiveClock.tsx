@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 const ZONES = [
   { tz: "America/Los_Angeles", label: "Pacific" },
+  { tz: "America/Denver", label: "Mountain" },
   { tz: "America/Chicago", label: "Central" },
   { tz: "America/New_York", label: "Eastern" },
 ] as const;
@@ -27,15 +28,11 @@ export function CounterLiveClock() {
   }, []);
 
   if (!now) {
-    return <span>updated hourly</span>;
+    return null;
   }
 
   const clocks = ZONES.map((z) => `${formatZone(now, z.tz)} ${z.label}`).join(
     " · "
   );
-  return (
-    <span>
-      updated hourly · {clocks}
-    </span>
-  );
+  return <span>{clocks}</span>;
 }
