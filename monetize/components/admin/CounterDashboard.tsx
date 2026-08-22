@@ -51,6 +51,7 @@ export function CounterDashboard({
   showRecentAccounts,
   showFounderDebug,
   bookmarkPath,
+  checkedText,
 }: {
   stats: CounterStats;
   adminKey?: string;
@@ -60,6 +61,8 @@ export function CounterDashboard({
   /** Founder-only debug cards (likely tests, real-looking new, early cohort). */
   showFounderDebug?: boolean;
   bookmarkPath: string;
+  /** Replaces the live "checked {time}" stamp when set. */
+  checkedText?: string;
 }) {
   // Activity Counter is shareable: hide founder-only signals.
   const shareSafe = !showRecentAccounts;
@@ -92,7 +95,9 @@ export function CounterDashboard({
       <div className="text-center">
         <h1 className="text-2xl font-black text-white">{title}</h1>
         <p className="mt-1 text-sm text-slate-400">
-          {subtitle} · checked {new Date(stats.checkedAt).toLocaleString()}
+          {subtitle} ·{" "}
+          {checkedText ??
+            `checked ${new Date(stats.checkedAt).toLocaleString()}`}
         </p>
       </div>
 

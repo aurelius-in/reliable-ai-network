@@ -29,6 +29,7 @@ export default async function AdminCounterV3Page({
         showRecentAccounts
         showFounderDebug={false}
         bookmarkPath="/admin/counter/v3"
+        checkedText="updated hourly · last update 1:00 PST"
       />
     </Shell>
   );
