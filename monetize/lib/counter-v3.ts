@@ -1,6 +1,8 @@
 /**
  * Hardcoded Counter snapshot for /admin/counter/v3.
  * Account statuses are disjoint and must sum to `total`.
+ * Public site first day is 2026-07-22 (makeitrainapp.com).
+ * No account or all-time traffic bar exists before that date.
  * Paid and trialing each take about half of the remaining seats after
  * 8 reviewers, 5 never-started, and 3 canceled.
  */
@@ -23,16 +25,24 @@ import {
   type ToolUsageRow,
 } from "@/lib/counter-stats";
 
-function createdAt(daysAgo: number, hour: number, min: number): string {
-  const d = new Date();
-  d.setSeconds(0, 0);
-  if (daysAgo === 0) {
-    const cap = Math.max(0, d.getHours() - 1);
-    d.setHours(Math.min(hour, cap), min, 0, 0);
-  } else {
-    d.setHours(hour, min, 0, 0);
-    d.setDate(d.getDate() - daysAgo);
+function createdAt(on: string, hour: number, min: number): string {
+  const [year, month, day] = on.split("-").map(Number);
+  const d = new Date(year, month - 1, day, 0, 0, 0, 0);
+  const now = new Date();
+  const sameDay =
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate();
+  let h = hour;
+  let m = min;
+  if (sameDay) {
+    const capH = Math.max(0, now.getHours() - 1);
+    if (h > capH) {
+      h = capH;
+      m = Math.min(min, Math.max(0, now.getMinutes() - 1));
+    }
   }
+  d.setHours(h, m, 0, 0);
   return d.toISOString();
 }
 
@@ -45,7 +55,7 @@ function trialEndsAt(createdIso: string, status: string | null): string | null {
 
 function buildAccounts(): CounterRow[] {
   const rows: CounterRow[] = V3_ROSTER.map((r, i) => {
-    const created_at = createdAt(r.daysAgo, r.hour, r.min);
+    const created_at = createdAt(r.on, r.hour, r.min);
     return {
       id: `c${String(i + 1).padStart(3, "0")}`,
       name: r.name,
@@ -134,14 +144,8 @@ function fracDigit(src: string, i: number): number {
   return Number(src[Math.abs(i) % src.length] ?? "0");
 }
 
-function lastNDates(now: Date, n: number): Date[] {
-  return Array.from({ length: n }, (_, i) => {
-    const d = new Date(now);
-    d.setHours(12, 0, 0, 0);
-    d.setDate(d.getDate() - (n - 1 - i));
-    return d;
-  });
-}
+/** First public day of makeitrainapp.com. */
+const SITE_LAUNCH = new Date(2026, 6, 22);
 
 function daysFromToday(d: Date, today: Date): number {
   const a = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
@@ -149,12 +153,25 @@ function daysFromToday(d: Date, today: Date): number {
   return Math.round((b - a) / 86400000);
 }
 
+function datesFromLaunch(now: Date): Date[] {
+  const start = new Date(SITE_LAUNCH);
+  start.setHours(12, 0, 0, 0);
+  const end = new Date(now);
+  end.setHours(12, 0, 0, 0);
+  if (end < start) return [new Date(start)];
+  const dates: Date[] = [];
+  for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    dates.push(new Date(d));
+  }
+  return dates;
+}
+
 function organicDayWeight(d: Date, i: number, today: Date): number {
   const pi = fracDigit(PI_FRAC, i);
   const e = fracDigit(E_FRAC, i);
   const pi2 = fracDigit(PI_FRAC, i + 31);
   const age = daysFromToday(d, today);
-  let w = 90 + i * 0.18;
+  let w = 90 + i * 0.35;
   const sign = e >= 5 ? 1 : -1;
   w *= 1 + sign * ((4 + pi * 1.8) / 100);
   w *= 1 + (pi2 - 4.5) * 0.02;
@@ -163,16 +180,16 @@ function organicDayWeight(d: Date, i: number, today: Date): number {
   if (dow === 0) w *= 0.47 + e * 0.032;
   if (dow === 1 && pi < 4) w *= 0.8;
   if (dow === 5 && e > 6) w *= 1.11;
-  if (d.getMonth() === 5) w *= 0.76 + (d.getDate() % 9) * 0.01;
-  if (d.getMonth() === 6 && d.getDate() >= 13 && d.getDate() <= 19) {
-    w *= 0.58 + pi * 0.018;
-  }
+  if (d.getMonth() === 6 && d.getDate() === 22) w *= 2.7;
+  if (d.getMonth() === 6 && d.getDate() === 23) w *= 1.9;
+  if (d.getMonth() === 6 && d.getDate() === 24) w *= 1.2;
+  if (d.getMonth() === 6 && d.getDate() === 28) w *= 0.5;
+  if (d.getMonth() === 6 && d.getDate() > 24) w *= 0.9;
   if (age === 3) w *= 0.55;
   if (age === 9) w *= 0.67;
   if (age === 18) w *= 0.52;
   if (age === 4) w *= 1.16;
   if (d.getMonth() === 7 && d.getDate() === 11) w *= 1.36;
-  if (d.getMonth() === 4 && d.getDate() === 28) w *= 1.25;
   return Math.max(10, w);
 }
 
@@ -249,8 +266,8 @@ function trafficFor(range: CounterRange): {
       })),
     };
   }
+  const dates = datesFromLaunch(now);
   const monthDays = Math.max(1, now.getDate());
-  const dates = lastNDates(now, 90);
   const sessions = nestedDailySessions(dates, now, monthDays);
   const dayCount =
     range === "7d" ? 7 : range === "month" ? monthDays : dates.length;
@@ -503,25 +520,25 @@ const WINDOWS: Record<WindowKey, WindowSpec> = {
     factor: 5120 / 1823,
   },
   all: {
-    sessions: 14680,
-    pageViews: 35232,
-    home: 9724,
-    interest: 5760,
-    signupPage: 218,
-    signupSubmit: 156,
+    sessions: 6980,
+    pageViews: 16752,
+    home: 4620,
+    interest: 2730,
+    signupPage: 132,
+    signupSubmit: 108,
     signupSuccess: 89,
-    checkout: 98,
+    checkout: 96,
     checkoutSuccess: 76,
-    dashboard: 1240,
-    toolRun: 1028,
+    dashboard: 580,
+    toolRun: 478,
     newInRange: 89,
     newFreeNoTrialInRange: 5,
     realLookingNewInRange: 89,
-    homeViews: 12480,
-    pricingViews: 620,
-    pricingSessions: 508,
-    signupViews: 268,
-    factor: 14680 / 1823,
+    homeViews: 5880,
+    pricingViews: 285,
+    pricingSessions: 234,
+    signupViews: 148,
+    factor: 6980 / 1823,
   },
 };
 
