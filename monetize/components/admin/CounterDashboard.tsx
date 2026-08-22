@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AdminOpsNav } from "@/components/admin/AdminOpsNav";
 import { RevenueCards, TrafficChart } from "@/components/admin/CounterCharts";
+import { CounterLiveClock } from "@/components/admin/CounterLiveClock";
 import {
   COUNTER_RANGES,
   type CounterRange,
@@ -51,7 +52,7 @@ export function CounterDashboard({
   showRecentAccounts,
   showFounderDebug,
   bookmarkPath,
-  checkedText,
+  liveClock = false,
 }: {
   stats: CounterStats;
   adminKey?: string;
@@ -61,8 +62,8 @@ export function CounterDashboard({
   /** Founder-only debug cards (likely tests, real-looking new, early cohort). */
   showFounderDebug?: boolean;
   bookmarkPath: string;
-  /** Replaces the live "checked {time}" stamp when set. */
-  checkedText?: string;
+  /** Live PT / CT / ET clock instead of a checked timestamp. */
+  liveClock?: boolean;
 }) {
   // Activity Counter is shareable: hide founder-only signals.
   const shareSafe = !showRecentAccounts;
@@ -96,8 +97,11 @@ export function CounterDashboard({
         <h1 className="text-2xl font-black text-white">{title}</h1>
         <p className="mt-1 text-sm text-slate-400">
           {subtitle} ·{" "}
-          {checkedText ??
-            `checked ${new Date(stats.checkedAt).toLocaleString()}`}
+          {liveClock ? (
+            <CounterLiveClock />
+          ) : (
+            `checked ${new Date(stats.checkedAt).toLocaleString()}`
+          )}
         </p>
       </div>
 
