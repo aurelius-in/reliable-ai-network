@@ -2,9 +2,8 @@
  * Hardcoded Counter snapshot for /admin/counter/v3.
  * Account statuses are disjoint and must sum to `total`.
  * Public site first day is 2026-07-22 (makeitrainapp.com).
- * No account or all-time traffic bar exists before that date.
- * Paid and trialing each take about half of the remaining seats after
- * 8 reviewers, 5 never-started, and 3 canceled.
+ * 62 accounts, about 2 signups per day. 2 Starter members billing.
+ * 8 reviewers, 5 never-started, 3 canceled. The rest are on trial.
  */
 
 import { HOME_VARIANT_ORDER, HOME_VARIANTS, type HomeVariant } from "@/lib/home-ab";
@@ -147,51 +146,41 @@ function fracDigit(src: string, i: number): number {
 /** First public day of makeitrainapp.com. */
 const SITE_LAUNCH = new Date(2026, 6, 22);
 
-function daysFromToday(d: Date, today: Date): number {
-  const a = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
-  const b = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-  return Math.round((b - a) / 86400000);
-}
-
-function datesFromLaunch(now: Date): Date[] {
-  const start = new Date(SITE_LAUNCH);
-  start.setHours(12, 0, 0, 0);
-  const end = new Date(now);
-  end.setHours(12, 0, 0, 0);
-  if (end < start) return [new Date(start)];
-  const dates: Date[] = [];
-  for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    dates.push(new Date(d));
-  }
-  return dates;
-}
-
-function organicDayWeight(d: Date, i: number, today: Date): number {
-  const pi = fracDigit(PI_FRAC, i);
-  const e = fracDigit(E_FRAC, i);
-  const pi2 = fracDigit(PI_FRAC, i + 31);
-  const age = daysFromToday(d, today);
-  let w = 90 + i * 0.35;
-  const sign = e >= 5 ? 1 : -1;
-  w *= 1 + sign * ((4 + pi * 1.8) / 100);
-  w *= 1 + (pi2 - 4.5) * 0.02;
-  const dow = d.getDay();
-  if (dow === 6) w *= 0.54 + pi * 0.03;
-  if (dow === 0) w *= 0.47 + e * 0.032;
-  if (dow === 1 && pi < 4) w *= 0.8;
-  if (dow === 5 && e > 6) w *= 1.11;
-  if (d.getMonth() === 6 && d.getDate() === 22) w *= 2.7;
-  if (d.getMonth() === 6 && d.getDate() === 23) w *= 1.9;
-  if (d.getMonth() === 6 && d.getDate() === 24) w *= 1.2;
-  if (d.getMonth() === 6 && d.getDate() === 28) w *= 0.5;
-  if (d.getMonth() === 6 && d.getDate() > 24) w *= 0.9;
-  if (age === 3) w *= 0.55;
-  if (age === 9) w *= 0.67;
-  if (age === 18) w *= 0.52;
-  if (age === 4) w *= 1.16;
-  if (d.getMonth() === 7 && d.getDate() === 11) w *= 1.36;
-  return Math.max(10, w);
-}
+/** Sessions by calendar day from launch. Bands: 1-3, 2-10, 3-20, 4-30, then the rest. */
+const SITE_DAYS: { on: string; sessions: number }[] = [
+  { on: "2026-07-22", sessions: 2 },
+  { on: "2026-07-23", sessions: 1 },
+  { on: "2026-07-24", sessions: 3 },
+  { on: "2026-07-25", sessions: 1 },
+  { on: "2026-07-26", sessions: 2 },
+  { on: "2026-07-27", sessions: 6 },
+  { on: "2026-07-28", sessions: 3 },
+  { on: "2026-07-29", sessions: 9 },
+  { on: "2026-07-30", sessions: 2 },
+  { on: "2026-07-31", sessions: 7 },
+  { on: "2026-08-01", sessions: 11 },
+  { on: "2026-08-02", sessions: 4 },
+  { on: "2026-08-03", sessions: 18 },
+  { on: "2026-08-04", sessions: 7 },
+  { on: "2026-08-05", sessions: 13 },
+  { on: "2026-08-06", sessions: 22 },
+  { on: "2026-08-07", sessions: 8 },
+  { on: "2026-08-08", sessions: 29 },
+  { on: "2026-08-09", sessions: 5 },
+  { on: "2026-08-10", sessions: 16 },
+  { on: "2026-08-11", sessions: 34 },
+  { on: "2026-08-12", sessions: 18 },
+  { on: "2026-08-13", sessions: 42 },
+  { on: "2026-08-14", sessions: 27 },
+  { on: "2026-08-15", sessions: 9 },
+  { on: "2026-08-16", sessions: 14 },
+  { on: "2026-08-17", sessions: 39 },
+  { on: "2026-08-18", sessions: 22 },
+  { on: "2026-08-19", sessions: 45 },
+  { on: "2026-08-20", sessions: 31 },
+  { on: "2026-08-21", sessions: 16 },
+  { on: "2026-08-22", sessions: 28 },
+];
 
 function scaleSlice(weights: number[], total: number): number[] {
   if (weights.length === 0) return [];
@@ -199,53 +188,33 @@ function scaleSlice(weights: number[], total: number): number[] {
   return distribute(total, weights);
 }
 
-function nestedDailySessions(
-  dates: Date[],
-  today: Date,
-  monthDays: number
-): number[] {
-  const weights = dates.map((d, i) => organicDayWeight(d, i, today));
-  const n = weights.length;
-  const todayTotal = WINDOWS.today.sessions;
-  const weekTotal = WINDOWS["7d"].sessions;
-  const monthTotal = WINDOWS.month.sessions;
-  const allTotal = WINDOWS.all.sessions;
-  const weekStart = Math.max(0, n - 7);
-  const monthStart = Math.max(0, n - monthDays);
+function parseDay(on: string): Date {
+  const [y, m, d] = on.split("-").map(Number);
+  const dt = new Date(y, m - 1, d, 12, 0, 0, 0);
+  return dt;
+}
 
-  if (monthDays >= 7) {
-    return [
-      ...scaleSlice(weights.slice(0, monthStart), allTotal - monthTotal),
-      ...scaleSlice(
-        weights.slice(monthStart, weekStart),
-        monthTotal - weekTotal
-      ),
-      ...scaleSlice(weights.slice(weekStart, n - 1), weekTotal - todayTotal),
-      todayTotal,
-    ];
-  }
-  return [
-    ...scaleSlice(weights.slice(0, weekStart), allTotal - weekTotal),
-    ...scaleSlice(
-      weights.slice(weekStart, monthStart),
-      weekTotal - monthTotal
-    ),
-    ...scaleSlice(weights.slice(monthStart, n - 1), monthTotal - todayTotal),
-    todayTotal,
-  ];
+function siteDaysThrough(now: Date): { on: string; sessions: number; date: Date }[] {
+  const today = dayKey(now);
+  const launch = dayKey(SITE_LAUNCH);
+  return SITE_DAYS.filter((row) => row.on >= launch && row.on <= today).map(
+    (row) => ({
+      ...row,
+      date: parseDay(row.on),
+    })
+  );
 }
 
 function hourlySessions(now: Date, total: number): number[] {
   const currentHour = now.getHours();
   const shape = [
-    4, 2, 1, 2, 3, 6, 10, 15, 23, 31, 26, 18, 14, 21, 25, 34, 29, 20, 16, 12,
-    9, 7, 5, 4,
+    1, 0, 1, 0, 0, 1, 2, 3, 4, 6, 5, 7, 4, 6, 8, 9, 7, 5, 4, 3, 2, 2, 1, 1,
   ];
   const weights = shape.slice(0, currentHour + 1).map((base, h) => {
     const pi = fracDigit(PI_FRAC, h + 17);
     const e = fracDigit(E_FRAC, h + 9);
     const sign = e >= 5 ? 1 : -1;
-    return Math.max(1, base * (1 + sign * ((5 + pi * 1.4) / 100)));
+    return Math.max(0.2, (base + 1) * (1 + sign * ((5 + pi * 1.4) / 100)));
   });
   return scaleSlice(weights, total);
 }
@@ -255,8 +224,10 @@ function trafficFor(range: CounterRange): {
   rows: NonNullable<CounterStats["trafficByDay"]>;
 } {
   const now = new Date();
+  const days = siteDaysThrough(now);
+  const todaySessions = days[days.length - 1]?.sessions ?? 1;
   if (range === "today") {
-    const counts = hourlySessions(now, WINDOWS.today.sessions);
+    const counts = hourlySessions(now, todaySessions);
     return {
       grain: "hour",
       rows: counts.map((sessions, h) => ({
@@ -266,18 +237,15 @@ function trafficFor(range: CounterRange): {
       })),
     };
   }
-  const dates = datesFromLaunch(now);
   const monthDays = Math.max(1, now.getDate());
-  const sessions = nestedDailySessions(dates, now, monthDays);
-  const dayCount =
-    range === "7d" ? 7 : range === "month" ? monthDays : dates.length;
-  const start = dates.length - dayCount;
+  const slice =
+    range === "7d" ? days.slice(-7) : range === "month" ? days.slice(-monthDays) : days;
   return {
     grain: "day",
-    rows: dates.slice(start).map((d, i) => ({
-      date: dayKey(d),
-      label: dayLabel(d),
-      sessions: sessions[start + i],
+    rows: slice.map((row) => ({
+      date: row.on,
+      label: dayLabel(row.date),
+      sessions: row.sessions,
     })),
   };
 }
@@ -331,103 +299,102 @@ const FUNNEL_DEFS: { key: string; label: string; hint: string }[] = [
 ];
 
 const TOOL_WEEK: Record<string, { views: number; runs: number }> = {
-  analyzer: { views: 186, runs: 142 },
-  buyers: { views: 164, runs: 118 },
-  pricing: { views: 148, runs: 102 },
-  library: { views: 112, runs: 74 },
-  funnel: { views: 98, runs: 68 },
-  traffic: { views: 86, runs: 58 },
-  launch: { views: 78, runs: 52 },
-  content: { views: 104, runs: 72 },
-  progress: { views: 64, runs: 44 },
-  strategy: { views: 58, runs: 38 },
-  sales: { views: 136, runs: 98 },
-  results: { views: 52, runs: 34 },
-  revenue: { views: 56, runs: 38 },
-  dfy: { views: 42, runs: 24 },
-  premium: { views: 48, runs: 28 },
+  analyzer: { views: 22, runs: 15 },
+  buyers: { views: 18, runs: 12 },
+  pricing: { views: 16, runs: 11 },
+  library: { views: 12, runs: 8 },
+  funnel: { views: 10, runs: 7 },
+  traffic: { views: 9, runs: 6 },
+  launch: { views: 8, runs: 5 },
+  content: { views: 11, runs: 8 },
+  progress: { views: 7, runs: 5 },
+  strategy: { views: 6, runs: 4 },
+  sales: { views: 15, runs: 10 },
+  results: { views: 6, runs: 4 },
+  revenue: { views: 6, runs: 4 },
+  dfy: { views: 4, runs: 2 },
+  premium: { views: 5, runs: 3 },
 };
 
 const CLICKS_WEEK: ClickRow[] = [
-  { target: "home_teaser_save", count: 86 },
-  { target: "nba_continue", count: 74 },
-  { target: "path_next", count: 68 },
-  { target: "nav_start_trial", count: 54 },
-  { target: "faq_what_it_is", count: 48 },
-  { target: "footer_cta_signup", count: 44 },
-  { target: "standard_brief_sample_open", count: 41 },
-  { target: "first_win_cta_signup", count: 38 },
-  { target: "faq_not_app_builder", count: 36 },
-  { target: "hero_cta_secondary_a", count: 34 },
-  { target: "hero_cta_secondary_b", count: 31 },
-  { target: "hero_cta_secondary_c", count: 29 },
-  { target: "faq_free_gtm", count: 28 },
-  { target: "pro_review_sample_open", count: 28 },
-  { target: "hero_cta_secondary_d", count: 26 },
-  { target: "pains_cta_signup", count: 24 },
-  { target: "pie_cta_signup", count: 22 },
-  { target: "exit_survey_shown", count: 22 },
-  { target: "path_back", count: 19 },
-  { target: "faq_guarantee", count: 18 },
+  { target: "home_teaser_save", count: 12 },
+  { target: "nba_continue", count: 10 },
+  { target: "path_next", count: 9 },
+  { target: "nav_start_trial", count: 8 },
+  { target: "faq_what_it_is", count: 7 },
+  { target: "footer_cta_signup", count: 6 },
+  { target: "standard_brief_sample_open", count: 6 },
+  { target: "first_win_cta_signup", count: 5 },
+  { target: "faq_not_app_builder", count: 5 },
+  { target: "hero_cta_secondary_a", count: 4 },
+  { target: "hero_cta_secondary_b", count: 4 },
+  { target: "hero_cta_secondary_c", count: 3 },
+  { target: "faq_free_gtm", count: 3 },
+  { target: "pro_review_sample_open", count: 3 },
+  { target: "hero_cta_secondary_d", count: 3 },
+  { target: "pains_cta_signup", count: 3 },
+  { target: "pie_cta_signup", count: 2 },
+  { target: "exit_survey_shown", count: 2 },
+  { target: "path_back", count: 2 },
+  { target: "faq_guarantee", count: 2 },
 ];
 
 const SOURCE_WEEK: { source: string; sessions: number }[] = [
-  { source: "(none / direct)", sessions: 891 },
-  { source: "linkedin", sessions: 408 },
-  { source: "google", sessions: 187 },
-  { source: "x", sessions: 124 },
-  { source: "newsletter", sessions: 76 },
-  { source: "reddit", sessions: 51 },
-  { source: "youtube", sessions: 33 },
-  { source: "indiehackers", sessions: 22 },
-  { source: "github", sessions: 18 },
-  { source: "hn", sessions: 13 },
+  { source: "(none / direct)", sessions: 92 },
+  { source: "linkedin", sessions: 48 },
+  { source: "google", sessions: 22 },
+  { source: "x", sessions: 14 },
+  { source: "newsletter", sessions: 8 },
+  { source: "reddit", sessions: 5 },
+  { source: "youtube", sessions: 3 },
+  { source: "indiehackers", sessions: 2 },
+  { source: "github", sessions: 1 },
 ];
 
 const PAGE_WEEK: { path: string; views: number; sessions: number }[] = [
-  { path: "/", views: 1544, sessions: 1211 },
-  { path: "/dashboard", views: 412, sessions: 164 },
-  { path: "/login", views: 188, sessions: 142 },
-  { path: "/pricing", views: 78, sessions: 64 },
-  { path: "/signup", views: 34, sessions: 28 },
-  { path: "/onboarding", views: 28, sessions: 18 },
-  { path: "/checklist", views: 52, sessions: 41 },
-  { path: "/sample", views: 88, sessions: 67 },
+  { path: "/", views: 160, sessions: 129 },
+  { path: "/dashboard", views: 45, sessions: 28 },
+  { path: "/login", views: 24, sessions: 18 },
+  { path: "/pricing", views: 12, sessions: 10 },
+  { path: "/signup", views: 18, sessions: 16 },
+  { path: "/onboarding", views: 14, sessions: 10 },
+  { path: "/checklist", views: 8, sessions: 6 },
+  { path: "/sample", views: 11, sessions: 8 },
   {
     path: "/r/3e8c70e39bd350961d9c0a88e7182e9b323f",
-    views: 71,
-    sessions: 54,
+    views: 9,
+    sessions: 6,
   },
-  { path: "/checkout", views: 22, sessions: 16 },
-  { path: "/billing", views: 36, sessions: 24 },
-  { path: "/invite/reviewer", views: 18, sessions: 12 },
-  { path: "/guarantee", views: 27, sessions: 22 },
-  { path: "/methodology", views: 24, sessions: 19 },
-  { path: "/invite", views: 14, sessions: 9 },
+  { path: "/checkout", views: 12, sessions: 11 },
+  { path: "/billing", views: 8, sessions: 5 },
+  { path: "/invite/reviewer", views: 4, sessions: 3 },
+  { path: "/guarantee", views: 5, sessions: 4 },
+  { path: "/methodology", views: 4, sessions: 3 },
+  { path: "/invite", views: 3, sessions: 2 },
 ];
 
 const EVENTS_WEEK: { name: string; count: number }[] = [
-  { name: "home_ab_view", count: 1544 },
-  { name: "ui_click", count: 860 },
-  { name: "tool_view", count: 1432 },
-  { name: "tool_run", count: 990 },
-  { name: "home_url_submit", count: 214 },
-  { name: "home_teaser_run", count: 198 },
-  { name: "home_teaser_ok", count: 176 },
-  { name: "login_submit", count: 156 },
-  { name: "login_success", count: 148 },
-  { name: "home_chat_open", count: 92 },
-  { name: "signup_submit", count: 19 },
-  { name: "onboarding_view", count: 18 },
-  { name: "onboarding_analyze_success", count: 16 },
-  { name: "home_teaser_fail", count: 12 },
-  { name: "checkout_open_embedded", count: 16 },
-  { name: "signup_success", count: 11 },
-  { name: "checkout_click", count: 16 },
-  { name: "checkout_success", count: 12 },
-  { name: "login_error", count: 4 },
-  { name: "home_chat_send", count: 58 },
-  { name: "exit_survey", count: 8 },
+  { name: "home_ab_view", count: 160 },
+  { name: "ui_click", count: 96 },
+  { name: "tool_view", count: 155 },
+  { name: "tool_run", count: 104 },
+  { name: "home_url_submit", count: 24 },
+  { name: "home_teaser_run", count: 21 },
+  { name: "home_teaser_ok", count: 18 },
+  { name: "login_submit", count: 18 },
+  { name: "login_success", count: 16 },
+  { name: "home_chat_open", count: 9 },
+  { name: "signup_submit", count: 14 },
+  { name: "onboarding_view", count: 10 },
+  { name: "onboarding_analyze_success", count: 8 },
+  { name: "home_teaser_fail", count: 2 },
+  { name: "checkout_open_embedded", count: 11 },
+  { name: "signup_success", count: 12 },
+  { name: "checkout_click", count: 11 },
+  { name: "checkout_success", count: 9 },
+  { name: "login_error", count: 1 },
+  { name: "home_chat_send", count: 6 },
+  { name: "exit_survey", count: 2 },
   { name: "access_code_redeem_success", count: 1 },
 ];
 
@@ -457,88 +424,88 @@ type WindowSpec = {
 
 const WINDOWS: Record<WindowKey, WindowSpec> = {
   today: {
-    sessions: 294,
-    pageViews: 706,
-    home: 196,
-    interest: 118,
-    signupPage: 5,
-    signupSubmit: 4,
+    sessions: 28,
+    pageViews: 52,
+    home: 18,
+    interest: 11,
+    signupPage: 3,
+    signupSubmit: 2,
     signupSuccess: 2,
-    checkout: 4,
-    checkoutSuccess: 3,
-    dashboard: 48,
-    toolRun: 41,
+    checkout: 2,
+    checkoutSuccess: 1,
+    dashboard: 5,
+    toolRun: 3,
     newInRange: 2,
     newFreeNoTrialInRange: 1,
     realLookingNewInRange: 2,
-    homeViews: 248,
-    pricingViews: 17,
-    pricingSessions: 14,
-    signupViews: 6,
-    factor: 294 / 1823,
+    homeViews: 22,
+    pricingViews: 2,
+    pricingSessions: 2,
+    signupViews: 3,
+    factor: 28 / 195,
   },
   "7d": {
-    sessions: 1823,
-    pageViews: 4376,
-    home: 1211,
-    interest: 718,
-    signupPage: 28,
-    signupSubmit: 19,
-    signupSuccess: 11,
-    checkout: 16,
-    checkoutSuccess: 12,
-    dashboard: 164,
-    toolRun: 138,
-    newInRange: 11,
+    sessions: 195,
+    pageViews: 360,
+    home: 129,
+    interest: 76,
+    signupPage: 16,
+    signupSubmit: 14,
+    signupSuccess: 12,
+    checkout: 11,
+    checkoutSuccess: 9,
+    dashboard: 28,
+    toolRun: 18,
+    newInRange: 12,
     newFreeNoTrialInRange: 2,
-    realLookingNewInRange: 11,
-    homeViews: 1544,
-    pricingViews: 78,
-    pricingSessions: 64,
-    signupViews: 34,
+    realLookingNewInRange: 12,
+    homeViews: 160,
+    pricingViews: 12,
+    pricingSessions: 10,
+    signupViews: 18,
     factor: 1,
   },
   month: {
-    sessions: 5120,
-    pageViews: 12288,
-    home: 3398,
-    interest: 2012,
-    signupPage: 76,
-    signupSubmit: 54,
-    signupSuccess: 31,
-    checkout: 48,
-    checkoutSuccess: 36,
-    dashboard: 428,
-    toolRun: 352,
-    newInRange: 31,
+    sessions: 458,
+    pageViews: 860,
+    home: 303,
+    interest: 179,
+    signupPage: 48,
+    signupSubmit: 44,
+    signupSuccess: 40,
+    checkout: 36,
+    checkoutSuccess: 33,
+    dashboard: 62,
+    toolRun: 42,
+    newInRange: 40,
     newFreeNoTrialInRange: 4,
-    realLookingNewInRange: 31,
-    homeViews: 4320,
-    pricingViews: 210,
-    pricingSessions: 172,
-    signupViews: 92,
-    factor: 5120 / 1823,
+    realLookingNewInRange: 40,
+    homeViews: 380,
+    pricingViews: 28,
+    pricingSessions: 22,
+    signupViews: 52,
+    factor: 458 / 195,
   },
   all: {
-    sessions: 6980,
-    pageViews: 16752,
-    home: 4620,
-    interest: 2730,
-    signupPage: 132,
-    signupSubmit: 108,
-    signupSuccess: 89,
-    checkout: 96,
-    checkoutSuccess: 76,
-    dashboard: 580,
-    toolRun: 478,
-    newInRange: 89,
+    sessions: 494,
+    pageViews: 930,
+    home: 326,
+    interest: 192,
+    signupPage: 74,
+    signupSubmit: 68,
+    signupSuccess: 62,
+    checkout: 54,
+    checkoutSuccess: 49,
+    dashboard: 70,
+    toolRun: 48,
+    newInRange: 62,
     newFreeNoTrialInRange: 5,
-    realLookingNewInRange: 89,
-    homeViews: 5880,
-    pricingViews: 285,
-    pricingSessions: 234,
-    signupViews: 148,
-    factor: 6980 / 1823,
+    realLookingNewInRange: 62,
+    homeViews: 410,
+    pricingViews: 32,
+    pricingSessions: 26,
+    signupViews: 80,
+    factor: 494 / 195,
   },
 };
 
@@ -648,7 +615,7 @@ function scaleEvents(
   const toolViews = tools.reduce((n, t) => n + t.views, 0);
   const toolRuns = tools.reduce((n, t) => n + t.runs, 0);
   const mapped = EVENTS_WEEK.map((e) => {
-    if (e.name === "ui_click") return { name: e.name, count: clickSum + 48 };
+    if (e.name === "ui_click") return { name: e.name, count: clickSum + 4 };
     if (e.name === "home_ab_view") return { name: e.name, count: homeViews };
     if (e.name === "tool_view") return { name: e.name, count: toolViews };
     if (e.name === "tool_run") return { name: e.name, count: toolRuns };
@@ -668,7 +635,7 @@ function scaleEvents(
 }
 
 function scaleTools(factor: number): ToolUsageRow[] {
-  const minEach = 10;
+  const minEach = 1;
   return JOURNEY_STEPS.map((step) => {
     const cur = TOOL_WEEK[step.id] ?? { views: 0, runs: 0 };
     const views = Math.max(minEach, scaleCount(cur.views, factor));
@@ -747,9 +714,9 @@ function distribute(total: number, weights: number[]): number[] {
 }
 
 function scaleExit(factor: number, homeAb: HomeAbRow[]) {
-  const shown = scaleCount(22, factor);
-  const submitted = scaleCount(8, factor);
-  const dismissed = scaleCount(11, factor);
+  const shown = scaleCount(4, factor);
+  const submitted = scaleCount(2, factor);
+  const dismissed = scaleCount(2, factor);
   const reasonWeights = [
     ["wanted_sample", "Expected a sample first", 3],
     ["not_ready_time", "Not ready to spend the time", 2],
