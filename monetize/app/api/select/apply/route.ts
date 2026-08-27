@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail, escapeHtml } from "@/lib/email";
 import { RAIN_SELECT } from "@/rain-select/config";
+import { sendSelectEmail } from "@/rain-select/mail";
 
 export const dynamic = "force-dynamic";
 
@@ -79,7 +80,9 @@ export async function POST(request: Request) {
     const admin = createAdminClient();
     let query = admin.from("rain_select_applications").update(row);
     query = id ? query.eq("id", id) : query.ilike("email", email!);
-    const { data, error } = await query.select("id, email, company_name, variant").maybeSingle();
+    const { data, error } = await query
+      .select("id, email, first_name, company_name, variant")
+      .maybeSingle();
     if (error || !data) {
       console.error("[select-apply]", error?.message);
       return NextResponse.json({ error: "Could not submit." }, { status: 500 });
@@ -97,11 +100,12 @@ export async function POST(request: Request) {
         });
       }
       if (typeof data.email === "string") {
-        await sendEmail({
+        const name = String(data.first_name || "").trim() || "there";
+        await sendSelectEmail({
           to: data.email,
           subject: "RAIN Select application received",
-          text: "We received your RAIN Select application. A human operator will review whether there is enough existing commercial motion, measurable upside, and 30-day leverage for the intervention to make sense. You are not selected until that review happens.",
-          html: `<p>We received your RAIN Select application.</p><p>A human operator will review whether there is enough existing commercial motion, measurable upside, and 30-day leverage for the intervention to make sense.</p><p>You are not selected until that review happens.</p>`,
+          text: `${name}, we received the RAIN Select application.\n\nA person will review whether there is enough existing commercial motion, measurable upside, and 30-day leverage for the intervention to make sense. You are not selected until that review happens.\n\nIf something in the business changed, reply to this email.\n\nOliver\nRAIN Select`,
+          html: `<p>${escapeHtml(name)}, we received the RAIN Select application.</p><p>A person will review whether there is enough existing commercial motion, measurable upside, and 30-day leverage for the intervention to make sense. You are not selected until that review happens.</p><p>If something in the business changed, reply to this email.</p><p>Oliver<br/>RAIN Select</p>`,
         });
       }
     }

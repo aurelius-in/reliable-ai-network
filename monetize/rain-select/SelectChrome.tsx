@@ -43,6 +43,14 @@ export function SelectFooter() {
         Reliable AI Network, LLC. RAIN Select is a commercial intervention, not
         a software membership.
       </p>
+      <p className="mt-2">
+        <a
+          href={`mailto:${RAIN_SELECT.contactEmail}`}
+          className="text-zinc-400 transition hover:text-white"
+        >
+          {RAIN_SELECT.contactEmail}
+        </a>
+      </p>
     </footer>
   );
 }

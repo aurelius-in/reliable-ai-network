@@ -7,6 +7,8 @@ export type SendEmailInput = {
   subject: string;
   text: string;
   html: string;
+  /** Override From. Select mail should not use the Make it RAIN sender. */
+  from?: string;
   /** ISO timestamp for delayed send (Resend scheduled_at) */
   scheduledAt?: string;
   /** One-click / list unsubscribe URL (marketing mail) */
@@ -19,6 +21,7 @@ export async function sendEmail(
 ): Promise<{ sent: boolean; reason?: string; id?: string }> {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const from =
+    input.from?.trim() ||
     process.env.RESEND_FROM_EMAIL?.trim() ||
     "Make it RAIN <onboarding@resend.dev>";
 

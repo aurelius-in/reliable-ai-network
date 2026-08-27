@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { adminKeyFromRequest, assertAdminSecret } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendEmail, escapeHtml } from "@/lib/email";
+import { escapeHtml } from "@/lib/email";
 import { RAIN_SELECT } from "@/rain-select/config";
+import { sendSelectEmail } from "@/rain-select/mail";
 
 export const dynamic = "force-dynamic";
 
@@ -65,22 +66,22 @@ export async function POST(request: Request) {
     const company = data.company_name || "the business";
 
     if (status === "selected") {
-      await sendEmail({
+      await sendSelectEmail({
         to: data.email,
         subject: "You've been selected for RAIN Select",
-        text: `${name}, we see enough commercial motion in ${company} to justify a 30-Day Revenue Intervention.${reason ? `\n\n${reason}` : ""}\n\n30-Day Revenue Intervention: $${RAIN_SELECT.monthlyPrice.toLocaleString("en-US")}.${nextStep ? `\n\nBegin here: ${nextStep}` : ""}`,
-        html: `<p>${escapeHtml(String(name))}, we see enough commercial motion in ${escapeHtml(String(company))} to justify a 30-Day Revenue Intervention.</p>${reason ? `<p>${escapeHtml(reason)}</p>` : ""}<p>30-Day Revenue Intervention: $${RAIN_SELECT.monthlyPrice.toLocaleString("en-US")}.</p>${nextStep ? `<p><a href="${escapeHtml(nextStep)}">Begin the 30-Day Intervention</a></p>` : ""}`,
+        text: `${name}, we see enough commercial motion in ${company} to justify a 30-Day Revenue Intervention.${reason ? `\n\n${reason}` : ""}\n\n30-Day Revenue Intervention: $${RAIN_SELECT.monthlyPrice.toLocaleString("en-US")}.${nextStep ? `\n\nBegin here: ${nextStep}` : ""}\n\nReply to this email if you want to proceed.\n\nOliver\nRAIN Select`,
+        html: `<p>${escapeHtml(String(name))}, we see enough commercial motion in ${escapeHtml(String(company))} to justify a 30-Day Revenue Intervention.</p>${reason ? `<p>${escapeHtml(reason)}</p>` : ""}<p>30-Day Revenue Intervention: $${RAIN_SELECT.monthlyPrice.toLocaleString("en-US")}.</p>${nextStep ? `<p><a href="${escapeHtml(nextStep)}">Begin the 30-Day Intervention</a></p>` : ""}<p>Reply to this email if you want to proceed.</p><p>Oliver<br/>RAIN Select</p>`,
       });
     } else {
       let extra = "";
       if (offerMir || status === "better_fit_other_path") {
         extra = `\n\nRAIN Select is probably too early for this business. If the immediate job is still figuring out who may pay, what offer to test, and which buyer conversation is worth having, there is a lower-cost self-guided RAIN product built for that stage: ${RAIN_SELECT.mirReferralUrl}`;
       }
-      await sendEmail({
+      await sendSelectEmail({
         to: data.email,
         subject: "RAIN Select application update",
-        text: `${name}, we do not think a $${RAIN_SELECT.monthlyPrice.toLocaleString("en-US")} RAIN Select engagement is the right commercial move for ${company} right now.${reason ? `\n\n${reason}` : ""}${extra}`,
-        html: `<p>${escapeHtml(String(name))}, we do not think a $${RAIN_SELECT.monthlyPrice.toLocaleString("en-US")} RAIN Select engagement is the right commercial move for ${escapeHtml(String(company))} right now.</p>${reason ? `<p>${escapeHtml(reason)}</p>` : ""}${extra ? `<p>RAIN Select is probably too early for this business. If the immediate job is still figuring out who may pay, there is a <a href="${RAIN_SELECT.mirReferralUrl}">lower-cost self-guided path</a>.</p>` : ""}`,
+        text: `${name}, we do not think a $${RAIN_SELECT.monthlyPrice.toLocaleString("en-US")} RAIN Select engagement is the right commercial move for ${company} right now.${reason ? `\n\n${reason}` : ""}${extra}\n\nOliver\nRAIN Select`,
+        html: `<p>${escapeHtml(String(name))}, we do not think a $${RAIN_SELECT.monthlyPrice.toLocaleString("en-US")} RAIN Select engagement is the right commercial move for ${escapeHtml(String(company))} right now.</p>${reason ? `<p>${escapeHtml(reason)}</p>` : ""}${extra ? `<p>RAIN Select is probably too early for this business. If the immediate job is still figuring out who may pay, there is a <a href="${RAIN_SELECT.mirReferralUrl}">lower-cost self-guided path</a>.</p>` : ""}<p>Oliver<br/>RAIN Select</p>`,
       });
     }
 

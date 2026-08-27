@@ -10,6 +10,7 @@ export const RAIN_SELECT = {
     : null,
   companyLine:
     "RAIN Select is built by Reliable AI Network in strategic collaboration with Innovative Marketing Solutions.",
+  contactEmail: "oliver@rainselect.com",
   mirReferralUrl: "https://makeitrainapp.com/?from=rain-select",
   cookieVariant: "rain_select_ab",
   cookieVisitor: "rain_select_vid",
