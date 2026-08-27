@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-export type AdminOpsNavCurrent = "activity" | "products" | "brief";
+export type AdminOpsNavCurrent =
+  | "activity"
+  | "products"
+  | "brief"
+  | "select";
 
 /**
  * Shareable ops strip. Never links to /admin/counter (emails / founder-only “fake” signals).
@@ -31,6 +35,11 @@ export function AdminOpsNav({
       id: "brief",
       label: "Brief Gen",
       href: `/admin/brief?key=${key}`,
+    },
+    {
+      id: "select",
+      label: "Select",
+      href: `/admin/select-applications?key=${key}`,
     },
   ];
 

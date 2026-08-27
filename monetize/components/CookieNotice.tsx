@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const STORAGE_KEY = "rain_cookie_notice_v1";
 
@@ -10,15 +11,19 @@ const STORAGE_KEY = "rain_cookie_notice_v1";
  * Not a hard GDPR wall — dismiss records acknowledgment.
  */
 export function CookieNotice() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    if (pathname?.startsWith("/select")) return;
     try {
       if (!localStorage.getItem(STORAGE_KEY)) setVisible(true);
     } catch {
       setVisible(true);
     }
-  }, []);
+  }, [pathname]);
+
+  if (pathname?.startsWith("/select")) return null;
 
   function dismiss() {
     try {

@@ -63,6 +63,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(inviteUrl);
   }
 
+  const host = request.nextUrl.hostname.toLowerCase();
+  const isSelectHost =
+    host === "rainselect.com" || host === "www.rainselect.com";
+
+  if (isSelectHost) {
+    const p = pathname;
+    const passThrough =
+      p.startsWith("/_next") ||
+      p.startsWith("/api") ||
+      p.startsWith("/select") ||
+      p.startsWith("/admin");
+    if (!passThrough) {
+      const rewriteUrl = request.nextUrl.clone();
+      rewriteUrl.pathname = p === "/" ? "/select" : `/select${p}`;
+      return NextResponse.rewrite(rewriteUrl);
+    }
+  }
+
   if ((pathname === "/login" || pathname === "/signup") && user) {
     const intended = safeInternalNext(
       request.nextUrl.searchParams.get("next"),

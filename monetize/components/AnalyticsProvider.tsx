@@ -14,8 +14,8 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!pathname) return;
-    // Skip noisy admin polling of itself
     if (pathname.startsWith("/admin")) return;
+    if (pathname.startsWith("/select")) return;
     trackPageView(pathname);
 
     const checkout = searchParams.get("checkout");

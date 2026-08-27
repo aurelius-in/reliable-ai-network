@@ -12,6 +12,7 @@ import { HomeDepth } from "@/components/HomeDepth";
 import { HomeHero } from "@/components/HomeHero";
 import { HomeChat } from "@/components/HomeChat";
 import { PublicExampleBriefs } from "@/components/PublicExampleBriefs";
+import { ProblemValueCalculator } from "@/components/ProblemValueCalculator";
 import { CopySwap } from "@/components/CopySwap";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient } from "@/lib/supabase/server";
@@ -73,8 +74,8 @@ const HOW_STEPS = [
   {
     n: "2",
     title: "Buyer Stress Test",
-    body: "Would a skeptical buyer actually pay for this? Pressure-test the offer before you burn another week promoting it. Unique to Make it RAIN.",
-    bodyMobile: "Would a skeptical buyer actually pay? Unique.",
+    body: "Would a skeptical buyer actually pay? Pressure-test the buyer, economics, and offer before you burn another week promoting it.",
+    bodyMobile: "Would a skeptical buyer actually pay? Stress-test before you promote.",
   },
   {
     n: "3",
@@ -129,6 +130,12 @@ export default async function HomePage() {
         <nav className="flex items-center gap-3 text-sm sm:gap-4">
           <Link href="/pricing" className="text-slate-300 transition hover:text-white">
             Pricing
+          </Link>
+          <Link
+            href="/#deal-economics"
+            className="hidden text-slate-300 transition hover:text-white sm:inline"
+          >
+            Unpaid month
           </Link>
           <Link href="/login" className="text-slate-300 transition hover:text-white">
             Login
@@ -242,8 +249,8 @@ export default async function HomePage() {
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-300">
             Paste a URL. See a commercial result before you create an account.
-            Then save for a {GUARANTEE.baitName} another firm would charge
-            hundreds for:
+            Then save for a {GUARANTEE.baitName}: buyer, paid offer, price
+            test, Buyer Stress Test, and the next conversation.
           </p>
           <ul className="rain-list mt-2.5 space-y-2 text-sm text-slate-200 sm:mt-3">
             <li>One buyer who may actually pay</li>
@@ -316,6 +323,13 @@ export default async function HomePage() {
               </li>
             ))}
           </ol>
+        </section>
+
+        <section
+          id="deal-economics"
+          className="fade-up mt-8 w-full max-w-2xl scroll-mt-24 sm:mt-10"
+        >
+          <ProblemValueCalculator />
         </section>
 
         <details className="group mt-8 w-full max-w-2xl scroll-mt-24 text-left sm:mt-10">

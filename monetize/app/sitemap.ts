@@ -1,13 +1,26 @@
 import type { MetadataRoute } from "next";
+import { headers } from "next/headers";
 
 const SITE = (
   process.env.NEXT_PUBLIC_APP_URL || "https://makeitrainapp.com"
 ).replace(/\/$/, "");
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const host = (await headers()).get("host") || "";
+  if (host.toLowerCase().includes("rainselect")) {
+    return [
+      {
+        url: "https://rainselect.com",
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 1,
+      },
+    ];
+  }
   const paths: { path: string; changeFrequency: MetadataRoute.Sitemap[0]["changeFrequency"]; priority: number }[] = [
     { path: "/", changeFrequency: "weekly", priority: 1 },
+    { path: "/deal-economics", changeFrequency: "weekly", priority: 0.85 },
     { path: "/pricing", changeFrequency: "weekly", priority: 0.9 },
     { path: "/reviews", changeFrequency: "weekly", priority: 0.75 },
     { path: "/checklist", changeFrequency: "monthly", priority: 0.8 },

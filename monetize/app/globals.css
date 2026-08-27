@@ -30,6 +30,12 @@
     sans-serif;
 }
 
+html.select-site body {
+  background-color: #000;
+  background-image: none;
+  color: #f4f4f5;
+}
+
 html {
   color-scheme: dark;
 }
