@@ -220,18 +220,9 @@ export function HomeHero() {
       <h1 className="sr-only">
         You built something real. Now it&apos;s time to get paid. Make it RAIN.
       </h1>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/brand/make-it-rain-wordmark-line.png"
-        alt=""
-        width={1133}
-        height={189}
-        decoding="async"
-        className="fade-up mx-auto mt-3 h-11 w-auto max-w-[min(100%,22rem)] object-contain object-center sm:mt-4 sm:h-14 sm:max-w-[28rem] md:h-16"
-      />
       <p
         aria-hidden
-        className="fade-up mt-5 max-w-xl text-lg font-semibold leading-snug tracking-tight text-white sm:mt-6 sm:text-xl md:text-2xl"
+        className="fade-up mt-3 max-w-xl text-lg font-semibold leading-snug tracking-tight text-white sm:mt-4 sm:text-xl md:text-2xl"
       >
         <CopySwap
           block
@@ -239,6 +230,15 @@ export function HomeHero() {
           desktop={<LineStack lines={copy.headlineDesktop} />}
         />
       </p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/brand/make-it-rain-wordmark-line.png"
+        alt=""
+        width={1129}
+        height={184}
+        decoding="async"
+        className="fade-up mx-auto mt-3 h-11 w-auto max-w-[min(100%,22rem)] bg-transparent object-contain object-center sm:mt-4 sm:h-14 sm:max-w-[28rem] md:h-16"
+      />
       <p className="fade-up mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:mt-4 sm:text-base">
         <CopySwap
           block
