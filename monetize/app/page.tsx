@@ -25,7 +25,7 @@ const SITE = (
 const TITLE =
   "You built something real. Now it's time to get paid. Make it RAIN.";
 const DESCRIPTION =
-  "Find who may pay, stress-test the offer, and figure out the next conversation worth having. Paste your URL. See a commercial result before you create an account.";
+  "Find who may pay, stress-test the offer, and the next conversation worth having. Paste your product URL for a commercial result before an account, then save to run First Customer Path.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
@@ -245,12 +245,11 @@ export default async function HomePage() {
             Free · {GUARANTEE.baitName}
           </p>
           <h2 className="mt-1.5 text-xl font-black text-white sm:mt-2 sm:text-3xl">
-            Find who may pay, what to charge, and what to do next
+            {GUARANTEE.baitName}
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-300">
-            Paste a URL. See a commercial result before you create an account.
-            Then save for a {GUARANTEE.baitName}: buyer, paid offer, price
-            test, Buyer Stress Test, and the next conversation.
+            Paste a URL. See a commercial result before you create an
+            account, then save to run the full path.
           </p>
           <ul className="rain-list mt-2.5 space-y-2 text-sm text-slate-200 sm:mt-3">
             <li>One buyer who may actually pay</li>

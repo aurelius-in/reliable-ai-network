@@ -20,7 +20,7 @@ const SITE_URL = (
 ).replace(/\/$/, "");
 
 const DEFAULT_DESCRIPTION =
-  "Find who may pay, what to charge, and what to do next. Buyer Stress Test. Run it on my product, free.";
+  "Find who may pay, stress-test the offer, and the next conversation worth having. Paste your URL. Run it on my product, free.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

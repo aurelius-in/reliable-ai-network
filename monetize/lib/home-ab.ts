@@ -42,30 +42,28 @@ export type HomeVariantCopy = {
 const HEADLINE = [
   "You built something real.",
   "Now it's time to get paid.",
-  "Make it RAIN.",
 ];
 
-const SUPPORT = [
-  "Find who may pay, stress-test the offer, and figure out the next conversation worth having.",
+const SUPPORT_MOBILE = [
+  "Find who may pay, stress-test the offer, and the next conversation worth having. Paste your URL for a result before an account.",
 ];
 
-const BODY_MOBILE = [
-  "Find who may pay, what to charge, and what to do next. Paste your URL. See one commercial result before you create an account.",
+const SUPPORT_DESKTOP = [
+  "Find who may pay, stress-test the offer, and the next conversation worth having. Paste your product URL for a commercial result before an account, then save to run First Customer Path.",
 ];
 
-const BODY_DESKTOP = [
-  "Find who may pay, what to charge, and what to do next. Paste your product URL. See one commercial result before you create an account. Then save it to run First Customer Path.",
-];
+const BODY_MOBILE: string[] = [];
+const BODY_DESKTOP: string[] = [];
 
-const TRUST_MOBILE = "No card. Result first. Account is how you save the full path.";
+const TRUST_MOBILE = "No card.";
 const TRUST_DESKTOP =
-  "No card. Result first. Not a guaranteed sale. If you upgrade and run the path, clearer ranked conversations in 60 days or money back on fees paid.";
+  "No card. Not a guaranteed sale. If you upgrade and run the path, clearer ranked conversations in 60 days or money back on fees paid.";
 
 const LOCKED = {
   headlineMobile: HEADLINE,
   headlineDesktop: HEADLINE,
-  supportLinesMobile: SUPPORT,
-  supportLinesDesktop: SUPPORT,
+  supportLinesMobile: SUPPORT_MOBILE,
+  supportLinesDesktop: SUPPORT_DESKTOP,
   bodyMobile: BODY_MOBILE,
   bodyDesktop: BODY_DESKTOP,
   primaryMobile: "Run it on my product, free",

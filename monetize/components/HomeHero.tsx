@@ -217,20 +217,36 @@ export function HomeHero() {
 
   return (
     <>
-      <h1 className="fade-up mt-3 text-4xl font-black leading-[1.05] tracking-tight text-white sm:mt-4 sm:text-6xl">
+      <h1 className="sr-only">
+        You built something real. Now it&apos;s time to get paid. Make it RAIN.
+      </h1>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/brand/make-it-rain-wordmark-line.png"
+        alt=""
+        width={1133}
+        height={189}
+        decoding="async"
+        className="fade-up mx-auto mt-3 h-11 w-auto max-w-[min(100%,22rem)] object-contain object-center sm:mt-4 sm:h-14 sm:max-w-[28rem] md:h-16"
+      />
+      <p
+        aria-hidden
+        className="fade-up mt-5 max-w-xl text-lg font-semibold leading-snug tracking-tight text-white sm:mt-6 sm:text-xl md:text-2xl"
+      >
         <CopySwap
           block
           mobile={<LineStack lines={copy.headlineMobile} />}
           desktop={<LineStack lines={copy.headlineDesktop} />}
         />
-      </h1>
-      <p className="fade-up mx-auto mt-3 max-w-3xl text-lg font-semibold leading-snug text-white sm:mt-4 sm:text-2xl sm:leading-snug">
+      </p>
+      <p className="fade-up mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:mt-4 sm:text-base">
         <CopySwap
           block
           mobile={<LineStack lines={copy.supportLinesMobile} />}
           desktop={<LineStack lines={copy.supportLinesDesktop} />}
         />
       </p>
+      {copy.bodyDesktop.length > 0 || copy.bodyMobile.length > 0 ? (
       <p className="fade-up mx-auto mt-2 max-w-2xl text-sm leading-snug text-slate-300 sm:mt-3 sm:text-base sm:leading-snug">
         <CopySwap
           block
@@ -238,6 +254,7 @@ export function HomeHero() {
           desktop={<LineStack lines={copy.bodyDesktop} />}
         />
       </p>
+      ) : null}
 
       <form
         onSubmit={handleRun}
@@ -310,6 +327,17 @@ export function HomeHero() {
           mobile={copy.trustLineMobile}
           desktop={copy.trustLineDesktop}
         />
+      </p>
+      <p className="mt-2 text-xs text-slate-500 sm:text-sm">
+        Don&apos;t want to paste a URL yet?{" "}
+        <TrackedLink
+          href="/#deal-economics"
+          trackTarget="hero_deal_calc_jump"
+          className="font-semibold text-aqua hover:text-aqua-bright"
+        >
+          See what another unpaid month is costing you
+        </TrackedLink>
+        .
       </p>
       {showBadge && (
         <p className="mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">

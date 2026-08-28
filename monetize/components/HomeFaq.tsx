@@ -61,7 +61,7 @@ const FAQS: {
     id: "faq_free_score",
     q: "What do I get free right now?",
     qMobile: "What do I get free right now?",
-    a: "Paste a product URL on the homepage. You see a commercial result before you create an account. Save the product for the full First Customer Path: one buyer, one paid offer, a price to test, Buyer Stress Test, the next conversation worth your hour, and what is still a guess. No card.",
+    a: "Paste a product URL. See a commercial result before you create an account, then save for the full First Customer Path. No card.",
     aMobile:
       "URL in, result first. Save for First Customer Path. No card.",
   },
