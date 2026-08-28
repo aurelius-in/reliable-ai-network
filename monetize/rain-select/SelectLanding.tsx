@@ -242,6 +242,9 @@ export function SelectLanding() {
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
           {copy.support}
         </p>
+        <p className="mt-4 max-w-2xl text-sm font-medium text-zinc-200">
+          {SHARED.guaranteeHook}
+        </p>
         <div className="mt-8">
           <a
             href="#apply"
@@ -321,6 +324,26 @@ export function SelectLanding() {
         </section>
 
         {priceBlock}
+
+        <section
+          className="mt-16 border-t border-white/10 pt-12 text-left"
+          onMouseEnter={() =>
+            track("select_guarantee_viewed", { variant, preview })
+          }
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+            Work guarantee
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+            {SHARED.guaranteeTitle}
+          </h2>
+          <p className="mt-3 max-w-2xl text-lg font-medium text-white">
+            {SHARED.guaranteeHook}
+          </p>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400">
+            {SHARED.guaranteeBody}
+          </p>
+        </section>
 
         <section
           id="apply"

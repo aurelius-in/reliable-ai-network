@@ -38,7 +38,10 @@ export default function GuaranteePage() {
         <p className="mt-4 text-sm text-slate-400">
           Short on the homepage. Specific here: two tracks ($0 / early path
           vs already earning), what “good faith” means, and what money back
-          covers.
+          covers. The free brief does not include a subscription to refund.
+          After the brief, a 30-day trial (card on file) puts this guarantee
+          in force. Companies with existing revenue may request RAIN Select:
+          name the constraint and the next move, or the $1,500 is returned.
         </p>
 
         <section className="mt-8 rounded-2xl border border-rain/40 bg-gradient-to-br from-rain/15 to-night-800 px-5 py-6">

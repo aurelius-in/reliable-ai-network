@@ -42,8 +42,9 @@ function wrapHtml(body: string, unsubHref: string): string {
       Oliver · Make it RAIN<br/>
       Reliable AI Network, LLC × Innovative Marketing Solutions<br/>
       ${escape(COMPANY_MAILING_ADDRESS)}<br/>
-      <a href="${SITE}/pricing" style="color:#0891b2">Start free trial</a>
-      · <a href="${SITE}/checklist" style="color:#0891b2">Open checkup</a>
+      <a href="${SITE}/pricing" style="color:#374151">Begin 30-day trial</a>
+      · <a href="https://rainselect.com/?utm_source=makeitrain&utm_medium=email&utm_campaign=nurture" style="color:#374151">RAIN Select</a>
+      · <a href="${SITE}/checklist" style="color:#374151">Open checkup</a>
       · <a href="${unsubHref}" style="color:#0891b2">Unsubscribe</a>
     </p>
   </div>`;

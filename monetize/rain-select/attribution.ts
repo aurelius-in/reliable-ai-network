@@ -15,10 +15,13 @@ const ATTR_KEY = "rain_select_attr";
 
 function readParams(search: string) {
   const p = new URLSearchParams(search);
+  const from = p.get("from");
   return {
-    source: p.get("utm_source"),
-    medium: p.get("utm_medium"),
-    campaign: p.get("utm_campaign"),
+    source: p.get("utm_source") || from,
+    medium: p.get("utm_medium") || (from ? "product" : null),
+    campaign:
+      p.get("utm_campaign") ||
+      (from === "makeitrain" ? "post_brief" : from),
     content: p.get("utm_content"),
     term: p.get("utm_term"),
   };

@@ -77,9 +77,9 @@ const FAQS: {
     id: "faq_guarantee",
     q: "What is the guarantee?",
     qMobile: "Guarantee?",
-    a: "Clearer ranked conversations in 60 days, or money back on subscription fees paid in the window. Run the path in good faith (logged conversations, not an unused login). Already earning? 2× revenue track also available. Full rules at /guarantee.",
+    a: "Clearer ranked conversations in 60 days, or money back on subscription fees paid in the window. The free brief has nothing to refund. After the brief, a 30-day trial (card on file) puts the guarantee in force. Companies with customers or pipeline may request RAIN Select at rainselect.com: name the constraint and the next move, or the $1,500 is returned. Full rules at /guarantee.",
     aMobile:
-      "Clearer ranked conversations in 60 days, or money back. Terms: /guarantee",
+      "Trial: clearer conversations in 60 days, or fees back. Select: name the leak and next move, or $1,500 back. /guarantee",
   },
   {
     id: "faq_no_ads",
@@ -96,6 +96,14 @@ const FAQS: {
     a: "No. We do not build, host, or take ownership of your software. You bring a product you own. We help with the commercial side.",
     aMobile:
       "No. We don’t build, host, or own your software. You keep it. We help you monetize.",
+  },
+  {
+    id: "faq_deal_math",
+    q: "What is the calculator on the homepage?",
+    qMobile: "Homepage calculator?",
+    a: "A few of your numbers, no URL: what another unpaid month is costing you in time. That is one door into the same product. First Customer Path is who may pay, Buyer Stress Test, and the next conversation. Proposal math (delivery, closer pay, what to charge) is a different calculator inside after you save an account. Neither closes the sale for you.",
+    aMobile:
+      "Unpaid-month cost, no URL. Then First Customer Path. Proposal math is inside after you save.",
   },
 ];
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Check, Crown, Star } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { CheckoutButton } from "@/components/CheckoutButton";
+import { PaidNextOffer } from "@/components/PaidNextOffer";
 import { SiteFooter } from "@/components/SiteFooter";
 import { TIERS } from "@/lib/tiers";
 import { createClient } from "@/lib/supabase/server";
@@ -24,6 +25,22 @@ export default async function PricingPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const { data: profile } = user
+    ? await supabase
+        .from("profiles")
+        .select("subscription_status")
+        .eq("id", user.id)
+        .maybeSingle()
+    : { data: null };
+  const status = profile?.subscription_status ?? null;
+  const showFullOffer = Boolean(user) && (!status || status === "canceled");
+  const showSelectOnly = Boolean(
+    user &&
+      status &&
+      status !== "canceled" &&
+      status !== "reviewer" &&
+      status !== "retention"
+  );
 
   return (
     <div className="min-h-screen px-4 py-10 md:px-6">
@@ -63,6 +80,17 @@ export default async function PricingPage() {
             )}
           </p>
         </div>
+
+        {showFullOffer ? (
+          <div className="mx-auto mt-10 max-w-5xl">
+            <PaidNextOffer placement="pricing" />
+          </div>
+        ) : null}
+        {showSelectOnly ? (
+          <div className="mx-auto mt-10 max-w-5xl">
+            <PaidNextOffer placement="pricing" mode="select_only" />
+          </div>
+        ) : null}
 
         <section className="mx-auto mt-10 max-w-3xl rounded-2xl border border-white/10 bg-night-800/80 px-5 py-6 text-left sm:px-8">
           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-aqua">

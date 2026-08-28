@@ -17,11 +17,13 @@ export function FirstRunSuccess({
   nextHref = "/dashboard?tab=buyers",
   source = "analyzer",
   compact = false,
+  showPaidNext = false,
 }: {
   analysis: IdeaAnalysis;
   nextHref?: string;
   source?: "onboarding" | "analyzer";
   compact?: boolean;
+  showPaidNext?: boolean;
 }) {
   const items = buildFirstRunItems(analysis);
 
@@ -52,7 +54,7 @@ export function FirstRunSuccess({
         You have a commercial test to run
       </h3>
       <p className="mt-1.5 text-sm text-slate-300">
-        Not another AI opinion. Four things to act on — then people you already
+        Not another AI opinion. Four things to act on, then people you already
         know.
       </p>
 
@@ -65,13 +67,20 @@ export function FirstRunSuccess({
       <Link
         href={nextHref}
         onClick={onContinue}
-        className="btn-primary mt-5 inline-flex w-full items-center justify-center gap-2 !py-3.5 text-base sm:w-auto sm:!px-8"
+        className={`inline-flex w-full items-center justify-center gap-2 text-sm font-semibold sm:w-auto ${
+          showPaidNext
+            ? "mt-4 text-slate-300 hover:text-white"
+            : "btn-primary mt-5 !py-3.5 text-base sm:!px-8"
+        }`}
       >
-        Next: Daily Market Research <ArrowRight size={18} />
+        {showPaidNext
+          ? "Continue with Daily Market Research"
+          : "Next: Daily Market Research"}{" "}
+        <ArrowRight size={18} />
       </Link>
       <p className="mt-2 text-xs text-slate-500">
-        Step 1: people you already know. Step 2: scan 25+ public communities for
-        buyer conversations. Approve every outreach before sending.
+        Free tools stay. Step 1: people you already know. Step 2: scan public
+        communities. Approve every outreach before sending.
       </p>
     </div>
   );

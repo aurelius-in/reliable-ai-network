@@ -5,6 +5,7 @@ import { CheckoutWithUpsells } from "@/components/CheckoutWithUpsells";
 import { SiteFooter } from "@/components/SiteFooter";
 import { createClient } from "@/lib/supabase/server";
 import { TIERS } from "@/lib/tiers";
+import { GUARANTEE } from "@/lib/guarantee";
 import type { Tier } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
@@ -50,16 +51,23 @@ export default async function CheckoutPage({
 
       <main className="mx-auto mt-8 w-full max-w-2xl flex-1">
         <div className="mb-6 text-center sm:text-left">
-          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
-            Secure checkout
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
+            Checkout
           </p>
-          <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
             {tierInfo ? `${tierInfo.name} plan` : "Start your trial"}
           </h1>
-          <p className="mt-1.5 text-sm text-slate-400">
+          <p className="mt-1.5 text-sm leading-relaxed text-slate-400">
             {tierInfo
-              ? `30-day free trial of ${tierInfo.name}. Optionally add funnel services below (AI answering, content, leads, outreach). Card saved now — plan and any add-ons bill after the trial unless you cancel.`
-              : "30-day free trial. Card saved now. Charged when the trial ends unless you cancel."}
+              ? `30-day trial of ${tierInfo.name}. A card is stored now. The plan bills after the trial unless you cancel.`
+              : "30-day trial. A card is stored now. You are charged when the trial ends unless you cancel."}
+          </p>
+          <p className="mt-3 text-sm text-slate-200">
+            {GUARANTEE.hook}. Cancel by day 30 and you pay $0.{" "}
+            <Link href="/guarantee" className="text-slate-400 underline-offset-4 hover:text-white hover:underline">
+              Terms
+            </Link>
+            .
           </p>
         </div>
 

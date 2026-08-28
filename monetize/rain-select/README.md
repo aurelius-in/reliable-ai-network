@@ -30,5 +30,9 @@ Do not mark an applicant selected until a human reviews the business.
 
 - `RAIN_SELECT_MONTHLY_PRICE` (default 1500)
 - `RAIN_SELECT_SHOW_PRICE` (default true)
-- `RAIN_SELECT_3X_GUARANTEE_ENABLED` (default false)
+- `RAIN_SELECT_3X_GUARANTEE_ENABLED` (default false; do not use a 3X revenue promise)
 - `RAIN_SELECT_MAX_ACTIVE_CLIENTS` (optional, only if capacity is real)
+
+Work guarantee on the live page: if selected, name the highest-value leak and a next commercial move for the month, or refund the $1,500. That is a work-product guarantee, not a revenue multiple.
+
+Make it RAIN in-app upsell (after the free brief) links here with `utm_source=makeitrain`. Keep Select chrome free of Make it RAIN navigation.

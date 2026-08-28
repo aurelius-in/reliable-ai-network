@@ -10,6 +10,7 @@ import { ReferralAttributor } from "@/components/ReferralAttributor";
 import { AccessCodeAutoRedeem } from "@/components/AccessCodeAutoRedeem";
 import { AccessCodeForm } from "@/components/AccessCodeForm";
 import { ConfirmEmailBanner } from "@/components/ConfirmEmailBanner";
+import { PaidNextOffer } from "@/components/PaidNextOffer";
 import { isComplimentaryStatus } from "@/lib/access-codes";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -82,7 +83,14 @@ export default async function BillingPage() {
       <main className="mx-auto max-w-3xl space-y-6 px-4 pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] md:py-8">
         <ReferralAttributor />
         <ConfirmEmailBanner />
-        <h1 className="text-2xl font-black text-white">Billing</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-white">Billing</h1>
+
+        {!hasSubscription && !isComp ? (
+          <PaidNextOffer placement="billing" />
+        ) : null}
+        {hasSubscription && !isComp ? (
+          <PaidNextOffer placement="billing" mode="select_only" />
+        ) : null}
 
         {isTrialing && trialEndDate && (
           <div className="fade-up rounded-2xl border border-rain/40 bg-gradient-to-r from-rain/10 to-night-700 p-6">

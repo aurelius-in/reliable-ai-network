@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Zap } from "lucide-react";
+import { PaidNextOffer } from "@/components/PaidNextOffer";
 import { RainBullet } from "@/components/RainBullet";
 import { tierLabel, trialDaysLeft } from "@/lib/tiers";
 import { track } from "@/lib/track";
@@ -76,26 +76,14 @@ export function TrialBanner({ profile }: { profile: Profile | null }) {
 
   if (!status || status === "canceled") {
     return (
-      <div className="fade-up rounded-2xl border border-rain/30 bg-gradient-to-r from-rain/10 via-night-700 to-violet/10 px-5 py-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="flex items-center gap-2 font-semibold text-white">
-            <Zap size={18} className="text-aqua" />
-            {status === "canceled"
-              ? "Your subscription ended. Rejoin to keep making it rain."
-              : "Your account isn't active yet — pick a plan and start your 30-day free trial."}
+      <div className="fade-up space-y-3">
+        {status === "canceled" ? (
+          <p className="text-sm text-slate-400">
+            Your subscription ended. Restart the trial or apply for RAIN Select
+            if revenue is already in motion.
           </p>
-          <Link
-            href={status === "canceled" ? "/billing" : "/pricing"}
-            onClick={() =>
-              track("activate_trial_click", {
-                status: status ?? "none",
-              })
-            }
-            className="btn-primary !rounded-lg !px-4 !py-2 text-sm shadow-[0_0_18px_rgba(0,229,255,0.25)]"
-          >
-            {status === "canceled" ? "Reactivate" : "Activate trial"}
-          </Link>
-        </div>
+        ) : null}
+        <PaidNextOffer placement="dashboard" />
       </div>
     );
   }

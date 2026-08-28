@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import { AnalysisResult } from "@/components/AnalysisResult";
 import { FirstRunSuccess } from "@/components/FirstRunSuccess";
+import { PaidNextOffer } from "@/components/PaidNextOffer";
 import { EvidenceChecklist } from "@/components/EvidenceChecklist";
 import { ChipGroup, ErrorText, FieldLabel, FunLoading } from "@/components/ui";
 import { AUDIENCE_OPTIONS, EXAMPLE_CREATIONS } from "@/lib/examples";
@@ -122,7 +123,12 @@ export function OnboardingForm() {
   if (analysis) {
     return (
       <div className="space-y-6">
-        <FirstRunSuccess analysis={analysis} source="onboarding" />
+        <FirstRunSuccess
+          analysis={analysis}
+          source="onboarding"
+          showPaidNext
+        />
+        <PaidNextOffer placement="first_run" />
         <details className="rounded-xl border border-white/10 bg-night-800/80 px-4 py-3">
           <summary className="cursor-pointer text-sm font-semibold text-slate-200">
             See full brief

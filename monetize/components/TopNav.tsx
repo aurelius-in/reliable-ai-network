@@ -57,9 +57,9 @@ export function TopNav({ profile }: { profile: Profile | null }) {
           {tier !== "pro" && !isComp && (
             <Link
               href="/pricing"
-              className="hidden rounded-lg bg-gradient-to-r from-aqua via-violet to-rain px-3.5 py-1.5 text-xs font-bold text-white shadow-[0_0_18px_rgba(0,229,255,0.25)] transition hover:brightness-110 sm:inline-block"
+              className="hidden border border-white/25 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-white transition hover:border-white hover:bg-white hover:text-night-900 sm:inline-block"
             >
-              Upgrade
+              Continue
             </Link>
           )}
 

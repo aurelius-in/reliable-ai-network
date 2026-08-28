@@ -115,6 +115,10 @@ export const SHARED = {
   ],
   priceNote:
     "Selected businesses begin with a $1,500 30-Day Revenue Intervention. Continuation after 30 days depends on what was learned and whether both sides want to continue. Submitting does not obligate you to buy.",
+  guaranteeTitle: "The fee comes back if we fail the work",
+  guaranteeHook: "Name the leak and the next move, or the $1,500 comes back.",
+  guaranteeBody:
+    "If we select your business and complete the 30-Day Revenue Intervention without naming the highest-value commercial leak and a next move you can run this month, we refund the $1,500. That is a work guarantee, not a promise that revenue will 2x or 3x. We still decline businesses where 30 days would be theater. Selection happens before you pay.",
   applyConfirm:
     "Application started. Give us enough context to decide whether RAIN Select is the right intervention for your business.",
   received:

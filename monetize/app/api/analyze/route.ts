@@ -9,6 +9,7 @@ import {
 import type { EvidenceAnswers } from "@/lib/evidence-quality";
 import type { IdeaAnalysis } from "@/types";
 import { trackToolRun } from "@/lib/track-server";
+import { sendPaidNextEmail } from "@/lib/paid-next-email";
 import {
   CREATION_CONTEXT_SELECT,
   toProductContext,
@@ -169,6 +170,12 @@ export async function POST(request: Request) {
     },
   };
 
+  const { count: priorBriefs } = await supabase
+    .from("generated_assets")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("type", "idea_analysis");
+
   const { data: asset, error: assetError } = await withProfileRepair(user, () =>
     supabase
       .from("generated_assets")
@@ -187,6 +194,23 @@ export async function POST(request: Request) {
   }
 
   trackToolRun("analyzer", {}, { userId: user.id, path: "/api/analyze" });
+
+  if ((priorBriefs ?? 0) === 0 && !assetError && user.email) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name, subscription_status")
+      .eq("id", user.id)
+      .maybeSingle();
+    const status = profile?.subscription_status ?? null;
+    if (!status || status === "canceled") {
+      const firstName =
+        profile?.name?.split(" ")[0] || user.email.split("@")[0];
+      void sendPaidNextEmail({ to: user.email, firstName }).catch((err) =>
+        console.error("[paid-next-email]", err)
+      );
+    }
+  }
+
   return NextResponse.json({
     creationId: creation.id,
     assetId: asset?.id ?? null,
