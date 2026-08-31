@@ -370,7 +370,7 @@ export function SelectLanding() {
                 Application started
               </p>
               <h2 className="text-2xl font-semibold text-white">
-                Enough context to decide
+                {SHARED.applyFormTitle}
               </h2>
               <p className="text-sm text-zinc-400">{SHARED.applyConfirm}</p>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -615,8 +615,7 @@ export function SelectLanding() {
                 Submit for Selection
               </button>
               <p className="text-xs text-zinc-500">
-                Submitting does not obligate you to buy. We review whether the
-                intervention makes commercial sense first.
+                {SHARED.applySubmitNote}
               </p>
             </form>
           ) : (
@@ -628,16 +627,17 @@ export function SelectLanding() {
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
                 Selection application
               </p>
-              <h2 className="text-2xl font-semibold text-white">{copy.cta}</h2>
-              <p className="text-sm text-zinc-400">
-                Business email first. We decide whether there is enough to work
-                with before anyone pays.
-              </p>
-              <Field label="Business email">
+              <h2 className="text-2xl font-semibold text-white">
+                {SHARED.applyTitle}
+              </h2>
+              <p className="text-sm text-zinc-400">{SHARED.applyBody}</p>
+              <Field label={SHARED.applyEmailLabel}>
                 <input
                   required
                   type="email"
                   className={inputClass}
+                  autoComplete="email"
+                  placeholder="you@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -648,7 +648,7 @@ export function SelectLanding() {
                 disabled={busy}
                 className="border border-white bg-white px-6 py-3 text-sm font-semibold text-black disabled:opacity-60"
               >
-                {copy.cta}
+                {SHARED.applyEmailCta}
               </button>
             </form>
           )}

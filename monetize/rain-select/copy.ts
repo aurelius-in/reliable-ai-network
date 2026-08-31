@@ -119,10 +119,18 @@ export const SHARED = {
   guaranteeHook: "Name the leak and the next move, or the $1,500 comes back.",
   guaranteeBody:
     "If we select your business and complete the 30-Day Revenue Intervention without naming the highest-value commercial leak and a next move you can run this month, we refund the $1,500. That is a work guarantee, not a promise that revenue will 2x or 3x. We still decline businesses where 30 days would be theater. Selection happens before you pay.",
+  applyTitle: "Start with a work email",
+  applyBody:
+    "If there is not enough existing commercial motion to justify a 30-day intervention, there is nothing to buy.",
+  applyEmailLabel: "Work email",
+  applyEmailCta: "Continue",
+  applyFormTitle: "A few facts about the business",
   applyConfirm:
-    "Application started. Give us enough context to decide whether RAIN Select is the right intervention for your business.",
+    "Enough to tell whether a 30-day intervention would be real work, or theater.",
   received:
-    "We will review whether there is enough existing commercial motion, measurable upside and 30-day leverage for RAIN Select to make sense.",
+    "A person will look at whether there is enough existing commercial motion, measurable upside, and 30-day leverage for the intervention to make sense.",
+  applySubmitNote:
+    "Submitting does not obligate you to buy. The engagement only proceeds if there is a commercial problem worth attacking.",
   footer:
     "Reliable AI Network, LLC. RAIN Select is a commercial intervention, not a software membership.",
 };
