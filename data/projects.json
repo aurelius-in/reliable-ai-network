@@ -1,0 +1,373 @@
+[
+  {
+    "id": "make-it-rain",
+    "title": "Make it RAIN",
+    "summary": "Monetization OS for indie developers and AI builders who already shipped. Fifteen guided tools for buyers, pricing, launch, sales, and what to fix next. Built by Reliable AI Network with Innovative Marketing Solutions. Live product at MakeItRainApp.com.",
+    "blurb": "Commercial pathfinding for builders who already shipped: who may pay, what to charge, and what to do next.",
+    "industries": [
+      "SaaS / Software",
+      "Marketing"
+    ],
+    "caps": [
+      "Agentic",
+      "UI & Traces",
+      "Guardrails"
+    ],
+    "codeAccess": "proprietary_saas",
+    "repo": null,
+    "page": "https://MakeItRainApp.com",
+    "poster": "docs/assets/rain-social-sm.png",
+    "gif": null,
+    "featuredOnHome": false
+  },
+  {
+    "id": "health-nav",
+    "title": "Agentic AI Health Navigator",
+    "summary": "Built for providers, payers, and digital-front-door teams: multi-agent triage analyzes symptoms, checks risk/coverage, and routes to in-network care. React/TS + FastAPI services with HIPAA-minded design, medical ontologies, monitoring, and policy guardrails for safe, auditable decisions.",
+    "blurb": "Multi-agent triage that checks risk and coverage, then routes people to in-network care.",
+    "industries": [
+      "Healthcare"
+    ],
+    "caps": [
+      "Agentic",
+      "Retrieval (RAG)",
+      "Guardrails",
+      "Evals",
+      "UI & Traces",
+      "Compliance"
+    ],
+    "repo": "https://github.com/aurelius-in/AI-Health-Navigator-for-Patients",
+    "poster": "agentic-ai-health-nav-poster.webp",
+    "gif": "agentic-ai-health-nav.webp",
+    "featuredOnHome": true,
+    "homeOrder": 1
+  },
+  {
+    "id": "autoops",
+    "title": "AutoOps Sentinel",
+    "summary": "For SRE/Platform teams: ingests metrics/logs to detect anomalies, forecast incidents, and propose safe auto-remediations. An agent explains actions, answers NL questions, and generates exec-ready postmortems showing cost avoided, backed by a modern React dashboard and observability hooks.",
+    "blurb": "Detects anomalies, proposes safe remediations, and produces exec-ready postmortems from live ops data.",
+    "industries": [
+      "DevOps / SRE",
+      "Platform / IT"
+    ],
+    "caps": [
+      "Agentic",
+      "Anomaly / Forecast",
+      "UI & Traces",
+      "Guardrails",
+      "Compliance"
+    ],
+    "codeAccess": "proprietary_saas",
+    "repo": null,
+    "page": "saas/autoops-sentinel/",
+    "poster": "autoOps-sentinel-poster.webp",
+    "gif": "autoOps-sentinel.webp",
+    "featuredOnHome": true,
+    "homeOrder": 2
+  },
+  {
+    "id": "claims",
+    "title": "Agentic Claims Triage AI",
+    "summary": "For carriers and TPAs: auto-classifies claims, scores risk, and routes to compliant next steps using policy-as-code + retrieval. Surfaces explanations, flags outliers, and streams analytics so leaders see cycle-time, leakage, and QA trends, with agents orchestrated for auditability and speed.",
+    "blurb": "Classifies claims, scores risk, and routes the next compliant step with explanations you can audit.",
+    "industries": [
+      "Insurance",
+      "Healthcare",
+      "Finance & Legal"
+    ],
+    "caps": [
+      "Agentic",
+      "Retrieval (RAG)",
+      "Document AI",
+      "UI & Traces",
+      "Compliance",
+      "Guardrails"
+    ],
+    "repo": null,
+    "page": "saas/claims-triage/",
+    "codeAccess": "proprietary_saas",
+    "poster": "claims-demo-poster.webp",
+    "gif": "claims-demo.webp",
+    "featuredOnHome": true,
+    "homeOrder": 3
+  },
+  {
+    "id": "mindtrace",
+    "title": "Enterprise Wellness AI (MindTrace)",
+    "summary": "For HR/People Ops and employees: five agents (Companion, Reco, Risk, Analytics, Policy) deliver privacy-safe check-ins, burnout detection, and org-level insights. Integrates Slack/Teams/HRIS; FastAPI/React stack with monitoring and OPA-style policy controls for trust and compliance.",
+    "blurb": "Privacy-safe check-ins, burnout detection, and org-level wellness insight for HR and employees.",
+    "industries": [
+      "HR & Recruiting",
+      "Healthcare"
+    ],
+    "caps": [
+      "Agentic",
+      "UI & Traces",
+      "Evals",
+      "Compliance"
+    ],
+    "repo": "https://github.com/aurelius-in/MindTrace",
+    "poster": "enterprise-wellness-mindtrace-poster.webp",
+    "gif": "enterprise-wellness-mindtrace.webp",
+    "featuredOnHome": false
+  },
+  {
+    "id": "hire-falcon",
+    "title": "High-Volume Recruiter Agent",
+    "summary": "For recruiting teams that hire at scale: SMS/chat outreach, screening, scheduling, and ATS sync, driven by an explainable agent with live KPIs and guardrails. Works offline or through an SMS gateway, enabling compliant, high-throughput pipelines without sacrificing candidate experience.",
+    "blurb": "High-volume outreach, screening, and scheduling with live KPIs and recruiting guardrails.",
+    "industries": [
+      "HR & Recruiting"
+    ],
+    "caps": [
+      "Agentic",
+      "Recruiting / ATS",
+      "UI & Traces",
+      "Compliance"
+    ],
+    "repo": "https://github.com/aurelius-in/high-volume-recruiter-ai-agent",
+    "poster": "high-volume-recruiter-hire-falcon-poster.webp",
+    "gif": "high-volume-recruiter-hire-falcon.webp",
+    "featuredOnHome": true,
+    "homeOrder": 5
+  },
+  {
+    "id": "governance",
+    "title": "AI Governance Dashboard",
+    "summary": "For platform/security leaders: a production LLM proxy with policies-as-code, cost controls, audit trails, and safety guardrails. Centralize prompts, models, and tools behind enforceable rules; capture decisions and spend; ship features faster without losing compliance or observability.",
+    "blurb": "A production LLM proxy with policies-as-code, cost controls, and a full audit trail.",
+    "industries": [
+      "Platform / IT",
+      "Finance & Legal"
+    ],
+    "caps": [
+      "Governance",
+      "Guardrails",
+      "Compliance",
+      "UI & Traces",
+      "Agentic"
+    ],
+    "codeAccess": "proprietary_saas",
+    "page": "saas/ai-governance/",
+    "repo": null,
+    "poster": "ai-governance-dashboard-poster.webp",
+    "gif": "ai-governance-dashboard.webp",
+    "featuredOnHome": true,
+    "homeOrder": 4
+  },
+  {
+    "id": "aida",
+    "title": "AI Document Agent (aiDa)",
+    "summary": "For legal/finance/insurers: orchestrates document ingest, classification, extraction, risk checks, and compliance monitoring with live agent traces and audit artifacts. Pairs retrieval and policy controls so reviewers get cited evidence, faster processing, and measurable quality gains.",
+    "blurb": "Document ingest, extraction, and compliance checks with cited evidence and live traces.",
+    "industries": [
+      "Finance & Legal",
+      "Platform / IT",
+      "Insurance"
+    ],
+    "caps": [
+      "Agentic",
+      "Document AI",
+      "Retrieval (RAG)",
+      "UI & Traces",
+      "Compliance"
+    ],
+    "repo": null,
+    "codeAccess": "proprietary_saas",
+    "page": "saas/aida/",
+    "poster": "aiDa-dashboard-poster.webp",
+    "gif": "aiDa-dashboard.webp",
+    "featuredOnHome": false
+  },
+  {
+    "id": "muse",
+    "title": "MuseAgent",
+    "summary": "For labels, editors, and music tech: ingests tracks, extracts spectral features, builds embeddings, tags mood/genre/instrumentation, and serves explainable recs with rich visuals. Exports branded PDF reports; optional enrichment and AI-assisted music generation round out the toolkit.",
+    "blurb": "Track analysis, embeddings, and explainable music recommendations with visual reports.",
+    "industries": [
+      "Media & Entertainment"
+    ],
+    "caps": [
+      "Agentic",
+      "Music Intelligence",
+      "Retrieval (RAG)",
+      "UI & Traces",
+      "Evals"
+    ],
+    "repo": "https://github.com/aurelius-in/MuseAgent",
+    "poster": "muse-agent-poster.webp",
+    "gif": "muse-agent.webp",
+    "featuredOnHome": false
+  },
+  {
+    "id": "adops",
+    "title": "AdOps Flightdeck",
+    "summary": "For performance marketers and AdOps: multi-agent planning, creative QA/guardrails, pacing + budget control, anomaly explanations, and attribution views. Ships audit JSON for compliance and shares rationale behind changes so teams can act fast while staying policy-safe.",
+    "blurb": "Multi-agent campaign ops: planning, creative QA, pacing, and policy-safe change rationale.",
+    "industries": [
+      "Marketing / AdOps"
+    ],
+    "caps": [
+      "Agentic",
+      "AdOps",
+      "Anomaly / Forecast",
+      "UI & Traces",
+      "Governance"
+    ],
+    "repo": "https://github.com/aurelius-in/adops-flightdeck-multi-agent",
+    "poster": "adops-demo-poster.webp",
+    "gif": "adops-demo.webp",
+    "featuredOnHome": false
+  },
+  {
+    "id": "perception",
+    "title": "Perception Lab",
+    "summary": "For CV engineers and field ops: interactive lab to compose detection/fusion pipelines, measure COCO mAP/IoU/IDF1, and export PDF evals. FastAPI backend with adapters (Replicate/HF/Azure/GCP), Prometheus/Grafana monitoring, ROS & Jetson/TensorRT stubs, tests, and Dockerized workflows.",
+    "blurb": "Compose computer-vision pipelines, measure evals, and export reproducible PDF reports.",
+    "industries": [
+      "Industrial & Field Ops",
+      "Edge AI & Computer Vision"
+    ],
+    "caps": [
+      "Agentic",
+      "CV (Computer Vision)",
+      "Edge",
+      "UI & Traces",
+      "Evals"
+    ],
+    "repo": "https://github.com/aurelius-in/perception-lab",
+    "poster": "perceptionLab-poster.webp",
+    "gif": "perceptionLab.webp",
+    "featuredOnHome": false
+  },
+  {
+    "id": "edgesight",
+    "title": "EdgeSight QA",
+    "summary": "Edge computer-vision QA: multi-camera ingest, on-device inference, Ignition/MQTT/OPC UA write-backs, with offline-safe logging and metrics.",
+    "blurb": "On-device visual QA with multi-camera ingest and industrial write-backs.",
+    "industries": [
+      "Industrial & Field Ops",
+      "Edge AI & Computer Vision"
+    ],
+    "caps": [
+      "Agentic",
+      "CV (Computer Vision)",
+      "Edge",
+      "UI & Traces",
+      "Evals",
+      "Governance"
+    ],
+    "repo": "https://github.com/aurelius-in/EdgeSight-QA",
+    "poster": "https://raw.githubusercontent.com/aurelius-in/agentic-portfolio/main/docs/images/esqa-preview-poster.webp",
+    "gif": "https://raw.githubusercontent.com/aurelius-in/agentic-portfolio/main/docs/images/esqa-preview.webp",
+    "featuredOnHome": false
+  },
+  {
+    "id": "myriskagent",
+    "title": "MyRiskAgent",
+    "summary": "Agentic risk intelligence for providers and companies. Ingests claims, filings, and OSINT; computes family risk scores with peer-normalized outlier detection; explains drivers via SHAP; exports audit-ready evidence. Stack: FastAPI, Postgres/pgvector or Chroma, DuckDB, Redis, LangGraph, Prometheus/Grafana, OPA.",
+    "blurb": "Risk intelligence from claims, filings, and OSINT, with explainable scores and audit-ready evidence.",
+    "industries": [
+      "Finance & Legal",
+      "Insurance",
+      "Healthcare",
+      "Platform / IT"
+    ],
+    "caps": [
+      "Agentic",
+      "Retrieval (RAG)",
+      "Document AI",
+      "Governance",
+      "Compliance",
+      "UI & Traces",
+      "Evals",
+      "Policy / OPA"
+    ],
+    "repo": null,
+    "page": "saas/myriskagent/",
+    "poster": "my_risk_poster.png",
+    "codeAccess": "proprietary_saas",
+    "gif": "my_risk_demo.webp",
+    "featuredOnHome": true,
+    "homeOrder": 6
+  },
+  {
+    "id": "ace-lab",
+    "title": "ACE Lab",
+    "summary": "Agentic Creative Experience Lab is a real-time, WebGPU-first platform that blends agentic shader design, on-device image generation, and microservice video generation (AnimateDiff for motion, RIFE for interpolation), plus generative fill, style transfer, and policy-safe WebM export.",
+    "blurb": "Real-time WebGPU lab for agentic shaders, image generation, and policy-safe video export.",
+    "industries": [
+      "Media & Entertainment",
+      "Platform / IT",
+      "Marketing / AdOps"
+    ],
+    "caps": [
+      "Agentic",
+      "Experimentation",
+      "Evals",
+      "Governance",
+      "UI & Traces",
+      "Video Enhancement",
+      "Image Generation",
+      "Generative AI",
+      "Image Editing",
+      "Video Generation"
+    ],
+    "repo": "https://github.com/aurelius-in/ACE-Lab",
+    "poster": "https://raw.githubusercontent.com/aurelius-in/agentic-portfolio/main/docs/images/ace-lab-desktop.png",
+    "gif": "https://raw.githubusercontent.com/aurelius-in/agentic-portfolio/main/docs/images/ace-lab-portfolio.webp",
+    "featuredOnHome": false
+  },
+  {
+    "id": "rainref",
+    "title": "RainRef",
+    "summary": "Support Ref: normalize tickets/chats to RefEvents, draft cited answers, propose policy-gated safe actions with signed receipts, and emit Product Signals to Jira/Linear/RainScout.",
+    "blurb": "Normalize support events, draft cited answers, and propose policy-gated actions with signed receipts.",
+    "industries": [
+      "Platform / IT",
+      "SaaS / B2B",
+      "Customer Support & Success"
+    ],
+    "caps": [
+      "Agentic",
+      "Retrieval (RAG)",
+      "Document AI",
+      "Policy / OPA",
+      "Governance",
+      "Compliance",
+      "UI & Traces",
+      "Product Signals"
+    ],
+    "repo": null,
+    "codeAccess": "proprietary_saas",
+    "page": "saas/rainref/",
+    "poster": "https://raw.githubusercontent.com/aurelius-in/reliable-ai-network/main/saas/rainref/rr_demo.png",
+    "gif": "https://raw.githubusercontent.com/aurelius-in/reliable-ai-network/main/saas/rainref/rr_demo.webp",
+    "featuredOnHome": false
+  },
+  {
+    "id": "epiphany",
+    "title": "Epiphany",
+    "summary": "Self-hosted full-stack diffusion suite for image and video generation with a Next.js UI, Express APIs, and FastAPI GPU workers, supporting SDXL (txt2img/img2img/inpainting/ControlNet), text-to-video, prompt enhancement, Safe/Research/NSFW modes, editing tools (upscale/bg-remove/face-restore), Redis + S3, and explainability (attention heatmaps + audit logs).",
+    "blurb": "Self-hosted image and video generation with traces, editing tools, and audit logs.",
+    "industries": [
+      "Media & Entertainment",
+      "Platform / IT",
+      "Marketing / AdOps"
+    ],
+    "caps": [
+      "Generative AI",
+      "Image Generation",
+      "Video Generation",
+      "Image Editing",
+      "Video Enhancement",
+      "UI & Traces",
+      "Governance"
+    ],
+    "repo": "https://github.com/aurelius-in/Epiphany",
+    "poster": "epiphany.png",
+    "gif": "epiphany.webp",
+    "featuredOnHome": false
+  }
+]

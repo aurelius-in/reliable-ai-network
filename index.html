@@ -1,24 +1,127 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Redirecting…</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Send users/bots to the gallery -->
-  <link rel="canonical" href="./portfolio.html" />
-  <meta http-equiv="refresh" content="0; url=./portfolio.html" />
-  <meta name="robots" content="noindex" />
-  <script>
-    // Avoid adding an extra history entry
-    window.location.replace('./portfolio.html');
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reliable AI Network | Production AI systems and products</title>
+  <meta name="description" content="Reliable AI Network designs production-minded AI systems, builds practical software products including Make it RAIN, and publishes work on AI systems and software commercialization.">
+  <link rel="canonical" href="https://reliableainetwork.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Reliable AI Network">
+  <meta property="og:description" content="Reliable AI systems built for the real world. Explore the project gallery and current products.">
+  <meta property="og:url" content="https://reliableainetwork.com/">
+  <meta property="og:image" content="https://reliableainetwork.com/assets/brand/rain-banner.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="./assets/brand/rain-mark-sm.png" type="image/png">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./css/site.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://reliableainetwork.com/#org",
+        "name": "Reliable AI Network, Inc.",
+        "alternateName": "RAIN",
+        "url": "https://reliableainetwork.com/",
+        "logo": "https://reliableainetwork.com/assets/brand/rain-mark.png",
+        "email": "info@reliableainetwork.com",
+        "founder": { "@id": "https://reliableainetwork.com/oliver-ellison.html#person" },
+        "sameAs": [
+          "https://github.com/aurelius-in/reliable-ai-network",
+          "https://www.linkedin.com/company/reliableainetwork"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "name": "Reliable AI Network",
+        "url": "https://reliableainetwork.com/",
+        "publisher": { "@id": "https://reliableainetwork.com/#org" }
+      }
+    ]
+  }
   </script>
-  <style>
-    html,body{height:100%} body{display:flex;align-items:center;justify-content:center;
-    font:14px system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial}
-    a{color:#2563eb}
-  </style>
+  <script src="./js/site.js" defer></script>
+  <script src="./js/projects-api.js" defer></script>
+  <script src="./js/home.js" defer></script>
 </head>
-<body>
-  Redirecting to Project Gallery… <a href="./portfolio.html">Click here if not redirected</a>.
+<body class="rain-body" data-page="home">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <section class="home-hero">
+      <div class="wrap">
+        <p class="kicker">Reliable AI Network</p>
+        <h1>Reliable AI systems built for the real world.</h1>
+        <p class="lead">Reliable AI Network designs production-minded AI systems, builds practical software products, and develops tools for turning AI capability into measurable outcomes.</p>
+        <div class="btn-row">
+          <a class="btn" href="./portfolio.html">Explore the AI Portfolio</a>
+          <a class="btn secondary" href="./products.html">Explore Products</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="systems-title">
+      <div class="wrap wrap-wide">
+        <h2 id="systems-title">Selected AI systems</h2>
+        <p class="lead">A sample of systems from the Project Gallery. Every project is built to be operated, inspected, and handed off.</p>
+        <div id="home-systems" class="card-grid" style="margin-top:22px"></div>
+        <p class="section-foot"><a class="btn secondary" href="./portfolio.html">View Full Project Gallery</a></p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="products-title" style="padding-top:0">
+      <div class="wrap">
+        <h2 id="products-title">Products from Reliable AI Network</h2>
+        <p class="lead">Make it RAIN is the current commercial product. It is built by Reliable AI Network. It is not the whole company.</p>
+        <div class="mir-block" style="margin-top:22px">
+          <img class="logo" src="./assets/products/make-it-rain/make-it-rain-logo.png" alt="Make it RAIN">
+          <div>
+            <p class="kicker">Make it RAIN</p>
+            <h3 style="margin:0 0 8px">You built something real. Now it's time to get paid.</h3>
+            <p class="muted">Make it RAIN is for software creators who have shipped an app, SaaS product, AI tool, or working MVP, but still have unanswered commercial questions.</p>
+            <p class="muted">It helps a builder investigate questions such as:</p>
+            <ul>
+              <li>Who may actually pay?</li>
+              <li>What problem is economically important enough to buy?</li>
+              <li>What is the smallest paid offer worth testing?</li>
+              <li>What price should be tested?</li>
+              <li>What remains assumption rather than evidence?</li>
+              <li>Who is the next person worth talking to?</li>
+            </ul>
+            <p class="muted">First Customer Path, Founder Brief, Buyer Stress Test, buyer hypothesis, paid problem, smallest paid offer, price to test, and the next conversation worth having. Do not automate a guess.</p>
+            <div class="btn-row">
+              <a class="btn mir" data-track="make_it_rain_click" href="https://MakeItRainApp.com/?utm_source=reliableainetwork&amp;utm_medium=referral&amp;utm_campaign=home-products" target="_blank" rel="noopener">Explore Make it RAIN</a>
+              <a class="btn secondary" href="./make-it-rain.html">Product overview</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="books-title">
+      <div class="wrap wrap-wide">
+        <h2 id="books-title">Books on AI, software, and the business around it</h2>
+        <p class="lead">Books by Reliable AI Network founder Oliver A. Ellison on building AI systems, operating them responsibly, and solving the commercial problems that begin after software ships.</p>
+        <div id="home-books" class="card-grid" style="margin-top:22px"></div>
+        <p class="section-foot"><a class="btn secondary" href="./books.html">View All Books</a></p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="close-title">
+      <div class="wrap">
+        <h2 id="close-title">Building an AI system that has to survive production?</h2>
+        <p class="lead">Explore the portfolio or start a conversation with Reliable AI Network.</p>
+        <div class="btn-row">
+          <a class="btn" href="./portfolio.html">View Portfolio</a>
+          <a class="btn secondary" data-track="consultation_click" href="./consultation.html">Contact Reliable AI Network</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
 </body>
 </html>
