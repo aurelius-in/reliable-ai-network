@@ -11,17 +11,17 @@
     "coverThumb": "assets/books/great-app-bad-business/cover-sm.jpg",
     "coverKind": "cover",
     "readUrl": "books/great-app-bad-business/read/",
-    "amazonUrl": "https://www.amazon.com/dp/9798171849252",
-    "kindleUrl": "",
-    "paperbackUrl": "https://www.amazon.com/dp/9798171849252",
+    "amazonUrl": "https://www.amazon.com/dp/B0HHRQT492",
+    "kindleUrl": "https://www.amazon.com/dp/B0HHRQT492",
+    "paperbackUrl": "https://www.amazon.com/dp/B0HHRQT492",
     "audibleUrl": "",
     "isbn": "9798171849252",
-    "asin": "",
+    "asin": "B0HHRQT492",
     "featured": true,
     "listOnSite": true,
     "detailPage": "books/great-app-bad-business.html",
     "topics": ["software commercialization", "app builders", "pricing", "demand", "trust"],
-    "_notes": "ISBN confirmed. Cover is cover02.png optimized to cover.jpg. HTML edition at books/great-app-bad-business/read/."
+    "_notes": "Kindle ASIN B0HHRQT492 is the live Amazon product page (Kindle and paperback). Paperback ISBN 9798171849252 is printed on the book but is not a working /dp/ URL. Cover is cover02.png optimized to cover.jpg. HTML edition at books/great-app-bad-business/read/."
   },
   {
     "slug": "the-agentic-ai-week",

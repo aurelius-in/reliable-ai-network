@@ -23,7 +23,7 @@ MD_DIR = Path(
 OUT_DIR = ROOT / "books" / "great-app-bad-business" / "read"
 COVER_DIR = ROOT / "assets" / "books" / "great-app-bad-business"
 BOOK_PAGE = "../../great-app-bad-business.html"
-AMAZON = "https://www.amazon.com/dp/9798171849252"
+AMAZON = "https://www.amazon.com/dp/B0HHRQT492"
 CANONICAL_BASE = "https://reliableainetwork.com/books/great-app-bad-business/read"
 ISBN = "9798171849252"
 BOOK_TITLE = "Great App. Bad Business."
@@ -494,6 +494,7 @@ def write_index(chapters: list[dict]) -> None:
       "inLanguage": "en",
       "bookFormat": "https://schema.org/EBook",
       "url": CANONICAL_BASE + "/",
+      "sameAs": AMAZON,
       "image": "https://reliableainetwork.com/assets/books/great-app-bad-business/cover.jpg",
       "author": {"@type": "Person", "name": AUTHOR},
       "publisher": {"@type": "Organization", "name": "Reliable AI Network, Inc."},
