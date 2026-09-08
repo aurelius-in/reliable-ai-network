@@ -165,6 +165,135 @@ button.btn {
   .fg-toc ol { display: flex; flex-wrap: wrap; gap: 4px; }
 }
 
+/* Commercial Frontier Report intake */
+.cfr-page-main { max-width: 46rem; }
+.cfr-form fieldset {
+  border: 1px solid var(--rain-line);
+  border-radius: 16px;
+  padding: 16px 16px 8px;
+  margin: 0 0 18px;
+  background: var(--rain-panel);
+}
+.cfr-form legend {
+  padding: 0 8px;
+  color: var(--rain-ink);
+  font-weight: 700;
+}
+.cfr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 14px;
+  margin: 8px 0 12px;
+}
+.cfr-grid .cfr-span { grid-column: 1 / -1; }
+.cfr-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--rain-ink);
+  font-size: 0.92rem;
+}
+.cfr-form .req { color: var(--gabb-red); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.cfr-form .opt { color: var(--rain-muted); font-size: 11px; }
+.cfr-form input,
+.cfr-form select,
+.cfr-form textarea {
+  font: inherit;
+  color: var(--rain-ink);
+  background: rgba(5, 8, 16, 0.7);
+  border: 1px solid var(--rain-line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  width: 100%;
+}
+.cfr-form textarea { resize: vertical; min-height: 4.2em; }
+.cfr-form input:focus,
+.cfr-form select:focus,
+.cfr-form textarea:focus {
+  outline: 2px solid var(--rain-focus);
+  outline-offset: 1px;
+}
+.cfr-help, .cfr-form .cfr-help { margin: 0 0 10px; font-size: 0.9rem; color: var(--rain-muted); }
+.cfr-counts {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 12px;
+}
+.cfr-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 8px;
+}
+.cfr-pills label {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--rain-line);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 13px;
+  color: var(--rain-muted);
+}
+.cfr-pills input { width: auto; }
+.cfr-q { margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid var(--rain-line); }
+.cfr-q > p:first-child { margin: 0 0 4px; color: var(--rain-ink); font-weight: 650; }
+.cfr-guard, .cfr-error, .cfr-note {
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 0 0 14px;
+}
+.cfr-guard { background: rgba(196, 30, 58, 0.12); color: var(--rain-ink); }
+.cfr-error { background: rgba(196, 30, 58, 0.2); color: #fecaca; }
+.cfr-note { background: rgba(34, 211, 238, 0.1); color: var(--rain-ink); }
+.cfr-sticky-actions { margin: 18px 0; }
+.fail-path .is-frontier {
+  border-color: var(--gabb-red);
+  color: #fff;
+  background: rgba(196, 30, 58, 0.18);
+}
+.cfr {
+  max-width: 40rem;
+  margin: 28px 0 48px;
+  padding: 8px 0 24px;
+}
+.cfr .cfr-kicker {
+  margin: 0 0 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gabb-red);
+}
+.cfr .cfr-head h1 { margin: 0 0 8px; }
+.cfr-liner, .cfr-byline { color: var(--rain-muted); margin: 0 0 8px; }
+.cfr-byline { font-size: 14px; }
+.cfr-block { border-top: 1px solid var(--rain-line); padding: 22px 0; }
+.cfr-block h2 { margin: 0 0 10px; font-size: 1.05rem; }
+.cfr-block h3 { margin: 0 0 8px; font-size: 0.95rem; }
+.cfr-state { font-size: 1.35rem; font-weight: 700; color: #fff; margin: 12px 0; }
+.cfr-split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.cfr-split ul { margin: 0; padding-left: 1.1em; }
+.cfr-rung, .cfr-tool { font-size: 14px; color: var(--rain-muted); }
+.cfr-dl { margin: 0; }
+.cfr-dl div { margin: 0 0 10px; }
+.cfr-dl dt {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rain-cyan);
+}
+.cfr-dl dd { margin: 4px 0 0; color: var(--rain-muted); }
+.cfr-plan { margin: 0; padding-left: 1.2em; }
+.cfr-plan li { margin: 0 0 10px; }
+.cfr-foot { border-top: 1px solid var(--rain-line); padding-top: 18px; font-size: 13px; color: var(--rain-muted); }
+@media (max-width: 720px) {
+  .cfr-grid, .cfr-split, .cfr-counts { grid-template-columns: 1fr 1fr; }
+  .cfr-counts { grid-template-columns: 1fr 1fr; }
+}
+
 @media print {
   #site-header, #site-footer, .site-header, .site-footer, .nav-toggle, .fg-toc, .fg-actions, .skip-link, .fg-facts { display: none !important; }
   body.rain-body, .fg-main, .worksheet, .fg-rule {
@@ -179,4 +308,12 @@ button.btn {
   .fg-main p, .fg-main li, .worksheet-q, .fg-table td, .fg-table th { color: #222 !important; }
   .write-in { min-height: 3.6em; }
   a { color: #111; text-decoration: none; }
+  .cfr-page .cfr-form,
+  .cfr-page .cfr-intro,
+  .cfr-page #cfr-actions,
+  .cfr-page #cfr-note,
+  .cfr-page #cfr-error { display: none !important; }
+  .cfr, .cfr-block { color: #111; }
+  .cfr-state { color: #111; }
+  #cfr-mount[hidden] { display: none !important; }
 }

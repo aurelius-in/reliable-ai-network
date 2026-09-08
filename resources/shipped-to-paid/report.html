@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Commercial Frontier Report | Shipped-to-Paid Field Guide</title>
+  <meta name="description" content="Answer a short intake and get a Commercial Frontier Report: where the path to payment breaks, what evidence you actually have, and the next test.">
+  <link rel="canonical" href="https://reliableainetwork.com/resources/shipped-to-paid/report.html">
+  <meta property="og:title" content="Commercial Frontier Report">
+  <meta property="og:description" content="A short diagnosis from Great App. Bad Business. Stop at the first unsupported step.">
+  <meta property="og:url" content="https://reliableainetwork.com/resources/shipped-to-paid/report.html">
+  <meta property="og:image" content="https://reliableainetwork.com/assets/books/great-app-bad-business/cover.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../../assets/brand/rain-mark-sm.png" type="image/png">
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="../../css/site.css">
+  <link rel="stylesheet" href="../../css/field-guide.css">
+  <script src="../../js/site.js" defer></script>
+  <script src="../../js/frontier-report.js" defer></script>
+</head>
+<body class="rain-body cfr-page" data-page="books">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="site-header"></div>
+  <main id="main" class="section" style="padding-top:36px">
+    <div class="fg-layout cfr-layout">
+      <article class="fg-main cfr-page-main">
+        <div class="cfr-intro">
+        <p class="kicker fg-kicker">Shipped-to-Paid Field Guide</p>
+        <h1>Commercial Frontier Report</h1>
+        <p class="lead">A short diagnosis for a shipped (or nearly shipped) product with weak or uncertain revenue. The report names the first break on the path to payment, separates what you have seen from what you believe, and hands you the next test.</p>
+        <p>This is the interactive path. The <a href="./">worksheets</a> stay available if you would rather write by hand. You do not need to buy the book.</p>
+        <p class="fg-meta">Companion to Great App. Bad Business. by Oliver A. Ellison · ISBN 9798171849252</p>
+        </div>
+
+        <form id="frontier-form" class="cfr-form" novalidate>
+          <fieldset>
+            <legend>You</legend>
+            <div class="cfr-grid">
+              <label>Email <span class="req">required</span>
+                <input type="email" name="email" required autocomplete="email" placeholder="you@company.com">
+              </label>
+              <label>Phone <span class="opt">optional</span>
+                <input type="tel" name="phone" autocomplete="tel" placeholder="If a call would help">
+              </label>
+              <label>Your name
+                <input type="text" name="name" autocomplete="name" placeholder="How to address you">
+              </label>
+              <label>Role
+                <select name="role">
+                  <option value="">Choose...</option>
+                  <option value="founder">Founder</option>
+                  <option value="builder">Builder / engineer</option>
+                  <option value="operator">Operator</option>
+                  <option value="other">Other</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>The product</legend>
+            <div class="cfr-grid">
+              <label class="cfr-span">Company or product name <span class="req">required</span>
+                <input type="text" name="productName" required placeholder="The shipped thing, not the category">
+              </label>
+              <label class="cfr-span">One line: what it does
+                <input type="text" name="oneLiner" maxlength="160" placeholder="Who it helps do what">
+              </label>
+              <label>Product URL
+                <input type="url" name="productUrl" placeholder="https://">
+              </label>
+              <label>Who you think the buyer is
+                <input type="text" name="buyer" placeholder="Observable conditions, not a persona if you can help it">
+              </label>
+              <label>Revenue now
+                <select name="revenue">
+                  <option value="unknown">Unknown</option>
+                  <option value="none">None</option>
+                  <option value="some">Some, not recurring</option>
+                  <option value="recurring">Recurring</option>
+                </select>
+              </label>
+              <label>Anyone paid under real terms?
+                <select name="paidReal">
+                  <option value="unknown">Unknown</option>
+                  <option value="no">No</option>
+                  <option value="yes">Yes, standard offer and price</option>
+                </select>
+              </label>
+              <label>Have you asked anyone to pay?
+                <select name="askedToPay">
+                  <option value="unknown">Unknown</option>
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </label>
+              <label class="cfr-span">Signups or usage vs payment
+                <input type="text" name="usageNote" placeholder="e.g. 400 signups, 2 people tried a paid plan, 0 paid">
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Last 30 days</legend>
+            <p class="cfr-help">Counts you can check. Zero is a real answer.</p>
+            <div class="cfr-counts">
+              <label>Outreach <input type="number" name="outreach30" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+              <label>Replies <input type="number" name="replies30" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+              <label>Evaluations <input type="number" name="evals30" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+              <label>Explicit nos <input type="number" name="nos30" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+              <label>Payments <input type="number" name="payments30" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Where the path breaks</legend>
+            <p class="cfr-help">Answer in order. Observed means behavior you could show someone else. Unknown is first-class. Later “observed” stays locked until the earlier step has evidence.</p>
+            <p id="cfr-guard" class="cfr-guard" hidden>You cannot mark a later step observed until the earlier one has evidence. If you have never asked anyone to pay, you cannot pass “values but will not pay.”</p>
+
+            <div class="cfr-diag">
+              <div class="cfr-q">
+                <p>1. Can you identify plausible buyers?</p>
+                <p class="cfr-help">People you can name or describe by observable conditions, who own the consequence.</p>
+                <div class="cfr-pills">
+                  <label><input type="radio" name="d_buyers" value="unknown" checked> Unknown</label>
+                  <label><input type="radio" name="d_buyers" value="no"> No</label>
+                  <label><input type="radio" name="d_buyers" value="plausible"> Plausible</label>
+                  <label><input type="radio" name="d_buyers" value="observed"> Observed</label>
+                </div>
+                <textarea name="d_buyers_ev" rows="2" placeholder="Evidence only. Leave blank if unknown."></textarea>
+              </div>
+              <div class="cfr-q">
+                <p>2. Do those buyers reply when you reach them?</p>
+                <p class="cfr-help">Replies, not opens.</p>
+                <div class="cfr-pills">
+                  <label><input type="radio" name="d_replies" value="unknown" checked> Unknown</label>
+                  <label><input type="radio" name="d_replies" value="no"> No</label>
+                  <label><input type="radio" name="d_replies" value="plausible"> Plausible</label>
+                  <label><input type="radio" name="d_replies" value="observed"> Observed</label>
+                </div>
+                <textarea name="d_replies_ev" rows="2" placeholder="Evidence only."></textarea>
+              </div>
+              <div class="cfr-q">
+                <p>3. Will they undertake a real evaluation?</p>
+                <p class="cfr-help">Against a real case, with their own data or workflow.</p>
+                <div class="cfr-pills">
+                  <label><input type="radio" name="d_evaluate" value="unknown" checked> Unknown</label>
+                  <label><input type="radio" name="d_evaluate" value="no"> No</label>
+                  <label><input type="radio" name="d_evaluate" value="plausible"> Plausible</label>
+                  <label><input type="radio" name="d_evaluate" value="observed"> Observed</label>
+                </div>
+                <textarea name="d_evaluate_ev" rows="2" placeholder="Evidence only."></textarea>
+              </div>
+              <div class="cfr-q">
+                <p>4. Do they experience meaningful value?</p>
+                <p class="cfr-help">The promised outcome occurred, in their terms.</p>
+                <div class="cfr-pills">
+                  <label><input type="radio" name="d_value" value="unknown" checked> Unknown</label>
+                  <label><input type="radio" name="d_value" value="no"> No</label>
+                  <label><input type="radio" name="d_value" value="plausible"> Plausible</label>
+                  <label><input type="radio" name="d_value" value="observed"> Observed</label>
+                </div>
+                <textarea name="d_value_ev" rows="2" placeholder="Evidence only."></textarea>
+              </div>
+              <div class="cfr-q">
+                <p>5. Will they pay under real terms?</p>
+                <p class="cfr-help">The standard offer at the standard price, not a favor.</p>
+                <div class="cfr-pills">
+                  <label><input type="radio" name="d_pay" value="unknown" checked> Unknown</label>
+                  <label><input type="radio" name="d_pay" value="no"> No</label>
+                  <label><input type="radio" name="d_pay" value="plausible"> Plausible</label>
+                  <label><input type="radio" name="d_pay" value="observed"> Observed</label>
+                </div>
+                <textarea name="d_pay_ev" rows="2" placeholder="Evidence only."></textarea>
+              </div>
+              <div class="cfr-q">
+                <p>6. After paying, do they stay?</p>
+                <p class="cfr-help">Activation, continued use, renewal.</p>
+                <div class="cfr-pills">
+                  <label><input type="radio" name="d_stay" value="unknown" checked> Unknown</label>
+                  <label><input type="radio" name="d_stay" value="no"> No</label>
+                  <label><input type="radio" name="d_stay" value="plausible"> Plausible</label>
+                  <label><input type="radio" name="d_stay" value="observed"> Observed</label>
+                </div>
+                <textarea name="d_stay_ev" rows="2" placeholder="Evidence only."></textarea>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Paid problem and price</legend>
+            <div class="cfr-grid">
+              <label class="cfr-span">What do they already do because the problem exists?
+                <textarea name="workaround" rows="2" placeholder="Spreadsheet, contractor, monthly fire drill. Nothing is evidence."></textarea>
+              </label>
+              <label>Who owns the consequence?
+                <input type="text" name="owner" placeholder="Budget, staff, or performance">
+              </label>
+              <label>Why does it matter now?
+                <input type="text" name="whyNow" placeholder="Deadline, audit, failed alternative, or nothing">
+              </label>
+              <label>Price you quote
+                <input type="text" name="price" placeholder="A number, or none">
+              </label>
+              <label>Has a buyer heard that number?
+                <select name="heardPrice">
+                  <option value="unknown">Unknown</option>
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </label>
+              <label class="cfr-span">Strongest reason a buyer would say no (your guess)
+                <textarea name="strongestNo" rows="2" placeholder="Argue the no. Include doing nothing."></textarea>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Stories and the move you were about to make</legend>
+            <div class="cfr-grid">
+              <label class="cfr-span">One payer story, if any
+                <textarea name="payer" rows="2" placeholder="Who paid, what they were trying to do, what they did before."></textarea>
+              </label>
+              <label class="cfr-span">Near-miss 1
+                <textarea name="nearMiss1" rows="2" placeholder="Qualified, had the problem, reached a decision, did not buy."></textarea>
+              </label>
+              <label class="cfr-span">Near-miss 2
+                <textarea name="nearMiss2" rows="2" placeholder="Optional second control."></textarea>
+              </label>
+              <label class="cfr-span">What you were about to do next
+                <textarea name="plannedNext" rows="2" placeholder="Ads, another feature, more posting, a redesign, hiring, a waitlist..."></textarea>
+              </label>
+            </div>
+          </fieldset>
+
+          <p id="cfr-error" class="cfr-error" hidden></p>
+          <div class="btn-row">
+            <button type="submit" class="btn gabb">Generate the report</button>
+            <a class="btn ghost" href="./">Back to worksheets</a>
+          </div>
+          <p class="fg-meta">Drafts stay in this browser. The report is yours to view and save. A short contact note (email, phone, product, frontier, next-test line) may be sent to Reliable AI Network. The full diary is not.</p>
+        </form>
+
+        <p id="cfr-note" class="cfr-note" hidden></p>
+        <div id="cfr-actions" class="btn-row cfr-sticky-actions" hidden>
+          <button type="button" class="btn gabb" id="cfr-save">Save report</button>
+          <button type="button" class="btn secondary" id="cfr-print">Print</button>
+        </div>
+        <article id="cfr-mount" class="cfr" hidden></article>
+      </article>
+    </div>
+  </main>
+  <div id="site-footer"></div>
+</body>
+</html>
