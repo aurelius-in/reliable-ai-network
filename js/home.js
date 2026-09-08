@@ -20,13 +20,14 @@
         : (b.amazonUrl ? site.withCampaign(b.amazonUrl, "home-books") : site.abs("books.html"));
       var track = b.detailPage ? "book_detail_click" : "amazon_book_click";
       return '<a class="book-card" data-track="' + track + '" href="' + more + '" style="text-decoration:none;color:inherit">' +
-        cover + "<h3>" + b.title + "</h3><p class=\"muted\">" + (b.subtitle || "") + "</p></a>";
+        (cover ? '<div class="cover-frame">' + cover + "</div>" : "") +
+        "<h3>" + b.title + "</h3><p class=\"book-sub\">" + (b.subtitle || "") + "</p></a>";
     }
     var html = "";
     if (featured) {
       var buy = featured.amazonUrl ? site.withCampaign(featured.amazonUrl, "home-books") : "";
       html += '<article class="book-feature panel-card" style="grid-column:1/-1">' +
-        (featured.cover ? '<img src="' + site.abs(featured.cover) + '" alt="Great App. Bad Business. title treatment">' : "") +
+        (featured.cover ? '<img src="' + site.abs(featured.cover) + '" alt="Great App. Bad Business. cover">' : "") +
         "<div><p class=\"kicker\">Newest</p><h3>" + featured.title + "</h3>" +
         "<p class=\"muted\">" + featured.subtitle + "</p>" +
         "<p class=\"muted\">" + featured.description + "</p>" +

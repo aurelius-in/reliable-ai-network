@@ -28,12 +28,14 @@
     var status = (book.status || "published") + (book.year ? " · " + book.year : "");
     return (
       '<article class="book-card">' +
-        cover +
-        "<h3>" + book.title + "</h3>" +
-        (book.subtitle ? '<p class="muted">' + book.subtitle + "</p>" : "") +
-        '<p class="muted">' + (book.description || "") + "</p>" +
-        '<p class="muted" style="font-size:13px">' + status + "</p>" +
-        '<div class="btn-row">' + read + detail + buy + "</div>" +
+        (cover ? '<div class="cover-frame">' + cover + "</div>" : "") +
+        '<div class="book-copy">' +
+          "<h3>" + book.title + "</h3>" +
+          (book.subtitle ? '<p class="book-sub">' + book.subtitle + "</p>" : "") +
+          (book.description ? '<p class="book-desc">' + book.description + "</p>" : "") +
+          '<p class="book-meta">' + status + "</p>" +
+          '<div class="btn-row">' + read + detail + buy + "</div>" +
+        "</div>" +
       "</article>"
     );
   }
