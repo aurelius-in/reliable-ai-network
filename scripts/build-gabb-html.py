@@ -22,6 +22,7 @@ MD_DIR = Path(
 )
 OUT_DIR = ROOT / "books" / "great-app-bad-business" / "read"
 COVER_DIR = ROOT / "assets" / "books" / "great-app-bad-business"
+BOOK_PAGE = "../../great-app-bad-business.html"
 AMAZON = "https://www.amazon.com/dp/9798171849252"
 CANONICAL_BASE = "https://reliableainetwork.com/books/great-app-bad-business/read"
 ISBN = "9798171849252"
@@ -383,7 +384,7 @@ def reader_page(
     next_link = (
         f'<a rel="next" href="{html.escape(next_ch["slug"])}.html">Next: {inline(next_ch["nav"])}</a>'
         if next_ch
-        else '<a href="../great-app-bad-business.html">Book page</a>'
+        else f'<a href="{BOOK_PAGE}">Book page</a>'
     )
     prev_head = (
         f'<link rel="prev" href="{html.escape(prev_ch["slug"])}.html">' if prev_ch else ""
@@ -415,7 +416,7 @@ def reader_page(
 <body class="gabb-reader" data-chapter="{html.escape(slug)}">
   <a class="skip-link" href="#chapter">Skip to chapter</a>
   <header class="reader-bar">
-    <a class="reader-home" href="../great-app-bad-business.html">Book page</a>
+    <a class="reader-home" href="{BOOK_PAGE}">Book page</a>
     <button type="button" class="toc-toggle" aria-expanded="false" aria-controls="toc-drawer">Contents</button>
     <span class="reader-now">{inline(title.split("|")[0].strip())}</span>
     <div class="reader-tools">
@@ -441,7 +442,7 @@ def reader_page(
     <p>Copyright &copy; 2026 {html.escape(AUTHOR)}. All rights reserved. ISBN {ISBN}.</p>
     <p>
       <a href="{html.escape(AMAZON)}" target="_blank" rel="noopener">Buy on Amazon</a>
-      &middot; <a href="../great-app-bad-business.html">About this book</a>
+      &middot; <a href="{BOOK_PAGE}">About this book</a>
       &middot; <a href="../../../">Reliable AI Network</a>
     </p>
   </footer>
@@ -504,7 +505,7 @@ def write_index(chapters: list[dict]) -> None:
 <body class="gabb-reader gabb-cover" data-chapter="index">
   <a class="skip-link" href="#contents">Skip to contents</a>
   <header class="reader-bar">
-    <a class="reader-home" href="../great-app-bad-business.html">Book page</a>
+    <a class="reader-home" href="{BOOK_PAGE}">Book page</a>
     <button type="button" class="toc-toggle" aria-expanded="false" aria-controls="toc-drawer">Contents</button>
     <span class="reader-now">{html.escape(BOOK_TITLE)}</span>
   </header>
@@ -534,7 +535,7 @@ def write_index(chapters: list[dict]) -> None:
   </section>
   <footer class="reader-foot">
     <p>Copyright &copy; 2026 {html.escape(AUTHOR)}. All rights reserved.</p>
-    <p><a href="../great-app-bad-business.html">About this book</a> &middot; <a href="../../../">Reliable AI Network</a></p>
+    <p><a href="{BOOK_PAGE}">About this book</a> &middot; <a href="../../../">Reliable AI Network</a></p>
   </footer>
 </body>
 </html>
