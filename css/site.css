@@ -228,9 +228,9 @@ h1, h2, h3 { line-height: 1.15; }
   display: block;
   width: 100%;
   height: auto;
-  max-height: 280px;
-  object-fit: cover;
-  object-position: center;
+  max-height: 320px;
+  object-fit: contain;
+  object-position: center top;
   background: #00030e;
 }
 
