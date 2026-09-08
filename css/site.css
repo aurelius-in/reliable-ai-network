@@ -335,7 +335,7 @@ h1, h2, h3 { line-height: 1.15; }
   gap: 24px;
   align-items: start;
 }
-.book-feature img { width: 100%; border-radius: 8px; border: 1px solid #333; }
+.book-feature img { width: 100%; height: auto; border-radius: 8px; border: 1px solid #333; background: #000; }
 .gabb-page {
   background: #070707;
 }

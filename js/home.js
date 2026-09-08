@@ -13,7 +13,8 @@
     var featured = live.filter(function (b) { return b.slug === "great-app-bad-business"; })[0];
     var others = live.filter(function (b) { return b.slug !== "great-app-bad-business"; }).slice(0, 2);
     function mini(b) {
-      var cover = b.cover ? '<img class="cover" src="' + site.abs(b.cover) + '" alt="' + b.title + '">' : "";
+      var src = b.coverThumb || b.cover;
+      var cover = src ? '<img class="cover" src="' + site.abs(src) + '" alt="' + b.title + ' cover">' : "";
       var more = b.detailPage
         ? site.abs(b.detailPage)
         : (b.amazonUrl ? site.withCampaign(b.amazonUrl, "home-books") : site.abs("books.html"));

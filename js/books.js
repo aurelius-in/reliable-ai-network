@@ -14,7 +14,11 @@
 
   function cardHtml(book, opts) {
     opts = opts || {};
-    var cover = book.cover ? '<img class="cover" src="' + bookUrl(book.cover) + '" alt="' + book.title + (book.coverKind === "title-card" ? " title treatment" : " cover") + '">' : "";
+    var coverSrc = book.coverThumb || book.cover;
+    var cover = coverSrc ? '<img class="cover" src="' + bookUrl(coverSrc) + '" alt="' + book.title + (book.coverKind === "title-card" ? " title treatment" : " cover") + '">' : "";
+    var read = book.readUrl
+      ? '<a class="btn gabb" data-track="read_book_click" href="' + bookUrl(book.readUrl) + '">Read online</a>'
+      : "";
     var detail = book.detailPage
       ? '<a class="btn secondary" data-track="book_detail_click" href="' + bookUrl(book.detailPage) + '">Learn More</a>'
       : "";
@@ -29,7 +33,7 @@
         (book.subtitle ? '<p class="muted">' + book.subtitle + "</p>" : "") +
         '<p class="muted">' + (book.description || "") + "</p>" +
         '<p class="muted" style="font-size:13px">' + status + "</p>" +
-        '<div class="btn-row">' + detail + buy + "</div>" +
+        '<div class="btn-row">' + read + detail + buy + "</div>" +
       "</article>"
     );
   }

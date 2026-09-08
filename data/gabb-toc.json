@@ -1,0 +1,251 @@
+[
+  {
+    "slug": "introduction",
+    "label": "Introduction",
+    "title": "You Built Something Real. Now What?",
+    "part": null
+  },
+  {
+    "slug": "chapter-1",
+    "label": "Chapter 1",
+    "title": "Great App. Bad Business.",
+    "part": {
+      "roman": "I",
+      "title": "The Product Isn't the Business"
+    }
+  },
+  {
+    "slug": "chapter-2",
+    "label": "Chapter 2",
+    "title": "Shipping Is the Starting Line",
+    "part": null
+  },
+  {
+    "slug": "chapter-3",
+    "label": "Chapter 3",
+    "title": "Users Aren't Customers",
+    "part": null
+  },
+  {
+    "slug": "chapter-4",
+    "label": "Chapter 4",
+    "title": "One More Feature Won't Save You",
+    "part": null
+  },
+  {
+    "slug": "chapter-5",
+    "label": "Chapter 5",
+    "title": "Find Where the Money Is Breaking",
+    "part": null
+  },
+  {
+    "slug": "chapter-6",
+    "label": "Chapter 6",
+    "title": "Persona Is Not Demand",
+    "part": {
+      "roman": "II",
+      "title": "Who May Actually Pay?"
+    }
+  },
+  {
+    "slug": "chapter-7",
+    "label": "Chapter 7",
+    "title": "The Paid Problem Test",
+    "part": null
+  },
+  {
+    "slug": "chapter-8",
+    "label": "Chapter 8",
+    "title": "\u201cI\u2019d Use This\u201d Is Not Demand",
+    "part": null
+  },
+  {
+    "slug": "chapter-9",
+    "label": "Chapter 9",
+    "title": "The Best Buyer You Can't Reach Is a Bad First Buyer",
+    "part": null
+  },
+  {
+    "slug": "chapter-10",
+    "label": "Chapter 10",
+    "title": "The Market Gets a Vote",
+    "part": null
+  },
+  {
+    "slug": "chapter-11",
+    "label": "Chapter 11",
+    "title": "Your App Is Not the Offer",
+    "part": {
+      "roman": "III",
+      "title": "Make the App Buyable"
+    }
+  },
+  {
+    "slug": "chapter-12",
+    "label": "Chapter 12",
+    "title": "The Smallest Thing Worth Paying For",
+    "part": null
+  },
+  {
+    "slug": "chapter-13",
+    "label": "Chapter 13",
+    "title": "Your Price Is a Hypothesis",
+    "part": null
+  },
+  {
+    "slug": "chapter-14",
+    "label": "Chapter 14",
+    "title": "Create the Purchase Moment",
+    "part": null
+  },
+  {
+    "slug": "chapter-15",
+    "label": "Chapter 15",
+    "title": "Trust Is Its Own Problem",
+    "part": null
+  },
+  {
+    "slug": "chapter-16",
+    "label": "Chapter 16",
+    "title": "The Skeptical Buyer Test",
+    "part": null
+  },
+  {
+    "slug": "chapter-17",
+    "label": "Chapter 17",
+    "title": "Distribution Is Not Posting",
+    "part": {
+      "roman": "IV",
+      "title": "Get to the First Customer"
+    }
+  },
+  {
+    "slug": "chapter-18",
+    "label": "Chapter 18",
+    "title": "Follow the Trust Path",
+    "part": null
+  },
+  {
+    "slug": "chapter-19",
+    "label": "Chapter 19",
+    "title": "The Next Conversation Worth Your Hour",
+    "part": null
+  },
+  {
+    "slug": "chapter-20",
+    "label": "Chapter 20",
+    "title": "Your First Customer Path",
+    "part": null
+  },
+  {
+    "slug": "chapter-21",
+    "label": "Chapter 21",
+    "title": "An Objection Is Data",
+    "part": {
+      "roman": "V",
+      "title": "Let Buyers Teach You the Business"
+    }
+  },
+  {
+    "slug": "chapter-22",
+    "label": "Chapter 22",
+    "title": "Why Did This Person Pay?",
+    "part": null
+  },
+  {
+    "slug": "chapter-23",
+    "label": "Chapter 23",
+    "title": "Paid But Doesn't Stay",
+    "part": null
+  },
+  {
+    "slug": "chapter-24",
+    "label": "Chapter 24",
+    "title": "From One Customer to a Business",
+    "part": null
+  },
+  {
+    "slug": "conclusion",
+    "label": "Conclusion",
+    "title": "From Shipped to Paid",
+    "part": null
+  },
+  {
+    "slug": "put-this-to-work",
+    "label": "Put This to Work",
+    "title": "",
+    "part": null
+  },
+  {
+    "slug": "practical-tools",
+    "label": "Practical Tools",
+    "title": "",
+    "part": null
+  },
+  {
+    "slug": "appendix-a",
+    "label": "Appendix A",
+    "title": "Commercial Failure Diagnostic",
+    "part": null
+  },
+  {
+    "slug": "appendix-b",
+    "label": "Appendix B",
+    "title": "Paid Problem Test",
+    "part": null
+  },
+  {
+    "slug": "appendix-c",
+    "label": "Appendix C",
+    "title": "Build Permission Checklist",
+    "part": null
+  },
+  {
+    "slug": "appendix-d",
+    "label": "Appendix D",
+    "title": "Commitment Evidence Ladder",
+    "part": null
+  },
+  {
+    "slug": "appendix-e",
+    "label": "Appendix E",
+    "title": "Buyer Stress Test",
+    "part": null
+  },
+  {
+    "slug": "appendix-f",
+    "label": "Appendix F",
+    "title": "First Customer Path Worksheet",
+    "part": null
+  },
+  {
+    "slug": "appendix-g",
+    "label": "Appendix G",
+    "title": "Payer Delta Interview and Comparison",
+    "part": null
+  },
+  {
+    "slug": "appendix-h",
+    "label": "Appendix H",
+    "title": "The Ten Conversations Worth Having",
+    "part": null
+  },
+  {
+    "slug": "appendix-i",
+    "label": "Appendix I",
+    "title": "30-Day Shipped-to-Paid Plan",
+    "part": null
+  },
+  {
+    "slug": "notes",
+    "label": "Notes & Sources",
+    "title": "",
+    "part": null
+  },
+  {
+    "slug": "about-the-author",
+    "label": "About the Author",
+    "title": "",
+    "part": null
+  }
+]

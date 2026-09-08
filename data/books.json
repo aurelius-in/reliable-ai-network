@@ -7,8 +7,10 @@
     "year": "2026",
     "status": "published",
     "description": "AI made software dramatically easier to build. It did not make people care, trust, buy, pay, or stay. This book is for builders trying to understand where the path from shipped to paid is actually breaking.",
-    "cover": "assets/books/great-app-bad-business/title-card.jpg",
-    "coverKind": "title-card",
+    "cover": "assets/books/great-app-bad-business/cover.jpg",
+    "coverThumb": "assets/books/great-app-bad-business/cover-sm.jpg",
+    "coverKind": "cover",
+    "readUrl": "books/great-app-bad-business/read/",
     "amazonUrl": "https://www.amazon.com/dp/9798171849252",
     "kindleUrl": "",
     "paperbackUrl": "https://www.amazon.com/dp/9798171849252",
@@ -19,7 +21,7 @@
     "listOnSite": true,
     "detailPage": "books/great-app-bad-business.html",
     "topics": ["software commercialization", "app builders", "pricing", "demand", "trust"],
-    "_notes": "ISBN confirmed. Direct Amazon ASIN not independently retrieved from a full product page (bot challenge). Official cover art was not in the repo; title-card.jpg is a typographic treatment, not a photographed jacket."
+    "_notes": "ISBN confirmed. Cover is cover02.png optimized to cover.jpg. HTML edition at books/great-app-bad-business/read/."
   },
   {
     "slug": "the-agentic-ai-week",
