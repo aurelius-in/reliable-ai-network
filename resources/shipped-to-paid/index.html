@@ -4,48 +4,518 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Shipped-to-Paid Field Guide | Reliable AI Network</title>
-  <meta name="description" content="A practical companion to Great App. Bad Business. Start by finding the first unsupported step in the path to payment.">
+  <meta name="description" content="Worksheets from Great App. Bad Business.: diagnose where the path to payment breaks, test the paid problem, and run a 30-day shipped-to-paid plan. Free to use in the browser or print.">
   <link rel="canonical" href="https://reliableainetwork.com/resources/shipped-to-paid/">
   <meta property="og:title" content="The Shipped-to-Paid Field Guide">
-  <meta property="og:description" content="A practical companion to Great App. Bad Business.">
+  <meta property="og:description" content="Practical tools from Great App. Bad Business. Diagnose the break, then run the next commercial test.">
   <meta property="og:url" content="https://reliableainetwork.com/resources/shipped-to-paid/">
   <meta property="og:image" content="https://reliableainetwork.com/assets/books/great-app-bad-business/cover.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://reliableainetwork.com/assets/books/great-app-bad-business/cover.jpg">
   <link rel="icon" href="../../assets/brand/rain-mark-sm.png" type="image/png">
   <link rel="stylesheet" href="../../styles.css">
   <link rel="stylesheet" href="../../css/site.css">
+  <link rel="stylesheet" href="../../css/field-guide.css">
   <script src="../../js/site.js" defer></script>
+  <script src="../../js/field-guide.js" defer></script>
 </head>
-<body class="rain-body gabb-page" data-page="books">
+<body class="rain-body" data-page="books">
   <a class="skip-link" href="#main">Skip to content</a>
   <div id="site-header"></div>
-  <main id="main" class="section">
-    <div class="wrap prose">
-      <p class="kicker">Companion to Great App. Bad Business.</p>
-      <h1>The Shipped-to-Paid Field Guide</h1>
-      <p class="lead">A practical companion to Great App. Bad Business. Start by finding the first unsupported step in the path to payment.</p>
-      <p>This page will hold worksheets and diagnostics for readers. It does not require Make it RAIN. The product is an optional next step after the diagnosis, not a gate.</p>
+  <main id="main" class="section" style="padding-top:36px">
+    <div class="fg-layout">
+      <nav class="fg-toc" id="fg-toc" aria-label="Field Guide contents">
+        <p>Contents</p>
+        <ol>
+          <li><a href="#how">How to use this</a></li>
+          <li><a href="#path">Failure path</a></li>
+          <li><a href="#a">A. Diagnostic</a></li>
+          <li><a href="#b">B. Paid Problem</a></li>
+          <li><a href="#c">C. Build Permission</a></li>
+          <li><a href="#d">D. Evidence Ladder</a></li>
+          <li><a href="#e">E. Buyer Stress Test</a></li>
+          <li><a href="#f">F. First Customer Path</a></li>
+          <li><a href="#g">G. Payer Delta</a></li>
+          <li><a href="#h">H. Ten Conversations</a></li>
+          <li><a href="#i">I. 30-Day Plan</a></li>
+        </ol>
+      </nav>
 
-      <h2>Planned contents</h2>
-      <ul>
-        <li>Field Guide download</li>
-        <li>Commercial Failure Diagnostic</li>
-        <li>Paid Problem Test</li>
-        <li>Build Permission Checklist</li>
-        <li>Commitment Evidence Ladder</li>
-        <li>Buyer Stress Test worksheet</li>
-        <li>First Customer Path worksheet</li>
-        <li>Payer Delta</li>
-        <li>30-Day Shipped-to-Paid Plan</li>
-      </ul>
+      <article class="fg-main">
+        <p class="kicker fg-kicker">Companion to Great App. Bad Business.</p>
+        <h1>The Shipped-to-Paid Field Guide</h1>
+        <p class="lead">Practical tools for app builders who have shipped (or nearly shipped) something real, with weak or uncertain revenue. These are the working versions of the tools in Oliver A. Ellison’s book, collected so you can use them without rereading the chapters.</p>
+        <p>You do not need to buy the book to use this guide. You do not need Make it RAIN. Each tool is meant for a first pass in under twenty minutes: a decision or a next test, not a document.</p>
+        <p class="fg-meta">ISBN 9798171849252 · First edition · Tools © 2026 Oliver A. Ellison</p>
+        <div class="fg-facts">
+          <div>
+            <h3>What this is</h3>
+            <p>The book’s Practical Tools (Appendices A through I) as worksheets. A first pass should take under twenty minutes per tool and produce a decision or a next test, not a document.</p>
+          </div>
+          <div>
+            <h3>Who it is for</h3>
+            <p>Builders with a shipped or nearly shipped product and weak or uncertain revenue. You do not need to buy the book. You do not need Make it RAIN.</p>
+          </div>
+          <div>
+            <h3>How to use it</h3>
+            <p>Type in the lined areas in the browser (notes stay on this device) or print a section. There is no form to submit and no email capture.</p>
+          </div>
+        </div>
+        <div class="btn-row fg-actions" style="margin-top:0">
+          <a class="btn gabb" href="../../books/great-app-bad-business/read/">Read the book online</a>
+          <a class="btn secondary" data-track="amazon_book_click" href="https://www.amazon.com/dp/9798171849252?utm_source=reliableainetwork&amp;utm_medium=referral&amp;utm_campaign=field-guide" target="_blank" rel="noopener">Buy on Amazon</a>
+          <button type="button" class="btn ghost" id="fg-print">Print worksheets</button>
+        </div>
 
-      <div class="todo-note" data-todo="email-capture">
-        <strong>Not downloadable yet.</strong> There is no live email provider wired on this static site. Do not add a form that pretends to collect addresses. When an ESP is configured, set <code>window.RAIN_FIELD_GUIDE_ENDPOINT</code> in site config and connect the capture here.
-      </div>
+        <h2 id="how">How to use this</h2>
+        <p>A rule that applies to every tool: write what you have observed, not what you believe. “Said the reports take a senior person most of a day each month” is an observation. “Has a strong need” is an interpretation. The tools work when the entries could be checked by someone else.</p>
+        <div class="fg-rule">
+          <p style="margin:0 0 8px"><strong>Start here if you are unsure.</strong></p>
+          <ol>
+            <li>Complete <a href="#a">Appendix A</a>. Stop at the first step your evidence cannot support.</li>
+            <li>That break is the current commercial frontier. Do not skip ahead because a later problem feels more comfortable.</li>
+            <li>Use <a href="#i">Appendix I</a> to turn the diagnosis into thirty days of buyer conversations, bounded offers, real prices, and explicit decisions.</li>
+          </ol>
+        </div>
+        <p>Print a section if you want lined paper. There is no form to submit and no email capture on this page.</p>
 
-      <div class="btn-row">
-        <a class="btn gabb" href="../../books/great-app-bad-business.html">Back to the book</a>
-        <a class="btn secondary" data-track="make_it_rain_click" href="https://MakeItRainApp.com/?utm_source=reliableainetwork&amp;utm_medium=referral&amp;utm_campaign=field-guide" target="_blank" rel="noopener">Optional: Make it RAIN</a>
-      </div>
+        <h2 id="path">The commercial failure path</h2>
+        <p>The diagnostic replaces “nobody is buying” with the specific point at which the path from buyer to retained customer breaks. Treatment follows diagnosis. The remedy that helps one failure state hurts another.</p>
+        <div class="fail-path" style="margin:16px 0 20px">
+          <span>cannot find buyer</span><span class="arrow">→</span>
+          <span>no reply</span><span class="arrow">→</span>
+          <span>will not try</span><span class="arrow">→</span>
+          <span>tries but does not value</span><span class="arrow">→</span>
+          <span>values but will not pay</span><span class="arrow">→</span>
+          <span>pays but does not stay</span>
+        </div>
+        <p>If two states both look broken, the earlier one is the constraint. The later one cannot be diagnosed until the earlier one passes.</p>
+
+        <h2 id="a">Appendix A: Commercial Failure Diagnostic</h2>
+        <p class="fg-meta">Introduced in Chapter 5. Reused in Chapters 17, 21, 23, and 24. <a href="../../books/great-app-bad-business/read/appendix-a.html">Read this appendix in the book</a>.</p>
+        <p>Answer the six questions in order. For each, write the evidence that says yes. Stop at the first question you cannot support with observed behavior. That is where the next test belongs. Do not guess about anything after it.</p>
+
+        <div class="worksheet">
+          <p class="worksheet-q">1. Can I identify plausible buyers?</p>
+          <p class="worksheet-help">Not a persona. People you can name or describe by observable conditions, who own the consequence of the problem.</p>
+          <div class="write-in" aria-label="Evidence for buyers"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">2. Do those buyers respond when I reach them?</p>
+          <p class="worksheet-help">Replies, not opens.</p>
+          <div class="write-in" aria-label="Evidence for replies"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">3. Will they undertake a real evaluation?</p>
+          <p class="worksheet-help">Against a real case, with their own data or workflow.</p>
+          <div class="write-in" aria-label="Evidence for evaluation"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">4. Do they experience meaningful value?</p>
+          <p class="worksheet-help">The promised outcome occurred, in their terms.</p>
+          <div class="write-in" aria-label="Evidence for value"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">5. Will they pay under real terms?</p>
+          <p class="worksheet-help">The standard offer at the standard price, not a favor.</p>
+          <div class="write-in" aria-label="Evidence for payment"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">6. After paying, do they continue to judge the exchange worthwhile?</p>
+          <p class="worksheet-help">Activation, continued use, renewal.</p>
+          <div class="write-in" aria-label="Evidence for retention"></div>
+        </div>
+        <h3>Reading the result</h3>
+        <ul>
+          <li>A break at 1 or 2 is a buyer, message, path, or trust problem. More traffic may help and may not.</li>
+          <li>A break at 3 is an offer or trust problem.</li>
+          <li>A break at 4 is a product, activation, or use-case problem.</li>
+          <li>A break at 5 is a price, urgency, purchase-moment, or economic-value problem.</li>
+          <li>A break at 6 is a retention problem. More acquisition will make it more expensive.</li>
+        </ul>
+        <p><strong>Common misuse.</strong> Placing the app at the furthest point you hope it reaches rather than the furthest point you have observed. If you have never asked anyone to pay, the diagnostic stops at 5 regardless of how much usage you have.</p>
+
+        <h2 id="b">Appendix B: Paid Problem Test</h2>
+        <p class="fg-meta">Introduced in Chapter 7. Reused in Chapters 11, 12, 19, and 20. <a href="../../books/great-app-bad-business/read/appendix-b.html">Read this appendix in the book</a>.</p>
+        <p>Pain is abundant. The test asks whether the problem already has an economic cost that causes behavior. The strongest problems are the ones somebody is already spending money, labor, risk, or attention on. For one target problem and one buyer:</p>
+        <div class="worksheet">
+          <p class="worksheet-q">1. What happens if the problem continues?</p>
+          <p class="worksheet-help">Next week, next month, next quarter. Name the consequence, not the feeling.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">2. What is the buyer already doing because the problem exists?</p>
+          <p class="worksheet-help">Spreadsheet, contractor, part-time employee, manual review, duplicate tool, monthly fire drill. If nothing, note that. It is evidence.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">3. What does the current response consume?</p>
+          <p class="worksheet-help">Hours of whose time, at what cost; money spent; revenue leaked; deadlines missed; risk carried. Use the buyer’s numbers where you have them and mark estimates as estimates.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">4. Who owns the consequence?</p>
+          <p class="worksheet-help">The person whose budget, staff, or performance absorbs the cost. This is frequently not the person who experiences the problem.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">5. Why does it matter now?</p>
+          <p class="worksheet-help">The trigger, if any: deadline, departure, audit, new client, failed alternative, budget cycle.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">6. Is doing nothing still a reasonable decision?</p>
+          <p class="worksheet-help">Answer honestly from the buyer’s side. If yes, the problem is real and not yet paid.</p>
+          <div class="write-in"></div>
+        </div>
+        <p><strong>Scoring without false precision.</strong> A problem passes when questions 2 and 3 have concrete answers, question 4 names a person, and question 6 is “no” or “not for long.” Strong 1 with weak 2 and 3 is a pain, not a paid problem. Strong 2 and 3 with no answer to 4 has cost and no buyer. Find the owner before proceeding.</p>
+        <p><strong>False positives.</strong> Interesting problem, no authority. Large problem, no budget line. Painful problem, entrenched alternative that works. Costly problem that occurs once a year. Each passes part of the test and fails the part that produces purchase.</p>
+
+        <h2 id="c">Appendix C: Build Permission Checklist</h2>
+        <p class="fg-meta">Introduced in Chapter 4. Reused in Chapter 21. <a href="../../books/great-app-bad-business/read/appendix-c.html">Read this appendix in the book</a>.</p>
+        <p>A feature request is evidence that somebody wants a feature. Build Permission asks whether there is evidence that building it changes buying behavior. The larger the build and the weaker the evidence, the more valuable it is to test the commercial assumption first.</p>
+        <div class="worksheet">
+          <p class="worksheet-q">1. Who needs this?</p>
+          <p class="worksheet-help">Paying customers, qualified prospects, free users, one vocal person, or the founder. Label the source accurately. There is nothing wrong with wanting a feature. There is something wrong with mislabeling why.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">2. What do they do today without it?</p>
+          <p class="worksheet-help">The workaround, or the absence of one.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">3. What financial or operational consequence exists?</p>
+          <p class="worksheet-help">For the person in question 1, in their terms.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">4. What decision is blocked?</p>
+          <p class="worksheet-help">“They would like it” is not a blocked decision. “They cannot begin the evaluation without it” is.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">5. What commitment has been made?</p>
+          <p class="worksheet-help">Verbal interest, agreement to evaluate, acceptance of a price, a dated conditional commitment, a paid pilot contingent on the feature, or nothing.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">6. What result would justify the build?</p>
+          <p class="worksheet-help">Write this before the build starts. If the feature ships and this result does not follow, what will you conclude?</p>
+          <div class="write-in"></div>
+        </div>
+        <p><strong>Decision rule.</strong> Concrete answers to 4 and 5 from a qualified buyer: Build Permission. Strong 1 through 3 and weak 4 and 5: a hypothesis. Ask what they would commit to if it existed. A feature the founder wants for product reasons can still be built. It should not be described as monetization work.</p>
+        <div class="fg-rule">
+          <p style="margin:0"><strong>The one question that saves the most time.</strong> If we deliver this by an agreed date and the rest of the product performs as demonstrated, are you prepared to proceed at the proposed terms? The answer is the evidence.</p>
+        </div>
+
+        <h2 id="d">Appendix D: Commitment Evidence Ladder</h2>
+        <p class="fg-meta">Introduced in Chapter 8. Reused in Chapters 13, 14, 20, 22, and 23. <a href="../../books/great-app-bad-business/read/appendix-d.html">Read this appendix in the book</a>.</p>
+        <p>Evidence gets progressively more expensive to produce, and its value rises with its cost. Lower rungs are not useless. They are weaker. One higher-rung event does not generalize. Never describe evidence from a lower rung as if it came from a higher one.</p>
+        <div class="fail-path" style="margin:12px 0 18px">
+          <span>expressed pain</span><span class="arrow">→</span>
+          <span>agrees to evaluate</span><span class="arrow">→</span>
+          <span>accepts a price</span><span class="arrow">→</span>
+          <span>dated pilot or conditional commitment</span><span class="arrow">→</span>
+          <span>pays</span><span class="arrow">→</span>
+          <span>renews</span>
+        </div>
+        <table class="fg-table">
+          <thead>
+            <tr><th>Rung</th><th>What the buyer did</th><th>What it proves</th><th>What it does not prove</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Expressed pain</td>
+              <td>Described the problem, perhaps with frustration</td>
+              <td>The problem is recognized</td>
+              <td>That it is costly, urgent, or theirs to solve</td>
+            </tr>
+            <tr>
+              <td>Agrees to evaluate</td>
+              <td>Scheduled time; supplied a real case or data</td>
+              <td>The problem is worth an hour</td>
+              <td>That they value the solution or can buy</td>
+            </tr>
+            <tr>
+              <td>Accepts a price</td>
+              <td>Heard a specific number and did not decline</td>
+              <td>The number is not disqualifying in context</td>
+              <td>That they will pay it</td>
+            </tr>
+            <tr>
+              <td>Dated pilot or conditional commitment</td>
+              <td>“If X by date Y at price Z, we proceed”; a paid pilot</td>
+              <td>Purchase intent tied to specific conditions</td>
+              <td>That the purchase will follow if conditions are met</td>
+            </tr>
+            <tr>
+              <td>Pays</td>
+              <td>Moved money under real terms</td>
+              <td>Expected value exceeded price plus risk for this buyer</td>
+              <td>That value was realized; that others will pay</td>
+            </tr>
+            <tr>
+              <td>Renews</td>
+              <td>Paid again with knowledge of what the first payment bought</td>
+              <td>Realized value justified continued commitment</td>
+              <td>That the business repeats or the economics work</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Place every current “lead” on the rung their observed behavior supports, not the rung the conversation felt like. Then ask each for the next rung up, not for the top. A prospect at “expressed pain” should be asked to evaluate, not to sign an annual contract. Weak commercial evidence includes: “cool idea,” “I’d use this,” “let me know when it’s ready,” a feature request, a signup, a download, free usage, and social engagement. All of these sit at or below the first rung.</p>
+        <div class="worksheet">
+          <p class="worksheet-q">Current leads, placed on the ladder</p>
+          <div class="write-in" style="min-height:6em"></div>
+        </div>
+
+        <h2 id="e">Appendix E: Buyer Stress Test</h2>
+        <p class="fg-meta">Introduced in Chapter 16. Reused in Chapter 20. An early-market version appears in Chapter 9. <a href="../../books/great-app-bad-business/read/appendix-e.html">Read this appendix in the book</a>.</p>
+        <p>Argue the no. Before spending money or reputation amplifying a proposition, construct the strongest honest case a rational buyer could make for not purchasing, and find out where the offer is actually weak. This is not a script for rebuttals. It is a search for the variable to fix before scaling.</p>
+        <p>Answer from the perspective of a skeptical but reasonable buyer:</p>
+        <div class="worksheet">
+          <p class="worksheet-q">1. Alternative</p>
+          <p class="worksheet-help">If they reject this, what do they actually do instead, and why is that good enough? Include doing nothing.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">2. Economics</p>
+          <p class="worksheet-help">What materially improves if they buy, and is the expected improvement worth the total cost of change: price, implementation, learning, disruption?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">3. Confidence</p>
+          <p class="worksheet-help">What are they being asked to believe, and what evidence makes that belief reasonable for someone who does not know you?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">4. Friction</p>
+          <p class="worksheet-help">What must happen between saying yes and reaching credible value, including work outside the product and people outside the conversation?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">5. Timing</p>
+          <p class="worksheet-help">Why does this belong on their calendar now? What materially changes if they wait a quarter?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">6. Internal purchase</p>
+          <p class="worksheet-help">Who else pays, works, approves, accepts risk, or can veto? What will each of them ask?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">7. Diagnosis</p>
+          <p class="worksheet-help">Which argument against the purchase is strongest, and which variable does it implicate: offer, proof, target buyer, product, price, trust, or timing?</p>
+          <div class="write-in"></div>
+        </div>
+        <p><strong>Decision rule.</strong> Fix the variable named in question 7 before increasing exposure. If the strongest argument against the purchase is one you cannot currently answer, do not scale the message. The scale will distribute the weakness.</p>
+        <p><strong>Early-market version (Chapter 9).</strong> For a candidate first buyer segment, score fit, economic pain, urgency, authority, reachability, and trust on a three-point scale of none, plausible, or observed. A segment with high fit and zero on reachability or trust is a poor first buyer however attractive the eventual market.</p>
+        <table class="fg-table">
+          <thead>
+            <tr><th>Condition</th><th>None</th><th>Plausible</th><th>Observed</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Fit</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Economic pain</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Urgency</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Authority</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Reachability</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Trust</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="f">Appendix F: First Customer Path Worksheet</h2>
+        <p class="fg-meta">Introduced in Chapter 20. Reused in Chapter 24. <a href="../../books/great-app-bad-business/read/appendix-f.html">Read this appendix in the book</a>.</p>
+        <p>“Get your first customer” is a chain of decisions, most of which founders make by default. The path makes each one explicit and asks for evidence rather than assumption. Enter at the first step where the word “evidence” is doing more work than the evidence can support.</p>
+        <div class="fail-path" style="margin:12px 0 18px">
+          <span>buyer</span><span class="arrow">→</span>
+          <span>paid problem</span><span class="arrow">→</span>
+          <span>smallest offer</span><span class="arrow">→</span>
+          <span>price and commitment test</span><span class="arrow">→</span>
+          <span>skeptical-buyer check</span><span class="arrow">→</span>
+          <span>conversation</span><span class="arrow">→</span>
+          <span>buying decision</span>
+        </div>
+        <p>For one real buyer, complete each step with observed information:</p>
+        <div class="worksheet">
+          <p class="worksheet-q">1. Buyer</p>
+          <p class="worksheet-help">Who, by name or by observable conditions, owns the consequence of the problem and can act? How do you reach them? What evidence supports this?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">2. Paid problem</p>
+          <p class="worksheet-help">What are they already spending, doing, or risking because of it? Use Appendix B. What is the cost in their terms?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">3. Smallest offer</p>
+          <p class="worksheet-help">What single bounded outcome could this buyer evaluate and purchase within a clear scope? State it without naming a feature unless the feature explains the outcome.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">4. Price and commitment test</p>
+          <p class="worksheet-help">What number, what terms, what ask? What did the buyer do when they heard it?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">5. Skeptical-buyer check</p>
+          <p class="worksheet-help">Appendix E, applied to this buyer. What is the strongest reason they would decline, and what did you do about it?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">6. Conversation</p>
+          <p class="worksheet-help">Through what path did it happen? What was asked, clearly? What did the buyer say and do?</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">7. Buying decision</p>
+          <p class="worksheet-help">Yes, no, or deferred. The stated reason. The commitment made, if any.</p>
+          <div class="write-in"></div>
+        </div>
+        <p>Keep one row per buyer. That record is what makes Appendix G possible. After each decision, run the same path with the next similar buyer if the evidence says it is working. Change one step if the decision showed that step was wrong. Do not change three steps at once.</p>
+        <p>Self-serve products: the steps do not change; where they happen does. The buyer is defined by in-product behavior, the paid problem by what users abandon or pay for elsewhere, the offer by what is legible on a pricing page in four seconds, the commitment test by the checkout, the conversation by onboarding and first emails, and the record by instrumentation. Find the cohort that reached the price step and treat what distinguishes it as the buyer definition.</p>
+
+        <h2 id="g">Appendix G: Payer Delta Interview and Comparison</h2>
+        <p class="fg-meta">Introduced in Chapter 22. Reused in Chapters 23 and 24. <a href="../../books/great-app-bad-business/read/appendix-g.html">Read this appendix in the book</a>.</p>
+        <p>One customer does not prove the thesis. Compared with similar prospects who did not buy, one customer can reveal the conditions that crossed the payment line. The near-misses are the control group. Without them the payer only confirms what you already believed.</p>
+        <p>Comparison group: one payer and at least two near-misses (prospects who qualified, had the problem, reached a decision point, and did not buy). The nearer, the better. A random non-payer produces a useless delta. For each person, record in observed terms:</p>
+        <ul>
+          <li>Trigger: what changed shortly before the decision?</li>
+          <li>Urgency and consequence: what would have happened if they did nothing for a quarter?</li>
+          <li>Use case: what specifically did they intend to do with the product?</li>
+          <li>Economic impact: what was the problem costing, in their accounting?</li>
+          <li>Existing workaround: what were they doing instead, at what cost?</li>
+          <li>Authority: could they decide alone, and who else was involved?</li>
+          <li>Acquisition path: how did they encounter the offer?</li>
+          <li>Trust: what did they already believe about you, and why?</li>
+          <li>Proof: what evidence did they see before deciding?</li>
+          <li>Timing: budget cycle, project, contract, season?</li>
+          <li>Price tolerance: what number did they accept or refuse, compared against what?</li>
+          <li>Implementation conditions: what did adopting require of them?</li>
+        </ul>
+        <table class="fg-table">
+          <thead>
+            <tr><th>Observed term</th><th>Payer</th><th>Near-miss 1</th><th>Near-miss 2</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Trigger</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Urgency and consequence</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Use case</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Economic impact</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Existing workaround</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Authority</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Acquisition path</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Trust</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Proof</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Timing</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Price tolerance</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>Implementation conditions</td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+          </tbody>
+        </table>
+        <p>Find the rows where the payer differs from most or all near-misses. Those are the delta. There are usually two or three, and they are frequently not the ones you were selling on. Write them as a hypothesis about who buys and why. Test it on the next three prospects who match it before changing the pricing page, the outreach list, or the roadmap.</p>
+        <p>Interview prompts for near-misses. Frame as research, not as a second attempt at the sale. “I’m trying to understand who this is right for, and you were close enough that your view would help. What would have needed to be different?” “What did you end up doing instead?” “What was the moment you decided not to go ahead?”</p>
+        <p>Retention version: run the same table with retained customers against churned customers. The acquisition delta and the retention delta together describe the business. Where they differ is the most important thing the tool can show you.</p>
+        <div class="worksheet">
+          <p class="worksheet-q">Delta hypothesis (who buys and why)</p>
+          <div class="write-in" style="min-height:5em"></div>
+        </div>
+
+        <h2 id="h">Appendix H: The Ten Conversations Worth Having</h2>
+        <p class="fg-meta">Derived from Chapter 19. <a href="../../books/great-app-bad-business/read/appendix-h.html">Read this appendix in the book</a>.</p>
+        <p>Before a repeatable channel exists, the founder’s hours are the acquisition system. Rank prospective conversations by what they can reveal, not by what they feel like. This is a way of noticing, not a formula.</p>
+        <p>For each of the next ten possible conversations, score each condition 0 (no evidence), 1 (plausible), or 2 (observed). Do not use a finer scale.</p>
+        <table class="fg-table">
+          <thead>
+            <tr>
+              <th>Condition</th>
+              <th>What “observed” looks like</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Fit</td><td>Lives with the problem in a context where it matters</td></tr>
+            <tr><td>Economic pain</td><td>Existing workaround, spend, or labor you can name</td></tr>
+            <tr><td>Authority</td><td>Can decide, or credibly moves the decision</td></tr>
+            <tr><td>Trigger</td><td>A visible reason action is plausible soon</td></tr>
+            <tr><td>Reachability and trust path</td><td>Can be reached in a way that lets a serious conversation happen; arrived with some reason to take you seriously</td></tr>
+            <tr><td>Candor</td><td>Likely to tell you the truth, or the conversation is structured to allow it</td></tr>
+          </tbody>
+        </table>
+        <table class="fg-table">
+          <thead>
+            <tr><th>#</th><th>Who</th><th>Fit</th><th>Pain</th><th>Auth</th><th>Trigger</th><th>Reach / trust</th><th>Candor</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>2</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>3</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>4</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>5</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>6</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>7</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>8</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>9</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td>10</td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr>
+          </tbody>
+        </table>
+        <p>Sum the scores if you like, then read the rows. A single zero often matters more than the total. A prospect with 2s everywhere except authority is a superb source of problem understanding and a poor use of an hour when you need purchase evidence. A prospect scoring 1 across the board is the most dangerous row: nothing disqualifies them and nothing recommends them.</p>
+        <div class="worksheet">
+          <p class="worksheet-q">Before the conversation</p>
+          <p class="worksheet-help">If this goes well, I will know more about ______ than I do now. If the blank fills with a specific belief the person can affect, take the hour. If it fills with “the product” or nothing, it is a social event. Do not count it as acquisition.</p>
+          <div class="write-in"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">After the conversation</p>
+          <p class="worksheet-help">Which belief was strengthened or weakened, what commitment or specific refusal occurred, and whether any condition was scored wrong. Revise the score.</p>
+          <div class="write-in"></div>
+        </div>
+
+        <h2 id="i">Appendix I: 30-Day Shipped-to-Paid Plan</h2>
+        <p class="fg-meta"><a href="../../books/great-app-bad-business/read/appendix-i.html">Read this appendix in the book</a>.</p>
+        <p>A sequence of the book’s tests. It guarantees a disciplined set of commercial experiments. It does not guarantee a customer or revenue, and any plan that does should be treated with the skepticism the book has recommended for every other claim.</p>
+        <p>The plan assumes a shipped product and weak or zero purchase evidence. Adjust the entry point using Appendix A: if you already have observed evidence for a step, do not repeat it.</p>
+        <div class="worksheet">
+          <p class="worksheet-q">Days 1 to 3: Diagnose</p>
+          <p class="worksheet-help">Complete Appendix A honestly. Write two lists: evidence the product works, and evidence the business works. No item appears on both without justification. Identify the first failure state you cannot support with observed behavior. Everything that follows targets that state.</p>
+          <div class="write-in" style="min-height:5em"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">Days 4 to 8: Buyer and paid problem</p>
+          <p class="worksheet-help">Rewrite the target customer as observable buying conditions rather than a persona. Complete Appendix B for one problem. Identify ten to fifteen reachable people who plausibly own the consequence. Do not build anything.</p>
+          <div class="write-in" style="min-height:5em"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">Days 9 to 15: Conversations that can change a belief</p>
+          <p class="worksheet-help">Use Appendix H to rank the list. Hold the top six to ten conversations, asking about current behavior and cost, not opinion. For each, complete the sentence in Appendix H before and record the result after. Stop the plan here and revise the buyer definition if fewer than three conversations produce an observable paid problem.</p>
+          <div class="write-in" style="min-height:5em"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">Days 16 to 20: Offer, price, and the skeptical case</p>
+          <p class="worksheet-help">From the conversations, define the smallest bounded outcome a buyer could evaluate and purchase. Write the offer without naming a feature unless needed. Attach a price and a commitment ask. Run Appendix E against it and fix the variable it names. Run Appendix C against any feature you are tempted to build first. Build it only if it has Build Permission.</p>
+          <div class="write-in" style="min-height:5em"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">Days 21 to 27: Create the purchase moment</p>
+          <p class="worksheet-help">Return to the three to five highest-scoring buyers with the specific offer, the price, a start date, and a clear ask. Ask for a decision. Record every response in the Appendix F format, including the stated reason for every no and every deferral.</p>
+          <div class="write-in" style="min-height:5em"></div>
+        </div>
+        <div class="worksheet">
+          <p class="worksheet-q">Days 28 to 30: Compare and decide</p>
+          <p class="worksheet-help">If anyone paid, run Appendix G and write the delta as a hypothesis. If nobody paid, code the refusals as in Chapter 21, identify the pattern, and decide which single variable to change: buyer, problem, offer, price, trust, path, or timing. Write the next thirty-day test. Do not automate anything yet.</p>
+          <div class="write-in" style="min-height:5em"></div>
+        </div>
+        <p>Thirty days from now you will know which failure state the business is in, who the buyer is in observable terms, what one bounded offer at one price looked like to real buyers, and what those buyers did when asked to decide. That is more commercial evidence than most shipped products have accumulated in a year. It may include a customer. Its purpose is to make sure that whether it does or not, you know why.</p>
+
+        <h2 id="next">Keep going</h2>
+        <p>Keep the rule that has mattered throughout the book: do not automate a guess. Make the assumption visible, put it in front of a buyer, and let the next decision earn the next move.</p>
+        <p>The argument, the stories, and the full explanations live in <a href="../../books/great-app-bad-business.html">Great App. Bad Business.</a> You can <a href="../../books/great-app-bad-business/read/">read it online</a> or <a data-track="amazon_book_click" href="https://www.amazon.com/dp/9798171849252?utm_source=reliableainetwork&amp;utm_medium=referral&amp;utm_campaign=field-guide" target="_blank" rel="noopener">buy the paperback on Amazon</a> (ISBN 9798171849252).</p>
+        <p>Make it RAIN is optional software for working through many of these questions interactively. No software can manufacture demand. If you would rather use a guided tool than a worksheet, it is at <a data-track="make_it_rain_click" href="https://MakeItRainApp.com/?utm_source=reliableainetwork&amp;utm_medium=referral&amp;utm_campaign=field-guide" target="_blank" rel="noopener">MakeItRainApp.com</a>.</p>
+        <div class="btn-row fg-actions">
+          <a class="btn gabb" href="../../books/great-app-bad-business/read/">Read the book online</a>
+          <a class="btn secondary" href="../../books/great-app-bad-business.html">Book page</a>
+          <a class="btn ghost" href="../">All resources</a>
+        </div>
+        <p class="fg-meta">These tools are from Great App. Bad Business. by Oliver A. Ellison. They are presented here by Reliable AI Network, Inc. as a free companion for builders. Print what you need. There is no download file and no mailing list on this page.</p>
+      </article>
     </div>
   </main>
   <div id="site-footer"></div>

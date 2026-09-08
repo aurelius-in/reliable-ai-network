@@ -1,0 +1,182 @@
+/* Shipped-to-Paid Field Guide. Dark chrome; print-friendly worksheets. */
+
+.fg-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.fg-toc {
+  position: sticky;
+  top: 72px;
+  align-self: start;
+  padding: 12px 0 24px;
+  font-size: 13px;
+}
+.fg-toc p {
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--rain-cyan);
+}
+.fg-toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.fg-toc a {
+  display: block;
+  color: var(--rain-muted);
+  text-decoration: none;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border-left: 2px solid transparent;
+}
+.fg-toc a:hover,
+.fg-toc a[aria-current="true"] {
+  color: var(--rain-ink);
+  background: rgba(15, 23, 42, 0.7);
+  border-left-color: var(--gabb-red);
+}
+.fg-main { min-width: 0; max-width: 46rem; padding-bottom: 64px; overflow-x: auto; }
+.fg-main h1 { margin: 0 0 10px; }
+.fg-main h2 {
+  margin: 2.4em 0 0.6em;
+  padding-top: 8px;
+  scroll-margin-top: 80px;
+}
+.fg-main h3 { margin: 1.4em 0 0.5em; font-size: 1.05rem; }
+.fg-main p, .fg-main li { color: var(--rain-muted); }
+.fg-main .lead { color: var(--rain-ink); }
+.fg-kicker { margin: 0 0 8px; }
+
+.fg-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 20px;
+}
+.fg-facts div {
+  border: 1px solid var(--rain-line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: var(--rain-panel);
+}
+.fg-facts h3 { margin: 0 0 8px; font-size: 0.95rem; }
+.fg-facts p { margin: 0; font-size: 0.92rem; }
+@media (max-width: 720px) {
+  .fg-facts { grid-template-columns: 1fr; }
+}
+
+button.btn {
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+}
+
+.fg-rule {
+  border: 1px solid var(--rain-line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 16px 0 22px;
+  background: var(--rain-panel);
+  color: var(--rain-ink);
+}
+.fg-rule strong { color: var(--rain-ink); }
+
+.worksheet {
+  border: 1px solid var(--rain-line);
+  border-radius: 14px;
+  padding: 16px 16px 8px;
+  margin: 14px 0 20px;
+  background: rgba(5, 8, 16, 0.55);
+}
+.worksheet + .worksheet { margin-top: 10px; }
+.worksheet-q {
+  margin: 0 0 8px;
+  color: var(--rain-ink);
+  font-weight: 650;
+}
+.worksheet-help {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+}
+.write-in {
+  min-height: 4.2em;
+  margin: 0 0 8px;
+  border-bottom: 1px dashed rgba(148, 163, 184, 0.35);
+  color: var(--rain-ink);
+  outline: none;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 1.35em,
+      rgba(148, 163, 184, 0.16) 1.35em,
+      rgba(148, 163, 184, 0.16) calc(1.35em + 1px)
+    );
+}
+.write-in:focus,
+.fg-table td.blank:focus {
+  box-shadow: inset 0 0 0 1px var(--rain-focus);
+}
+.fg-table td.blank {
+  min-width: 4.5em;
+  outline: none;
+  color: var(--rain-ink);
+}
+
+.fg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 12px 0 18px;
+}
+.fg-table th,
+.fg-table td {
+  border: 1px solid var(--rain-line);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+  color: var(--rain-muted);
+}
+.fg-table th { color: var(--rain-ink); background: rgba(11, 18, 32, 0.9); }
+.fg-table td.blank { height: 2.6em; background: rgba(5, 8, 16, 0.4); }
+
+.fg-meta {
+  font-size: 13px;
+  color: var(--rain-muted);
+  margin: 0 0 18px;
+}
+.fg-actions { margin: 28px 0 8px; }
+
+@media (max-width: 860px) {
+  .fg-layout { grid-template-columns: 1fr; }
+  .fg-toc {
+    position: static;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .fg-toc ol { display: flex; flex-wrap: wrap; gap: 4px; }
+}
+
+@media print {
+  #site-header, #site-footer, .site-header, .site-footer, .nav-toggle, .fg-toc, .fg-actions, .skip-link, .fg-facts { display: none !important; }
+  body.rain-body, .fg-main, .worksheet, .fg-rule {
+    background: #fff !important;
+    color: #111 !important;
+    box-shadow: none;
+  }
+  .fg-layout { display: block; max-width: none; padding: 0; }
+  .fg-main { max-width: none; }
+  .fg-main h2 { break-after: avoid; page-break-after: avoid; }
+  .worksheet { break-inside: avoid; page-break-inside: avoid; border-color: #bbb; }
+  .fg-main p, .fg-main li, .worksheet-q, .fg-table td, .fg-table th { color: #222 !important; }
+  .write-in { min-height: 3.6em; }
+  a { color: #111; text-decoration: none; }
+}

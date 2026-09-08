@@ -82,6 +82,7 @@
             '<a href="' + abs("portfolio.html") + '">Portfolio</a>' +
             '<a href="' + abs("products.html") + '">Products</a>' +
             '<a href="' + abs("books.html") + '">Books</a>' +
+            '<a href="' + abs("resources/") + '">Resources</a>' +
             '<a href="' + abs("oliver-ellison.html") + '">About</a>' +
             '<a href="' + abs("consultation.html") + '">Contact</a>' +
             '<a href="https://github.com/aurelius-in/reliable-ai-network" rel="noopener">GitHub</a>' +
