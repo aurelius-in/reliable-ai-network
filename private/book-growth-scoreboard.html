@@ -1,0 +1,1326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>GABB 90-Day Growth Scoreboard (private)</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg2: #11161d;
+      --surface: #161c25;
+      --surface2: #1c2430;
+      --line: #2a3340;
+      --ink: #e7edf5;
+      --muted: #8b98a8;
+      --accent: #7aa2ff;
+      --good: #3ccf8a;
+      --warn: #d6a84b;
+      --bad: #e05d5d;
+      --tele: #7d8b99;
+      --gold: #c4a35a;
+      --shadow: 0 8px 24px rgba(0,0,0,.28);
+      --radius: 12px;
+      --mono: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #efece4;
+        --bg2: #f7f4ee;
+        --surface: #fffdf8;
+        --surface2: #f3efe6;
+        --line: #d9d2c4;
+        --ink: #1c2430;
+        --muted: #5c6774;
+        --accent: #2f5fbf;
+        --good: #1f8a58;
+        --warn: #a57412;
+        --bad: #b42323;
+        --tele: #66707c;
+        --gold: #8a6a28;
+        --shadow: 0 8px 22px rgba(28,36,48,.08);
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: var(--mono);
+      background: radial-gradient(900px 420px at 100% -10%, rgba(122,162,255,.08), transparent 50%), var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 18px 18px 64px; }
+    header.top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+    header.top h1 { font-size: 1.55rem; margin: 0 0 4px; letter-spacing: -.02em; }
+    header.top .sub { color: var(--muted); margin: 0; }
+    .tools { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    button, .file-btn {
+      background: var(--surface);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 7px 11px;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    button:hover, .file-btn:hover { border-color: var(--accent); }
+    button.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    button.danger { color: var(--bad); border-color: var(--bad); }
+    .file-btn input { display: none; }
+    .lock {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface);
+      font-weight: 650;
+    }
+    .saved { color: var(--muted); font-size: 12px; margin-top: 6px; text-align: right; }
+    .reminders {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 0 0 14px;
+    }
+    .reminders p {
+      margin: 0;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 10px;
+      font-weight: 650;
+    }
+    .break-box {
+      margin: 0 0 16px;
+      padding: 18px 18px 16px;
+      border: 2px solid var(--gold);
+      background: linear-gradient(180deg, rgba(196,163,90,.12), var(--surface));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .break-box .k {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 800;
+      margin: 0 0 6px;
+    }
+    .break-box h2 {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+      letter-spacing: -.02em;
+    }
+    .break-box .rule {
+      margin: 0 0 12px;
+      color: var(--muted);
+      max-width: 78ch;
+    }
+    .break-box select.metric {
+      font-size: 1.12rem;
+      font-weight: 750;
+      padding: 10px 12px;
+      border-color: var(--gold);
+    }
+    .break-chain {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: stretch;
+      margin: 12px 0 10px;
+    }
+    .break-chip {
+      flex: 1 1 118px;
+      min-width: 118px;
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 9px;
+      font-size: 12px;
+      font-weight: 650;
+      color: var(--muted);
+    }
+    .break-chip.on {
+      border-color: var(--gold);
+      background: rgba(196,163,90,.16);
+      color: var(--ink);
+      box-shadow: inset 0 0 0 1px var(--gold);
+      font-weight: 800;
+    }
+    .break-chip .chip-k {
+      display: block;
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+      color: var(--gold);
+      font-weight: 800;
+    }
+    .break-guide {
+      margin: 0;
+      font-weight: 650;
+    }
+    .break-trap {
+      margin: 8px 0 0;
+      color: var(--warn);
+      font-weight: 700;
+    }
+    .break-score {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .stat, .card, .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .stat { padding: 10px 12px; }
+    .stat .k { color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+    .stat .v { font-size: 1.15rem; font-weight: 750; margin-top: 3px; }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .card { padding: 12px; position: relative; }
+    .card.evidence { border-left: 3px solid var(--gold); }
+    .card.mid { border-left: 3px solid var(--accent); }
+    .card.tele { border-left: 3px solid var(--tele); }
+    .card h3 { margin: 0 0 8px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .card .big { font-size: 1.85rem; font-weight: 800; letter-spacing: -.03em; }
+    .card .meta { color: var(--muted); font-size: 12px; margin: 4px 0 8px; }
+    .bar { height: 7px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--tele); }
+    .bar.ahead > span { background: var(--good); }
+    .bar.onpace > span { background: var(--good); }
+    .bar.warn > span { background: var(--warn); }
+    .bar.behind > span { background: var(--bad); }
+    .pace {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .pace.ahead, .pace.onpace { color: var(--good); }
+    .pace.warn { color: var(--warn); }
+    .pace.behind { color: var(--bad); }
+    .pace.none { color: var(--tele); }
+    .grid2 { display: grid; grid-template-columns: 1.2fr .8fr; gap: 12px; margin-bottom: 16px; }
+    .panel { padding: 14px; margin-bottom: 16px; }
+    .panel h2 { margin: 0 0 10px; font-size: 1.05rem; }
+    .panel h2 span { color: var(--muted); font-weight: 600; font-size: 12px; margin-left: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 6px 7px; text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
+    input[type="number"], input[type="text"], input[type="date"], select, textarea {
+      width: 100%;
+      background: var(--bg2);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 6px 8px;
+      font: inherit;
+    }
+    textarea { min-height: 64px; resize: vertical; }
+    input[readonly], select:disabled { opacity: .72; }
+    .num { width: 84px; }
+    .tiny { width: 64px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; margin: 8px 0; }
+    .field { min-width: 110px; }
+    .field label, .chk { display: block; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 4px; }
+    .checks { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+    .chkline { display: flex; gap: 8px; align-items: center; background: var(--bg2); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+    .ads { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+    .ad { background: var(--bg2); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+    .ad h3 { margin: 0 0 8px; font-size: 13px; }
+    .totals { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-top: 10px; }
+    .ladder { display: flex; flex-wrap: wrap; gap: 6px; align-items: stretch; }
+    .stage { flex: 1 1 90px; min-width: 90px; background: var(--bg2); border: 1px solid var(--line); border-radius: 10px; padding: 8px; }
+    .stage.evidence { border-color: var(--gold); }
+    .stage .name { font-size: 11px; font-weight: 700; min-height: 34px; }
+    .arrow { color: var(--muted); align-self: center; font-weight: 800; }
+    .gates { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .gate { background: var(--bg2); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+    .gate h3 { margin: 0 0 6px; font-size: 14px; }
+    .gate p { margin: 0 0 8px; color: var(--muted); }
+    .rhythm { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); font-size: 12px; margin: 0 0 12px; }
+    .dot { width: 8px; height: 8px; border-radius: 99px; display: inline-block; margin-right: 6px; }
+    .scroll { overflow-x: auto; }
+    .toast {
+      position: fixed; right: 16px; bottom: 16px; background: var(--ink); color: var(--bg);
+      padding: 8px 12px; border-radius: 8px; font-weight: 700; display: none; z-index: 20;
+    }
+    @media (max-width: 1100px) {
+      .kpis, .strip, .ads, .totals { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid2, .gates, .reminders, .checks, .rhythm { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .kpis, .strip, .ads, .totals { grid-template-columns: 1fr; }
+      header.top { flex-direction: column; }
+    }
+    @media print {
+      body { background: #fff; color: #111; font-size: 11px; }
+      .tools, .toast, button, .file-btn, .lock { display: none !important; }
+      .panel, .card, .stat, .break-box { break-inside: avoid; box-shadow: none; }
+      .wrap { max-width: none; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div>
+        <h1>Great App. Bad Business.</h1>
+        <p class="sub">90-Day Growth Scoreboard · Oliver A. Ellison · private operating file · 7 Sep to 6 Dec 2026</p>
+        <p class="saved" id="saved">Not saved yet</p>
+      </div>
+      <div>
+        <div class="tools">
+          <label class="lock"><input type="checkbox" id="edit-mode" checked> Edit metrics</label>
+          <button type="button" id="btn-today">Add Today</button>
+          <button type="button" id="btn-export">Export JSON</button>
+          <label class="file-btn">Import JSON<input type="file" id="import-file" accept="application/json"></label>
+          <button type="button" id="btn-print">Print / PDF</button>
+          <button type="button" class="danger" id="btn-reset">Reset Data</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="reminders">
+      <p>Scale only what produces stronger reader or buyer behavior.</p>
+      <p>Do not automate a guess.</p>
+    </div>
+
+    <section class="break-box" id="break-box">
+      <div class="k">Current break</div>
+      <h2>Stop at the first commercial behavior you cannot support. Work there.</h2>
+      <p class="rule">The book's diagnostic is a sequence, not a mood. Do not skip ahead to a later failure until the earlier stage has enough qualified evidence.</p>
+      <div class="field">
+        <label>Where the sequence currently breaks</label>
+        <select class="metric" id="break-stage" data-path="currentBreak.stage">
+          <option>Not enough evidence yet / discovery</option>
+          <option>Visits but no purchase</option>
+          <option>Bought but not reading/engaging</option>
+          <option>Reading but no review/referral</option>
+          <option>Guide opt-in but no reply</option>
+          <option>Conversation but no next step</option>
+          <option>Trial but no payment</option>
+          <option>Payment but no retention</option>
+        </select>
+      </div>
+      <div class="break-chain" id="break-chain"></div>
+      <p class="break-guide" id="break-guide"></p>
+      <p class="break-trap" id="break-trap"></p>
+      <div class="field" style="margin-top:12px">
+        <label>What would move this break today</label>
+        <textarea class="metric" data-path="currentBreak.note" placeholder="One behavior to produce, not hours of promotion."></textarea>
+      </div>
+      <p class="break-score">Do not score the day by hours of book promotion. Score it by whether this break moved down the evidence ladder.</p>
+    </section>
+
+    <div class="legend">
+      <span><i class="dot" style="background:var(--gold)"></i>Commercial evidence</span>
+      <span><i class="dot" style="background:var(--accent)"></i>Mid-funnel</span>
+      <span><i class="dot" style="background:var(--tele)"></i>Telemetry</span>
+    </div>
+
+    <section id="status-strip" class="strip"></section>
+    <section id="kpi-grid" class="kpis"></section>
+    <section class="panel">
+      <h2>Enter current evidence totals</h2>
+      <div class="row">
+        <div class="field"><label>Qualified conversations</label><input class="metric num" data-path="kpis.conversations" type="number" min="0" step="1"></div>
+        <div class="field"><label>Media bookings</label><input class="metric num" data-path="kpis.mediaBookings" type="number" min="0" step="1"></div>
+        <div class="field"><label>Bulk orders 20+</label><input class="metric num" data-path="kpis.bulkOrders" type="number" min="0" step="1"></div>
+        <div class="field"><label>Make it RAIN trials</label><input class="metric num" data-path="kpis.mirTrials" type="number" min="0" step="1"></div>
+        <div class="field"><label>Make it RAIN customers</label><input class="metric num" data-path="kpis.mirCustomers" type="number" min="0" step="1"></div>
+      </div>
+    </section>
+
+    <div class="grid2">
+      <section class="panel">
+        <h2>Current milestone progress</h2>
+        <div class="scroll" id="milestone-table"></div>
+      </section>
+      <section class="panel">
+        <h2>Paid sales mix</h2>
+        <div class="row">
+          <div class="field"><label>Kindle</label><input class="metric num" data-path="sales.kindle" type="number" min="0" step="1"></div>
+          <div class="field"><label>Paperback</label><input class="metric num" data-path="sales.paperback" type="number" min="0" step="1"></div>
+          <div class="field"><label>Hardcover</label><input class="metric num" data-path="sales.hardcover" type="number" min="0" step="1"></div>
+          <div class="field"><label>Other</label><input class="metric num" data-path="sales.other" type="number" min="0" step="1"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Kindle royalty / sale</label><input class="metric num" data-path="sales.kindleRoyalty" type="number" min="0" step="0.01"></div>
+          <div class="field"><label>Paperback royalty / sale</label><input class="metric num" data-path="sales.paperbackRoyalty" type="number" min="0" step="0.01"></div>
+          <div class="field"><label>Hardcover royalty / sale</label><input class="metric num" data-path="sales.hardcoverRoyalty" type="number" min="0" step="0.01"></div>
+        </div>
+        <p class="meta" id="royalty-line" style="color:var(--muted)"></p>
+        <p class="meta" style="color:var(--muted)">Paid Sales is the sum of the four channels. Daily-log book sales add to Other. If you paste KDP lifetime totals into Kindle/Paperback, keep that day's log sales at 0.</p>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2>Today's Operating Plan <span>morning work, then stop</span></h2>
+      <div class="row">
+        <div class="field" style="flex:2"><label>Task</label><input id="task-text" type="text" placeholder="What must move today?"></div>
+        <div class="field"><label>Category</label>
+          <select id="task-cat"><option>Scorecard</option><option>Field Guide</option><option>Amazon</option><option>Outreach</option><option>Content</option><option>Operating</option></select>
+        </div>
+        <div class="field"><label>Priority</label>
+          <select id="task-pri"><option>P1</option><option>P2</option><option>P3</option></select>
+        </div>
+        <div class="field"><label>Minutes</label><input id="task-min" class="tiny" type="number" min="0" value="20"></div>
+        <button type="button" class="primary" id="task-add">Add task</button>
+      </div>
+      <div class="scroll" id="task-table"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Daily activity log <span>one row per date · edits apply deltas, they do not re-add</span></h2>
+      <div class="scroll" id="log-table"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Outreach funnel <span>cumulative · use daily log or the increment row</span></h2>
+      <div class="row">
+        <div class="field"><label>Category</label>
+          <select id="out-cat">
+            <option value="reviewCopy">Review-copy outreach</option>
+            <option value="signal">Signal-specific founder outreach</option>
+            <option value="media">Podcast/newsletter pitches</option>
+            <option value="signed">Signed-copy / authority seeding</option>
+            <option value="bulk">Bulk-order outreach</option>
+          </select>
+        </div>
+        <div class="field"><label>+ Researched</label><input id="out-res" class="tiny" type="number" min="0" value="0"></div>
+        <div class="field"><label>+ Sent</label><input id="out-sent" class="tiny" type="number" min="0" value="0"></div>
+        <div class="field"><label>+ Replies</label><input id="out-rep" class="tiny" type="number" min="0" value="0"></div>
+        <div class="field"><label>+ Qualified</label><input id="out-q" class="tiny" type="number" min="0" value="0"></div>
+        <div class="field"><label>+ Calls</label><input id="out-calls" class="tiny" type="number" min="0" value="0"></div>
+        <div class="field"><label>+ Purchases</label><input id="out-buy" class="tiny" type="number" min="0" value="0"></div>
+        <button type="button" class="primary" id="out-apply">Add today's outreach</button>
+      </div>
+      <div class="scroll" id="outreach-table"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Amazon / ads <span>telemetry until an order or review appears</span></h2>
+      <div class="checks" id="amazon-flags"></div>
+      <div class="row">
+        <div class="field"><label>Visible Amazon reviews</label><input class="metric num" data-path="reviews.visible" type="number" min="0" step="1"></div>
+        <div class="field"><label>Pending submitted reviews</label><input class="metric num" data-path="reviews.pending" type="number" min="0" step="1"></div>
+        <div class="field"><label>KDP Select</label>
+          <select class="metric" data-path="amazon.kdpSelect">
+            <option value="undecided">undecided</option>
+            <option value="enroll">enroll</option>
+            <option value="do not enroll">do not enroll</option>
+            <option value="needs review">needs review</option>
+          </select>
+        </div>
+      </div>
+      <p class="meta" id="review-total" style="color:var(--muted)"></p>
+      <p class="meta" style="color:var(--muted)">Only visible reviews count against the official target. Pending is known activity, not Amazon-visible proof.</p>
+      <div class="ads" id="ads-grid"></div>
+      <div class="totals" id="ads-totals"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Field Guide</h2>
+      <div class="checks" id="fg-flags"></div>
+      <div class="row">
+        <div class="field"><label>Downloads</label><input class="metric num" data-path="fieldGuide.downloads" type="number" min="0"></div>
+        <div class="field"><label>Opt-ins</label><input class="metric num" data-path="fieldGuide.optIns" type="number" min="0"></div>
+        <div class="field"><label>Qualified replies from Field Guide</label><input class="metric num" data-path="fieldGuide.qualifiedReplies" type="number" min="0"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Evidence ladder <span>enter counts independently · later stages are not inferred</span></h2>
+      <div class="ladder" id="ladder"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Commercial Learning Log <span>activity is not evidence</span></h2>
+      <div class="row">
+        <div class="field" style="flex:1"><label>Hypothesis</label><input id="learn-h" type="text"></div>
+        <div class="field" style="flex:1"><label>What did we test?</label><input id="learn-test" type="text"></div>
+        <div class="field"><label>Channel</label><input id="learn-ch" type="text"></div>
+        <div class="field"><label>Evidence strength</label>
+          <select id="learn-ev">
+            <option>Impression</option>
+            <option>Click / visit</option>
+            <option>Reply</option>
+            <option>Qualified conversation</option>
+            <option>Evaluation</option>
+            <option>Purchase</option>
+            <option>Review / referral</option>
+            <option>Trial</option>
+            <option>Payment</option>
+            <option>Retention</option>
+          </select>
+        </div>
+        <button type="button" class="primary" id="learn-add">Add learning</button>
+      </div>
+      <div class="scroll" id="learn-table"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Decision gates</h2>
+      <div class="gates" id="gates"></div>
+    </section>
+
+    <div class="grid2">
+      <section class="panel">
+        <h2>Weekly operating rhythm</h2>
+        <div class="rhythm">
+          <div class="stat"><div class="k">Monday</div><div class="v">Scorecard + decisions</div></div>
+          <div class="stat"><div class="k">Tuesday</div><div class="v">Signal outreach</div></div>
+          <div class="stat"><div class="k">Wednesday</div><div class="v">Media + content</div></div>
+          <div class="stat"><div class="k">Thursday</div><div class="v">Signal outreach + reader path</div></div>
+          <div class="stat"><div class="k">Friday</div><div class="v">Content + follow-up</div></div>
+          <div class="stat"><div class="k">Weekend</div><div class="v">Newsletter, live-session prep, Amazon ad review</div></div>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Current week plan</h2>
+        <div class="field"><label>This week's commercial question</label><input class="metric" data-path="week.question" type="text" placeholder="What would have to be true?"></div>
+        <div class="field" style="margin-top:8px"><label>What evidence would support it?</label><textarea class="metric" data-path="week.support"></textarea></div>
+        <div class="field" style="margin-top:8px"><label>What evidence would weaken it?</label><textarea class="metric" data-path="week.weaken"></textarea></div>
+        <div class="field" style="margin-top:8px"><label>What action if it fails?</label><textarea class="metric" data-path="week.failAction"></textarea></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2>90-day target table</h2>
+      <div class="scroll" id="target-table"></div>
+    </section>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function () {
+    var KEY = 'gabb-growth-scoreboard-v1';
+    var START = '2026-09-07';
+    var END = '2026-12-06';
+    var MILESTONES = [
+      { id: 'd14', date: '2026-09-20', label: 'Day 14' },
+      { id: 'd30', date: '2026-10-06', label: 'Day 30' },
+      { id: 'd60', date: '2026-11-05', label: 'Day 60' },
+      { id: 'd90', date: '2026-12-06', label: 'Day 90' }
+    ];
+    var TARGETS = {
+      paidSales:      { label: 'Paid book sales', d14: 100, d30: 300, d60: 650, d90: 1000, stretch: 2000 },
+      reviews:        { label: 'Legitimate Amazon reviews', d14: 5, d30: 15, d60: 30, d90: 50, stretch: 100 },
+      fieldGuide:     { label: 'Field Guide opt-ins', d14: 75, d30: 250, d60: 500, d90: 750, stretch: 1500 },
+      media:          { label: 'Podcast/newsletter bookings', d14: 3, d30: 8, d60: 14, d90: 20, stretch: 30 },
+      conversations:  { label: 'Qualified reader replies / conversations', d14: 5, d30: 15, d60: 30, d90: 50, stretch: 80 },
+      bulk:           { label: 'Bulk orders, 20+ copies', d14: 0, d30: 1, d60: 3, d90: 5, stretch: 10 },
+      mirTrials:      { label: 'Book-attributed Make it RAIN trials', d14: 1, d30: 3, d60: 5, d90: 10, stretch: 20 },
+      mirCustomers:   { label: 'Book-attributed Make it RAIN paying customers', d14: 0, d30: 1, d60: 1, d90: 3, stretch: 6 }
+    };
+    var OUTREACH = [
+      { key: 'reviewCopy', label: 'Review-copy outreach' },
+      { key: 'signal', label: 'Signal-specific founder outreach' },
+      { key: 'media', label: 'Podcast/newsletter pitches' },
+      { key: 'signed', label: 'Signed-copy / authority seeding' },
+      { key: 'bulk', label: 'Bulk-order outreach' }
+    ];
+    var LADDER = [
+      ['seesIdea', 'Sees the idea', 'tele'],
+      ['visitsPage', 'Visits the book page', 'tele'],
+      ['buys', 'Buys', 'evidence'],
+      ['reads', 'Reads', 'mid'],
+      ['reviewsOrRefers', 'Reviews or refers', 'evidence'],
+      ['downloadsFg', 'Downloads Field Guide', 'mid'],
+      ['repliesProblem', 'Replies with a real commercial problem', 'evidence'],
+      ['acceptsDiagnostic', 'Accepts a diagnostic step', 'evidence'],
+      ['mirTrial', 'Starts Make it RAIN trial', 'evidence'],
+      ['pays', 'Pays', 'evidence'],
+      ['stays', 'Stays', 'evidence']
+    ];
+    var AD_KEYS = [
+      { key: 'auto', name: 'Campaign A · Automatic', budget: 5 },
+      { key: 'keywords', name: 'Campaign B · Manual Keywords', budget: 5 },
+      { key: 'product', name: 'Campaign C · Product Targeting', budget: 5 }
+    ];
+    var BREAKS = [
+      {
+        label: 'Not enough evidence yet / discovery',
+        short: 'Discovery',
+        guide: 'You have not yet put the book in front of enough qualified strangers to diagnose later failures.',
+        trap: 'Do not treat this as "Amazon page does not convert." That diagnosis needs visits from the right readers first.'
+      },
+      {
+        label: 'Visits but no purchase',
+        short: 'Visits, no purchase',
+        guide: 'Qualified people are reaching a sales surface and not buying. Inspect targeting, cover, title, description, A+, price, and category fit before raising spend.',
+        trap: ''
+      },
+      {
+        label: 'Bought but not reading/engaging',
+        short: 'Bought, not reading',
+        guide: 'A sale happened. The commercial behavior that is missing is reading or using the book. Work the open, the first chapter, and the first useful tool.',
+        trap: ''
+      },
+      {
+        label: 'Reading but no review/referral',
+        short: 'Reading, no review',
+        guide: 'Readers are getting through the material and not leaving a review or sending it on. Work the ask, timing, and who is actually finishing.',
+        trap: ''
+      },
+      {
+        label: 'Guide opt-in but no reply',
+        short: 'Guide, no reply',
+        guide: 'The Field Guide is collecting emails without a real commercial problem coming back. Rewrite the diagnostic email and the next-step ask.',
+        trap: ''
+      },
+      {
+        label: 'Conversation but no next step',
+        short: 'Talk, no next step',
+        guide: 'People will talk and will not accept a diagnostic, a call, or a defined next action. Tighten who you are speaking with and what the next step is.',
+        trap: ''
+      },
+      {
+        label: 'Trial but no payment',
+        short: 'Trial, no payment',
+        guide: 'A Make it RAIN trial started and did not convert. Work proof, offer, and the buying conversation, not more top-of-funnel.',
+        trap: ''
+      },
+      {
+        label: 'Payment but no retention',
+        short: 'Paid, no retention',
+        guide: 'Someone paid and did not stay. Work delivery, time-to-value, and whether the customer was the right one.',
+        trap: ''
+      }
+    ];
+
+    function blankOutreach() {
+      return { researched: 0, sent: 0, replies: 0, qualified: 0, calls: 0, purchases: 0, notes: '' };
+    }
+    function blankAd(budget) {
+      return { live: false, dailyBudget: budget, spend: 0, impressions: 0, clicks: 0, orders: 0, revenue: 0, royalty: 0 };
+    }
+    function defaultData() {
+      return {
+        version: 1,
+        campaignStart: START,
+        campaignEnd: END,
+        sales: { kindle: 0, paperback: 0, hardcover: 0, other: 0, kindleRoyalty: '', paperbackRoyalty: '', hardcoverRoyalty: '' },
+        reviews: { visible: 0, pending: 2 },
+        kpis: { conversations: 0, mediaBookings: 0, bulkOrders: 0, mirTrials: 0, mirCustomers: 0 },
+        fieldGuide: {
+          resourceLive: false, emailCaptureLive: false, analyticsWorking: false,
+          downloads: 0, optIns: 0, email1Live: false, email2Live: false, email3Live: false, qualifiedReplies: 0
+        },
+        amazon: {
+          kindleLive: false, paperbackLive: false, aplusSubmitted: false, aplusApproved: false,
+          authorCentral: false, goodreads: false, kdpSelect: 'undecided',
+          ads: { auto: blankAd(5), keywords: blankAd(5), product: blankAd(5) }
+        },
+        outreach: {
+          reviewCopy: blankOutreach(), signal: blankOutreach(), media: blankOutreach(),
+          signed: blankOutreach(), bulk: blankOutreach()
+        },
+        dailyLog: [],
+        tasks: [
+          { id: 't1', task: 'Update baseline and scorecard', category: 'Scorecard', priority: 'P1', minutes: 20, status: 'Not started', notes: '' },
+          { id: 't2', task: 'Verify Field Guide opt-in and delivery path', category: 'Field Guide', priority: 'P1', minutes: 25, status: 'Not started', notes: '' },
+          { id: 't3', task: 'Decide whether KDP Select needs further review', category: 'Amazon', priority: 'P1', minutes: 15, status: 'Not started', notes: '' },
+          { id: 't4', task: 'Research 5-10 shipped-but-unpaid prospects', category: 'Outreach', priority: 'P1', minutes: 30, status: 'Not started', notes: '' },
+          { id: 't5', task: 'Send 5-10 personalized signal-specific messages', category: 'Outreach', priority: 'P1', minutes: 40, status: 'Not started', notes: '' },
+          { id: 't6', task: 'Identify 5 legitimate independent review-copy candidates', category: 'Outreach', priority: 'P1', minutes: 25, status: 'Not started', notes: '' },
+          { id: 't7', task: 'Send review-copy offers', category: 'Outreach', priority: 'P1', minutes: 20, status: 'Not started', notes: '' },
+          { id: 't8', task: 'Publish one diagnostic LinkedIn post', category: 'Content', priority: 'P1', minutes: 30, status: 'Not started', notes: '' },
+          { id: 't9', task: 'Record replies, purchases, and review movement', category: 'Scorecard', priority: 'P1', minutes: 15, status: 'Not started', notes: '' },
+          { id: 't10', task: 'Do not change the manuscript', category: 'Operating', priority: 'P1', minutes: 0, status: 'Not started', notes: 'Standing constraint.' }
+        ],
+        evidence: { seesIdea: 0, visitsPage: 0, buys: 0, reads: 0, reviewsOrRefers: 0, downloadsFg: 0, repliesProblem: 0, acceptsDiagnostic: 0, mirTrial: 0, pays: 0, stays: 0 },
+        learning: [],
+        gates: [
+          { id: 'g1', date: '2026-09-20', title: 'Ads / Page', text: 'If relevant Amazon traffic is arriving but almost nobody buys: do not raise the budget. Inspect targeting, cover/title/description/A+ presentation, price, and category fit.', status: 'Not due', notes: '', decision: '', reviewed: '' },
+          { id: 'g2', date: '2026-10-06', title: 'Discovery', text: 'If sales are far below 300 but the page converts when qualified readers arrive: treat discovery as the main problem. Increase media, community, signal outreach, and only ads that convert.', status: 'Not due', notes: '', decision: '', reviewed: '' },
+          { id: 'g3', date: '2026-10-20', title: 'Reader Path', text: 'If Field Guide has 100+ opt-ins but fewer than 5 qualified replies: rewrite Email 2 and the diagnostic CTA.', status: 'Not due', notes: '', decision: '', reviewed: '' },
+          { id: 'g4', date: '2026-11-05', title: 'Authority', text: 'If podcasts or LinkedIn generate attention but not purchases or qualified conversations: narrow topic and audience. Do not answer the problem with more impressions.', status: 'Not due', notes: '', decision: '', reviewed: '' },
+          { id: 'g5', date: '2026-11-20', title: 'Scale', text: 'Choose the two channels producing the strongest purchases or qualified commercial behavior. Put roughly 80% of remaining effort there.', status: 'Not due', notes: '', decision: '', reviewed: '' },
+          { id: 'g6', date: '2026-12-06', title: '90-Day Review', text: 'Decide whether to scale, reposition, discount, use KDP promotion, expand bulk sales, or reduce effort.', status: 'Not due', notes: '', decision: '', reviewed: '' }
+        ],
+        week: { question: '', support: '', weaken: '', failAction: '' },
+        currentBreak: {
+          stage: 'Not enough evidence yet / discovery',
+          note: ''
+        }
+      };
+    }
+
+    function deepMerge(base, extra) {
+      if (!extra || typeof extra !== 'object') return base;
+      Object.keys(extra).forEach(function (k) {
+        if (extra[k] && typeof extra[k] === 'object' && !Array.isArray(extra[k]) && base[k] && typeof base[k] === 'object' && !Array.isArray(base[k])) {
+          deepMerge(base[k], extra[k]);
+        } else if (extra[k] !== undefined) {
+          base[k] = extra[k];
+        }
+      });
+      return base;
+    }
+    function uid(prefix) { return prefix + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function todayISO() {
+      var d = new Date();
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    }
+    function parseISO(s) {
+      var p = String(s || '').split('-');
+      return new Date(+p[0], (+p[1] || 1) - 1, +p[2] || 1);
+    }
+    function fmtDate(s) {
+      return parseISO(s).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    function daysBetween(a, b) { return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
+    function num(v) { var n = parseFloat(v); return isFinite(n) ? n : 0; }
+    function money(v) { return '$' + num(v).toFixed(2); }
+    function pct(n) { return (Math.round(n * 1000) / 10).toFixed(n >= 10 ? 0 : 1) + '%'; }
+    function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+    function getPath(obj, path) {
+      return path.split('.').reduce(function (o, k) { return o == null ? undefined : o[k]; }, obj);
+    }
+    function looksNumber(value) {
+      if (typeof value === 'number') return isFinite(value);
+      if (typeof value !== 'string') return false;
+      var t = value.trim();
+      if (t === '') return false;
+      return isFinite(Number(t));
+    }
+    function setPath(obj, path, value) {
+      var parts = path.split('.');
+      var cur = obj;
+      for (var i = 0; i < parts.length - 1; i++) cur = cur[parts[i]];
+      var last = parts[parts.length - 1];
+      var prev = cur[last];
+      if (typeof prev === 'boolean') cur[last] = !!value;
+      else if (typeof prev === 'number') cur[last] = value === '' ? '' : num(value);
+      else if (prev === '' && looksNumber(value)) cur[last] = num(value);
+      else cur[last] = value;
+    }
+    function paidSales() {
+      return num(state.sales.kindle) + num(state.sales.paperback) + num(state.sales.hardcover) + num(state.sales.other);
+    }
+    function royalties() {
+      return num(state.sales.kindle) * num(state.sales.kindleRoyalty) +
+        num(state.sales.paperback) * num(state.sales.paperbackRoyalty) +
+        num(state.sales.hardcover) * num(state.sales.hardcoverRoyalty);
+    }
+    function currentMilestone(today) {
+      for (var i = 0; i < MILESTONES.length; i++) {
+        if (daysBetween(today, MILESTONES[i].date) >= 0) return MILESTONES[i];
+      }
+      return MILESTONES[MILESTONES.length - 1];
+    }
+    function metricNow(key) {
+      if (key === 'paidSales') return paidSales();
+      if (key === 'reviews') return num(state.reviews.visible);
+      if (key === 'fieldGuide') return num(state.fieldGuide.optIns);
+      if (key === 'media') return num(state.kpis.mediaBookings);
+      if (key === 'conversations') return num(state.kpis.conversations);
+      if (key === 'bulk') return num(state.kpis.bulkOrders);
+      if (key === 'mirTrials') return num(state.kpis.mirTrials);
+      if (key === 'mirCustomers') return num(state.kpis.mirCustomers);
+      return 0;
+    }
+    function paceFor(key, today, ms) {
+      var target = TARGETS[key][ms.id];
+      var current = metricNow(key);
+      if (!target) return { status: 'No target yet', cls: 'none', pct: 0, expected: 0, target: 0, current: current };
+      var window = Math.max(1, daysBetween(START, ms.date));
+      var elapsed = clamp(daysBetween(START, today), 0, window);
+      var expected = target * (elapsed / window);
+      var ratio = current / Math.max(expected, 0.0001);
+      var ofTarget = current / target;
+      var status = 'On pace';
+      var cls = 'onpace';
+      if (current + 0.0001 >= target) { status = 'Ahead'; cls = 'ahead'; }
+      else if (ratio >= 1.08) { status = 'Ahead'; cls = 'ahead'; }
+      else if (ratio >= 0.9) { status = 'On pace'; cls = 'onpace'; }
+      else if (ratio >= 0.65) { status = 'Behind'; cls = 'warn'; }
+      else { status = 'Behind'; cls = 'behind'; }
+      if (elapsed === 0 && current === 0) { status = 'On pace'; cls = 'onpace'; }
+      return { status: status, cls: cls, pct: clamp(ofTarget, 0, 1), expected: expected, target: target, current: current };
+    }
+
+    var state = defaultData();
+    var saveTimer = null;
+
+    function load() {
+      try {
+        var raw = localStorage.getItem(KEY);
+        if (!raw) return;
+        var parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return;
+        state = deepMerge(defaultData(), parsed);
+      } catch (e) {}
+    }
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(state));
+      var t = new Date();
+      document.getElementById('saved').textContent = 'Saved locally at ' + pad(t.getHours()) + ':' + pad(t.getMinutes()) + ':' + pad(t.getSeconds());
+    }
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(save, 120);
+    }
+    function toast(msg) {
+      var el = document.getElementById('toast');
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(function () { el.style.display = 'none'; }, 1800);
+    }
+    function editing() { return document.getElementById('edit-mode').checked; }
+    function applyLock() {
+      var on = editing();
+      document.querySelectorAll('input.metric, select.metric, textarea.metric, #task-table input, #task-table select, #log-table input, #log-table select, #outreach-table input, #outreach-table textarea, #learn-table input, #learn-table select, #learn-table textarea, #gates input, #gates select, #gates textarea, #ladder input, #ads-grid input, #ads-grid select, #amazon-flags input, #fg-flags input').forEach(function (el) {
+        if (el.type === 'checkbox') el.disabled = !on;
+        else el.readOnly = !on;
+        if (el.tagName === 'SELECT') el.disabled = !on;
+      });
+    }
+
+    function kpiCards() {
+      var today = todayISO();
+      var ms = currentMilestone(today);
+      var cards = [
+        { key: 'paidSales', title: 'Paid Sales', kind: 'evidence' },
+        { key: 'reviews', title: 'Visible Amazon Reviews', kind: 'evidence' },
+        { key: 'fieldGuide', title: 'Field Guide Opt-ins', kind: 'mid' },
+        { key: 'conversations', title: 'Qualified Conversations', kind: 'evidence' },
+        { key: 'media', title: 'Media Bookings', kind: 'tele' },
+        { key: 'bulk', title: 'Bulk Orders', kind: 'evidence' },
+        { key: 'mirTrials', title: 'Make it RAIN Trials', kind: 'evidence' },
+        { key: 'mirCustomers', title: 'Make it RAIN Customers', kind: 'evidence' }
+      ];
+      document.getElementById('kpi-grid').innerHTML = cards.map(function (c) {
+        var p = paceFor(c.key, today, ms);
+        return '<article class="card ' + c.kind + '"><h3>' + c.title + '</h3><div class="big">' + p.current + '</div>' +
+          '<div class="meta">Milestone target ' + p.target + ' · ' + pct(p.pct) + ' of target</div>' +
+          '<div class="bar ' + p.cls + '"><span style="width:' + (p.pct * 100) + '%"></span></div>' +
+          '<div class="pace ' + p.cls + '">' + p.status + '</div></article>';
+      }).join('');
+    }
+    function statusStrip() {
+      var today = todayISO();
+      var ms = currentMilestone(today);
+      var day = daysBetween(START, today) + 1;
+      var remain = Math.max(0, daysBetween(today, END));
+      var until = Math.max(0, daysBetween(today, ms.date));
+      var items = [
+        ['Today', fmtDate(today)],
+        ['Campaign day', 'Day ' + day + ' of 91'],
+        ['Days remaining', remain + ' until 6 Dec'],
+        ['Current milestone', ms.label + ' · ' + fmtDate(ms.date)],
+        ['Days to milestone', until === 0 ? 'Due today' : until + ' days']
+      ];
+      document.getElementById('status-strip').innerHTML = items.map(function (x) {
+        return '<div class="stat"><div class="k">' + x[0] + '</div><div class="v">' + x[1] + '</div></div>';
+      }).join('');
+    }
+    function milestoneTable() {
+      var today = todayISO();
+      var ms = currentMilestone(today);
+      var keys = Object.keys(TARGETS);
+      var html = '<table><thead><tr><th>Metric</th><th>Now</th><th>Target</th><th>%</th><th>Pace</th></tr></thead><tbody>';
+      keys.forEach(function (k) {
+        var p = paceFor(k, today, ms);
+        html += '<tr><td>' + TARGETS[k].label + '</td><td>' + p.current + '</td><td>' + p.target + '</td><td>' + pct(p.pct) + '</td><td>' + p.status + '</td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('milestone-table').innerHTML = html;
+    }
+    function targetTable() {
+      var html = '<table><thead><tr><th>Metric</th><th>Sep 20</th><th>Oct 6</th><th>Nov 5</th><th>Dec 6</th><th>Stretch</th><th>Now</th></tr></thead><tbody>';
+      Object.keys(TARGETS).forEach(function (k) {
+        var t = TARGETS[k];
+        html += '<tr><td>' + t.label + '</td><td>' + t.d14 + '</td><td>' + t.d30 + '</td><td>' + t.d60 + '</td><td>' + t.d90 + '</td><td>' + t.stretch + '</td><td>' + metricNow(k) + '</td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('target-table').innerHTML = html;
+    }
+    function bindMetrics() {
+      document.querySelectorAll('[data-path]').forEach(function (el) {
+        var v = getPath(state, el.getAttribute('data-path'));
+        if (el.type === 'checkbox') el.checked = !!v;
+        else if (el.tagName === 'SELECT' || el.tagName === 'TEXTAREA' || el.type === 'text' || el.type === 'number') {
+          el.value = v === undefined || v === null ? '' : v;
+        }
+      });
+      document.getElementById('royalty-line').textContent = 'Paid sales ' + paidSales() + ' · estimated royalties ' + money(royalties());
+      document.getElementById('review-total').textContent = 'Total known review activity: ' + (num(state.reviews.visible) + num(state.reviews.pending)) + ' (visible ' + num(state.reviews.visible) + ' + pending ' + num(state.reviews.pending) + ')';
+    }
+    function flags(id, items) {
+      document.getElementById(id).innerHTML = items.map(function (it) {
+        var checked = getPath(state, it.path) ? ' checked' : '';
+        return '<label class="chkline"><input class="metric" type="checkbox" data-path="' + it.path + '"' + checked + '> ' + it.label + '</label>';
+      }).join('');
+    }
+    function adsGrid() {
+      document.getElementById('ads-grid').innerHTML = AD_KEYS.map(function (a) {
+        var p = 'amazon.ads.' + a.key + '.';
+        var c = state.amazon.ads[a.key];
+        var cps = num(c.orders) ? money(num(c.spend) / num(c.orders)) : 'n/a';
+        return '<div class="ad"><h3>' + a.name + '</h3>' +
+          '<label class="chkline"><input class="metric" type="checkbox" data-path="' + p + 'live"' + (c.live ? ' checked' : '') + '> Live</label>' +
+          '<div class="row">' +
+          field(p + 'dailyBudget', 'Daily budget', c.dailyBudget) +
+          field(p + 'spend', 'Spend', c.spend) +
+          field(p + 'impressions', 'Impressions', c.impressions) +
+          field(p + 'clicks', 'Clicks', c.clicks) +
+          field(p + 'orders', 'Attr. orders', c.orders) +
+          field(p + 'revenue', 'Attr. revenue', c.revenue) +
+          field(p + 'royalty', 'Est. royalty', c.royalty) +
+          '</div><p class="meta" style="color:var(--muted)">Cost per attributed sale: ' + cps + '</p></div>';
+      }).join('');
+      var tot = { spend: 0, clicks: 0, orders: 0 };
+      AD_KEYS.forEach(function (a) {
+        var c = state.amazon.ads[a.key];
+        tot.spend += num(c.spend); tot.clicks += num(c.clicks); tot.orders += num(c.orders);
+      });
+      document.getElementById('ads-totals').innerHTML = [
+        ['Total ad spend', money(tot.spend)],
+        ['Total clicks', tot.clicks],
+        ['Total attributed orders', tot.orders],
+        ['Overall cost / attributed sale', tot.orders ? money(tot.spend / tot.orders) : 'n/a']
+      ].map(function (x) { return '<div class="stat"><div class="k">' + x[0] + '</div><div class="v">' + x[1] + '</div></div>'; }).join('');
+    }
+    function field(path, label, val) {
+      return '<div class="field"><label>' + label + '</label><input class="metric tiny" data-path="' + path + '" type="number" min="0" step="0.01" value="' + val + '"></div>';
+    }
+    function ladder() {
+      var html = '';
+      LADDER.forEach(function (s, i) {
+        if (i) html += '<div class="arrow">→</div>';
+        html += '<div class="stage ' + s[2] + '"><div class="name">' + s[1] + '</div><input class="metric" data-path="evidence.' + s[0] + '" type="number" min="0" step="1" value="' + num(state.evidence[s[0]]) + '"></div>';
+      });
+      document.getElementById('ladder').innerHTML = html;
+    }
+    function rate(a, b) { return num(b) ? pct(num(a) / num(b)) : 'n/a'; }
+    function outreachTable() {
+      var html = '<table><thead><tr><th>Category</th><th>Researched</th><th>Sent</th><th>Replies</th><th>Qualified</th><th>Calls/bookings</th><th>Purchases</th><th>Reply rate</th><th>Qual. rate</th><th>Purchase rate</th><th>Notes</th></tr></thead><tbody>';
+      OUTREACH.forEach(function (o) {
+        var r = state.outreach[o.key];
+        html += '<tr>' +
+          '<td>' + o.label + '</td>' +
+          cell('outreach.' + o.key + '.researched', r.researched) +
+          cell('outreach.' + o.key + '.sent', r.sent) +
+          cell('outreach.' + o.key + '.replies', r.replies) +
+          cell('outreach.' + o.key + '.qualified', r.qualified) +
+          cell('outreach.' + o.key + '.calls', r.calls) +
+          cell('outreach.' + o.key + '.purchases', r.purchases) +
+          '<td>' + rate(r.replies, r.sent) + '</td>' +
+          '<td>' + rate(r.qualified, r.sent) + '</td>' +
+          '<td>' + rate(r.purchases, r.sent) + '</td>' +
+          '<td><input class="metric" data-path="outreach.' + o.key + '.notes" type="text" value="' + esc(r.notes) + '"></td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('outreach-table').innerHTML = html;
+    }
+    function cell(path, val) {
+      return '<td><input class="metric tiny" data-path="' + path + '" type="number" min="0" step="1" value="' + num(val) + '"></td>';
+    }
+    function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+    function taskTable() {
+      var html = '<table><thead><tr><th>Task</th><th>Category</th><th>Pri</th><th>Min</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody>';
+      state.tasks.forEach(function (t, i) {
+        html += '<tr>' +
+          '<td><input data-task="' + i + '" data-k="task" type="text" value="' + esc(t.task) + '"></td>' +
+          '<td><input data-task="' + i + '" data-k="category" type="text" value="' + esc(t.category) + '"></td>' +
+          '<td><select data-task="' + i + '" data-k="priority"><option' + sel(t.priority, 'P1') + '>P1</option><option' + sel(t.priority, 'P2') + '>P2</option><option' + sel(t.priority, 'P3') + '>P3</option></select></td>' +
+          '<td><input data-task="' + i + '" data-k="minutes" class="tiny" type="number" min="0" value="' + num(t.minutes) + '"></td>' +
+          '<td><select data-task="' + i + '" data-k="status"><option' + sel(t.status, 'Not started') + '>Not started</option><option' + sel(t.status, 'In progress') + '>In progress</option><option' + sel(t.status, 'Done') + '>Done</option><option' + sel(t.status, 'Skipped') + '>Skipped</option></select></td>' +
+          '<td><input data-task="' + i + '" data-k="notes" type="text" value="' + esc(t.notes) + '"></td>' +
+          '<td><button type="button" data-del-task="' + i + '">Delete</button></td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('task-table').innerHTML = html;
+    }
+    function sel(a, b) { return a === b ? ' selected' : ''; }
+    function emptyLog() {
+      return { date: todayISO(), linkedin: 0, newsletter: false, reviewCopy: 0, signal: 0, media: 0, signed: 0, bulk: 0, qualified: 0, calls: 0, sales: 0, optIns: 0, reviews: 0, notes: '' };
+    }
+    function logTable() {
+      var html = '<table><thead><tr><th>Date</th><th>LI posts</th><th>NL</th><th>Review offers</th><th>Signal</th><th>Pitches</th><th>Signed</th><th>Bulk</th><th>Qual. replies</th><th>Calls</th><th>Book sales</th><th>FG opt-ins</th><th>Reviews vis.</th><th>Notes</th><th></th></tr></thead><tbody>';
+      state.dailyLog.forEach(function (r, i) {
+        html += '<tr>' +
+          '<td><input data-log="' + i + '" data-k="date" type="date" value="' + esc(r.date) + '"></td>' +
+          ncell(i, 'linkedin', r.linkedin) +
+          '<td><select data-log="' + i + '" data-k="newsletter"><option value="false"' + sel(String(r.newsletter), 'false') + '>no</option><option value="true"' + sel(String(r.newsletter), 'true') + '>yes</option></select></td>' +
+          ncell(i, 'reviewCopy', r.reviewCopy) + ncell(i, 'signal', r.signal) + ncell(i, 'media', r.media) +
+          ncell(i, 'signed', r.signed) + ncell(i, 'bulk', r.bulk) + ncell(i, 'qualified', r.qualified) +
+          ncell(i, 'calls', r.calls) + ncell(i, 'sales', r.sales) + ncell(i, 'optIns', r.optIns) + ncell(i, 'reviews', r.reviews) +
+          '<td><input data-log="' + i + '" data-k="notes" type="text" value="' + esc(r.notes) + '"></td>' +
+          '<td><button type="button" data-del-log="' + i + '">Delete</button></td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('log-table').innerHTML = html || '<p style="color:var(--muted)">No days logged yet.</p>';
+    }
+    function ncell(i, k, v) { return '<td><input data-log="' + i + '" data-k="' + k + '" class="tiny" type="number" min="0" step="1" value="' + num(v) + '"></td>'; }
+    var LOG_ROLLUP = [
+      ['sales', ['sales', 'other']],
+      ['optIns', ['fieldGuide', 'optIns']],
+      ['reviews', ['reviews', 'visible']],
+      ['qualified', ['kpis', 'conversations']],
+      ['reviewCopy', ['outreach', 'reviewCopy', 'sent']],
+      ['signal', ['outreach', 'signal', 'sent']],
+      ['media', ['outreach', 'media', 'sent']],
+      ['signed', ['outreach', 'signed', 'sent']],
+      ['bulk', ['outreach', 'bulk', 'sent']]
+    ];
+    function addNested(path, delta) {
+      if (!delta) return;
+      var cur = state;
+      for (var i = 0; i < path.length - 1; i++) cur = cur[path[i]];
+      var last = path[path.length - 1];
+      cur[last] = num(cur[last]) + delta;
+    }
+    function applyLogDelta(oldRow, newRow) {
+      LOG_ROLLUP.forEach(function (pair) {
+        var o = oldRow ? num(oldRow[pair[0]]) : 0;
+        var n = newRow ? num(newRow[pair[0]]) : 0;
+        addNested(pair[1], n - o);
+      });
+    }
+    function learnTable() {
+      var html = '<table><thead><tr><th>Date</th><th>Hypothesis</th><th>Test</th><th>Audience / signal</th><th>Channel</th><th>Expected</th><th>Observed</th><th>Evidence</th><th>Learned</th><th>Decision</th><th>Follow-up</th><th></th></tr></thead><tbody>';
+      state.learning.forEach(function (r, i) {
+        html += '<tr>' +
+          '<td><input data-learn="' + i + '" data-k="date" type="date" value="' + esc(r.date) + '"></td>' +
+          lcell(i, 'hypothesis', r.hypothesis) + lcell(i, 'test', r.test) + lcell(i, 'audience', r.audience) +
+          lcell(i, 'channel', r.channel) + lcell(i, 'expected', r.expected) + lcell(i, 'observed', r.observed) +
+          '<td><select data-learn="' + i + '" data-k="evidence">' + evidenceOpts(r.evidence) + '</select></td>' +
+          lcell(i, 'learned', r.learned) + lcell(i, 'decision', r.decision) +
+          '<td><input data-learn="' + i + '" data-k="followUp" type="date" value="' + esc(r.followUp) + '"></td>' +
+          '<td><button type="button" data-del-learn="' + i + '">Delete</button></td></tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('learn-table').innerHTML = html || '<p style="color:var(--muted)">No tests recorded. That is the honest starting point.</p>';
+    }
+    function lcell(i, k, v) { return '<td><input data-learn="' + i + '" data-k="' + k + '" type="text" value="' + esc(v) + '"></td>'; }
+    function evidenceOpts(cur) {
+      return ['Impression', 'Click / visit', 'Reply', 'Qualified conversation', 'Evaluation', 'Purchase', 'Review / referral', 'Trial', 'Payment', 'Retention'].map(function (x) {
+        return '<option' + sel(cur, x) + '>' + x + '</option>';
+      }).join('');
+    }
+    function gates() {
+      document.getElementById('gates').innerHTML = state.gates.map(function (g, i) {
+        return '<article class="gate"><h3>' + fmtDate(g.date) + ' · ' + g.title + '</h3><p>' + g.text + '</p>' +
+          '<div class="field"><label>Status</label><select data-gate="' + i + '" data-k="status">' +
+          ['Not due', 'Open', 'Reviewed', 'Decision made'].map(function (s) { return '<option' + sel(g.status, s) + '>' + s + '</option>'; }).join('') +
+          '</select></div>' +
+          '<div class="field" style="margin-top:6px"><label>Notes</label><textarea data-gate="' + i + '" data-k="notes">' + esc(g.notes) + '</textarea></div>' +
+          '<div class="field" style="margin-top:6px"><label>Decision made</label><input data-gate="' + i + '" data-k="decision" type="text" value="' + esc(g.decision) + '"></div>' +
+          '<div class="field" style="margin-top:6px"><label>Date reviewed</label><input data-gate="' + i + '" data-k="reviewed" type="date" value="' + esc(g.reviewed) + '"></div></article>';
+      }).join('');
+    }
+
+    function renderStaticBits() {
+      flags('amazon-flags', [
+        { path: 'amazon.kindleLive', label: 'Kindle live' },
+        { path: 'amazon.paperbackLive', label: 'Paperback live' },
+        { path: 'amazon.aplusSubmitted', label: 'A+ content submitted' },
+        { path: 'amazon.aplusApproved', label: 'A+ content approved' },
+        { path: 'amazon.authorCentral', label: 'Author Central correct' },
+        { path: 'amazon.goodreads', label: 'Goodreads profile complete' }
+      ]);
+      flags('fg-flags', [
+        { path: 'fieldGuide.resourceLive', label: 'Resource page live' },
+        { path: 'fieldGuide.emailCaptureLive', label: 'Email capture live' },
+        { path: 'fieldGuide.analyticsWorking', label: 'Analytics working' },
+        { path: 'fieldGuide.email1Live', label: 'Email 1 live' },
+        { path: 'fieldGuide.email2Live', label: 'Email 2 live' },
+        { path: 'fieldGuide.email3Live', label: 'Email 3 live' }
+      ]);
+      adsGrid();
+      ladder();
+      outreachTable();
+      bindMetrics();
+    }
+    function renderAll() {
+      statusStrip();
+      kpiCards();
+      milestoneTable();
+      targetTable();
+      renderStaticBits();
+      paintBreak();
+      taskTable();
+      logTable();
+      learnTable();
+      gates();
+      applyLock();
+    }
+    function adsTotalsOnly() {
+      var tot = { spend: 0, clicks: 0, orders: 0 };
+      AD_KEYS.forEach(function (a) {
+        var c = state.amazon.ads[a.key];
+        tot.spend += num(c.spend); tot.clicks += num(c.clicks); tot.orders += num(c.orders);
+      });
+      var box = document.getElementById('ads-totals');
+      if (!box) return;
+      box.innerHTML = [
+        ['Total ad spend', money(tot.spend)],
+        ['Total clicks', tot.clicks],
+        ['Total attributed orders', tot.orders],
+        ['Overall cost / attributed sale', tot.orders ? money(tot.spend / tot.orders) : 'n/a']
+      ].map(function (x) { return '<div class="stat"><div class="k">' + x[0] + '</div><div class="v">' + x[1] + '</div></div>'; }).join('');
+      var royal = document.getElementById('royalty-line');
+      if (royal) royal.textContent = 'Paid sales ' + paidSales() + ' · estimated royalties ' + money(royalties());
+      var rev = document.getElementById('review-total');
+      if (rev) rev.textContent = 'Total known review activity: ' + (num(state.reviews.visible) + num(state.reviews.pending)) + ' (visible ' + num(state.reviews.visible) + ' + pending ' + num(state.reviews.pending) + ')';
+    }
+    function syncUnfocusedMetrics() {
+      document.querySelectorAll('[data-path]').forEach(function (el) {
+        if (document.activeElement === el) return;
+        var v = getPath(state, el.getAttribute('data-path'));
+        if (el.type === 'checkbox') el.checked = !!v;
+        else if (el.tagName === 'SELECT' || el.tagName === 'TEXTAREA' || el.type === 'text' || el.type === 'number') {
+          var next = v === undefined || v === null ? '' : String(v);
+          if (String(el.value) !== next) el.value = v === undefined || v === null ? '' : v;
+        }
+      });
+    }
+    function refreshDerived() {
+      statusStrip();
+      kpiCards();
+      milestoneTable();
+      targetTable();
+      adsTotalsOnly();
+      paintBreak();
+      syncUnfocusedMetrics();
+    }
+    function currentBreakInfo() {
+      var stage = state.currentBreak && state.currentBreak.stage;
+      for (var i = 0; i < BREAKS.length; i++) {
+        if (BREAKS[i].label === stage) return BREAKS[i];
+      }
+      return BREAKS[0];
+    }
+    function paintBreak() {
+      var cur = currentBreakInfo();
+      var html = '';
+      BREAKS.forEach(function (b) {
+        html += '<div class="break-chip' + (b.label === cur.label ? ' on' : '') + '">';
+        if (b.label === cur.label) html += '<span class="chip-k">Current</span>';
+        html += esc(b.short) + '</div>';
+      });
+      document.getElementById('break-chain').innerHTML = html;
+      document.getElementById('break-guide').textContent = cur.guide;
+      var trap = document.getElementById('break-trap');
+      trap.textContent = cur.trap || '';
+      trap.style.display = cur.trap ? 'block' : 'none';
+    }
+
+    function onMetricChange(el) {
+      var path = el.getAttribute('data-path');
+      if (!path) return;
+      var value = el.type === 'checkbox' ? el.checked : el.value;
+      setPath(state, path, value);
+      scheduleSave();
+      refreshDerived();
+    }
+
+    document.body.addEventListener('input', function (e) {
+      var el = e.target;
+      if (el.classList.contains('metric') && el.getAttribute('data-path')) onMetricChange(el);
+      if (el.hasAttribute('data-task')) {
+        var i = +el.getAttribute('data-task');
+        var k = el.getAttribute('data-k');
+        state.tasks[i][k] = k === 'minutes' ? num(el.value) : el.value;
+        scheduleSave();
+      }
+      if (el.hasAttribute('data-log')) {
+        var li = +el.getAttribute('data-log');
+        var lk = el.getAttribute('data-k');
+        var old = JSON.parse(JSON.stringify(state.dailyLog[li]));
+        var val = lk === 'newsletter' ? el.value === 'true' : (el.type === 'number' ? num(el.value) : el.value);
+        state.dailyLog[li][lk] = val;
+        applyLogDelta(old, state.dailyLog[li]);
+        scheduleSave();
+        refreshDerived();
+        outreachTable();
+        applyLock();
+      }
+      if (el.hasAttribute('data-learn')) {
+        state.learning[+el.getAttribute('data-learn')][el.getAttribute('data-k')] = el.value;
+        scheduleSave();
+      }
+      if (el.hasAttribute('data-gate')) {
+        state.gates[+el.getAttribute('data-gate')][el.getAttribute('data-k')] = el.value;
+        scheduleSave();
+      }
+    });
+    document.body.addEventListener('change', function (e) {
+      var el = e.target;
+      if (el.classList.contains('metric') && el.getAttribute('data-path')) onMetricChange(el);
+      if (el.hasAttribute('data-task') || el.hasAttribute('data-log') || el.hasAttribute('data-learn') || el.hasAttribute('data-gate')) {
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+    document.body.addEventListener('click', function (e) {
+      var t = e.target;
+      if (t.hasAttribute('data-del-task')) {
+        state.tasks.splice(+t.getAttribute('data-del-task'), 1);
+        save(); taskTable(); applyLock();
+      }
+      if (t.hasAttribute('data-del-log')) {
+        var i = +t.getAttribute('data-del-log');
+        applyLogDelta(state.dailyLog[i], null);
+        state.dailyLog.splice(i, 1);
+        save(); renderAll();
+      }
+      if (t.hasAttribute('data-del-learn')) {
+        state.learning.splice(+t.getAttribute('data-del-learn'), 1);
+        save(); learnTable(); applyLock();
+      }
+    });
+
+    document.getElementById('edit-mode').addEventListener('change', applyLock);
+    document.getElementById('task-add').addEventListener('click', function () {
+      var text = document.getElementById('task-text').value.trim();
+      if (!text) return;
+      state.tasks.push({
+        id: uid('task'),
+        task: text,
+        category: document.getElementById('task-cat').value,
+        priority: document.getElementById('task-pri').value,
+        minutes: num(document.getElementById('task-min').value),
+        status: 'Not started',
+        notes: ''
+      });
+      document.getElementById('task-text').value = '';
+      save(); taskTable(); applyLock();
+    });
+    document.getElementById('btn-today').addEventListener('click', function () {
+      var d = todayISO();
+      if (state.dailyLog.some(function (r) { return r.date === d; })) {
+        toast('Today already has a row. Edit it instead.');
+        return;
+      }
+      var row = emptyLog();
+      state.dailyLog.unshift(row);
+      save(); logTable(); applyLock();
+      toast('Today added. Numbers stay 0 until you enter them.');
+    });
+    document.getElementById('out-apply').addEventListener('click', function () {
+      var key = document.getElementById('out-cat').value;
+      var inc = {
+        researched: num(document.getElementById('out-res').value),
+        sent: num(document.getElementById('out-sent').value),
+        replies: num(document.getElementById('out-rep').value),
+        qualified: num(document.getElementById('out-q').value),
+        calls: num(document.getElementById('out-calls').value),
+        purchases: num(document.getElementById('out-buy').value)
+      };
+      Object.keys(inc).forEach(function (k) { state.outreach[key][k] = num(state.outreach[key][k]) + inc[k]; });
+      if (key === 'media') state.kpis.mediaBookings = num(state.kpis.mediaBookings) + inc.calls;
+      if (key === 'bulk') state.kpis.bulkOrders = num(state.kpis.bulkOrders) + inc.purchases;
+      state.kpis.conversations = num(state.kpis.conversations) + inc.qualified;
+      var d = todayISO();
+      var row = state.dailyLog.filter(function (r) { return r.date === d; })[0];
+      if (!row) { row = emptyLog(); state.dailyLog.unshift(row); }
+      var bits = [];
+      if (inc.sent) bits.push('sent ' + inc.sent);
+      if (inc.qualified) bits.push('qualified ' + inc.qualified);
+      if (inc.calls) bits.push('calls ' + inc.calls);
+      if (bits.length) {
+        row.notes = (row.notes ? row.notes + ' · ' : '') + key + ': ' + bits.join(', ');
+      }
+      ['out-res', 'out-sent', 'out-rep', 'out-q', 'out-calls', 'out-buy'].forEach(function (id) { document.getElementById(id).value = 0; });
+      save(); renderAll();
+      toast('Outreach added to category totals. Daily-log sent columns were left alone to avoid double-count.');
+    });
+    document.getElementById('learn-add').addEventListener('click', function () {
+      state.learning.unshift({
+        date: todayISO(),
+        hypothesis: document.getElementById('learn-h').value,
+        test: document.getElementById('learn-test').value,
+        audience: '',
+        channel: document.getElementById('learn-ch').value,
+        expected: '',
+        observed: '',
+        evidence: document.getElementById('learn-ev').value,
+        learned: '',
+        decision: '',
+        followUp: ''
+      });
+      document.getElementById('learn-h').value = '';
+      document.getElementById('learn-test').value = '';
+      save(); learnTable(); applyLock();
+    });
+    document.getElementById('btn-export').addEventListener('click', function () {
+      save();
+      var blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'gabb-scoreboard-' + todayISO() + '.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+    document.getElementById('import-file').addEventListener('change', function (e) {
+      var file = e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          var parsed = JSON.parse(reader.result);
+          if (!parsed || typeof parsed !== 'object' || !parsed.sales || !parsed.reviews) {
+            alert('That file is not a GABB scoreboard export.');
+            return;
+          }
+          state = deepMerge(defaultData(), parsed);
+          save();
+          renderAll();
+          toast('Scoreboard restored.');
+        } catch (err) {
+          alert('Could not import that file.');
+        }
+      };
+      reader.readAsText(file);
+    });
+    document.getElementById('btn-reset').addEventListener('click', function () {
+      if (!confirm('Reset the scoreboard to the 7 Sep baseline? This cannot be undone unless you exported JSON.')) return;
+      state = defaultData();
+      save();
+      renderAll();
+      toast('Reset to baseline.');
+    });
+    document.getElementById('btn-print').addEventListener('click', function () { window.print(); });
+
+    load();
+    renderAll();
+    save();
+  })();
+  </script>
+</body>
+</html>
