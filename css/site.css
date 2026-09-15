@@ -388,6 +388,13 @@ h1, h2, h3 { line-height: 1.15; }
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
   background: #000;
 }
+.book-card .cover[src*="cover3D"] {
+  aspect-ratio: auto;
+  max-height: 280px;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
 .book-card .book-copy { min-width: 0; }
 .book-card h3 {
   margin: 0 0 8px;
@@ -426,17 +433,124 @@ h1, h2, h3 { line-height: 1.15; }
 .gabb-page {
   background: #070707;
 }
+.gabb-page .kicker { color: var(--gabb-red); }
 .gabb-page .gabb-hero {
   border-bottom: 1px solid #2a2a2a;
+  padding-top: 64px;
 }
-.gabb-page h1 { color: #fff; }
-.gabb-page .subtitle { color: #e5e5e5; }
+.gabb-page .book-feature {
+  grid-template-columns: minmax(260px, 360px) 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.gabb-page h1 {
+  color: #fff;
+  font-size: clamp(2.1rem, 4.2vw, 3.15rem);
+  margin: 0 0 10px;
+}
+.gabb-page .subtitle {
+  color: #e5e5e5;
+  font-size: 1.12rem;
+  line-height: 1.4;
+  max-width: 36ch;
+  margin: 0 0 14px;
+}
+.gabb-formats {
+  color: var(--rain-muted);
+  font-size: 0.95rem;
+  margin: 0 0 16px;
+}
+.gabb-book {
+  padding: 0;
+}
+.gabb-page .gabb-book img,
+.gabb-page .gabb-book-hardcover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.gabb-parts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 16px 0 8px;
+  max-width: 68ch;
+}
+.gabb-part {
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 14px 16px 12px;
+  background: #101010;
+}
+.gabb-part .part-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gabb-red);
+  margin-bottom: 4px;
+}
+.gabb-part h3 {
+  margin: 0 0 6px;
+  font-size: 1.02rem;
+  color: #fff;
+}
+.gabb-part p {
+  margin: 0;
+  color: var(--rain-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+.gabb-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 8px;
+  padding: 0;
+  list-style: none;
+  max-width: 68ch;
+}
+.gabb-tools li {
+  border: 1px solid #3f3f46;
+  border-radius: 999px;
+  padding: 6px 11px;
+  font-size: 13px;
+  color: #d4d4d4;
+}
+.gabb-author {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 18px;
+  align-items: start;
+  max-width: 68ch;
+  margin: 8px 0 0;
+  padding: 16px 18px;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  background: #101010;
+}
+.gabb-author img {
+  width: 88px;
+  height: 110px;
+  object-fit: cover;
+  object-position: center 18%;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
+}
+.gabb-author p { margin: 0 0 8px; }
+.gabb-author p:last-child { margin-bottom: 0; }
 .fail-path {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
   color: #d4d4d4;
+  margin: 16px 0 8px;
 }
 .fail-path span {
   border: 1px solid #3f3f46;
@@ -446,10 +560,22 @@ h1, h2, h3 { line-height: 1.15; }
 }
 .fail-path .arrow { border: 0; color: var(--gabb-red); }
 .theme-list { columns: 2; gap: 24px; }
+@media (max-width: 720px) {
+  .gabb-page .book-feature {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .gabb-parts { grid-template-columns: 1fr; }
+  .gabb-book {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+}
 @media (max-width: 640px) {
   .book-feature, .bio-grid, .author-intro { grid-template-columns: 1fr; }
   .bio-photo { max-width: 220px; }
   .theme-list { columns: 1; }
+  .gabb-author { grid-template-columns: 72px 1fr; }
 }
 
 /* ----- Bio ----- */
