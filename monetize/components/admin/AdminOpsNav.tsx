@@ -24,8 +24,8 @@ export function AdminOpsNav({
   const items: { id: AdminOpsNavCurrent; label: string; href: string }[] = [
     {
       id: "daily",
-      label: "Today",
-      href: `/admin/daily?key=${key}`,
+      label: "All three",
+      href: `/admin/daily?key=${key}&range=${encodeURIComponent(range)}`,
     },
     {
       id: "activity",

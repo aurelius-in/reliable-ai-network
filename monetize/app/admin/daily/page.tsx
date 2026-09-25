@@ -1,12 +1,19 @@
+import Link from "next/link";
 import { AdminOpsNav } from "@/components/admin/AdminOpsNav";
 import { Logo } from "@/components/Logo";
 import { assertAdminSecret } from "@/lib/admin-auth";
-import { loadCounterStats } from "@/lib/counter-stats";
+import {
+  COUNTER_RANGES,
+  loadCounterStats,
+  parseCounterRange,
+  rangeLabel,
+  type CounterRange,
+} from "@/lib/counter-stats";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Today n/a Make it RAIN", robots: { index: false, follow: false } };
+export const metadata = { title: "Activity | Make it RAIN", robots: { index: false, follow: false } };
 
-type SearchParams = Promise<{ key?: string }>;
+type SearchParams = Promise<{ key?: string; range?: string }>;
 
 type Kpi = { label: string; value: string };
 
@@ -19,13 +26,15 @@ type Card = {
 };
 
 export default async function DailyActivityPage({ searchParams }: { searchParams: SearchParams }) {
-  const { key } = await searchParams;
+  const { key, range: rangeRaw } = await searchParams;
+  const range = parseCounterRange(rangeRaw);
+  const windowLabel = rangeLabel(range);
   const gate = assertAdminSecret(key);
   if (!gate.ok) {
     return (
       <Shell>
         <div className="rounded-2xl border border-night-600 bg-night-800 p-8 text-center">
-          <h1 className="text-xl font-bold text-white">Today</h1>
+          <h1 className="text-xl font-bold text-white">Activity</h1>
           <p className="mt-2 text-sm text-slate-400">
             Add your admin key to the URL:
             <br />
@@ -37,13 +46,14 @@ export default async function DailyActivityPage({ searchParams }: { searchParams
   }
 
   const cards = await Promise.all([
-    rainCard(key!),
+    rainCard(key!, range),
     remoteCard({
       id: "manifest",
       name: "ManifestOS",
       note: "Problems submitted, then how far the studio went.",
       origin: process.env.MANIFEST_ACTIVITY_ORIGIN || "https://manifestos.studio",
       secret: process.env.MANIFEST_ACTIVITY_SECRET,
+      range,
       fallback: [
         { label: "Sessions", value: "n/a" },
         { label: "Problems submitted", value: "n/a" },
@@ -56,6 +66,7 @@ export default async function DailyActivityPage({ searchParams }: { searchParams
       note: "Checks started, and signups that began and did not finish.",
       origin: process.env.APPHOLE_ACTIVITY_ORIGIN || "https://apphole.pro",
       secret: process.env.APPHOLE_ACTIVITY_SECRET,
+      range,
       fallback: [
         { label: "Sessions", value: "n/a" },
         { label: "Checks started", value: "n/a" },
@@ -67,17 +78,41 @@ export default async function DailyActivityPage({ searchParams }: { searchParams
   return (
     <Shell>
       <div className="w-full max-w-4xl space-y-6">
-        <AdminOpsNav adminKey={key!} current="daily" />
+        <AdminOpsNav adminKey={key!} current="daily" range={range} />
         <div className="text-center">
-          <h1 className="text-2xl font-black text-white">Today</h1>
-          <p className="mt-1 text-sm text-slate-400">Past week across the three products. Open a board when a number looks wrong.</p>
+          <h1 className="text-2xl font-black text-white">{windowLabel}</h1>
+          <p className="mt-1 text-sm text-slate-400">
+            These numbers are for {windowLabel.toLowerCase()} only. The same window opens on each activity board.
+          </p>
+        </div>
+        <div className="flex flex-wrap justify-center gap-2">
+          {COUNTER_RANGES.map((item) => {
+            const active = item.id === range;
+            const params = new URLSearchParams();
+            params.set("key", key!);
+            params.set("range", item.id);
+            return (
+              <Link
+                key={item.id}
+                href={`/admin/daily?${params.toString()}`}
+                className={`rounded-full px-3.5 py-1.5 text-sm font-semibold ${
+                  active
+                    ? "bg-aqua/20 text-aqua-bright ring-1 ring-aqua/50"
+                    : "bg-night-800 text-slate-400 ring-1 ring-night-600 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
         <div className="space-y-4">
           {cards.map((card) => (
             <article key={card.id} className="rounded-2xl border border-night-600 bg-night-800 p-5">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h2 className="text-lg font-bold text-white">{card.name}</h2>
+                  <p className="text-xs font-bold uppercase tracking-widest text-aqua">{windowLabel}</p>
+                  <h2 className="mt-1 text-lg font-bold text-white">{card.name}</h2>
                   <p className="mt-1 text-sm text-slate-400">{card.note}</p>
                 </div>
                 <a
@@ -112,9 +147,9 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
-async function rainCard(adminKey: string): Promise<Card> {
-  const href = `/admin/activity?key=${encodeURIComponent(adminKey)}&range=7d`;
-  const stats = await loadCounterStats("7d");
+async function rainCard(adminKey: string, range: CounterRange): Promise<Card> {
+  const href = `/admin/activity?key=${encodeURIComponent(adminKey)}&range=${range}`;
+  const stats = await loadCounterStats(range);
   if ("error" in stats) {
     return {
       id: "rain",
@@ -148,19 +183,20 @@ async function remoteCard(input: {
   note: string;
   origin: string;
   secret: string | undefined;
+  range: CounterRange;
   fallback: Kpi[];
 }): Promise<Card> {
   const secret = input.secret?.trim();
   const href = secret
-    ? `${input.origin.replace(/\/$/, "")}/ops/activity?key=${encodeURIComponent(secret)}&range=7d`
-    : `${input.origin.replace(/\/$/, "")}/ops/activity`;
+    ? `${input.origin.replace(/\/$/, "")}/ops/activity?key=${encodeURIComponent(secret)}&range=${input.range}`
+    : `${input.origin.replace(/\/$/, "")}/ops/activity?range=${input.range}`;
   if (!secret) {
     return { ...input, href, kpis: input.fallback, note: `${input.note} Set the activity secret on this server to load the numbers.` };
   }
   try {
     const url = new URL("/api/activity/summary", input.origin);
     url.searchParams.set("key", secret);
-    url.searchParams.set("range", "7d");
+    url.searchParams.set("range", input.range);
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) {
       return { ...input, href, kpis: input.fallback, note: `${input.note} Summary did not load (${res.status}).` };
