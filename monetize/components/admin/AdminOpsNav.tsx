@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 export type AdminOpsNavCurrent =
+  | "daily"
   | "activity"
   | "products"
   | "brief"
@@ -21,6 +22,11 @@ export function AdminOpsNav({
 }) {
   const key = encodeURIComponent(adminKey);
   const items: { id: AdminOpsNavCurrent; label: string; href: string }[] = [
+    {
+      id: "daily",
+      label: "Today",
+      href: `/admin/daily?key=${key}`,
+    },
     {
       id: "activity",
       label: "Activity",
