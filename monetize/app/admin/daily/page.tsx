@@ -50,14 +50,14 @@ export default async function DailyActivityPage({ searchParams }: { searchParams
     remoteCard({
       id: "manifest",
       name: "ManifestOS",
-      note: "Problems submitted, then how far the studio went.",
+      note: "Problems submitted, then who paid for a Build-Ready Blueprint.",
       origin: process.env.MANIFEST_ACTIVITY_ORIGIN || "https://manifestos.studio",
       secret: process.env.MANIFEST_ACTIVITY_SECRET,
       range,
       fallback: [
         { label: "Sessions", value: "n/a" },
         { label: "Problems submitted", value: "n/a" },
-        { label: "Opened the studio", value: "n/a" },
+        { label: "Blueprints bought", value: "n/a" },
       ],
     }),
     remoteCard({
