@@ -27,7 +27,6 @@ export const TIERS: TierInfo[] = [
       "Who to approach this week (warm first; public signals when they help)",
       "Outreach drafts you approve before send",
       "Price and packaging hypotheses to test",
-      "4 tools underneath this job",
     ],
   },
   {
@@ -46,7 +45,6 @@ export const TIERS: TierInfo[] = [
       "Pipeline: stop forgetting who replied and why they objected",
       "Site Optimize: stop sending traffic to an offer that dies on arrival",
       "Funnel + 30-day launch calendar",
-      "9 tools underneath this job",
     ],
     starValue:
       "Run the work: write, send prep, pipeline, site. Then learn.",
@@ -67,7 +65,6 @@ export const TIERS: TierInfo[] = [
       "Extra revenue models ranked for you",
       "One optional execution handoff per month",
       "Premium swipe files + priority support",
-      "15 tools underneath this job",
     ],
     starValue:
       "Month three should be more valuable than month one. That is the keep-pay job.",

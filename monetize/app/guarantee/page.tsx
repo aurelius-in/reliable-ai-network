@@ -32,13 +32,9 @@ export default function GuaranteePage() {
         <h1 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">
           {GUARANTEE.hook}
         </h1>
-        <p className="mt-3 text-base font-semibold text-slate-200">
-          {GUARANTEE.hookSecondary}
-        </p>
         <p className="mt-4 text-sm text-slate-400">
-          Short on the homepage. Specific here: two tracks ($0 / early path
-          vs already earning), what “good faith” means, and what money back
-          covers. The free brief does not include a subscription to refund.
+          Short on the homepage. Specific here: what counts as success, what
+          “good faith” means, and what money back covers. The free brief does not include a subscription to refund.
           After the brief, a 30-day trial (card on file) puts this guarantee
           in force. Companies with existing revenue may request RAIN Select:
           name the constraint and the next move, or the $1,500 is returned.
@@ -58,8 +54,7 @@ export default function GuaranteePage() {
             Over {GUARANTEE.windowDays} days, if you run the path in good faith
             and still do not leave with a clearer ranked set of conversations
             worth having plus messages worth sending, we refund Make it RAIN
-            subscription fees you paid in the window. If you already had
-            product revenue, you can claim under the 2× track instead.
+            subscription fees you paid in the window.
           </p>
           <TrackedLink
             href="/signup"
@@ -95,7 +90,7 @@ export default function GuaranteePage() {
 
         <section className="mt-10 space-y-3 text-sm leading-relaxed text-slate-400">
           <h2 className="text-lg font-bold text-white">
-            2. Track A — $0 / early (path to a paid yes)
+            2. Success: clearer conversations, or a paid yes
           </h2>
           <ul className="list-disc space-y-2 pl-5 text-slate-300">
             <li>
@@ -122,29 +117,20 @@ export default function GuaranteePage() {
 
         <section className="mt-10 space-y-3 text-sm leading-relaxed text-slate-400">
           <h2 className="text-lg font-bold text-white">
-            3. Track B — already earning (2× revenue)
+            3. Earlier revenue track (closed to new windows)
           </h2>
-          <ul className="list-disc space-y-2 pl-5 text-slate-300">
-            <li>
-              Baseline = money your product received in the{" "}
-              {GUARANTEE.baselineDays} days before your guarantee window starts
-              (Stripe, App Store, invoices, or equivalent).
-            </li>
-            <li>Provide a simple export or screenshots if you claim.</li>
-            <li>
-              Success = product revenue in the {GUARANTEE.windowDays}-day window
-              is at least <strong className="text-white">2×</strong> baseline.
-            </li>
-            <li>
-              Pure friends-and-family gifts may be excluded if they are not real
-              product sales.
-            </li>
-          </ul>
+          <p className="text-slate-300">
+            An earlier version of these terms offered a revenue-multiple track
+            for products that were already earning. It is closed to guarantee
+            windows that start after September 26, 2026. If your window started
+            on or before that date, you keep it under the terms published when
+            your window started. Email us and we will send them.
+          </p>
         </section>
 
         <section className="mt-10 space-y-3 text-sm leading-relaxed text-slate-400">
           <h2 className="text-lg font-bold text-white">
-            4. Good-faith path (required for either track)
+            4. Good-faith path (required to claim)
           </h2>
           <ul className="list-disc space-y-2 pl-5 text-slate-300">
             <li>Account in good standing on a paid plan (or trial that converts).</li>
@@ -209,10 +195,8 @@ export default function GuaranteePage() {
             >
               support@makeitrainapp.com
             </a>{" "}
-            with subject “Guarantee claim,” account email, which track (A or B),
-            Results outreach log, and for Track B baseline + day-
-            {GUARANTEE.windowDays} revenue proof. We respond within several
-            business days.
+            with subject “Guarantee claim,” your account email, and your Results
+            outreach log. We respond within several business days.
           </p>
           <p className="text-xs text-slate-500">
             Also see{" "}

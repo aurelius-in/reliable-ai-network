@@ -99,6 +99,13 @@ export function AuthForm({
   const [error, setError] = useState<string | null>(null);
   const [confirmationSent, setConfirmationSent] = useState(false);
   const [needsConfirm, setNeedsConfirm] = useState(false);
+  const [formStarted, setFormStarted] = useState(false);
+
+  function noteFormStarted() {
+    if (mode !== "signup" || formStarted) return;
+    setFormStarted(true);
+    track("signup_form_started", { home_ab: readHomeAbVariant() });
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -372,7 +379,7 @@ export function AuthForm({
       : null;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} onInput={noteFormStarted} className="space-y-4">
       {authErrorCopy ? (
         <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100">
           {authErrorCopy}

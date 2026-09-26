@@ -110,7 +110,7 @@ export default function MethodologyPage() {
         <section className="mt-10">
           <h2 className="text-xl font-bold text-white">Guarantee</h2>
           <p className="mt-2 text-sm text-slate-300">
-            {GUARANTEE.hook}. {GUARANTEE.hookSecondary}. Full terms on{" "}
+            {GUARANTEE.hook}. Full terms on{" "}
             <Link href="/guarantee" className="text-aqua hover:text-aqua-bright">
               /guarantee
             </Link>

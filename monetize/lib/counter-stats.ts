@@ -447,6 +447,29 @@ function buildFunnel(rows: EventRow[]): FunnelStep[] {
           ["/pricing", "/signup", "/checklist"].includes(pathBase(r.path))),
     },
     {
+      key: "url_focus",
+      label: "Clicked the URL box",
+      hint: "Put the cursor in the homepage product URL field",
+      pred: (r) =>
+        r.name === "home_url_focus" ||
+        r.name === "home_url_submit" ||
+        r.name === "home_teaser_run" ||
+        r.name === "home_teaser_ok",
+    },
+    {
+      key: "url_run",
+      label: "Ran the free result",
+      hint: "Submitted a product URL on the homepage",
+      pred: (r) =>
+        r.name === "home_teaser_run" || r.name === "home_teaser_ok",
+    },
+    {
+      key: "url_result",
+      label: "Saw the free result",
+      hint: "Free result came back",
+      pred: (r) => r.name === "home_teaser_ok",
+    },
+    {
       key: "signup_page",
       label: "Opened signup",
       hint: "Visited /signup",
@@ -454,9 +477,15 @@ function buildFunnel(rows: EventRow[]): FunnelStep[] {
         r.name === "page_view" && pathBase(r.path) === "/signup",
     },
     {
-      key: "signup_submit",
+      key: "signup_typed",
       label: "Started signup form",
-      hint: "Clicked create account",
+      hint: "Typed into the signup form",
+      pred: (r) => r.name === "signup_form_started" || r.name === "signup_submit",
+    },
+    {
+      key: "signup_submit",
+      label: "Clicked create account",
+      hint: "Submitted the signup form",
       pred: (r) => r.name === "signup_submit",
     },
     {

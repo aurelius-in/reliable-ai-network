@@ -111,8 +111,8 @@ export function InstallPrompt() {
           </p>
         ) : (
           <p className="mt-1 text-xs text-slate-400">
-            Install the app for full-screen access to all 15 tools — no browser
-            chrome, one tap from your home screen.
+            Install the app so your path is one tap from your home screen, with
+            no browser bars.
           </p>
         )}
       </div>

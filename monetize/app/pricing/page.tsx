@@ -109,12 +109,10 @@ export default async function PricingPage() {
             <li>Starter: find who may pay and get the offer ready</li>
             <li>Growth: reach them and run the work</li>
             <li>Pro: learn what closes and keep improving the next move</li>
-            <li>Tool counts sit underneath. They do not carry the sale.</li>
           </ul>
           <p className="mt-4 text-sm font-semibold text-white">
             {GUARANTEE.hook}
           </p>
-          <p className="mt-1 text-xs text-slate-500">{GUARANTEE.hookSecondary}</p>
           <p className="mt-1 text-sm text-slate-400">
             Free {GUARANTEE.baitName} to start. Plans from{" "}
             <span className="font-semibold text-white">$29/mo</span> after trial.

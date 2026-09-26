@@ -160,7 +160,7 @@ export function HomeDepth() {
           </ul>
           <div className="mt-3 sm:mt-4">
             <TrackedLink
-              href="/signup"
+              href="#home-product-url"
               trackTarget="pains_cta_signup"
               className="text-sm font-semibold text-aqua hover:text-aqua-bright"
             >
@@ -220,11 +220,11 @@ export function HomeDepth() {
               desktop="Then get the hard commercial answer for your real product."
             />{" "}
             <TrackedLink
-              href="/signup"
+              href="#home-product-url"
               trackTarget="video_cta_signup"
               className="font-semibold text-aqua hover:text-aqua-bright"
             >
-              Sign up free
+              Run it on my product, free
             </TrackedLink>
           </p>
         </DepthPanel>

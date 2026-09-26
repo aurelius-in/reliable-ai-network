@@ -141,7 +141,7 @@ export default async function HomePage() {
             Login
           </Link>
           <TrackedLink
-            href="/signup"
+            href="#home-product-url"
             trackTarget="nav_start_trial"
             className="btn-primary whitespace-nowrap !px-3 !py-2 text-sm sm:!px-4"
           >
@@ -182,9 +182,6 @@ export default async function HomePage() {
                 mobile={GUARANTEE.hookMobile}
                 desktop={GUARANTEE.hook}
               />
-            </p>
-            <p className="text-center text-xs text-slate-500 sm:text-sm">
-              {GUARANTEE.hookSecondary}
             </p>
             <span
               aria-hidden
@@ -351,7 +348,7 @@ export default async function HomePage() {
             <MarketingJourneyPie />
             <div className="mt-5 text-center sm:mt-6">
               <TrackedLink
-                href="/signup"
+                href="#home-product-url"
                 trackTarget="pie_cta_signup"
                 className="btn-primary inline-flex items-center justify-center gap-2 !px-6 !py-3 text-base"
               >
@@ -413,7 +410,7 @@ export default async function HomePage() {
 
         <div className="fade-up mt-8 flex w-full max-w-md flex-col items-stretch gap-2.5 sm:mt-10 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-3">
           <TrackedLink
-            href="/signup"
+            href="#home-product-url"
             trackTarget="footer_cta_signup"
             className="btn-primary glow-card inline-flex items-center justify-center gap-2 !px-6 !py-3.5 text-base sm:!px-8 sm:!py-4 sm:text-lg"
           >

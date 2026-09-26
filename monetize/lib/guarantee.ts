@@ -11,8 +11,6 @@ export const GUARANTEE = {
   /** Homepage / pricing primary hook — works at $0 */
   hook: "Clearer ranked conversations in 60 days, or money back",
   hookMobile: "Clearer conversations in 60 days, or money back",
-  /** Secondary for already-earning products */
-  hookSecondary: "Already earning? 2× revenue in 60 days, or money back",
   termsPath: "/guarantee",
   windowDays: 60,
   baselineDays: 60,

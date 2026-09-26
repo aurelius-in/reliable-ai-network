@@ -106,6 +106,20 @@ export function HomeHero() {
   const [teaserLoading, setTeaserLoading] = useState(false);
   const [teaserError, setTeaserError] = useState<string | null>(null);
   const [hitLimit, setHitLimit] = useState(false);
+  const [urlFocused, setUrlFocused] = useState(false);
+
+  useEffect(() => {
+    function focusUrlBox() {
+      if (window.location.hash !== "#home-product-url") return;
+      const input = document.getElementById("home-product-url");
+      if (!(input instanceof HTMLInputElement)) return;
+      input.scrollIntoView({ block: "center", behavior: "smooth" });
+      input.focus({ preventScroll: true });
+    }
+    focusUrlBox();
+    window.addEventListener("hashchange", focusUrlBox);
+    return () => window.removeEventListener("hashchange", focusUrlBox);
+  }, []);
 
   useEffect(() => {
     const forced = normalizeHomeVariant(searchParams.get("v"));
@@ -270,6 +284,11 @@ export function HomeHero() {
           autoComplete="url"
           placeholder="https://yourproduct.com"
           value={productUrl}
+          onFocus={() => {
+            if (urlFocused) return;
+            setUrlFocused(true);
+            track("home_url_focus", { variant: copy.id });
+          }}
           onChange={(e) => setProductUrl(e.target.value)}
           className="input-dark w-full !py-3.5 text-center sm:text-left"
         />
@@ -304,6 +323,19 @@ export function HomeHero() {
       ) : null}
       {teaserError ? (
         <p className="mt-3 text-sm text-amber-200">{teaserError}</p>
+      ) : null}
+      {!teaser && !teaserLoading ? (
+        <div className="fade-up mt-4 w-full max-w-xl rounded-2xl border border-white/10 bg-night-800/70 px-4 py-3 text-left">
+          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-aqua">
+            What comes back, before an account
+          </p>
+          <ul className="mt-2 grid gap-1.5 text-sm text-slate-200 sm:grid-cols-2">
+            <li>Who is most likely to pay</li>
+            <li>The biggest guess you have not tested</li>
+            <li>A price worth testing</li>
+            <li>The next conversation worth having</li>
+          </ul>
+        </div>
       ) : null}
       {teaser ? (
         <HomeTeaserCard teaser={teaser} signupHref={signupHref} />
