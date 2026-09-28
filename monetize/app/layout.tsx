@@ -6,6 +6,7 @@ import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { ReferralCapture } from "@/components/ReferralCapture";
 import { AccessCodeCapture } from "@/components/AccessCodeCapture";
 import { CookieNotice } from "@/components/CookieNotice";
+import { MetaPixel } from "@/components/MetaPixel";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -20,7 +21,7 @@ const SITE_URL = (
 ).replace(/\/$/, "");
 
 const DEFAULT_DESCRIPTION =
-  "Find who may pay, stress-test the offer, and the next conversation worth having. Paste your URL. Run it on my product, free.";
+  "For app builders. Find who may pay, stress-test the offer, and the next conversation worth having. Paste your URL. Run it on my product, free.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -78,6 +79,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={outfit.variable}>
       <body className={`${outfit.className} min-h-screen antialiased`}>
+        <MetaPixel />
         <Suspense fallback={null}>
           <AnalyticsProvider>{children}</AnalyticsProvider>
         </Suspense>

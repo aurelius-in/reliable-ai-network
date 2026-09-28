@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { trackPageView, track } from "@/lib/track";
+import { pixelPageView } from "@/lib/meta-pixel";
 
 /**
  * Auto page_view on route changes + one-shot query flags
@@ -11,12 +12,18 @@ import { trackPageView, track } from "@/lib/track";
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const firstView = useRef(true);
 
   useEffect(() => {
     if (!pathname) return;
     if (pathname.startsWith("/admin")) return;
     if (pathname.startsWith("/select")) return;
     trackPageView(pathname);
+    if (firstView.current) {
+      firstView.current = false;
+    } else {
+      pixelPageView();
+    }
 
     const checkout = searchParams.get("checkout");
     if (checkout === "canceled") {

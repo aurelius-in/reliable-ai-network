@@ -44,8 +44,8 @@ export function CookieNotice() {
     >
       <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm leading-relaxed text-slate-300">
-          We use local storage for session analytics and marketing attribution
-          (like UTM links) so we can improve Make it RAIN. See our{" "}
+          We use first-party analytics and a Meta Pixel so we can see which
+          pages and actions help founders get paid. See our{" "}
           <Link href="/privacy" className="font-semibold text-aqua hover:underline">
             Privacy Policy
           </Link>

@@ -3,6 +3,8 @@
  * Fire-and-forget; never blocks UX.
  */
 
+import { mirrorPixelEvent } from "@/lib/meta-pixel";
+
 const SESSION_KEY = "rain-analytics-session";
 
 export type TrackProps = Record<string, string | number | boolean | null | undefined>;
@@ -52,6 +54,7 @@ function readUtm(): {
 /** Record a named event. Safe to call from anywhere in the client. */
 export function track(name: string, props: TrackProps = {}): void {
   if (typeof window === "undefined") return;
+  mirrorPixelEvent(name);
 
   const utm = readUtm();
   const body = {

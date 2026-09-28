@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalDocShell title="Privacy Policy" updated="July 31, 2026">
+    <LegalDocShell title="Privacy Policy" updated="September 28, 2026">
       <p className="rounded-2xl border border-night-600 bg-night-700/60 p-5 text-slate-200">
         This Privacy Policy explains how{" "}
         <strong className="text-white">Reliable AI Network, LLC</strong>{" "}
@@ -50,11 +50,10 @@ export default function PrivacyPage() {
             Service.
           </li>
           <li>
-            <strong className="text-white">Local storage</strong> — a random
+            <strong className="text-white">Local storage</strong>: a random
             session id in local storage for first-party analytics, and marketing
             attribution (UTM parameters) in session storage when you arrive from
-            a campaign link. We do not use third-party advertising cookies for
-            this.
+            a campaign link.
           </li>
           <li>
             <strong className="text-white">Referral data</strong> — referral
@@ -89,6 +88,12 @@ export default function PrivacyPage() {
           <li>Supabase (authentication and database);</li>
           <li>Stripe (payments);</li>
           <li>Vercel (hosting);</li>
+          <li>
+            Meta (Facebook Pixel) for page views and conversion events such as
+            signup, First Customer Path, checkout, and trial start. Meta may set
+            cookies and receive those events. We do not send your product URL
+            contents, generated briefs, or passwords to Meta;
+          </li>
           <li>email delivery providers (for transactional and opted-in mail);</li>
           <li>
             AI model providers that process prompts and outputs needed to run
